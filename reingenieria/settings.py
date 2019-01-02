@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'gz73qckgdfb#h9e!#f0&uq00fnq=$q1zbdu+y4^hif5%%bdz$@'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,8 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
         'HOST': '192.168.11.105',
-        'USER': 'reuser',
-        'PASSWORD': 'r3us3r',
+        'USER': '',
+        'PASSWORD': '',
         'NAME': 'reingenieria',
         'PORT': '1433',
         'OPTIONS': {

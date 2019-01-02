@@ -162,4 +162,7 @@ def Planificacion_create(request, id_puntoServicio=None):
     if planificacion == None:
         planificacion = PlanificacionCab()
 
+    planificacionDetFormSet = inlineformset_factory(PlanificacionCab, PlanificacionDet, form=RelevamientoDetForm, extra=1, can_delete=True)
+    planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=RelevamientoEspForm, extra=1, can_delete=True)
+
     return render(request, 'planificacion/planificacion_list.html', context=contexto)

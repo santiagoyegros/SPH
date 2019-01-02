@@ -1,7 +1,14 @@
 from django import forms
 from bootstrap_datepicker_plus import DatePickerInput, TimePickerInput
 
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp
+from Operarios.models import (  PuntoServicio, 
+                                Operario, 
+                                RelevamientoCab, 
+                                RelevamientoDet, 
+                                RelevamientoEsp,
+                                PlanificacionCab, 
+                                PlanificacionDet, 
+                                PlanificacionEsp )
 
 class PuntoServicioForm(forms.ModelForm):
     class Meta:
@@ -203,6 +210,111 @@ class RelevamientoEspForm(forms.ModelForm):
 
     class Meta:
         model = RelevamientoEsp
+    
+        fields = [
+            'tipo',
+            'frecuencia',
+            'dia',
+            'cantHoras' 
+        ]
+
+        labels = {
+            'tipo': 'Tipo limpieza especial',
+            'frecuencia': 'Frecuencia',
+            'dia': 'Día',
+            'cantHoras': 'Cantidad de Horas'
+        }
+
+        widgets = {
+            'tipo': forms.Select(attrs={'class':'form-control form-control-sm'}),
+            'frecuencia': forms.Select(attrs={'class':'form-control form-control-sm'}),
+            'dia': forms.Select(attrs={'class':'form-control form-control-sm'}),
+            'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'})
+        }
+
+class PlanificacionForm(forms.ModelForm):
+
+    class Meta:
+        model = PlanificacionCab
+
+        fields = [
+            'puntoServicio',
+            'cantidad'
+        ]
+
+        labels = {
+            'puntoServicio': 'Punto de Servicio',
+            'cantidad': 'Cantidad de Operarios'
+        }
+
+        widgets = {
+            'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
+            'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'})
+        }
+
+class PlanificacionDetForm(forms.ModelForm):
+
+    class Meta:
+        model = PlanificacionDet
+
+        fields = [
+            'orden',
+            'lunEnt',
+            'lunSal',
+            'marEnt',
+            'marSal',
+            'mieEnt',
+            'mieSal',
+            'jueEnt',
+            'jueSal',
+            'vieEnt',
+            'vieSal',
+            'sabEnt',
+            'sabSal',
+            'domEnt',
+            'domSal'
+        ]
+
+        labels = {
+            'orden': 'Orden',
+            'lunEnt': 'Lunes Entrada',
+            'lunSal': 'Lunes Salida',
+            'marEnt': 'Martes Entrada',
+            'marSal': 'Martes Salida',
+            'mieEnt': 'Miercoles Entrada',
+            'mieSal': 'Miercoles Salida',
+            'jueEnt': 'Jueves Entrada',
+            'jueSal': 'Jueves Salida',
+            'vieEnt': 'Viernes Entrada',
+            'vieSal': 'Viernes Salida',
+            'sabEnt': 'Sabado Entrada',
+            'sabSal': 'Sabado Salida',
+            'domEnt': 'Domingo Entrada',
+            'domSal': 'Domingo Salida'
+        }
+
+        widgets = {
+            'orden': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'lunEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Lunes'),
+            'lunSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Lunes'),
+            'marEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Martes'),
+            'marSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Martes'),
+            'mieEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Miercoles'),
+            'mieSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Miercoles'),
+            'jueEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Jueves'),
+            'jueSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Jueves'),
+            'vieEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Viernes'),
+            'vieSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Viernes'),
+            'sabEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Sabado'),
+            'sabSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Sabado'),
+            'domEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Domingo'),
+            'domSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Domingo')
+        }
+
+class PlanificacionEspForm(forms.ModelForm):
+
+    class Meta:
+        model = PlanificacionEsp
     
         fields = [
             'tipo',

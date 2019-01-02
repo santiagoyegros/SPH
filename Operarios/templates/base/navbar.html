@@ -1,0 +1,59 @@
+{% load static %}
+{% url 'home' as home_url %}
+{% url 'planificacion' as planificacion_url %}
+{% url 'asignacion' as asignacion_url %}
+{% url 'Operarios:puntoServicio_list' as punto_servicio_url %}
+{% url 'Operarios:operarios_list' as operarios_url %}
+{% url 'marcaciones' as marcaciones_url %}
+{% url 'remplazos' as remplazos_url %}
+{% url 'alertas' as alertas_url %}
+
+
+<nav class="navbar navbar-expand-md navbar-dark mb-4" style="background-color: #7A0C25;">
+    <div class='container'>
+        <a class="navbar-brand" href="{{ home_url }}">
+            <img src="{% static 'logo-blanco.png' %}" height="30" class="d-inline-block align-top" alt="El mejor">
+        </a>
+        <button class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarCollapseLinks' aria-expanded='false' aria-label='Toggle Navigation'>
+            <span class='navbar-toggler-icon'></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarCollapseLinks">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item {% if request.path == planificacion_url %}active{% endif %}">
+                    <a class="nav-link" href="{{ planificacion_url }}">Planificación <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item {% if request.path == asignacion_url %}active{% endif %}">
+                    <a class="nav-link" href="{{ asignacion_url }}">Asignación</a>
+                </li>
+                <li class="nav-item {% if request.path == punto_servicio_url %}active{% endif %}">
+                    <a class="nav-link" href="{{ punto_servicio_url }}">Puntos de Servicio</a>
+                </li>
+                <li class="nav-item {% if request.path == operarios_url %}active{% endif %}">
+                    <a class="nav-link" href="{{ operarios_url }}">Operarios</a>
+                </li>
+                <li class="nav-item {% if request.path == marcaciones_url %}active{% endif %}">
+                    <a class="nav-link" href="{{ marcaciones_url }}">Marcaciones</a>
+                </li>
+                <li class="nav-item {% if request.path == remplazos_url %}active{% endif %}">
+                    <a class="nav-link" href="{{ remplazos_url }}">Reemplazos</a>
+                </li>
+                <li class="nav-item {% if request.path == alertas_url %}active{% endif %}">
+                    <a class="nav-link" href="{{ alertas_url }}">Alertas</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Reportes
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="#">Reporte 1</a>
+                    <a class="dropdown-item" href="#">Reporte 2</a>
+                    <a class="dropdown-item" href="#">Reporte 3</a>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+
+{% load staticfiles %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <img src="{% static 'logo-blanco.png' %}" height="40px" />
+    </a>
+    Sistema de Planificación de Servicios
+</h1>
+{% endblock %}
+
+    {% block extrastyle %}
+    <style>
+    :root {
+        --primary-color: #1d1d1b;
+        --primary-color-faded: #585853;
+        --secondary-color: #4dffba;
+    }
+    </style>
+    {% endblock %}
+
+{% block nav-global %}{% endblock %}

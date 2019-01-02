@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class='col mx-auto'>
+{% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
+<form method='POST' action='#'> 
+    {% csrf_token %}
+    
+    <!--{{ form.as_p }}-->
+    <div class="container-fluid mb-3 mt-4">
+        <div class="row mt-3">
+             <div class="col-4"> {{ form.puntoServicio.label }} {{ form.puntoServicio }} </div>
+        </div>
+        <div class="row mt-3">
+             <div class="col-4"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
+        </div>
+    </div>
+    
+
+    {{ relevamDetFormSet.management_form }}
+    {{ relevamEspFormSet.management_form }}
+
+    <!--<fieldset>
+        <legend>Cupo de Horas Detalles</legend>
+        <ul id='formset-det'>
+            {% for form in relevamDetFormSet %}
+                {{ form.id }}
+                <li>
+                    {{ form.as_ul }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <button id='btnDet'>Añadir Detalle</button>
+    </fieldset>-->
+    
+    <div class="container-fluid mb-3 mt-4" id='formset-det'>
+        <h4>
+        Cupo de Horas Detalles <small class="text-muted">Horas de Operarios</small>
+        </h4>
+        <div class="row mt-3 mb-2 justify-content-end">
+            <div class="col-3 text-right"> Total Horas: </div>
+            <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm"/></div>
+        </div>
+        <div class="row">
+            <div class="col-1"> Orden </div>
+            <div class="col"> Lunes </div>
+            <div class="col"> Martes </div>
+            <div class="col"> Miercoles </div>
+            <div class="col"> Jueves </div>
+            <div class="col"> Viernes </div>
+            <div class="col"> Sabado </div>
+            <div class="col"> Domingo </div>
+            <div class="col-1"> Eliminar? </div>
+        </div>
+	    {% for form in relevamDetFormSet %}
+        {{ form.id }}
+        <div class="row mt-2">
+            <div class="col-1 mt-3">
+                {{ form.orden }}
+            </div>
+            <div class="col">
+                {{ form.lunEnt }}{{ form.lunSal }}
+            </div>
+            <div class="col">
+                {{ form.marEnt }}{{ form.marSal }}
+            </div>
+            <div class="col">
+                {{ form.mieEnt }}{{ form.mieSal }}
+            </div>
+            <div class="col">
+                {{ form.jueEnt }}{{ form.jueSal }}
+            </div>
+            <div class="col">
+                {{ form.vieEnt }}{{ form.vieSal }}
+            </div>
+            <div class="col">
+                {{ form.sabEnt }}{{ form.sabSal }}
+            </div>
+            <div class="col">
+                {{ form.domEnt }}{{ form.domSal }}
+            </div>
+            <div class="col-1 text-center">
+                {{ form.DELETE }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row justify-content-end">
+            <button id='btnDet' class="btn btn-outline-info btn-sm">Añadir Detalle</button>
+    </div>
+
+    <!--<fieldset>
+        <legend>Cupo de Horas Especiales</legend>
+        <ul id='formset-Esp'>
+            {% for form in relevamEspFormSet %}
+                {{ form.id }}
+                <li>
+                    {{ form.as_ul }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <button id='btnEsp'>Añadir Especiales</button>
+    </fieldset>-->
+
+    
+    <div class="container-fluid mb-3 mt-4" id='formset-Esp'>
+        <h4>
+        Cupo de Horas Especiales <small class="text-muted">Horas de Servicios Especiales</small>
+        </h4>
+        <div class="row mt-3 mb-2 justify-content-end">
+            <div class="col-3 text-right"> Total Horas Especiales: </div>
+            <div class="col-3">  <input id="sumAll_2" type="text" value="" class="form-control form-control-sm"/></div>
+        </div>
+        <div class="row">
+            <div class="col">Tipo limpieza especial </div>
+            <div class="col">Frecuencia </div>
+            <div class="col">Día </div>
+            <div class="col">Cantidad de Horas </div>
+            <div class="col-1">Eliminar? </div>
+        </div>
+	    {% for form in relevamEspFormSet %}
+        {{ form.id }}
+        <div class="row mt-2">
+            <div class="col">
+                {{ form.tipo }}
+            </div>
+            <div class="col">
+                {{ form.frecuencia }}
+            </div>
+            <div class="col">
+                {{ form.dia }}
+            </div>
+            <div class="col">
+                {{ form.cantHoras }}
+            </div>
+            <div class="col-1 text-center">
+                {{ form.DELETE }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row justify-content-end">
+            <button id='btnEsp' class="btn btn-outline-info btn-sm">Añadir Especiales</button>
+    </div>
+    <div class="row mt-5 justify-content-end">
+        <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
+        <a class='btn btn-primary btn-sm' href={% url 'Operarios:puntoServicio_list' %}>Cancelar</a>
+    </div>
+
+</form>
+</div>
+
+    
+
+  
+<!-- Script que carga las filas dinamicamente -->
+<script type='template/Detalle'>
+    <div class="row mt-2">
+            <div class="col-1  mt-3">
+                {{ relevamDetFormSet.empty_form.orden }}
+            </div>
+            <div class="col">
+                {{ relevamDetFormSet.empty_form.lunEnt }}{{ relevamDetFormSet.empty_form.lunSal }}
+            </div>
+            <div class="col">
+                {{ relevamDetFormSet.empty_form.marEnt }}{{ relevamDetFormSet.empty_form.marSal }}
+            </div>
+            <div class="col">
+                {{ relevamDetFormSet.empty_form.mieEnt }}{{ relevamDetFormSet.empty_form.mieSal }}
+            </div>
+            <div class="col">
+                {{ relevamDetFormSet.empty_form.jueEnt }}{{ relevamDetFormSet.empty_form.jueSal }}
+            </div>
+            <div class="col">
+                {{ relevamDetFormSet.empty_form.vieEnt }}{{ relevamDetFormSet.empty_form.vieSal }}
+            </div>
+            <div class="col">
+                {{ relevamDetFormSet.empty_form.sabEnt }}{{ relevamDetFormSet.empty_form.sabSal }}
+            </div>
+            <div class="col">
+                {{ relevamDetFormSet.empty_form.domEnt }}{{ relevamDetFormSet.empty_form.domSal }}
+            </div>
+            <div class="col-1 text-center">
+                {{ relevamDetFormSet.empty_form.DELETE }}
+            </div>
+        </div>
+</script>
+
+<!--<script type='template/Detalle'>
+    {{ relevamDetFormSet.empty_form.as_ul }}
+</script>-->
+
+<script type='template/Especiales'>
+    <div class="row mt-2">
+            <div class="col">
+                {{ relevamEspFormSet.empty_form.tipo }}
+            </div>
+            <div class="col">
+                {{ relevamEspFormSet.empty_form.frecuencia }}
+            </div>
+            <div class="col">
+                {{ relevamEspFormSet.empty_form.dia }}
+            </div>
+            <div class="col">
+                {{ relevamEspFormSet.empty_form.cantHoras }}
+            </div>
+            <div class="col-1 text-center">
+                {{ relevamEspFormSet.empty_form.DELETE }}
+            </div>
+        </div>  
+</script>
+
+<!--<script type='template/Especiales'>
+    {{ relevamEspFormSet.empty_form.as_ul }}
+</script>-->
+</div>
+
+<script>
+function pad(d) {
+    return (d < 10) ? '0' + d.toString() : d.toString();
+}
+
+function timeInHours(str){
+   var sp = str.split(":");
+   return parseInt(sp[0]) + parseFloat(sp[1]/60);
+}
+
+function hoursToString(h){
+   var hours = Math.floor(h);
+   var minutes = ((h - hours)*60).toFixed(2);
+
+   return pad(hours) + ":" + pad(minutes);
+}
+
+function SumHrMin(h1, h2){
+    var sp = h1.split(":");
+    var hora1 = sp[0];
+    var min1 = sp[1];
+
+    sp = h2.split(":");
+    var hora2 = sp[0];
+    var min2 = sp[1];
+
+    var hora_total = parseInt(hora1) + parseInt(hora2);
+    var min_pre = parseInt(min1) + parseInt(min2);
+
+    var horas_adicionales = Math.floor((min_pre/60));
+    hora_total += horas_adicionales;
+    var min_total = (min_pre - (horas_adicionales*60));
+
+    return hora_total + ":" + pad(min_total);
+
+}
+
+$(function(){
+
+    // Reemplaza todas las coincidencias en vez de solo la primera
+    function replaceAll(text, busca, reemplaza){
+          while (text.toString().indexOf(busca) != -1)
+            text = text.toString().replace(busca, reemplaza);
+          return text;
+    }
+
+    var $totalDetalle = $('#id_relevamientodet_set-TOTAL_FORMS');
+
+    $('#btnDet').click(function(event) {
+        event.preventDefault();
+        var total = parseInt($totalDetalle.val(), 10);
+        var clon = $('script[type="template/Detalle"]').html();
+        clon_html = replaceAll(clon, '__prefix__', (total).toString());
+        $('#formset-det').append(clon_html);
+        $totalDetalle.val(total +  1);
+    });
+
+    var $totalEspeciales = $('#id_relevamientoesp_set-TOTAL_FORMS');
+
+    $('#btnEsp').click(function(event) {
+        event.preventDefault();
+        var total = parseInt($totalEspeciales.val(), 10);
+        var clon = $('script[type="template/Especiales"]').html();
+        clon_html = replaceAll(clon, '__prefix__', (total).toString());
+        $('#formset-Esp').append(clon_html);
+        $totalEspeciales.val(total +  1);
+    });
+});
+
+$('input[id$="cantHoras"]').change(function() {
+        debugger;
+        var total = 0;
+        $('input[id$="cantHoras"]').each(function() {
+          if (!isNaN($(this).val())) {
+              total += Number($(this).val());
+          }
+        })
+        $('#sumAll_2').val(total);
+    });
+
+
+$('input[id^="id_relevamientodet_set-"]').on('dp.change', function(e){
+        debugger;
+        var total_horas_detalle = '00:00';
+        //var lunEnt = $('#id_relevamientodet_set-0-lunEnt').val();
+        //var lunSal = $('#id_relevamientodet_set-0-lunSal').val();
+        
+        //var total_horas_detalle = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
+
+        var $totalDetalle = $('#id_relevamientodet_set-TOTAL_FORMS');
+        var totalDet = parseInt($totalDetalle.val(), 10);
+
+        for (i = 0; i < totalDet; i++) { 
+            //Lunes
+            var lunEnt =  $('#id_relevamientodet_set-' + i + '-lunEnt').val();
+            var lunSal =  $('#id_relevamientodet_set-' + i + '-lunSal').val();
+
+            var totalLunes = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
+            if(!(totalLunes == 'NaN:NaN')){
+                total_horas_detalle = SumHrMin(total_horas_detalle, totalLunes);
+            }
+            
+            //Martes
+            var marEnt =  $('#id_relevamientodet_set-' + i + '-marEnt').val();
+            var marSal =  $('#id_relevamientodet_set-' + i + '-marSal').val();
+
+            var totalMartes = hoursToString(timeInHours(marSal) - timeInHours(marEnt));
+            if(!(totalMartes == 'NaN:NaN')){
+                total_horas_detalle = SumHrMin(total_horas_detalle, totalMartes);
+            }
+
+            //Miercoles
+            var mieEnt =  $('#id_relevamientodet_set-' + i + '-mieEnt').val();
+            var mieSal =  $('#id_relevamientodet_set-' + i + '-mieSal').val();
+
+            var totalMiercoles = hoursToString(timeInHours(mieSal) - timeInHours(mieEnt));
+            if(!(totalMiercoles == 'NaN:NaN')){
+                total_horas_detalle = SumHrMin(total_horas_detalle, totalMiercoles);
+            }
+
+            //Jueves
+            var jueEnt =  $('#id_relevamientodet_set-' + i + '-jueEnt').val();
+            var jueSal =  $('#id_relevamientodet_set-' + i + '-jueSal').val();
+
+            var totalJueves = hoursToString(timeInHours(jueSal) - timeInHours(jueEnt));
+            if(!(totalJueves == 'NaN:NaN')){
+                total_horas_detalle = SumHrMin(total_horas_detalle, totalJueves);
+            }
+
+            //Viernes
+            var vieEnt =  $('#id_relevamientodet_set-' + i + '-vieEnt').val();
+            var vieSal =  $('#id_relevamientodet_set-' + i + '-vieSal').val();
+
+            var totalViernes = hoursToString(timeInHours(vieSal) - timeInHours(vieEnt));
+            if(!(totalViernes == 'NaN:NaN')){
+                total_horas_detalle = SumHrMin(total_horas_detalle, totalViernes);
+            }
+
+            //Sabado
+            var sabEnt =  $('#id_relevamientodet_set-' + i + '-sabEnt').val();
+            var sabSal =  $('#id_relevamientodet_set-' + i + '-sabSal').val();
+
+            var totalSabado = hoursToString(timeInHours(sabSal) - timeInHours(sabEnt));
+            if(!(totalSabado == 'NaN:NaN')){
+                total_horas_detalle = SumHrMin(total_horas_detalle, totalSabado);
+            }
+
+            //Domingo
+            var domEnt =  $('#id_relevamientodet_set-' + i + '-domEnt').val();
+            var domSal =  $('#id_relevamientodet_set-' + i + '-domSal').val();
+
+            var totalDomingo = hoursToString(timeInHours(domSal) - timeInHours(domEnt));
+            if(!(totalSabado == 'NaN:NaN')){
+                total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
+            }
+        }
+
+        $('#sumAll_1').val(total_horas_detalle);
+    });
+
+
+</script>
+
+{% endblock %}

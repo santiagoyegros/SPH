@@ -4,7 +4,7 @@ from . import views
 from django.views.generic import TemplateView, RedirectView
 from django.conf.urls import url, include
 from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView, Relevamiento
-from Operarios.views import Operarios_list, Operarios_create, Operarios_update, Operarios_delete
+from Operarios.views import Operarios_list, Operarios_create, Operarios_update, Operarios_delete, Planificacion_list, Planificacion_create
 
 app_name = 'Operarios'
 
@@ -22,4 +22,6 @@ urlpatterns = [
     url(r'^operarios/nuevo/', Operarios_create, name='operarios_create'),
     url(r'^operarios/editar/(?P<pk>\d+)/$', Operarios_update, name='operarios_update'),
     url(r'^operarios/eliminar/(?P<pk>\d+)/$', Operarios_delete, name='operarios_delete'),
+    url(r'^planificacion/listar/', Planificacion_list, name='planificar_list'),
+    url(r'^planificacion/planificar/(?P<id_puntoServicio>\d+)/$', Planificacion_create, name='planificar_create'),
 ]

@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ''
+SECRET_KEY = 'gz73qckgdfb#h9e!#f0&uq00fnq=$q1zbdu+y4^hif5%%bdz$@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,8 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
         'HOST': '192.168.11.105',
-        'USER': '',
-        'PASSWORD': '',
+        'USER': 'reuser',
+        'PASSWORD': 'r3us3r',
         'NAME': 'reingenieria',
         'PORT': '1433',
         'OPTIONS': {
@@ -137,4 +137,54 @@ STATICFILES_DIRS = [
 
 BOOTSTRAP4 = {
     'include_jquery': True,
+}
+
+
+# Configuracion del Logging
+LOGGING = {
+	'version':1,
+	'disable_existing_loggers': False,
+	'formatters':{
+		'large':{
+			'format':'%(asctime)s - %(levelname)s - %(process)d - %(pathname)s - %(funcName)s - %(lineno)d - %(message)s  '
+		},
+		'tiny':{
+			'format':'%(asctime)s -  %(message)s  '
+		}
+	},
+	'handlers':{
+		'errors_file':{
+			'level':'ERROR',
+		    'class':'logging.handlers.TimedRotatingFileHandler',
+			'when':'midnight',
+			'interval':1,
+			'filename':'logs/ErrorLoggers.log',
+			'formatter':'large',
+		},
+		'info_file':{
+			'level':'INFO',
+		    'class':'logging.handlers.TimedRotatingFileHandler',
+			'when':'midnight',
+			'interval':1,
+			'filename':'logs/InfoLoggers.log',
+			'formatter':'large',
+		},
+	},
+	'loggers':{
+		'error_logger':{
+			'handlers':['errors_file'],
+			'level':'WARNING',
+			'propagate':False,
+		},
+		'info_logger':{
+			'handlers':['info_file'],
+			'level':'INFO',
+			'propagate':False,
+		},
+        '':{
+			'handlers':['errors_file'],
+			'level':'INFO',
+			'propagate':False,
+		},
+	},
 }

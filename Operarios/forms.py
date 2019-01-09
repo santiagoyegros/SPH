@@ -239,17 +239,26 @@ class PlanificacionForm(forms.ModelForm):
 
         fields = [
             'puntoServicio',
-            'cantidad'
+            'cantidad',
+            'cantHoras',
+            'cantHorasNoc',
+            'cantHorasEsp',
         ]
 
         labels = {
             'puntoServicio': 'Punto de Servicio',
-            'cantidad': 'Cantidad de Operarios'
+            'cantidad': 'Cantidad de Operarios',
+            'cantHoras': 'Cantidad de Horas',
+            'cantHorasNoc': 'Cantidad de Horas Nocturnas',
+            'cantHorasEsp': 'Cantidad de Horas Especiales',
         }
 
         widgets = {
             'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
-            'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'})
+            'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'cantHorasNoc': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'cantHorasEsp': forms.TextInput(attrs={'class':'form-control form-control-sm'})
         }
 
 class PlanificacionDetForm(forms.ModelForm):
@@ -258,6 +267,7 @@ class PlanificacionDetForm(forms.ModelForm):
         model = PlanificacionDet
 
         fields = [
+            'especialista',
             'orden',
             'lunEnt',
             'lunSal',
@@ -276,6 +286,7 @@ class PlanificacionDetForm(forms.ModelForm):
         ]
 
         labels = {
+            'especialista': 'Especialista',
             'orden': 'Orden',
             'lunEnt': 'Lunes Entrada',
             'lunSal': 'Lunes Salida',
@@ -294,6 +305,7 @@ class PlanificacionDetForm(forms.ModelForm):
         }
 
         widgets = {
+            'especialista': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'orden': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'lunEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Lunes'),
             'lunSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Lunes'),
@@ -317,6 +329,7 @@ class PlanificacionEspForm(forms.ModelForm):
         model = PlanificacionEsp
     
         fields = [
+            'especialista',
             'tipo',
             'frecuencia',
             'dia',
@@ -324,6 +337,7 @@ class PlanificacionEspForm(forms.ModelForm):
         ]
 
         labels = {
+            'especialista': 'Especialista',
             'tipo': 'Tipo limpieza especial',
             'frecuencia': 'Frecuencia',
             'dia': 'Día',
@@ -331,6 +345,7 @@ class PlanificacionEspForm(forms.ModelForm):
         }
 
         widgets = {
+            'especialista': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'tipo': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'frecuencia': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'dia': forms.Select(attrs={'class':'form-control form-control-sm'}),

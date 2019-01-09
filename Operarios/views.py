@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render, redirect, render_to_response
 from django.http import HttpResponse, Http404
 from django.contrib import messages
@@ -8,9 +9,7 @@ from django.forms.models import inlineformset_factory
 from django.template import RequestContext
 
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, PlanificacionCab, PlanificacionDet, PlanificacionEsp
-from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm
-
-
+from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, PlanificacionForm, PlanificacionDetForm, PlanificacionEspForm
 
 def index(request):
     return HttpResponse("Vista de Operarios")
@@ -149,20 +148,61 @@ def Operarios_delete(request, pk):
 
 
 def Planificacion_create(request, id_puntoServicio=None):
-    """
-        Obtenemos el punto de servicio, en caso de error se muesta un error 404
-    """
+    logging.getLogger("error_logger").error('Se ingreso en el metodo planificacion_create')
+    ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
     try:
         puntoSer = PuntoServicio.objects.get(pk=id_puntoServicio)
-    except PuntoServicio.DoesNotExist:
+    except PuntoServicio.DoesNotExist as err:
+        logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         raise Http404("Punto de Servicio no existe")
 
+    ''' Obtenemos el relevamiento para mostrar en la pantalla '''
+    relevamiento = RelevamientoCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+
+    ''' Obtenemos la planificacion en caso de que exista una '''
     planificacion = PlanificacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
 
     if planificacion == None:
         planificacion = PlanificacionCab()
 
-    planificacionDetFormSet = inlineformset_factory(PlanificacionCab, PlanificacionDet, form=RelevamientoDetForm, extra=1, can_delete=True)
-    planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=RelevamientoEspForm, extra=1, can_delete=True)
+    planificacionDetFormSet = inlineformset_factory(PlanificacionCab, PlanificacionDet, form=PlanificacionDetForm, extra=1, can_delete=True)
+    planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=PlanificacionEspForm, extra=1, can_delete=True)
 
-    return render(request, 'planificacion/planificacion_list.html', context=contexto)
+    if request.method == 'POST':
+        form = PlanificacionForm(request.POST, instance=planificacion)
+        planifDetFormSet = planificacionDetFormSet(request.POST, instance=planificacion)
+        planifEspFormSet = planificacionEspFormSet(request.POST, instance=planificacion)
+
+        if form.is_valid() and planifDetFormSet.is_valid() and planifEspFormSet.is_valid():
+            form.save()
+            planifDetFormSet.save()
+            planifEspFormSet.save()
+            return redirect('Operarios:puntoServicio_list')
+    else:
+        """
+        Seteamos el punto de servicio
+        """
+        planificacion.puntoServicio = puntoSer
+
+        form = PlanificacionForm(instance=planificacion)
+        planifDetFormSet = planificacionDetFormSet(instance=planificacion)
+        planifEspFormSet = planificacionEspFormSet(instance=planificacion)
+
+    contexto = {
+            'title': 'Nueva Planificación',
+            'form': form,
+            'planifDetFormSet': planifDetFormSet,
+            'planifEspFormSet': planifEspFormSet,
+            'relevamiento' : relevamiento,
+        }
+
+    return render(request, 'planificacion/planificacion_crear.html', context=contexto)
+
+def Planificacion_list(request):
+    if request.method == 'POST':
+        pk_puntoServSeleccionado = request.POST.get('plani_puntoServ')
+        return redirect('Operarios:planificar_create', id_puntoServicio=pk_puntoServSeleccionado)
+    else:
+        puntoServi = PuntoServicio.objects.all()
+        contexto = {'PuntosServicio': puntoServi}
+        return render(request, 'planificacion/planificacion_list.html', context=contexto)

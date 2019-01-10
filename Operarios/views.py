@@ -80,6 +80,8 @@ def Relevamiento(request, id_puntoServicio=None):
             relevamDetFormSet.save()
             relevamEspFormSet.save()
             return redirect('Operarios:puntoServicio_list')
+        else:
+            messages.warning(request, 'No se pudo guardar los cambios')
     else:
         """
         Seteamos el punto de servicio
@@ -177,7 +179,10 @@ def Planificacion_create(request, id_puntoServicio=None):
             form.save()
             planifDetFormSet.save()
             planifEspFormSet.save()
-            return redirect('Operarios:puntoServicio_list')
+            messages.success(request, 'Se guardo correctamente la planificación')
+            return redirect('Operarios:planificar_list')
+        else:
+            messages.warning(request, 'No se pudo guardar los cambios')
     else:
         """
         Seteamos el punto de servicio

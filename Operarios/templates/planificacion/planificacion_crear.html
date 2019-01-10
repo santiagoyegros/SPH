@@ -2,30 +2,33 @@
 
 {% block content %}
 <div class='col mx-auto'>
-{% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
+{% if title %}<h1 class='my-3'>{{ title }} - {{relevamiento.puntoServicio.NombrePServicio}} ({{ relevamiento.puntoServicio }}){% endif %} </h1>
 
 
 <!-- Tarjeta con los datos del relevamiento-->
 <div class="card mb-3">
     <h4 class="card-header">Relevamiento</h4>
     <div class="card-body">
-        <div class="container-fluid mb-3 mt-4 ">
+        <div class="container-fluid mb-1 mt-2 ">
             <div class="row">
-                <div class="col"> Punto de Servicio: {{relevamiento.puntoServicio.NombrePServicio}} ({{ relevamiento.puntoServicio }})</div>
+                <div class="col"><u>Punto de Servicio:</u> {{relevamiento.puntoServicio.NombrePServicio}} ({{ relevamiento.puntoServicio }})</div>
             </div>
             <div class="row">
-                <div class="col"> Fecha de Relevamiento: {{ relevamiento.fecha }}</div>
+                <div class="col"><u>Fecha de Relevamiento:</u> {{ relevamiento.fecha }}</div>
             </div>
             <div class="row">
-                <div class="col"> Cantidad de Operarios: {{ relevamiento.cantidad }}</div>
+                <div class="col"><u>Cantidad de Operarios:</u> {{ relevamiento.cantidad }}</div>
+            </div>
+            <div class="row">
+                <div class="col"><u>Cantidad de Horas totales por Semana:</u> {{ relevamiento.cantidadHrTotal }} hrs</div>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid mb-3 mt-4" id='formset-det-relevamiento'>
-        <h4>
+    <div class="container-fluid mb-3 mt-3" id='formset-det-relevamiento'>
+        <h5>
             Relevamiento realizado <small class="text-muted">Detalle de horas</small>
-        </h4>
+        </h5>
         <table class="table table-sm">
             <thead>
             <tr>
@@ -82,6 +85,46 @@
             </tbody>
             {% endfor %}
         </table>
+        <h5 class='mt-3'>
+            Relevamiento horas Especiales <small class="text-muted">Detalle de horas</small>
+        </h5>
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th scope="col-2"> Tipo limpieza especial      </th>
+                <th scope="col-2"> Frecuencia      </th>
+                <th scope="col-2"> Día     </th>
+                <th scope="col-2"> Cantidad de Horas  </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for relevesp in relevamiento.relevamientoesp_set.all %}
+            <tr>
+                <td scope="row">
+                    {% if relevesp.tipo %}
+                        {{ relevesp.tipo }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if relevesp.frecuencia %}
+                    {{ relevesp.frecuencia }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if relevesp.dia %}
+                    {{ relevesp.dia }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if relevesp.cantHoras %}
+                    {{ relevesp.cantHoras }}
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+
     </div>
 
 </div>
@@ -95,9 +138,9 @@
             
             <!--{{ form.as_p }}-->
             <div class="container-fluid mb-3 mt-4">
-                <!--div class="row mt-3">
-                    <div class="col-4"> {{ form.puntoServicio.label }} {{ form.puntoServicio }} </div>
-                </div-->
+                <div class="row mt-3">
+                    <div class="col-4"> {{ form.puntoServicio.as_hidden }} </div>
+                </div>
                 <div class="row mt-3">
                     <div class="col-3"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
                     <div class="col-3"> {{ form.cantHoras.label }} {{ form.cantHoras }}</div>
@@ -117,7 +160,7 @@
                 </h4>
                 <div class="row mt-3 mb-2 justify-content-end">
                     <div class="col-3 text-right"> Total Horas: </div>
-                    <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm"/></div>
+                    <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm" readonly/></div>
                 </div>
                 <div class="row">
                     <div class="col-1"> Perfil Operario </div>
@@ -174,7 +217,7 @@
                 </h4>
                 <div class="row mt-3 mb-2 justify-content-end">
                     <div class="col-3 text-right"> Total Horas Especiales: </div>
-                    <div class="col-3">  <input id="sumAll_2" type="text" value="" class="form-control form-control-sm"/></div>
+                    <div class="col-3">  <input id="sumAll_2" type="text" value="" class="form-control form-control-sm" readonly/></div>
                 </div>
                 <div class="row">
                     <div class="col">Perfil Operario </div>
@@ -351,10 +394,10 @@ $(function(){
     });
 });
 
-$('input[id$="cantHoras"]').change(function() {
+$('input[id$="-cantHoras"]').change(function() {
         debugger;
         var total = 0;
-        $('input[id$="cantHoras"]').each(function() {
+        $('input[id$="-cantHoras"]').each(function() {
           if (!isNaN($(this).val())) {
               total += Number($(this).val());
           }

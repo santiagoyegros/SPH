@@ -14,6 +14,9 @@
         <div class="row mt-3">
              <div class="col-4"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
         </div>
+        <div class="row mt-3">
+             <div class="col-4"> {{ form.cantidadHrTotal.label }} {{ form.cantidadHrTotal }}</div>
+        </div>
     </div>
     
 
@@ -40,7 +43,7 @@
         </h4>
         <div class="row mt-3 mb-2 justify-content-end">
             <div class="col-3 text-right"> Total Horas: </div>
-            <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm"/></div>
+            <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm" readonly/></div>
         </div>
         <div class="row">
             <div class="col-1"> Orden </div>
@@ -111,7 +114,7 @@
         </h4>
         <div class="row mt-3 mb-2 justify-content-end">
             <div class="col-3 text-right"> Total Horas Especiales: </div>
-            <div class="col-3">  <input id="sumAll_2" type="text" value="" class="form-control form-control-sm"/></div>
+            <div class="col-3">  <input id="sumAll_2" type="text" value="" class="form-control form-control-sm" readonly/></div>
         </div>
         <div class="row">
             <div class="col">Tipo limpieza especial </div>
@@ -254,6 +257,11 @@ function SumHrMin(h1, h2){
 
 }
 
+function obtenerNumeroId(id){
+    var sp = id.split("-");
+    return sp[1];
+}
+
 $(function(){
 
     // Reemplaza todas las coincidencias en vez de solo la primera
@@ -286,20 +294,50 @@ $(function(){
     });
 });
 
-$('input[id$="cantHoras"]').change(function() {
+$('input[id$="cantHoras"]').on('change blur', function(e){
         debugger;
+        //aqui empieza el calculo del total de horas especiales
         var total = 0;
         $('input[id$="cantHoras"]').each(function() {
-          if (!isNaN($(this).val())) {
-              total += Number($(this).val());
-          }
+            if (!isNaN($(this).val()) && $(this).val() !== '') {
+
+                var n = obtenerNumeroId(this.id);
+                var frecuencia = $('#id_relevamientoesp_set-' + n + '-frecuencia').val();
+
+                if(frecuencia == 'DIA'){
+                    total += Number($(this).val())*7;
+                }else if(frecuencia == 'SEM'){
+                    total += Number($(this).val());
+                }else if(frecuencia == 'MEN'){
+                    total += Number($(this).val())/4;
+                }else if(frecuencia == 'BIM'){
+                    total += Number($(this).val())/8;
+                }else if(frecuencia == 'TRI'){
+                    total += Number($(this).val())/12;
+                }else if(frecuencia == 'SEM'){
+                    total += Number($(this).val())/24;
+                }else if(frecuencia == 'ANU'){
+                    total += Number($(this).val())/48;
+                }
+                total = hoursToString(total);
+                //total += Number($(this).val());
+            }
         })
-        $('#sumAll_2').val(total);
+        $('#sumAll_2').val(SumHrMin(total, '00:00'));
+
+        //aqui empieza el calculo del total de horas
+        var total = 0;
+        var sumaDet = timeInHours($('#sumAll_1').val());
+        var sumaEsp = timeInHours($('#sumAll_2').val());
+        total = hoursToString(sumaDet + sumaEsp);
+        $('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
+
     });
 
 
 $('input[id^="id_relevamientodet_set-"]').on('dp.change', function(e){
         debugger;
+        //aqui empieza el calculo del total de horas normales
         var total_horas_detalle = '00:00';
         //var lunEnt = $('#id_relevamientodet_set-0-lunEnt').val();
         //var lunSal = $('#id_relevamientodet_set-0-lunSal').val();
@@ -375,6 +413,14 @@ $('input[id^="id_relevamientodet_set-"]').on('dp.change', function(e){
         }
 
         $('#sumAll_1').val(total_horas_detalle);
+
+        //aqui empieza el calculo del total de horas
+        var total = 0;
+        var sumaDet = timeInHours($('#sumAll_1').val());
+        var sumaEsp = timeInHours($('#sumAll_2').val().concat(':00'));
+        total = hoursToString(sumaDet + sumaEsp);
+        $('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
+
     });
 
 

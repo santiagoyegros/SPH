@@ -134,17 +134,20 @@ class RelevamientoForm(forms.ModelForm):
 
         fields = [
             'puntoServicio',
-            'cantidad'
+            'cantidad',
+            'cantidadHrTotal'
         ]
 
         labels = {
             'puntoServicio': 'Punto de Servicio',
-            'cantidad': 'Cantidad de Operarios'
+            'cantidad': 'Cantidad de Operarios',
+            'cantidadHrTotal': 'Cantidad Total de Horas'
         }
 
         widgets = {
             'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
-            'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'})
+            'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'cantidadHrTotal': forms.TextInput(attrs={'class':'form-control form-control-sm'})
         }
 
 class RelevamientoDetForm(forms.ModelForm):

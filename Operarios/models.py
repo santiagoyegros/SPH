@@ -102,6 +102,7 @@ class RelevamientoCab(models.Model):
     puntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
     fecha = models.DateTimeField('Fecha Relevamiento', auto_now_add=True)
     cantidad = models.IntegerField('Cantidad de Operarios', blank=True, null=True)
+    cantidadHrTotal = models.CharField('Cantidad de Horas total por Semana', max_length=8, blank=True, null=True)
     
     def __str__(self):
         return self.puntoServicio.NombrePServicio

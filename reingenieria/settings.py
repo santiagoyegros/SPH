@@ -181,10 +181,5 @@ LOGGING = {
 			'level':'INFO',
 			'propagate':False,
 		},
-        '':{
-			'handlers':['errors_file'],
-			'level':'INFO',
-			'propagate':False,
-		},
 	},
 }

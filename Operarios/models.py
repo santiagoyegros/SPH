@@ -103,6 +103,7 @@ class RelevamientoCab(models.Model):
     fecha = models.DateTimeField('Fecha Relevamiento', auto_now_add=True)
     cantidad = models.IntegerField('Cantidad de Operarios', blank=True, null=True)
     cantidadHrTotal = models.CharField('Cantidad de Horas total por Semana', max_length=8, blank=True, null=True)
+    cantidadHrEsp = models.CharField('Cantidad de Horas Especiales por Semana', max_length=8, blank=True, null=True)
     
     def __str__(self):
         return self.puntoServicio.NombrePServicio

@@ -175,14 +175,14 @@ def Planificacion_create(request, id_puntoServicio=None):
         planifDetFormSet = planificacionDetFormSet(request.POST, instance=planificacion)
         planifEspFormSet = planificacionEspFormSet(request.POST, instance=planificacion)
 
-        if form.is_valid() and planifDetFormSet.is_valid() and planifEspFormSet.is_valid():
+        if form.is_valid(relevamiento.cantidad, relevamiento.cantidadHrTotal, relevamiento.cantidadHrEsp) and planifDetFormSet.is_valid() and planifEspFormSet.is_valid():
             form.save()
             planifDetFormSet.save()
             planifEspFormSet.save()
             messages.success(request, 'Se guardo correctamente la planificación')
             return redirect('Operarios:planificar_list')
-        else:
-            messages.warning(request, 'No se pudo guardar los cambios')
+        #else:
+            #messages.warning(request, 'No se pudo guardar los cambios')
     else:
         """
         Seteamos el punto de servicio

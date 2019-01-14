@@ -135,19 +135,22 @@ class RelevamientoForm(forms.ModelForm):
         fields = [
             'puntoServicio',
             'cantidad',
-            'cantidadHrTotal'
+            'cantidadHrTotal',
+            'cantidadHrEsp'
         ]
 
         labels = {
             'puntoServicio': 'Punto de Servicio',
             'cantidad': 'Cantidad de Operarios',
-            'cantidadHrTotal': 'Cantidad Total de Horas'
+            'cantidadHrTotal': 'Cantidad Total de Horas',
+            'cantidadHrEsp': 'Cantidad Total de horas Especiales'
         }
 
         widgets = {
             'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
             'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
-            'cantidadHrTotal': forms.TextInput(attrs={'class':'form-control form-control-sm'})
+            'cantidadHrTotal': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'cantidadHrEsp': forms.TextInput(attrs={'class':'form-control form-control-sm'})
         }
 
 class RelevamientoDetForm(forms.ModelForm):
@@ -264,6 +267,31 @@ class PlanificacionForm(forms.ModelForm):
             'cantHorasEsp': forms.TextInput(attrs={'class':'form-control form-control-sm'})
         }
 
+
+    def is_valid(self, cantidad, cantidadHrTotal, cantidadHrEsp):
+        #Se prueba si es valido
+        valid = super(PlanificacionForm, self).is_valid()
+
+        if not valid:
+            return valid
+
+        if self.cleaned_data['cantHoras'] > timeInHours(cantidadHrTotal):
+            self.add_error(None, 'Cantidad de Horas Normales que sobrepasan la cantidad estimada')
+            self.add_error('cantHoras', 'La Cantidad no puede superar las horas planificadas')
+            self.fields['cantHoras'].widget.attrs['class'] += " is-invalid"
+            return False
+
+        if self.cleaned_data['cantidad'] < cantidad:
+            self.add_error(None, 'Cantidad de Operarios minima no se cumpla')
+            self.add_error('cantidad', 'La Cantidad no puede superar las horas planificadas')
+            self.fields['cantidad'].widget.attrs['class'] += " is-invalid"
+            return False
+
+
+        #Si llegamos aca todo esta bien
+        return True
+
+
 class PlanificacionDetForm(forms.ModelForm):
 
     class Meta:
@@ -354,3 +382,8 @@ class PlanificacionEspForm(forms.ModelForm):
             'dia': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'})
         }
+
+def timeInHours(str):
+    tokens = str.split(':')
+
+    return int(tokens[0]) + float(tokens[1])

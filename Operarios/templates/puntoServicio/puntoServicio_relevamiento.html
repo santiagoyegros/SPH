@@ -10,12 +10,11 @@
     <div class="container-fluid mb-3 mt-4">
         <div class="row mt-3">
              <div class="col-4"> {{ form.puntoServicio.label }} {{ form.puntoServicio }} </div>
+             <div class="col-4"> {{ form.cantidadHrTotal.label }} {{ form.cantidadHrTotal }}</div>
         </div>
         <div class="row mt-3">
              <div class="col-4"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
-        </div>
-        <div class="row mt-3">
-             <div class="col-4"> {{ form.cantidadHrTotal.label }} {{ form.cantidadHrTotal }}</div>
+             <div class="col-4"> {{ form.cantidadHrEsp.label }} {{ form.cantidadHrEsp }}</div>
         </div>
     </div>
     
@@ -294,10 +293,11 @@ $(function(){
     });
 });
 
-$('input[id$="cantHoras"]').on('change blur', function(e){
+$('input[id$="cantHoras"]').on('change', function(e){
         debugger;
         //aqui empieza el calculo del total de horas especiales
         var total = 0;
+        var subtotal = 0;
         $('input[id$="cantHoras"]').each(function() {
             if (!isNaN($(this).val()) && $(this).val() !== '') {
 
@@ -319,18 +319,18 @@ $('input[id$="cantHoras"]').on('change blur', function(e){
                 }else if(frecuencia == 'ANU'){
                     total += Number($(this).val())/48;
                 }
-                total = hoursToString(total);
                 //total += Number($(this).val());
             }
         })
+        total = hoursToString(total);
         $('#sumAll_2').val(SumHrMin(total, '00:00'));
 
         //aqui empieza el calculo del total de horas
         var total = 0;
-        var sumaDet = timeInHours($('#sumAll_1').val());
+        //var sumaDet = timeInHours($('#sumAll_1').val());
         var sumaEsp = timeInHours($('#sumAll_2').val());
-        total = hoursToString(sumaDet + sumaEsp);
-        $('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
+        total = hoursToString(sumaEsp);
+        $('#id_cantidadHrEsp').val(SumHrMin(total, '00:00'));
 
     });
 
@@ -415,11 +415,12 @@ $('input[id^="id_relevamientodet_set-"]').on('dp.change', function(e){
         $('#sumAll_1').val(total_horas_detalle);
 
         //aqui empieza el calculo del total de horas
-        var total = 0;
-        var sumaDet = timeInHours($('#sumAll_1').val());
-        var sumaEsp = timeInHours($('#sumAll_2').val().concat(':00'));
-        total = hoursToString(sumaDet + sumaEsp);
-        $('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
+        //var total = 0;
+        //var sumaDet = timeInHours($('#sumAll_1').val());
+        //var sumaEsp = timeInHours($('#sumAll_2').val().concat(':00'));
+        //total = hoursToString(sumaDet + sumaEsp);
+        //$('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
+        $('#id_cantidadHrTotal').val(total_horas_detalle);
 
     });
 

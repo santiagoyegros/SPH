@@ -372,6 +372,11 @@ function SumHrMin(h1, h2){
 
 }
 
+function obtenerNumeroId(id){
+    var sp = id.split("-");
+    return sp[1];
+}
+
 $(function(){
 
     // Reemplaza todas las coincidencias en vez de solo la primera
@@ -406,13 +411,43 @@ $(function(){
 
 $('input[id$="-cantHoras"]').change(function() {
         debugger;
+        //aqui empieza el calculo del total de horas especiales
         var total = 0;
+        var subtotal = 0;
         $('input[id$="-cantHoras"]').each(function() {
-          if (!isNaN($(this).val())) {
-              total += Number($(this).val());
-          }
+            if (!isNaN($(this).val()) && $(this).val() !== '') {
+
+                var n = obtenerNumeroId(this.id);
+                var frecuencia = $('#id_planificacionesp_set-' + n + '-frecuencia').val();
+
+                if(frecuencia == 'DIA'){
+                    total += Number($(this).val())*7;
+                }else if(frecuencia == 'SEM'){
+                    total += Number($(this).val());
+                }else if(frecuencia == 'MEN'){
+                    total += Number($(this).val())/4;
+                }else if(frecuencia == 'BIM'){
+                    total += Number($(this).val())/8;
+                }else if(frecuencia == 'TRI'){
+                    total += Number($(this).val())/12;
+                }else if(frecuencia == 'SEM'){
+                    total += Number($(this).val())/24;
+                }else if(frecuencia == 'ANU'){
+                    total += Number($(this).val())/48;
+                }
+                //total += Number($(this).val());
+            }
         })
-        $('#sumAll_2').val(total);
+        total = hoursToString(total);
+        $('#sumAll_2').val(SumHrMin(total, '00:00'));
+
+        //aqui empieza el calculo del total de horas
+        var total = 0;
+        //var sumaDet = timeInHours($('#sumAll_1').val());
+        var sumaEsp = timeInHours($('#sumAll_2').val());
+        total = hoursToString(sumaEsp);
+        $('#id_cantHorasEsp').val(SumHrMin(total, '00:00'));
+
     });
 
 
@@ -489,6 +524,8 @@ $('input[id^="id_planificaciondet_set-"]').on('dp.change', function(e){
         }
 
         $('#sumAll_1').val(total_horas_detalle);
+        $('#id_cantHoras').val(total_horas_detalle);
+        
     });
 
 

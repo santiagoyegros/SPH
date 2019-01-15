@@ -275,18 +275,23 @@ class PlanificacionForm(forms.ModelForm):
         if not valid:
             return valid
 
-        if self.cleaned_data['cantHoras'] > timeInHours(cantidadHrTotal):
+        if timeInHours(self.cleaned_data['cantHoras']) > timeInHours(cantidadHrTotal):
             self.add_error(None, 'Cantidad de Horas Normales que sobrepasan la cantidad estimada')
             self.add_error('cantHoras', 'La Cantidad no puede superar las horas planificadas')
             self.fields['cantHoras'].widget.attrs['class'] += " is-invalid"
             return False
 
         if self.cleaned_data['cantidad'] < cantidad:
-            self.add_error(None, 'Cantidad de Operarios minima no se cumpla')
+            self.add_error(None, 'Cantidad de Operarios minima no se cumple')
             self.add_error('cantidad', 'La Cantidad no puede superar las horas planificadas')
             self.fields['cantidad'].widget.attrs['class'] += " is-invalid"
             return False
 
+        if timeInHours(self.cleaned_data['cantHorasEsp']) > timeInHours(cantidadHrEsp):
+            self.add_error(None, 'Cantidad de Horas Especiales que sobrepasan la cantidad estimada')
+            self.add_error('cantHorasEsp', 'La Cantidad no puede superar las horas planificadas')
+            self.fields['cantHorasEsp'].widget.attrs['class'] += " is-invalid"
+            return False
 
         #Si llegamos aca todo esta bien
         return True
@@ -386,4 +391,4 @@ class PlanificacionEspForm(forms.ModelForm):
 def timeInHours(str):
     tokens = str.split(':')
 
-    return int(tokens[0]) + float(tokens[1])
+    return int(tokens[0]) + float(tokens[1])/60.0

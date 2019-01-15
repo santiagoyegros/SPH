@@ -175,9 +175,12 @@ class PlanificacionCab(models.Model):
     puntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
     fecha = models.DateTimeField('Fecha Planificación', auto_now_add=True)
     cantidad = models.IntegerField('Cantidad de Operarios', blank=True, null=True)
-    cantHoras = models.IntegerField('Cantidad de Horas Normales', blank=True, null=True)
-    cantHorasNoc = models.IntegerField('Cantidad de Horas Nocturnas', blank=True, null=True)
-    cantHorasEsp = models.IntegerField('Cantidad de Horas Especiales', blank=True, null=True)
+    #cantHoras = models.IntegerField('Cantidad de Horas Normales', blank=True, null=True)
+    #cantHorasNoc = models.IntegerField('Cantidad de Horas Nocturnas', blank=True, null=True)
+    #cantHorasEsp = models.IntegerField('Cantidad de Horas Especiales', blank=True, null=True)
+    cantHoras = models.CharField('Cantidad de Horas Normales', max_length=8, blank=True, null=True)
+    cantHorasNoc = models.CharField('Cantidad de Horas Nocturnas', max_length=8, blank=True, null=True)
+    cantHorasEsp = models.CharField('Cantidad de Horas Especiales', max_length=8, blank=True, null=True)
     
     def __str__(self):
         return self.puntoServicio.NombrePServicio

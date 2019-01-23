@@ -7,6 +7,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.forms.models import inlineformset_factory
 from django.template import RequestContext
+from django.contrib.auth.decorators import login_required, permission_required
+from django.utils.decorators import method_decorator
 
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, PlanificacionCab, PlanificacionDet, PlanificacionEsp
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, PlanificacionForm, PlanificacionDetForm, PlanificacionEspForm
@@ -20,12 +22,16 @@ def index_alert(request):
     messages.success(request, 'Mensaje de Exito')
     messages.warning(request, 'Mensaje de Error.')
     messages.error(request, 'Document deleted.')
-    return render(request, 'base.html')
+    return render(request, 'base_example.html')
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(permission_required('Operarios.view_puntoservicio', raise_exception=True), name='dispatch')
 class PuntosServicioList(ListView):
     model = PuntoServicio
     template_name = "puntoServicio/puntoServicio_list.html"
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(permission_required('Operarios.add_puntoservicio', raise_exception=True), name='dispatch')
 class PuntoServicioCreate(SuccessMessageMixin, CreateView):
     model = PuntoServicio
     form_class = PuntoServicioForm
@@ -34,6 +40,8 @@ class PuntoServicioCreate(SuccessMessageMixin, CreateView):
     success_message = 'Punto de Servicio Creado correctamente'
     extra_context = {'title': 'Nuevo Punto de Servicio'}
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(permission_required('Operarios.change_puntoservicio', raise_exception=True), name='dispatch')
 class PuntoServicioUpdateView(SuccessMessageMixin, UpdateView):
     model = PuntoServicio
     form_class = PuntoServicioForm
@@ -42,6 +50,8 @@ class PuntoServicioUpdateView(SuccessMessageMixin, UpdateView):
     success_message = 'Punto de Servicio modificado correctamente'
     extra_context = {'title': 'Editar Punto de Servicio '}
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(permission_required('Operarios.delete_puntoservicio', raise_exception=True), name='dispatch')
 class PuntoServicioDeleteView(SuccessMessageMixin, DeleteView):
     model = PuntoServicio
     template_name = "puntoServicio/puntoServicio_delete.html"
@@ -52,6 +62,8 @@ class PuntoServicioDeleteView(SuccessMessageMixin, DeleteView):
         messages.warning(self.request, self.success_message)
         return super(PuntoServicioDeleteView, self).delete(request, *args, **kwargs)
 
+@login_required
+@permission_required(['Operarios.add_relevamientocab', 'Operarios.view_relevamientocab'], raise_exception=True)
 def Relevamiento(request, id_puntoServicio=None):
     try:
         """
@@ -101,6 +113,8 @@ def Relevamiento(request, id_puntoServicio=None):
     #return render_to_response('puntoServicio/puntoServicio_relevamiento.html', locals())
     return render(request, 'puntoServicio/puntoServicio_relevamiento.html', context=contexto)
 
+@login_required
+@permission_required('Operarios.add_operario', raise_exception=True)
 def Operarios_create(request):
     if request.method == 'POST': 
         form = OperarioForm(request.POST)
@@ -119,11 +133,15 @@ def Operarios_create(request):
     
     return render(request, 'operarios/operarios_form.html', context=contexto)
 
+@login_required
+@permission_required('Operarios.view_operario', raise_exception=True)
 def Operarios_list(request):
     operarios = Operario.objects.all()
     contexto = {'Operarios': operarios}
     return render(request, 'operarios/operarios_list.html', context=contexto)
 
+@login_required
+@permission_required('Operarios.change_operario', raise_exception=True)
 def Operarios_update(request, pk):
     operarios = Operario.objects.get(id=pk)
     if request.method == 'GET':
@@ -140,6 +158,9 @@ def Operarios_update(request, pk):
         return redirect('Operarios:operarios_list')
 
     return render(request, 'operarios/operarios_form.html', context=contexto)
+
+@login_required
+@permission_required('Operarios.delete_operario', raise_exception=True)
 def Operarios_delete(request, pk):
     operarios = Operario.objects.get(id=pk)
     if request.method == 'POST':
@@ -149,6 +170,8 @@ def Operarios_delete(request, pk):
     return render(request, 'operarios/operarios_delete.html', {'operarios': operarios})
 
 
+@login_required
+@permission_required('Operarios.add_planificacioncab', raise_exception=True)
 def Planificacion_create(request, id_puntoServicio=None):
     logging.getLogger("error_logger").error('Se ingreso en el metodo planificacion_create')
     ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
@@ -203,6 +226,8 @@ def Planificacion_create(request, id_puntoServicio=None):
 
     return render(request, 'planificacion/planificacion_crear.html', context=contexto)
 
+@login_required
+@permission_required('Operarios.view_planificacioncab', raise_exception=True)
 def Planificacion_list(request):
     if request.method == 'POST':
         pk_puntoServSeleccionado = request.POST.get('plani_puntoServ')

@@ -13,12 +13,12 @@
       {% block js_auxiliar %}{% endblock %}
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <title>Base Template</title>
+      <title>El mejor</title>
         {% include 'base/css.html' %}
         {% block base_head %}{% endblock %}
     </head>
     <body>
-      {% include 'base/navbar.html' %}
+      {% block navbar %}{% include 'base/navbar.html' %}{% endblock %}
       <div class="row"></div>
       <div class='container'>
         {% if messages %}

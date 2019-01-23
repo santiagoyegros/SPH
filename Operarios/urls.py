@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from django.views.generic import TemplateView, RedirectView
 from django.conf.urls import url, include
+from django.contrib.auth.decorators import login_required
 from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView, Relevamiento
 from Operarios.views import Operarios_list, Operarios_create, Operarios_update, Operarios_delete, Planificacion_list, Planificacion_create
 

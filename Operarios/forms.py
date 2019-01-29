@@ -341,7 +341,7 @@ class PlanificacionDetForm(forms.ModelForm):
         }
 
         widgets = {
-            'especialista': forms.Select(attrs={'class':'form-control form-control-sm'}),
+            'especialista': forms.Select(attrs={'class':'form-row form-control-sm col-sm-6'}),
             'orden': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'lunEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Lunes'),
             'lunSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Lunes'),

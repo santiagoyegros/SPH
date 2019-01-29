@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 
+<style>
+
+.legend .row:nth-of-type(odd) div {
+background-color:antiquewhite;
+}
+.legend .row:nth-of-type(even) div {
+background: #FFFFFF;
+}
+
+</style>
+
 {% block content %}
 {% if form.non_field_errors %}
     <div class='container'>
@@ -164,7 +175,7 @@
             {{ planifEspFormSet.management_form }}
 
             
-            <div class="container-fluid mb-3 mt-4" id='formset-det'>
+            <div class="container-fluid legend mb-3 mt-4" id='formset-det'>
                 <h4>
                 Cupo de Horas Detalles <small class="text-muted">Horas de Operarios</small>
                 </h4>
@@ -172,23 +183,27 @@
                     <div class="col-3 text-right"> Total Horas: </div>
                     <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm" readonly/></div>
                 </div>
-                <div class="row">
-                    <div class="col-1"> Perfil Operario </div>
-                    <div class="col"> Lunes </div>
-                    <div class="col"> Martes </div>
-                    <div class="col"> Miercoles </div>
-                    <div class="col"> Jueves </div>
-                    <div class="col"> Viernes </div>
-                    <div class="col"> Sabado </div>
-                    <div class="col"> Domingo </div>
-                    <div class="col-1"> Eliminar? </div>
-                </div>
                 {% for form in planifDetFormSet %}
                 {{ form.id }}
+                <div class="row col-8 mt-4">
+                    <label for="staticEmail" class="col-sm-2"><p class='text-left'>Perfil:</p> </label>
+                    {{ form.especialista }}
+                </div>
+                <div class="row">
+                    <!--div class="col-1"> Perfil Operario </div-->
+                    <div class="col">   Lunes       </div>
+                    <div class="col">   Martes      </div>
+                    <div class="col">   Miercoles   </div>
+                    <div class="col">   Jueves      </div>
+                    <div class="col">   Viernes     </div>
+                    <div class="col">   Sabado      </div>
+                    <div class="col">   Domingo     </div>
+                    <div class="col-1"> Eliminar    </div>
+                </div>
                 <div class="row mt-2">
-                    <div class="col-1 mt-3">
+                    <!--div class="col-1 mt-3">
                         {{ form.especialista }}
-                    </div>
+                    </div-->
                     <div class="col">
                         {{ form.lunEnt }}{{ form.lunSal }}
                     </div>
@@ -278,10 +293,21 @@
   
 <!-- Script que carga las filas dinamicamente -->
 <script type='template/Detalle'>
-    <div class="row mt-2">
-            <div class="col-1  mt-3">
-                {{ planifDetFormSet.empty_form.especialista }}
-            </div>
+        <div class="row col-8 mt-4">
+            <label for="staticEmail" class="col-sm-2"><p class='text-left'>Perfil:</p> </label>
+            {{ planifDetFormSet.empty_form.especialista }}
+        </div>
+        <div class="row">
+            <div class="col">   Lunes       </div>
+            <div class="col">   Martes      </div>
+            <div class="col">   Miercoles   </div>
+            <div class="col">   Jueves      </div>
+            <div class="col">   Viernes     </div>
+            <div class="col">   Sabado      </div>
+            <div class="col">   Domingo     </div>
+            <div class="col-1"> Eliminar    </div>
+        </div>
+        <div class="row mt-2">
             <div class="col">
                 {{ planifDetFormSet.empty_form.lunEnt }}{{ planifDetFormSet.empty_form.lunSal }}
             </div>

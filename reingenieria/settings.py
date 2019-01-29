@@ -26,7 +26,7 @@ SECRET_KEY = 'gz73qckgdfb#h9e!#f0&uq00fnq=$q1zbdu+y4^hif5%%bdz$@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.11.31', 'GBCORETest']
 
 
 # Application definition
@@ -81,12 +81,14 @@ WSGI_APPLICATION = 'reingenieria.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
-        'HOST': '192.168.11.105',
+        'HOST': 'baudeletsql2k12',
         'USER': 'reuser',
         'PASSWORD': 'r3us3r',
         'NAME': 'reingenieria',
         'PORT': '1433',
         'OPTIONS': {
+            # Para produccion
+            #'driver' : 'ODBC Driver 17 for SQL Server',
             'driver' : 'SQL Server Native Client 11.0',
             'MARS_Connection' : True,
             'driver_supports_utf8' : True,
@@ -137,6 +139,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+#Produccion
+STATIC_ROOT = '/usr/share/EM/env_re/reingenieria/reingenieria/static/'
 
 BOOTSTRAP4 = {
     'include_jquery': True,

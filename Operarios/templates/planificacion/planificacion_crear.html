@@ -1,16 +1,5 @@
 {% extends "base.html" %}
 
-<style>
-
-.legend .row:nth-of-type(odd) div {
-background-color:antiquewhite;
-}
-.legend .row:nth-of-type(even) div {
-background: #FFFFFF;
-}
-
-</style>
-
 {% block content %}
 {% if form.non_field_errors %}
     <div class='container'>
@@ -23,9 +12,20 @@ background: #FFFFFF;
 {% if title %}<h1 class='my-3'>{{ title }} - {{relevamiento.puntoServicio.NombrePServicio}} ({{ relevamiento.puntoServicio }}){% endif %} </h1>
 
 
-<!-- Tarjeta con los datos del relevamiento-->
-<div class="card mb-3">
-    <h4 class="card-header">Relevamiento</h4>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="relev-tab" data-toggle="tab" href="#relev" role="tab" aria-controls="home" aria-selected="true">
+        <h4>Relevamiento</h4>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="plani-tab" data-toggle="tab" href="#plani" role="tab" aria-controls="plani" aria-selected="false">
+        <h4>Planificación</h4>
+    </a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="relev" role="tabpanel" aria-labelledby="relev-tab">
     <div class="card-body">
         <div class="container-fluid mb-1 mt-2 ">
             <div class="row">
@@ -44,124 +44,116 @@ background: #FFFFFF;
                 <div class="col"><u>Cantidad de Horas Especiales por Semana:</u> {{ relevamiento.cantidadHrEsp }} hrs</div>
             </div>
         </div>
+
+        <div class="container-fluid mb-3 mt-3" id='formset-det-relevamiento'>
+            <h5>
+                Relevamiento realizado <small class="text-muted">Detalle de horas</small>
+            </h5>
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th scope="col-2"> Orden      </th>
+                    <th scope="col-2"> Lunes      </th>
+                    <th scope="col-2"> Martes     </th>
+                    <th scope="col-2"> Miercoles  </th>
+                    <th scope="col-2"> Jueves     </th>
+                    <th scope="col-2"> Viernes    </th>
+                    <th scope="col-2"> Sabado     </th>
+                    <th scope="col-2"> Domingo    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for relev in relevamiento.relevamientodet_set.all %}
+                <tr>
+                    <th scope="row">{{ relev.orden }}</th>
+                    <td>
+                        {% if relev.lunEnt %}
+                            {{ relev.lunEnt }} a {{ relev.lunSal }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if relev.marEnt %}
+                        {{ relev.marEnt }} a {{ relev.marSal }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if relev.mieEnt %}
+                        {{ relev.mieEnt }} a {{ relev.mieSal }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if relev.jueEnt %}
+                        {{ relev.jueEnt }} a {{ relev.jueSal }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if relev.vieEnt %}
+                        {{ relev.vieEnt }} a {{ relev.vieSal }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if relev.sabEnt %}
+                        {{ relev.sabEnt }} a {{ relev.sabSal }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if relev.domEnt %}
+                        {{ relev.domEnt }} a {{ relev.domSal }}
+                        {% endif %}
+                    </td>
+                </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+            <h5 class='mt-3'>
+                Relevamiento horas Especiales <small class="text-muted">Detalle de horas</small>
+            </h5>
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th scope="col-2"> Tipo limpieza especial      </th>
+                    <th scope="col-2"> Frecuencia      </th>
+                    <th scope="col-2"> Día     </th>
+                    <th scope="col-2"> Cantidad de Horas  </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for relevesp in relevamiento.relevamientoesp_set.all %}
+                <tr>
+                    <td scope="row">
+                        {% if relevesp.tipo %}
+                            {{ relevesp.tipo }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if relevesp.frecuencia %}
+                        {{ relevesp.frecuencia }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if relevesp.dia %}
+                        {{ relevesp.dia }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if relevesp.cantHoras %}
+                        {{ relevesp.cantHoras }}
+                        {% endif %}
+                    </td>
+                </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+
+        </div>
     </div>
-
-    <div class="container-fluid mb-3 mt-3" id='formset-det-relevamiento'>
-        <h5>
-            Relevamiento realizado <small class="text-muted">Detalle de horas</small>
-        </h5>
-        <table class="table table-sm">
-            <thead>
-            <tr>
-                <th scope="col-2"> Orden      </th>
-                <th scope="col-2"> Lunes      </th>
-                <th scope="col-2"> Martes     </th>
-                <th scope="col-2"> Miercoles  </th>
-                <th scope="col-2"> Jueves     </th>
-                <th scope="col-2"> Viernes    </th>
-                <th scope="col-2"> Sabado     </th>
-                <th scope="col-2"> Domingo    </th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for relev in relevamiento.relevamientodet_set.all %}
-            <tr>
-                <th scope="row">{{ relev.orden }}</th>
-                <td>
-                    {% if relev.lunEnt %}
-                        {{ relev.lunEnt }} a {{ relev.lunSal }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if relev.marEnt %}
-                    {{ relev.marEnt }} a {{ relev.marSal }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if relev.mieEnt %}
-                    {{ relev.mieEnt }} a {{ relev.mieSal }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if relev.jueEnt %}
-                    {{ relev.jueEnt }} a {{ relev.jueSal }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if relev.vieEnt %}
-                    {{ relev.vieEnt }} a {{ relev.vieSal }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if relev.sabEnt %}
-                    {{ relev.sabEnt }} a {{ relev.sabSal }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if relev.domEnt %}
-                    {{ relev.domEnt }} a {{ relev.domSal }}
-                    {% endif %}
-                </td>
-            </tr>
-            </tbody>
-            {% endfor %}
-        </table>
-        <h5 class='mt-3'>
-            Relevamiento horas Especiales <small class="text-muted">Detalle de horas</small>
-        </h5>
-        <table class="table table-sm">
-            <thead>
-            <tr>
-                <th scope="col-2"> Tipo limpieza especial      </th>
-                <th scope="col-2"> Frecuencia      </th>
-                <th scope="col-2"> Día     </th>
-                <th scope="col-2"> Cantidad de Horas  </th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for relevesp in relevamiento.relevamientoesp_set.all %}
-            <tr>
-                <td scope="row">
-                    {% if relevesp.tipo %}
-                        {{ relevesp.tipo }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if relevesp.frecuencia %}
-                    {{ relevesp.frecuencia }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if relevesp.dia %}
-                    {{ relevesp.dia }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if relevesp.cantHoras %}
-                    {{ relevesp.cantHoras }}
-                    {% endif %}
-                </td>
-            </tr>
-            </tbody>
-            {% endfor %}
-        </table>
-
-    </div>
-
-</div>
-
-<!-- Tarjeta con el formulario de planificacion-->
-<div class="card mb-3">
-    <h4 class="card-header">Planificación</h4>
+  </div>
+  <div class="tab-pane fade" id="plani" role="tabpanel" aria-labelledby="plani-tab">
     <div class="card-body">
         <form method='POST' action='#'> 
             {% csrf_token %}
-            
-            <!--{{ form.as_p }}-->
-            <div class="container-fluid mb-3 mt-4">
-                <div class="row mt-3">
-                    <div class="col-4"> {{ form.puntoServicio.as_hidden }} </div>
-                </div>
+            {{ form.puntoServicio.as_hidden }}
+            <div class="container-fluid mb-3 mt-1">
                 <div class="row mt-3">
                     <div class="col-3"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
                     <div class="col-3"> {{ form.cantHoras.label }} {{ form.cantHoras }}</div>
@@ -175,7 +167,7 @@ background: #FFFFFF;
             {{ planifEspFormSet.management_form }}
 
             
-            <div class="container-fluid legend mb-3 mt-4" id='formset-det'>
+            <div class="container-fluid mb-3 mt-4" id='formset-det'>
                 <h4>
                 Cupo de Horas Detalles <small class="text-muted">Horas de Operarios</small>
                 </h4>
@@ -286,9 +278,9 @@ background: #FFFFFF;
 
         </form>
     </div>
-
+  
+  </div>
 </div>
-   
 
   
 <!-- Script que carga las filas dinamicamente -->

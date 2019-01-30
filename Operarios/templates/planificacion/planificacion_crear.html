@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<style>
+.legend .row:nth-of-type(odd) div {
+background-color:antiquewhite;
+}
+.legend .row:nth-of-type(even) div {
+background: #FFFFFF;
+}
+</style>
+
 {% if form.non_field_errors %}
     <div class='container'>
         {% for error in form.non_field_errors %}
@@ -177,48 +187,49 @@
                 </div>
                 {% for form in planifDetFormSet %}
                 {{ form.id }}
-                <div class="row col-8 mt-4">
-                    <label for="staticEmail" class="col-sm-2"><p class='text-left'>Perfil:</p> </label>
-                    {{ form.especialista }}
-                </div>
-                <div class="row">
-                    <!--div class="col-1"> Perfil Operario </div-->
-                    <div class="col">   Lunes       </div>
-                    <div class="col">   Martes      </div>
-                    <div class="col">   Miercoles   </div>
-                    <div class="col">   Jueves      </div>
-                    <div class="col">   Viernes     </div>
-                    <div class="col">   Sabado      </div>
-                    <div class="col">   Domingo     </div>
-                    <div class="col-1"> Eliminar    </div>
-                </div>
-                <div class="row mt-2">
-                    <!--div class="col-1 mt-3">
+                <div class="container-fluid border rounded border-top-0 border-bottom-0 border-right-1 border-left-1 border-danger mb-1">
+                    <div class="row col-8 mt-4">
+                        <label for="staticEmail" class="col-sm-2"><p class='text-left'>Perfil:</p> </label>
                         {{ form.especialista }}
-                    </div-->
-                    <div class="col">
-                        {{ form.lunEnt }}{{ form.lunSal }}
                     </div>
-                    <div class="col">
-                        {{ form.marEnt }}{{ form.marSal }}
+                    <div class="row">
+                        <div class="col">   Lunes       </div>
+                        <div class="col">   Martes      </div>
+                        <div class="col">   Miercoles   </div>
+                        <div class="col">   Jueves      </div>
+                        <div class="col">   Viernes     </div>
+                        <div class="col">   Sabado      </div>
+                        <div class="col">   Domingo     </div>
+                        <div class="col-1"> Eliminar    </div>
                     </div>
-                    <div class="col">
-                        {{ form.mieEnt }}{{ form.mieSal }}
-                    </div>
-                    <div class="col">
-                        {{ form.jueEnt }}{{ form.jueSal }}
-                    </div>
-                    <div class="col">
-                        {{ form.vieEnt }}{{ form.vieSal }}
-                    </div>
-                    <div class="col">
-                        {{ form.sabEnt }}{{ form.sabSal }}
-                    </div>
-                    <div class="col">
-                        {{ form.domEnt }}{{ form.domSal }}
-                    </div>
-                    <div class="col-1 text-center">
-                        {{ form.DELETE }}
+                    <div class="row mt-2 mb-2">
+                        <!--div class="col-1 mt-3">
+                            {{ form.especialista }}
+                        </div-->
+                        <div class="col">
+                            {{ form.lunEnt }}{{ form.lunSal }}
+                        </div>
+                        <div class="col">
+                            {{ form.marEnt }}{{ form.marSal }}
+                        </div>
+                        <div class="col">
+                            {{ form.mieEnt }}{{ form.mieSal }}
+                        </div>
+                        <div class="col">
+                            {{ form.jueEnt }}{{ form.jueSal }}
+                        </div>
+                        <div class="col">
+                            {{ form.vieEnt }}{{ form.vieSal }}
+                        </div>
+                        <div class="col">
+                            {{ form.sabEnt }}{{ form.sabSal }}
+                        </div>
+                        <div class="col">
+                            {{ form.domEnt }}{{ form.domSal }}
+                        </div>
+                        <div class="col-1 text-center">
+                            {{ form.DELETE }}
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
@@ -285,6 +296,7 @@
   
 <!-- Script que carga las filas dinamicamente -->
 <script type='template/Detalle'>
+    <div class="container-fluid border rounded border-top-0 border-bottom-0 border-right-1 border-left-1 border-danger mb-1">
         <div class="row col-8 mt-4">
             <label for="staticEmail" class="col-sm-2"><p class='text-left'>Perfil:</p> </label>
             {{ planifDetFormSet.empty_form.especialista }}
@@ -325,6 +337,7 @@
                 {{ planifDetFormSet.empty_form.DELETE }}
             </div>
         </div>
+    </div>
 </script>
 
 

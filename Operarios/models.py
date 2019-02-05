@@ -1,4 +1,5 @@
 import logging
+from django.utils.translation import gettext as _
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -282,3 +283,56 @@ def create_user_cargoasignado(sender, instance, created, **kwargs):
 def save_user_cargoasignado(sender, instance, **kwargs):
     logging.getLogger("error_logger").error('Se ingreso a save_user_cargoasignado')
     #instance.CargoAsignado.save()
+
+
+class AsigJefeFiscal(models.Model):
+    userJefe = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name='JefeOp_AsigJefeFiscal')
+    userFiscal = models.OneToOneField(User, on_delete=models.CASCADE, related_name='Fiscal_AsigJefeFiscal')
+    
+
+    class Meta:
+        verbose_name = _("Asignacion Jefe-Fiscal")
+        verbose_name_plural = _("Asignaciones Jefe-Fiscales")
+
+    def __str__(self):
+        return self.userJefe.first_name
+
+class AsigFiscalPuntoServicio(models.Model):
+    userFiscal = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Fiscal_AsigFiscalPuntoServicio')
+    puntoServicio = models.OneToOneField(PuntoServicio, on_delete=models.CASCADE, related_name='puntoServicio_AsigFiscalPuntoServicio')
+
+    class Meta:
+        verbose_name = _("Asignacion Fiscal-PuntoServicio")
+        verbose_name_plural = _("Asignaciones Fiscales-PuntoServicio")
+
+    def __str__(self):
+        return self.userFiscal.first_name
+
+class HisAsigJefeFiscal(models.Model):
+    userJefe = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name='JefeOp_HisAsigJefeFiscal')
+    userFiscal = models.OneToOneField(User, on_delete=models.CASCADE, related_name='Fiscal_HisAsigJefeFiscal')
+    fecha_inicio = models.DateField('Fecha de Inicio')
+    fecha_fin = models.DateField('Fecha Final', blank=True, null=True)
+    
+
+    class Meta:
+        verbose_name = _("Historico Asignacion Jefe-Fiscal")
+        verbose_name_plural = _("Historico Asignaciones Jefe-Fiscales")
+
+    def __str__(self):
+        return self.userJefe.first_name
+
+class HisAsigFiscalPuntoServicio(models.Model):
+    userFiscal = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Fiscal_HisAsigFiscalPuntoServicio')
+    puntoServicio = models.OneToOneField(PuntoServicio, on_delete=models.CASCADE, related_name='puntoServicio_HisAsigFiscalPuntoServicio')
+    fecha_inicio = models.DateField('Fecha de Inicio')
+    fecha_fin = models.DateField('Fecha Final', blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Historico Asignacion Fiscal-PuntoServicio")
+        verbose_name_plural = _("Historico Asignaciones Fiscales-PuntoServicio")
+
+    def __str__(self):
+        return self.userFiscal.first_name
+
+

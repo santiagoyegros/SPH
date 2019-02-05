@@ -9,8 +9,9 @@ from django.forms.models import inlineformset_factory
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
+from django.contrib.auth.models import User
 
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, PlanificacionCab, PlanificacionDet, PlanificacionEsp
+from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, PlanificacionCab, PlanificacionDet, PlanificacionEsp, Cargo, CargoAsignado
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, PlanificacionForm, PlanificacionDetForm, PlanificacionEspForm
 
 def index(request):
@@ -236,3 +237,10 @@ def Planificacion_list(request):
         puntoServi = PuntoServicio.objects.all()
         contexto = {'PuntosServicio': puntoServi}
         return render(request, 'planificacion/planificacion_list.html', context=contexto)
+
+@login_required
+@permission_required('Operarios.view_operario', raise_exception=True)
+def Jefes_list(request):
+    jefes = User.objects.filter(cargoasignado__cargo__cargo='Jefe de Operaciones')
+    contexto = {'Jefes': jefes}
+    return render(request, 'jefes/jefes_list.html', context=contexto)

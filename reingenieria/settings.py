@@ -207,6 +207,7 @@ LOGGING = {
 
 #BackEnd authenticaction
 AUTHENTICATION_BACKENDS = (
+    'reingenieria.backend.ElMejorBackend',
     "django_python3_ldap.auth.LDAPBackend",
     'django.contrib.auth.backends.ModelBackend',
 )

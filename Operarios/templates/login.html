@@ -43,6 +43,13 @@
 		{% block content %}
 
 		<section class="login-block">
+			{% if form.non_field_errors %}
+			<div class='container-fluid col-md-8'>
+				{% for error in form.non_field_errors %}
+				<div class="alert alert-danger messages">Error: {{ error }}<br/></div>
+				{% endfor %}
+			</div>
+ 			{% endif %}
 			<div class="container">
 				<div class="row">
 					<div class="col-md-4 login-sec">

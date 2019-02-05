@@ -1,4 +1,9 @@
+import logging
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 class Ciudad(models.Model):
     NombreCiudad = models.CharField("Ciudad", max_length=70)
@@ -246,3 +251,34 @@ class PlanificacionEsp(models.Model):
     frecuencia = models.CharField('Frecuencia', max_length = 3, choices = FRECUENCIA, default = MENSUAL, )
     dia = models.CharField('Dia', max_length = 3, choices = DIA)
     cantHoras = models.IntegerField('Cantidad de Horas', blank=True, null=True)
+
+class Cargo(models.Model):
+    cargo = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.cargo
+
+    class Meta:
+        verbose_name_plural = "Cargo"
+
+class CargoAsignado(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    cargo =  models.ForeignKey(Cargo, blank=True, null=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.first_name
+
+    class Meta:
+        verbose_name_plural = "Cargo Asignado"
+
+
+@receiver(post_save, sender=User)
+def create_user_cargoasignado(sender, instance, created, **kwargs):
+    if created:
+        CargoAsignado.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_cargoasignado(sender, instance, **kwargs):
+    logging.getLogger("error_logger").error('Se ingreso a save_user_cargoasignado')
+    #instance.CargoAsignado.save()

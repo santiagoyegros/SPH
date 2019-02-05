@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Ciudad, Operario, Nacionalidad, Especializacion, TipoServicio
+from .models import Ciudad, Operario, Nacionalidad, Especializacion, TipoServicio, Cargo, CargoAsignado
 from .models import GrupoEmpresarial, Cliente, PuntoServicio, RelevamientoCab, RelevamientoDet, RelevamientoEsp
 
 class CiudadAdmin(admin.ModelAdmin):
@@ -27,7 +27,6 @@ class RelevamientoDetInline(admin.TabularInline):
 class RelevamientoEspInline(admin.TabularInline):
     model = RelevamientoEsp
 
-
 class RelevaminetoCabAdmin(admin.ModelAdmin):
     inlines = (RelevamientoDetInline, RelevamientoEspInline, )
 
@@ -40,3 +39,5 @@ admin.site.register(TipoServicio)
 admin.site.register(Cliente, ClienteAdmin)
 admin.site.register(PuntoServicio, PuntoServicioAdmin)
 admin.site.register(RelevamientoCab, RelevaminetoCabAdmin)
+admin.site.register(Cargo)
+admin.site.register(CargoAsignado)

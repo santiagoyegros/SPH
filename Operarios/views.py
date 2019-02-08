@@ -244,3 +244,20 @@ def Jefes_list(request):
     jefes = User.objects.filter(cargoasignado__cargo__cargo='Jefe de Operaciones')
     contexto = {'Jefes': jefes}
     return render(request, 'jefes/jefes_list.html', context=contexto)
+
+@login_required
+@permission_required('Operarios.view_operario', raise_exception=True)
+def Jefes_asig(request, id_user_jefe=None):
+    try:
+        user_jefe = User.objects.get(pk=id_user_jefe)   
+    except User.DoesNotExist as err:
+        logging.getLogger("error_logger").error('Usuario de Jefe de Operaciones no existe: {0}'.format(err))
+        
+    #Se traen todos los fiscales que estan asignados al jefe de operaciones en cuestion
+    fiscales_asig = User.objects.filter(Fiscal_AsigJefeFiscal__userJefe=id_user_jefe)
+    consulta = User.objects.filter(Fiscal_AsigJefeFiscal__userJefe=id_user_jefe).query
+    logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
+    contexto = {'Fiscales': fiscales_asig,
+                'Jefe': user_jefe
+            }
+    return render(request, 'jefes/jefes_asig.html', context=contexto)

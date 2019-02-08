@@ -275,8 +275,11 @@ class CargoAsignado(models.Model):
 
 @receiver(post_save, sender=User)
 def create_user_cargoasignado(sender, instance, created, **kwargs):
-    if created:
-        CargoAsignado.objects.create(user=instance)
+    '''
+    Aqui se define que se va realizar con el cargoasignado en el momento que se cree un usuario nuevo
+    '''
+    #if created:
+    #    CargoAsignado.objects.create(user=instance)
 
 
 @receiver(post_save, sender=User)

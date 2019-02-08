@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h2>Fiscales asignados de Operaciones</h2>
+    <div class="container-fluid mb-3 mt-4">
+        <div class="row">
+            {% if Jefe %}
+                <div class="col"><b>Jefe/a: </b>{{ Jefe.last_name }}, {{ Jefe.first_name }} </div>
+            {% endif %}
+        </div>
+    </div>
+    <!--Table-->
+    <table id="tablePreview" class="table table-hover table-sm">
+    <!--Table head-->
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Fiscal</th>
+            <th>Eliminar</th>
+        </tr>
+    </thead>
+    <!--Table head-->
+    <!--Table body-->
+    <tbody>
+        {% if Fiscales %}
+        {% for fiscal in Fiscales %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ fiscal.last_name }}, {{ fiscal.first_name }}</td>
+            <td> <a class='btn btn-danger btn-sm' href=>Eliminar</a> </td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </tbody>
+    <!--Table body-->
+    </table>
+    <!--Table-->
+    <a class='btn btn-success btn-sm' href='' > Asignar Fiscal </a>
+
+
+{% endblock %}

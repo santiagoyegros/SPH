@@ -4,8 +4,9 @@ from . import views
 from django.views.generic import TemplateView, RedirectView
 from django.conf.urls import url, include
 from django.contrib.auth.decorators import login_required
-from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView, Relevamiento
-from Operarios.views import Operarios_list, Operarios_create, Operarios_update, Operarios_delete, Planificacion_list, Planificacion_create, Jefes_list
+from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView
+from Operarios.views import Relevamiento, Operarios_list, Operarios_create, Operarios_update, Operarios_delete
+from Operarios.views import Planificacion_list, Planificacion_create, Jefes_list, Jefes_asig
 
 app_name = 'Operarios'
 
@@ -25,5 +26,6 @@ urlpatterns = [
     url(r'^operarios/eliminar/(?P<pk>\d+)/$', Operarios_delete, name='operarios_delete'),
     url(r'^planificacion/listar/', Planificacion_list, name='planificar_list'),
     url(r'^planificacion/planificar/(?P<id_puntoServicio>\d+)/$', Planificacion_create, name='planificar_create'),
-    url(r'^jefes/listar/', Jefes_list , name='jefes_list'),
-]
+    url(r'^jefes/listar/', Jefes_list, name='jefes_list'),
+    url(r'^jefes/asig/(?P<id_user_jefe>\d+)/$', Jefes_asig, name='jefes_asig'),
+]   

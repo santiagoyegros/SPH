@@ -4,7 +4,7 @@
 {% block content %}
     <h2>Jefes de Operaciones</h2>
     <!--Table-->
-    <table id="tablePreview" class="table table-hover table-sm">
+    <table id="tablePreview" class="table table-hover table-sm mt-2">
     <!--Table head-->
     <thead>
         <tr>
@@ -21,7 +21,7 @@
         <tr>
             <th scope="row">{{ forloop.counter }}</th>
             <td>{{ jefe.last_name }}, {{ jefe.first_name }}</td>
-            <td> <a class='btn btn-danger btn-sm' href=>Asignar</a> </td>
+            <td> <a class='btn btn-danger btn-sm' href={% url 'Operarios:jefes_asig' jefe.id %}>Asignar</a> </td>
         </tr>
         {% endfor %}
         {% endif %}

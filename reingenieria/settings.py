@@ -26,7 +26,7 @@ SECRET_KEY = 'gz73qckgdfb#h9e!#f0&uq00fnq=$q1zbdu+y4^hif5%%bdz$@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.11.31', 'GBCORETest']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.11.31', 'GBCORETest.grupobaudelet.com']
 
 
 # Application definition

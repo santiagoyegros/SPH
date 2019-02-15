@@ -4,6 +4,7 @@
 {% url 'asignacion' as asignacion_url %}
 {% url 'Operarios:puntoServicio_list' as punto_servicio_url %}
 {% url 'Operarios:operarios_list' as operarios_url %}
+{% url 'Operarios:jefes_list' as jefes_url %}
 {% url 'marcaciones' as marcaciones_url %}
 {% url 'remplazos' as remplazos_url %}
 {% url 'alertas' as alertas_url %}
@@ -26,11 +27,15 @@
                 <li class="nav-item {% if request.path == asignacion_url %}active{% endif %}">
                     <a class="nav-link" href="{{ asignacion_url }}">Asignación</a>
                 </li>
-                <li class="nav-item {% if request.path == punto_servicio_url %}active{% endif %}">
-                    <a class="nav-link" href="{{ punto_servicio_url }}">Puntos de Servicio</a>
-                </li>
-                <li class="nav-item {% if request.path == operarios_url %}active{% endif %}">
-                    <a class="nav-link" href="{{ operarios_url }}">Operarios</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Operaciones
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="{{ punto_servicio_url }}">Puntos de Servicio</a>
+                    <a class="dropdown-item" href="{{ operarios_url }}">Operarios</a>
+                    <a class="dropdown-item" href="{{ jefes_url }}">Estructura de Jefes/Fiscales</a>
+                    </div>
                 </li>
                 <li class="nav-item {% if request.path == marcaciones_url %}active{% endif %}">
                     <a class="nav-link" href="{{ marcaciones_url }}">Marcaciones</a>

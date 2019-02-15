@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class='col-12 col-md-6 mx-auto'>
+{% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
+<form method='POST' action='{% if action_url %}{{ action_url }}{% endif %}'> 
+    {% csrf_token %}
+    {% if next_url %}
+    <input type='hidden' name='next' value='{{ next_url }}' />
+    {% endif %}
+    <h2>¿Desea eliminar la asignación de {{ PuntoServicio.CodPuntoServicio }} a {{ Fiscal.last_name }}, {{ Fiscal.first_name }}? </h2>
+    <button type='submit' class='btn btn-danger btn-sm'>Eliminar</button>
+    <a class='btn btn-primary btn-sm' href='{% url 'Operarios:fiscales_asig' Fiscal.id %}'>Cancelar</a>
+</form>
+</div>
+{% endblock %}

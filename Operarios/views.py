@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, PlanificacionCab, PlanificacionDet, PlanificacionEsp, Cargo, CargoAsignado
+from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, PlanificacionCab, PlanificacionDet, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, PlanificacionForm, PlanificacionDetForm, PlanificacionEspForm
 
 def index(request):
@@ -28,8 +28,13 @@ def index_alert(request):
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.view_puntoservicio', raise_exception=True), name='dispatch')
 class PuntosServicioList(ListView):
-    model = PuntoServicio
+    #model = PuntoServicio
+    context_object_name = 'PuntoServicio'
     template_name = "puntoServicio/puntoServicio_list.html"
+    def get_queryset(self):
+        consulta = PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal=self.request.user.id).query
+        logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
+        return PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal=self.request.user.id)
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.add_puntoservicio', raise_exception=True), name='dispatch')
@@ -247,17 +252,96 @@ def Jefes_list(request):
 
 @login_required
 @permission_required('Operarios.view_operario', raise_exception=True)
-def Jefes_asig(request, id_user_jefe=None):
+def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
     try:
         user_jefe = User.objects.get(pk=id_user_jefe)   
     except User.DoesNotExist as err:
         logging.getLogger("error_logger").error('Usuario de Jefe de Operaciones no existe: {0}'.format(err))
+
+    if id_user_fiscal != None:
+        user_fiscal = User.objects.get(pk=id_user_fiscal)
+        asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
+        asignacion.save()
         
     #Se traen todos los fiscales que estan asignados al jefe de operaciones en cuestion
     fiscales_asig = User.objects.filter(Fiscal_AsigJefeFiscal__userJefe=id_user_jefe)
     consulta = User.objects.filter(Fiscal_AsigJefeFiscal__userJefe=id_user_jefe).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
+
+    #se trae los fiscales disponibles
+    fiscales_disp = User.objects.filter(Fiscal_AsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal')
+    consulta2 = User.objects.filter(Fiscal_AsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal').query
+    logging.getLogger("error_logger").error('La consulta de fiscales disponibles ejecutada es: {0}'.format(consulta2))
+
+    #cargamos el contexto
     contexto = {'Fiscales': fiscales_asig,
-                'Jefe': user_jefe
+                'Jefe': user_jefe,
+                'Fiscales_disp': fiscales_disp
             }
     return render(request, 'jefes/jefes_asig.html', context=contexto)
+
+@login_required
+@permission_required('Operarios.delete_operario', raise_exception=True)
+def Jefes_delete(request, id_user_jefe=None, id_user_fiscal=None):
+    user_fiscal = User.objects.get(pk=id_user_fiscal)
+    user_jefe = User.objects.get(pk=id_user_jefe)
+
+    if request.method == 'POST':
+        asignacion = AsigJefeFiscal.objects.get(userJefe=user_jefe, userFiscal=user_fiscal)
+        asignacion.delete()
+        messages.warning(request, 'Asignación eliminada correctamente')
+        return redirect('Operarios:jefes_asig', id_user_jefe=id_user_jefe)
+    
+    #cargamos el contexto
+    contexto = {'Jefe': user_jefe,
+                'Fiscal': user_fiscal
+                }
+    return render(request, 'jefes/jefes_delete.html', context=contexto)
+
+@login_required
+@permission_required('Operarios.view_operario', raise_exception=True)
+def Fiscales_asig(request, id_user_fiscal=None, id_puntoServicio=None):
+    try:
+        user_fiscal = User.objects.get(pk=id_user_fiscal)   
+    except User.DoesNotExist as err:
+        logging.getLogger("error_logger").error('Usuario de Fiscal no existe: {0}'.format(err))
+
+    if id_puntoServicio != None:
+        puntoServicio = PuntoServicio.objects.get(pk=id_puntoServicio)
+        asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=puntoServicio)
+        asignacion.save()
+        
+    #Se traen todos los puntos de servicio que estan asignados al fiscal en cuestion
+    puntosServ_asig = PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal=id_user_fiscal)
+    consulta = PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal=id_user_fiscal).query
+    logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
+
+    #se trae los puntos de servicio disponibles
+    puntosServ_disp = PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal__isnull=True)
+    consulta2 = PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal__isnull=True).query
+    logging.getLogger("error_logger").error('La consulta de puntos de servicio disponibles ejecutada es: {0}'.format(consulta2))
+
+    #cargamos el contexto
+    contexto = {'PuntosSer': puntosServ_asig,
+                'Fiscal': user_fiscal,
+                'PuntosSer_disp': puntosServ_disp
+            }
+    return render(request, 'fiscales/fiscales_asig.html', context=contexto)
+
+@login_required
+@permission_required('Operarios.delete_operario', raise_exception=True)
+def Fiscales_delete(request, id_user_fiscal=None, id_puntoServicio=None):
+    user_fiscal = User.objects.get(pk=id_user_fiscal) 
+    puntoServicio = PuntoServicio.objects.get(pk=id_puntoServicio)
+
+    if request.method == 'POST':
+        asignacion = AsigFiscalPuntoServicio.objects.get(userFiscal=user_fiscal, puntoServicio=puntoServicio)
+        asignacion.delete()
+        messages.warning(request, 'Asignación eliminada correctamente')
+        return redirect('Operarios:fiscales_asig', id_user_fiscal=id_user_fiscal)
+    
+    #cargamos el contexto
+    contexto = {'Fiscal': user_fiscal,
+                'PuntoServicio': puntoServicio,
+                }
+    return render(request, 'fiscales/fiscales_delete.html', context=contexto)

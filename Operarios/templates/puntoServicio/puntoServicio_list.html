@@ -20,8 +20,8 @@
     <!--Table head-->
     <!--Table body-->
     <tbody>
-        {% if object_list %}
-        {% for puntosSer in object_list %}
+        {% if PuntoServicio %}
+        {% for puntosSer in PuntoServicio %}
         <tr>
             <th scope="row">{{ forloop.counter }}</th>
             <td>{{ puntosSer.CodPuntoServicio }}</td>

@@ -2,11 +2,11 @@
 {% load static %}
 
 {% block content %}
-    <h2>Fiscales asignados de Operaciones</h2>
+    <h2>Puntos de Servicio Asignados</h2>
     <div class="container-fluid mb-3 mt-4">
         <div class="row">
-            {% if Jefe %}
-                <div class="col"><b>Jefe/a: </b>{{ Jefe.last_name }}, {{ Jefe.first_name }} </div>
+            {% if Fiscal %}
+                <div class="col"><b>Fiscal: </b>{{ Fiscal.last_name }}, {{ Fiscal.first_name }} </div>
             {% endif %}
         </div>
     </div>
@@ -16,7 +16,6 @@
     <thead>
         <tr>
             <th>#</th>
-            <th>Fiscal</th>
             <th>Punto de Servicio</th>
             <th>Desasignar</th>
         </tr>
@@ -24,13 +23,12 @@
     <!--Table head-->
     <!--Table body-->
     <tbody>
-        {% if Fiscales %}
-        {% for fiscal in Fiscales %}
+        {% if PuntosSer %}
+        {% for puntoS in PuntosSer %}
         <tr>
             <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ fiscal.last_name }}, {{ fiscal.first_name }}</td>
-            <td> <a class='btn btn-primary btn-sm' href='{% url 'Operarios:fiscales_asig' fiscal.id %}'>Puntos de Servicio</a> </td>
-            <td> <a class='btn btn-danger btn-sm' href='{% url 'Operarios:jefes_del' Jefe.id fiscal.id %}'>Desasignar</a> </td>
+            <td>{{ puntoS.CodPuntoServicio }} - {{ puntoS.NombrePServicio }}</td>
+            <td> <a class='btn btn-danger btn-sm' href='{% url 'Operarios:fiscales_del' Fiscal.id puntoS.id %}'>Desasignar</a> </td>
         </tr>
         {% endfor %}
         {% endif %}
@@ -38,7 +36,7 @@
     <!--Table body-->
     </table>
     <!--Table-->
-    <a class='btn btn-success btn-sm' href='' data-toggle="modal" data-target="#exampleModalCenter"> Asignar Fiscal </a>
+    <a class='btn btn-success btn-sm' href='' data-toggle="modal" data-target="#exampleModalCenter"> Asignar Punto de Servicio </a>
     <a class='btn btn-secondary btn-sm' href='{% url 'Operarios:jefes_list' %}' > Volver </a>
 
 
@@ -47,7 +45,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalCenterTitle">Fiscales no Asignados</h5>
+            <h5 class="modal-title" id="exampleModalCenterTitle">Punto de Servicio no Asignados</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
@@ -59,19 +57,19 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Fiscal</th>
+                    <th>Punto de Servicio</th>
                     <th>Seleccionar</td>
                 </tr>
             </thead>
             <!--Table head-->
             <!--Table body-->
             <tbody>
-                {% if Fiscales_disp %}
-                {% for fiscal in Fiscales_disp %}
+                {% if PuntosSer_disp %}
+                {% for puntoS in PuntosSer_disp %}
                 <tr>
                     <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ fiscal.last_name }}, {{ fiscal.first_name }}</td>
-                    <td><a class="btn btn-primary btn-sm" href='{% url 'Operarios:jefes_asig' Jefe.id fiscal.id %}'>Asignar</button></td>
+                    <td>{{ puntoS.CodPuntoServicio }} - {{ puntoS.NombrePServicio }}</td>
+                    <td><a class="btn btn-primary btn-sm" href='{% url 'Operarios:fiscales_asig' Fiscal.id puntoS.id %}'>Asignar</button></td>
                 </tr>
                 {% endfor %}
                 {% endif %}

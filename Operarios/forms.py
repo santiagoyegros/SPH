@@ -1,4 +1,5 @@
 from django import forms
+import logging
 from bootstrap_datepicker_plus import DatePickerInput, TimePickerInput
 
 from Operarios.models import (  PuntoServicio, 
@@ -275,23 +276,31 @@ class PlanificacionForm(forms.ModelForm):
         if not valid:
             return valid
 
-        if timeInHours(self.cleaned_data['cantHoras']) > timeInHours(cantidadHrTotal):
-            self.add_error(None, 'Cantidad de Horas Normales que sobrepasan la cantidad estimada')
-            self.add_error('cantHoras', 'La Cantidad no puede superar las horas planificadas')
-            self.fields['cantHoras'].widget.attrs['class'] += " is-invalid"
-            return False
+        if (cantidadHrTotal is not None) and (self.cleaned_data['cantHoras'] is not None):
+            logging.getLogger("error_logger").error('cantidadHrTotal/cantHoras no son None')
 
-        if self.cleaned_data['cantidad'] < cantidad:
-            self.add_error(None, 'Cantidad de Operarios minima no se cumple')
-            self.add_error('cantidad', 'La Cantidad no puede superar las horas planificadas')
-            self.fields['cantidad'].widget.attrs['class'] += " is-invalid"
-            return False
+            if timeInHours(self.cleaned_data['cantHoras']) > timeInHours(cantidadHrTotal):
+                self.add_error(None, 'Cantidad de Horas Normales que sobrepasan la cantidad estimada')
+                self.add_error('cantHoras', 'La Cantidad no puede superar las horas planificadas')
+                self.fields['cantHoras'].widget.attrs['class'] += " is-invalid"
+                return False
 
-        if timeInHours(self.cleaned_data['cantHorasEsp']) > timeInHours(cantidadHrEsp):
-            self.add_error(None, 'Cantidad de Horas Especiales que sobrepasan la cantidad estimada')
-            self.add_error('cantHorasEsp', 'La Cantidad no puede superar las horas planificadas')
-            self.fields['cantHorasEsp'].widget.attrs['class'] += " is-invalid"
-            return False
+        if (cantidad is not None) and (self.cleaned_data['cantidad'] is not None):
+            logging.getLogger("error_logger").error('cantidad/cantidad no son None')
+
+            if self.cleaned_data['cantidad'] < cantidad:
+                self.add_error(None, 'Cantidad de Operarios minima no se cumple')
+                self.add_error('cantidad', 'La Cantidad no puede superar las horas planificadas')
+                self.fields['cantidad'].widget.attrs['class'] += " is-invalid"
+                return False
+
+        if (cantidadHrEsp is not None) and (self.cleaned_data['cantHorasEsp'] is not None):
+            logging.getLogger("error_logger").error('cantidadHrEsp no son None')
+            if timeInHours(self.cleaned_data['cantHorasEsp']) > timeInHours(cantidadHrEsp):
+                self.add_error(None, 'Cantidad de Horas Especiales que sobrepasan la cantidad estimada')
+                self.add_error('cantHorasEsp', 'La Cantidad no puede superar las horas planificadas')
+                self.fields['cantHorasEsp'].widget.attrs['class'] += " is-invalid"
+                return False
 
         #Si llegamos aca todo esta bien
         return True

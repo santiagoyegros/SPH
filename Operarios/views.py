@@ -11,8 +11,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, PlanificacionCab, PlanificacionDet, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal
-from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, PlanificacionForm, PlanificacionDetForm, PlanificacionEspForm
+from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, PlanificacionCab, PlanificacionDet, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal
+from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, PlanificacionForm, PlanificacionDetForm, PlanificacionEspForm
 
 def index(request):
     return HttpResponse("Vista de Operarios")
@@ -85,18 +85,21 @@ def Relevamiento(request, id_puntoServicio=None):
         relevamiento = RelevamientoCab()
 
        
-    relevamientoDetFormSet = inlineformset_factory(RelevamientoCab, RelevamientoDet, form=RelevamientoDetForm, extra=1, can_delete=True)
-    relevamientoEspFormSet = inlineformset_factory(RelevamientoCab, RelevamientoEsp, form=RelevamientoEspForm, extra=1, can_delete=True)
+    relevamientoDetFormSet =        inlineformset_factory(RelevamientoCab, RelevamientoDet, form=RelevamientoDetForm, extra=3, can_delete=True)
+    relevamientoEspFormSet =        inlineformset_factory(RelevamientoCab, RelevamientoEsp, form=RelevamientoEspForm, extra=2, can_delete=True)
+    relevamientoCupoHorasFormSet =  inlineformset_factory(RelevamientoCab, RelevamientoCupoHoras, form=RelevamientoCupoHorasForm, extra=3, can_delete=True)
 
     if request.method == 'POST':
         form = RelevamientoForm(request.POST, instance=relevamiento)
         relevamDetFormSet = relevamientoDetFormSet(request.POST, instance=relevamiento)
         relevamEspFormSet = relevamientoEspFormSet(request.POST, instance=relevamiento)
+        relevamCuHrFormSet = relevamientoCupoHorasFormSet(request.POST, instance=relevamiento)
 
-        if form.is_valid() and relevamDetFormSet.is_valid() and relevamEspFormSet.is_valid():
+        if form.is_valid() and relevamDetFormSet.is_valid() and relevamEspFormSet.is_valid() and relevamCuHrFormSet.is_valid():
             form.save()
             relevamDetFormSet.save()
             relevamEspFormSet.save()
+            relevamCuHrFormSet.save()
             return redirect('Operarios:puntoServicio_list')
         else:
             messages.warning(request, 'No se pudo guardar los cambios')
@@ -109,12 +112,14 @@ def Relevamiento(request, id_puntoServicio=None):
         form = RelevamientoForm(instance=relevamiento)
         relevamDetFormSet = relevamientoDetFormSet(instance=relevamiento)
         relevamEspFormSet = relevamientoEspFormSet(instance=relevamiento)
+        relevamCuHrFormSet = relevamientoCupoHorasFormSet(instance=relevamiento)
 
     contexto = {
-            'title': 'Nuevo Relevamiento',
+            'title': 'Servicio Aprobado',
             'form': form,
             'relevamDetFormSet': relevamDetFormSet,
             'relevamEspFormSet': relevamEspFormSet,
+            'relevamCuHrFormSet': relevamCuHrFormSet,
         }
     #return render_to_response('puntoServicio/puntoServicio_relevamiento.html', locals())
     return render(request, 'puntoServicio/puntoServicio_relevamiento.html', context=contexto)

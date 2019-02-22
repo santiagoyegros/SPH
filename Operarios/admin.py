@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from .models import Ciudad, Operario, Nacionalidad, Especializacion, TipoServicio, Cargo, CargoAsignado
-from .models import AsigJefeFiscal, AsigFiscalPuntoServicio
-from .models import GrupoEmpresarial, Cliente, PuntoServicio, RelevamientoCab, RelevamientoDet, RelevamientoEsp
+from .models import AsigJefeFiscal, AsigFiscalPuntoServicio, TipoHorario, TipoSalario, TipoServicioParticular
+from .models import GrupoEmpresarial, Cliente, PuntoServicio, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras
 
 class CiudadAdmin(admin.ModelAdmin):
     list_display = ('NombreCiudad', )
@@ -22,14 +22,26 @@ class ClienteAdmin(admin.ModelAdmin):
 class PuntoServicioAdmin(admin.ModelAdmin):
     list_display = ('CodPuntoServicio', 'NombrePServicio', )
 
+class TipoHorarioAdmin(admin.ModelAdmin):
+    list_display = ('tipoHorario', )
+
+class TipoSalarioAdmin(admin.ModelAdmin):
+    list_display = ('tipoSalario', )
+
+class TipoServicioParticularAdmin(admin.ModelAdmin):
+    list_display = ('tipoServicioParticular', )
+
 class RelevamientoDetInline(admin.TabularInline):
     model = RelevamientoDet
 
 class RelevamientoEspInline(admin.TabularInline):
     model = RelevamientoEsp
 
+class RelevamientoCupoHorasInline(admin.TabularInline):
+    model = RelevamientoCupoHoras
+
 class RelevaminetoCabAdmin(admin.ModelAdmin):
-    inlines = (RelevamientoDetInline, RelevamientoEspInline, )
+    inlines = (RelevamientoCupoHorasInline, RelevamientoDetInline, RelevamientoEspInline, )
 
 class CargoAsignadoAdmin(admin.ModelAdmin):
     list_display = ('user', 'get_name', 'get_last_name', 'cargo', )
@@ -69,6 +81,9 @@ admin.site.register(GrupoEmpresarial)
 admin.site.register(TipoServicio)
 admin.site.register(Cliente, ClienteAdmin)
 admin.site.register(PuntoServicio, PuntoServicioAdmin)
+admin.site.register(TipoHorario, TipoHorarioAdmin)
+admin.site.register(TipoSalario, TipoSalarioAdmin)
+admin.site.register(TipoServicioParticular, TipoServicioParticularAdmin)
 admin.site.register(RelevamientoCab, RelevaminetoCabAdmin)
 admin.site.register(Cargo)
 admin.site.register(CargoAsignado, CargoAsignadoAdmin)

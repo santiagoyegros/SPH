@@ -6,81 +6,50 @@
 <form method='POST' action='#'> 
     {% csrf_token %}
     
-    <!--{{ form.as_p }}-->
-    <div class="container-fluid mb-3 mt-4">
+    <div class="container-fluid mb-4 mt-4">
         <div class="row mt-3">
-             <div class="col-4"> {{ form.puntoServicio.label }} {{ form.puntoServicio }} </div>
-             <div class="col-4"> {{ form.cantidadHrTotal.label }} {{ form.cantidadHrTotal }}</div>
+            <div class="col-3"> {{ form.puntoServicio.label }} {{ form.puntoServicio }} </div>
+            <div class="col-3"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
+            <div class="col-3"> {{ form.fechaInicio.label }} {{ form.fechaInicio }}</div>
+            <div class="col-3"> {{ form.tipoSalario.label }} {{ form.tipoSalario }}</div>
         </div>
         <div class="row mt-3">
-             <div class="col-4"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
-             <div class="col-4"> {{ form.cantidadHrEsp.label }} {{ form.cantidadHrEsp }}</div>
+            <div class="col-4"> {{ form.cantidadHrTotal.label }} {{ form.cantidadHrTotal }}</div>
+            <div class="col-4"> {{ form.cantidadHrEsp.label }} {{ form.cantidadHrEsp }}</div> 
         </div>
     </div>
     
 
     {{ relevamDetFormSet.management_form }}
     {{ relevamEspFormSet.management_form }}
+    {{ relevamCuHrFormSet.management_form }}
 
-    <!--<fieldset>
-        <legend>Cupo de Horas Detalles</legend>
-        <ul id='formset-det'>
-            {% for form in relevamDetFormSet %}
-                {{ form.id }}
-                <li>
-                    {{ form.as_ul }}
-                </li>
-            {% endfor %}
-        </ul>
-
-        <button id='btnDet'>Añadir Detalle</button>
-    </fieldset>-->
-    
-    <div class="container-fluid mb-3 mt-4" id='formset-det'>
+    <!--Formulario de Cupo de Horas-->
+    <div class="container-fluid mb-3 mt-4" id='formset-CupoH'>
         <h4>
-        Cupo de Horas Detalles <small class="text-muted">Horas de Operarios</small>
+        Cupo de horas <small class="text-muted">Definicion de horas, frecuencia y tipo de Horas</small>
         </h4>
         <div class="row mt-3 mb-2 justify-content-end">
-            <div class="col-3 text-right"> Total Horas: </div>
+            <div class="col-3 text-right"> Total Cupo de Horas: </div>
             <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm" readonly/></div>
         </div>
         <div class="row">
-            <div class="col-1"> Orden </div>
-            <div class="col"> Lunes </div>
-            <div class="col"> Martes </div>
-            <div class="col"> Miercoles </div>
-            <div class="col"> Jueves </div>
-            <div class="col"> Viernes </div>
-            <div class="col"> Sabado </div>
-            <div class="col"> Domingo </div>
-            <div class="col-1"> Eliminar? </div>
+            <div class="col">Cantidad de Hrs </div>
+            <div class="col">Frecuencia </div>
+            <div class="col">Tipo de Horas </div>
+            <div class="col-1">Eliminar? </div>
         </div>
-	    {% for form in relevamDetFormSet %}
+	    {% for form in relevamCuHrFormSet %}
         {{ form.id }}
         <div class="row mt-2">
-            <div class="col-1 mt-3">
-                {{ form.orden }}
+            <div class="col">
+                {{ form.cantCHoras }}
             </div>
             <div class="col">
-                {{ form.lunEnt }}{{ form.lunSal }}
+                {{ form.frecuencia }}
             </div>
             <div class="col">
-                {{ form.marEnt }}{{ form.marSal }}
-            </div>
-            <div class="col">
-                {{ form.mieEnt }}{{ form.mieSal }}
-            </div>
-            <div class="col">
-                {{ form.jueEnt }}{{ form.jueSal }}
-            </div>
-            <div class="col">
-                {{ form.vieEnt }}{{ form.vieSal }}
-            </div>
-            <div class="col">
-                {{ form.sabEnt }}{{ form.sabSal }}
-            </div>
-            <div class="col">
-                {{ form.domEnt }}{{ form.domSal }}
+                {{ form.tipoHora }}
             </div>
             <div class="col-1 text-center">
                 {{ form.DELETE }}
@@ -88,28 +57,71 @@
         </div>
         {% endfor %}
     </div>
-    <div class="row justify-content-end">
-            <button id='btnDet' class="btn btn-outline-info btn-sm">Añadir Detalle</button>
+    <div class="row mt-3 justify-content-end">
+        <button id='btnCupH' class="btn btn-outline-info btn-sm">Añadir Cupo</button>
     </div>
-
-    <!--<fieldset>
-        <legend>Cupo de Horas Especiales</legend>
-        <ul id='formset-Esp'>
-            {% for form in relevamEspFormSet %}
-                {{ form.id }}
-                <li>
-                    {{ form.as_ul }}
-                </li>
-            {% endfor %}
-        </ul>
-
-        <button id='btnEsp'>Añadir Especiales</button>
-    </fieldset>-->
-
     
+
+
+    <!--Formulario de Servicios Particulares-->
+    <div class="container-fluid mb-3 mt-4" id='formset-det'>
+        <h4>
+        Servicios Particulares <small class="text-muted">Definicion de dias y horario</small>
+        </h4>
+        <div class="row">
+            <div class="col-2 p-0 mt-3"> Servicio </div>
+            <div class="col p-0 text-center"> Lunes </div>
+            <div class="col p-0 text-center"> Martes </div>
+            <div class="col p-0 text-center"> Miercoles </div>
+            <div class="col p-0 text-center"> Jueves </div>
+            <div class="col p-0 text-center"> Viernes </div>
+            <div class="col p-0 text-center"> Sabado </div>
+            <div class="col p-0 text-center"> Domingo </div>
+            <div class="col-1 p-0 text-center"> Eliminar? </div>
+        </div>
+	    {% for form in relevamDetFormSet %}
+        {{ form.id }}
+        <div class="row mt-2">
+            <div class="col-2 p-0 mt-3">
+                {{ form.tipoServPart }}
+            </div>
+            <div class="col p-0">
+                {{ form.lunEnt }}{{ form.lunSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.marEnt }}{{ form.marSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.mieEnt }}{{ form.mieSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.jueEnt }}{{ form.jueSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.vieEnt }}{{ form.vieSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.sabEnt }}{{ form.sabSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.domEnt }}{{ form.domSal }}
+            </div>
+            <div class="col-1 p-0 text-center">
+                {{ form.DELETE }}
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+    <div class="row mt-3 justify-content-end">
+        <button id='btnDet' class="btn btn-outline-info btn-sm">Añadir Detalle</button>
+    </div>
+    
+
+    <!--Formulario de Servicios Particulares-->
     <div class="container-fluid mb-3 mt-4" id='formset-Esp'>
         <h4>
-        Cupo de Horas Especiales <small class="text-muted">Horas de Servicios Especiales</small>
+        Limpiezas Profundas <small class="text-muted">Definicion de horas y frecuencia</small>
         </h4>
         <div class="row mt-3 mb-2 justify-content-end">
             <div class="col-3 text-right"> Total Horas Especiales: </div>
@@ -142,10 +154,16 @@
             </div>
         </div>
         {% endfor %}
+
     </div>
-    <div class="row justify-content-end">
-            <button id='btnEsp' class="btn btn-outline-info btn-sm">Añadir Especiales</button>
+    <div class="row mt-3 justify-content-end">
+        <button id='btnEsp' class="btn btn-outline-info btn-sm">Añadir Especiales</button>
     </div>
+    
+    <div class="row mt-3">
+        <div class="col"> {{ form.comentario.label }} {{ form.comentario }}</div>
+    </div>
+
     <div class="row mt-5 justify-content-end">
         <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
         <a class='btn btn-primary btn-sm' href={% url 'Operarios:puntoServicio_list' %}>Cancelar</a>
@@ -154,45 +172,58 @@
 </form>
 </div>
 
-    
 
   
 <!-- Script que carga las filas dinamicamente -->
+<script type='template/CupoHoras'>
+    <div class="row mt-2">
+        <div class="col">
+            {{ relevamCuHrFormSet.empty_form.cantCHoras }}
+        </div>
+        <div class="col">
+            {{ relevamCuHrFormSet.empty_form.frecuencia }}
+        </div>
+        <div class="col">
+            {{ relevamCuHrFormSet.empty_form.tipoHora }}
+        </div>
+        <div class="col-1 text-center">
+            {{ relevamCuHrFormSet.empty_form.DELETE }}
+        </div>
+    </div>
+</script>
+
 <script type='template/Detalle'>
     <div class="row mt-2">
-            <div class="col-1  mt-3">
-                {{ relevamDetFormSet.empty_form.orden }}
+            <div class="col-2 p-0 mt-3">
+                {{ relevamDetFormSet.empty_form.tipoServPart }}
             </div>
-            <div class="col">
+            <div class="col p-0">
                 {{ relevamDetFormSet.empty_form.lunEnt }}{{ relevamDetFormSet.empty_form.lunSal }}
             </div>
-            <div class="col">
+            <div class="col p-0">
                 {{ relevamDetFormSet.empty_form.marEnt }}{{ relevamDetFormSet.empty_form.marSal }}
             </div>
-            <div class="col">
+            <div class="col p-0">
                 {{ relevamDetFormSet.empty_form.mieEnt }}{{ relevamDetFormSet.empty_form.mieSal }}
             </div>
-            <div class="col">
+            <div class="col p-0">
                 {{ relevamDetFormSet.empty_form.jueEnt }}{{ relevamDetFormSet.empty_form.jueSal }}
             </div>
-            <div class="col">
+            <div class="col p-0">
                 {{ relevamDetFormSet.empty_form.vieEnt }}{{ relevamDetFormSet.empty_form.vieSal }}
             </div>
-            <div class="col">
+            <div class="col p-0">
                 {{ relevamDetFormSet.empty_form.sabEnt }}{{ relevamDetFormSet.empty_form.sabSal }}
             </div>
-            <div class="col">
+            <div class="col p-0">
                 {{ relevamDetFormSet.empty_form.domEnt }}{{ relevamDetFormSet.empty_form.domSal }}
             </div>
-            <div class="col-1 text-center">
+            <div class="col-1 p-0 text-center">
                 {{ relevamDetFormSet.empty_form.DELETE }}
             </div>
         </div>
 </script>
 
-<!--<script type='template/Detalle'>
-    {{ relevamDetFormSet.empty_form.as_ul }}
-</script>-->
 
 <script type='template/Especiales'>
     <div class="row mt-2">
@@ -214,9 +245,7 @@
         </div>  
 </script>
 
-<!--<script type='template/Especiales'>
-    {{ relevamEspFormSet.empty_form.as_ul }}
-</script>-->
+
 </div>
 
 <script>
@@ -291,6 +320,17 @@ $(function(){
         $('#formset-Esp').append(clon_html);
         $totalEspeciales.val(total +  1);
     });
+
+    var $totalCupoHoras = $('#id_relevamientocupohoras_set-TOTAL_FORMS');
+
+    $('#btnCupH').click(function(event) {
+        event.preventDefault();
+        var total = parseInt($totalCupoHoras.val(), 10);
+        var clon = $('script[type="template/CupoHoras"]').html();
+        clon_html = replaceAll(clon, '__prefix__', (total).toString());
+        $('#formset-CupoH').append(clon_html);
+        $totalCupoHoras.val(total +  1);
+    });
 });
 
 $('input[id$="cantHoras"]').on('change', function(e){
@@ -305,19 +345,19 @@ $('input[id$="cantHoras"]').on('change', function(e){
                 var frecuencia = $('#id_relevamientoesp_set-' + n + '-frecuencia').val();
 
                 if(frecuencia == 'DIA'){
-                    total += Number($(this).val())*7;
+                    total += Number($(this).val())*30;
                 }else if(frecuencia == 'SEM'){
-                    total += Number($(this).val());
+                    total += Number($(this).val())*4;
                 }else if(frecuencia == 'MEN'){
-                    total += Number($(this).val())/4;
+                    total += Number($(this).val());
                 }else if(frecuencia == 'BIM'){
-                    total += Number($(this).val())/8;
+                    total += Number($(this).val())/2;
                 }else if(frecuencia == 'TRI'){
-                    total += Number($(this).val())/12;
+                    total += Number($(this).val())/3;
                 }else if(frecuencia == 'SEM'){
-                    total += Number($(this).val())/24;
+                    total += Number($(this).val())/6;
                 }else if(frecuencia == 'ANU'){
-                    total += Number($(this).val())/48;
+                    total += Number($(this).val())/12;
                 }
                 //total += Number($(this).val());
             }
@@ -327,13 +367,34 @@ $('input[id$="cantHoras"]').on('change', function(e){
 
         //aqui empieza el calculo del total de horas
         var total = 0;
-        //var sumaDet = timeInHours($('#sumAll_1').val());
         var sumaEsp = timeInHours($('#sumAll_2').val());
         total = hoursToString(sumaEsp);
         $('#id_cantidadHrEsp').val(SumHrMin(total, '00:00'));
 
     });
 
+$('input[id$="cantCHoras"]').on('change', function(e){
+        debugger;
+        //aqui empieza el calculo del total de horas especiales
+        var total = 0;
+        var subtotal = 0;
+        $('input[id$="cantCHoras"]').each(function() {
+            if (!isNaN($(this).val()) && $(this).val() !== '') {
+
+                total += Number($(this).val());
+
+            }
+        })
+        total = hoursToString(total);
+        $('#sumAll_1').val(SumHrMin(total, '00:00'));
+
+        //aqui empieza el calculo del total de horas
+        var total = 0;
+        var sumaEsp = timeInHours($('#sumAll_1').val());
+        total = hoursToString(sumaEsp);
+        $('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
+
+    });
 
 $('input[id^="id_relevamientodet_set-"]').on('dp.change', function(e){
         debugger;
@@ -413,13 +474,6 @@ $('input[id^="id_relevamientodet_set-"]').on('dp.change', function(e){
         }
 
         $('#sumAll_1').val(total_horas_detalle);
-
-        //aqui empieza el calculo del total de horas
-        //var total = 0;
-        //var sumaDet = timeInHours($('#sumAll_1').val());
-        //var sumaEsp = timeInHours($('#sumAll_2').val().concat(':00'));
-        //total = hoursToString(sumaDet + sumaEsp);
-        //$('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
         $('#id_cantidadHrTotal').val(total_horas_detalle);
 
     });

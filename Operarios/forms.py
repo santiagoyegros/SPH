@@ -7,6 +7,7 @@ from Operarios.models import (  PuntoServicio,
                                 RelevamientoCab, 
                                 RelevamientoDet, 
                                 RelevamientoEsp,
+                                RelevamientoCupoHoras,
                                 PlanificacionCab, 
                                 PlanificacionDet, 
                                 PlanificacionEsp )
@@ -137,21 +138,30 @@ class RelevamientoForm(forms.ModelForm):
             'puntoServicio',
             'cantidad',
             'cantidadHrTotal',
-            'cantidadHrEsp'
+            'cantidadHrEsp',
+            'fechaInicio',
+            'tipoSalario',
+            'comentario'
         ]
 
         labels = {
             'puntoServicio': 'Punto de Servicio',
             'cantidad': 'Cantidad de Operarios',
             'cantidadHrTotal': 'Cantidad Total de Horas',
-            'cantidadHrEsp': 'Cantidad Total de horas Especiales'
+            'cantidadHrEsp': 'Cantidad Total de horas Especiales',
+            'fechaInicio': 'Fecha de Inicio de Cobertura',
+            'tipoSalario': 'Tipo de Salario',
+            'comentario': 'Comentarios'
         }
 
         widgets = {
             'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
             'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'cantidadHrTotal': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
-            'cantidadHrEsp': forms.TextInput(attrs={'class':'form-control form-control-sm'})
+            'cantidadHrEsp': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'fechaInicio': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"}),
+            'tipoSalario': forms.Select(attrs={'class':'form-control form-control-sm'}), 
+            'comentario': forms.Textarea(attrs={'class':'form-control form-control-sm', 'rows':4, 'cols':60}),
         }
 
 class RelevamientoDetForm(forms.ModelForm):
@@ -161,6 +171,7 @@ class RelevamientoDetForm(forms.ModelForm):
 
         fields = [
             'orden',
+            'tipoServPart',
             'lunEnt',
             'lunSal',
             'marEnt',
@@ -175,10 +186,12 @@ class RelevamientoDetForm(forms.ModelForm):
             'sabSal',
             'domEnt',
             'domSal'
+            
         ]
 
         labels = {
             'orden': 'Orden',
+            'tipoServPart' : 'Tipo de Servicio Particular',
             'lunEnt': 'Lunes Entrada',
             'lunSal': 'Lunes Salida',
             'marEnt': 'Martes Entrada',
@@ -197,6 +210,7 @@ class RelevamientoDetForm(forms.ModelForm):
 
         widgets = {
             'orden': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'tipoServPart': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'lunEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Lunes'),
             'lunSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Lunes'),
             'marEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Martes'),
@@ -238,6 +252,30 @@ class RelevamientoEspForm(forms.ModelForm):
             'dia': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'})
         }
+
+class RelevamientoCupoHorasForm(forms.ModelForm):
+
+    class Meta:
+        model = RelevamientoCupoHoras
+    
+        fields = [
+            'cantCHoras',
+            'frecuencia',
+            'tipoHora'
+        ]
+
+        labels = {
+            'cantCHoras': 'Cantidad Hrs',
+            'frecuencia': 'Frecuencia',
+            'tipoHora': 'Tipo de Hora',
+        }
+
+        widgets = {
+            'cantCHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'frecuencia': forms.Select(attrs={'class':'form-control form-control-sm'}),
+            'tipoHora': forms.Select(attrs={'class':'form-control form-control-sm'})
+        }
+
 
 class PlanificacionForm(forms.ModelForm):
 

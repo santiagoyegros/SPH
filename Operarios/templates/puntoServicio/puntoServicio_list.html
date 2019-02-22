@@ -14,7 +14,7 @@
             <th>Cliente</th>
             <th>Editar</th>
             <th>Eliminar</th>
-            <th>Relevamiento</th>
+            <th>Servicio Aprobado</th>
         </tr>
     </thead>
     <!--Table head-->
@@ -29,7 +29,7 @@
             <td>{{ puntosSer.Cliente.Cliente }}</td>
             <td> <a class='btn btn-primary btn-sm' href={% url 'Operarios:puntoServicio_update' puntosSer.id %}>Editar</a> </td>
             <td> <a class='btn btn-danger btn-sm' href={% url 'Operarios:puntoServicio_delete' puntosSer.id %}>Eliminar</a> </td>
-            <td> <a class='btn btn-warning btn-sm' href={% url 'Operarios:relevamiento' puntosSer.id %}>Relevamiento</a> </td>
+            <td> <a class='btn btn-warning btn-sm' href={% url 'Operarios:relevamiento' puntosSer.id %}>Serv Aprobado</a> </td>
         </tr>
         {% endfor %}
         {% endif %}

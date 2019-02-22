@@ -84,7 +84,8 @@ class TipoServicio(models.Model):
         return self.tipoServicio
 
     class Meta:
-        verbose_name_plural = "Tipos de Servicio"
+        verbose_name = _("Tipo de Limpieza Profunda")
+        verbose_name_plural = _("Tipos de Limpiezas Profundas")
 
 class PuntoServicio(models.Model):
     Cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
@@ -104,18 +105,59 @@ class PuntoServicio(models.Model):
     class Meta:
         verbose_name_plural = "Puntos de Servicio"
 
+class TipoHorario(models.Model):
+    tipoHorario = models.CharField('Tipo de Horario', max_length=50)
+    horaInicio = models.TimeField('Horario Inicio', blank=True, null=True)
+    horaFin = models.TimeField('Horario Fin', blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Tipo de Horario")
+        verbose_name_plural = _("Tipos de Horarios")
+
+    def __str__(self):
+        return self.tipoHorario
+
+class TipoSalario(models.Model):
+    tipoSalario = models.CharField('Tipo de Salario', max_length=50)
+    descripcion = models.CharField('Descripcion', max_length=200, blank=True, null=True)
+    valor = models.IntegerField('Valor de Salario', blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Tipo de Salario")
+        verbose_name_plural = _("Tipos de Salarios")
+
+    def __str__(self):
+        return self.tipoSalario
+
+class TipoServicioParticular(models.Model):
+    tipoServicioParticular = models.CharField('Tipo de Salario', max_length=100)
+    
+
+    class Meta:
+        verbose_name = _("Tipo de Servicio Particular")
+        verbose_name_plural = _("Tipos de Servicios Particulares")
+
+    def __str__(self):
+        return self.tipoServicioParticular
+
+
 class RelevamientoCab(models.Model):
     puntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
     fecha = models.DateTimeField('Fecha Relevamiento', auto_now_add=True)
     cantidad = models.IntegerField('Cantidad de Operarios', blank=True, null=True)
     cantidadHrTotal = models.CharField('Cantidad de Horas total por Semana', max_length=8, blank=True, null=True)
     cantidadHrEsp = models.CharField('Cantidad de Horas Especiales por Semana', max_length=8, blank=True, null=True)
+    fechaInicio = models.DateField('Fecha Inicio Cobertura', null=True)
+    usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    tipoSalario = models.ForeignKey(TipoSalario, blank=True, null=True, on_delete=models.CASCADE)
+    comentario = models.CharField('Comentarios del servicio aprobado', max_length=550, blank=True, null=True)
     
     def __str__(self):
         return self.puntoServicio.NombrePServicio
 
     class Meta:
-        verbose_name_plural = "Relevamientos"
+        verbose_name = _("Servicio Aprobado")
+        verbose_name_plural = "Servicios Aprobados"
 
 class RelevamientoDet(models.Model):
     relevamientoCab =  models.ForeignKey(RelevamientoCab, blank=True, null=True, on_delete=models.SET_NULL)
@@ -134,9 +176,10 @@ class RelevamientoDet(models.Model):
     sabSal = models.TimeField('Sabado salida', blank=True, null=True)
     domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
     domSal = models.TimeField('Domingo salida', blank=True, null=True)
+    tipoServPart = models.ForeignKey(TipoServicioParticular, blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = "Relevamientos Cupo de Horas"
+        verbose_name_plural = "Servicios Particulares"
 
 class RelevamientoEsp(models.Model):
     
@@ -175,15 +218,34 @@ class RelevamientoEsp(models.Model):
     cantHoras = models.IntegerField('Cantidad de Horas', blank=True, null=True)
 
     class Meta:
-        verbose_name_plural = "Relevamientos Cupo de Horas Especiales"
+        verbose_name_plural = "Cupo de Horas Limpieza Profunda"
+
+class RelevamientoCupoHoras(models.Model):
+    SEMANAL = 'SEM'
+    DOMINGO = 'DOM'
+    FERIADO = 'FER'
+
+    CUPO_FRECUENCIA = (
+        (SEMANAL, 'Semanal'),
+        (DOMINGO, 'Domingo'),
+        (FERIADO, 'Feriado'),
+    )
+    
+    relevamientoCab =  models.ForeignKey(RelevamientoCab, blank=True, null=True, on_delete=models.CASCADE)
+    cantCHoras = models.IntegerField('Cantidad de Horas', db_column='cantHoras', blank=True, null=True)
+    frecuencia = models.CharField('Frecuencia', max_length = 3, choices = CUPO_FRECUENCIA, default = SEMANAL, )
+    tipoHora = models.ForeignKey(TipoHorario, blank=True, null=True, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _("Cupo de Horas")
+        verbose_name_plural = _("Cupos de Horas")
+
+        
 
 class PlanificacionCab(models.Model):
     puntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
     fecha = models.DateTimeField('Fecha Planificación', auto_now_add=True)
     cantidad = models.IntegerField('Cantidad de Operarios', blank=True, null=True)
-    #cantHoras = models.IntegerField('Cantidad de Horas Normales', blank=True, null=True)
-    #cantHorasNoc = models.IntegerField('Cantidad de Horas Nocturnas', blank=True, null=True)
-    #cantHorasEsp = models.IntegerField('Cantidad de Horas Especiales', blank=True, null=True)
     cantHoras = models.CharField('Cantidad de Horas Normales', max_length=8, blank=True, null=True)
     cantHorasNoc = models.CharField('Cantidad de Horas Nocturnas', max_length=8, blank=True, null=True)
     cantHorasEsp = models.CharField('Cantidad de Horas Especiales', max_length=8, blank=True, null=True)

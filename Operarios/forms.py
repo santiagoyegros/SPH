@@ -148,7 +148,7 @@ class RelevamientoForm(forms.ModelForm):
             'puntoServicio': 'Punto de Servicio',
             'cantidad': 'Cantidad de Operarios',
             'cantidadHrTotal': 'Cantidad Total de Horas',
-            'cantidadHrEsp': 'Cantidad Total de horas Especiales',
+            'cantidadHrEsp': 'Cantidad Total de Horas Limp Profunda',
             'fechaInicio': 'Fecha de Inicio de Cobertura',
             'tipoSalario': 'Tipo de Salario',
             'comentario': 'Comentarios'

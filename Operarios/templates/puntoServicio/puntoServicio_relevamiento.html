@@ -9,13 +9,14 @@
     <div class="container-fluid mb-4 mt-4">
         <div class="row mt-3">
             <div class="col-3"> {{ form.puntoServicio.label }} {{ form.puntoServicio }} </div>
-            <div class="col-3"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
+            <div class="col"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
+            <div class="col"> {{ form.cantAprendices.label }} {{ form.cantAprendices }}</div>
             <div class="col-3"> {{ form.fechaInicio.label }} {{ form.fechaInicio }}</div>
-            <div class="col-3"> {{ form.tipoSalario.label }} {{ form.tipoSalario }}</div>
         </div>
         <div class="row mt-3">
             <div class="col-4"> {{ form.cantidadHrTotal.label }} {{ form.cantidadHrTotal }}</div>
             <div class="col-4"> {{ form.cantidadHrEsp.label }} {{ form.cantidadHrEsp }}</div> 
+            <div class="col-3"> {{ form.tipoSalario.label }} {{ form.tipoSalario }}</div>
         </div>
     </div>
     
@@ -23,6 +24,7 @@
     {{ relevamDetFormSet.management_form }}
     {{ relevamEspFormSet.management_form }}
     {{ relevamCuHrFormSet.management_form }}
+    {{ relevamMenFormSet.management_form }}
 
     <!--Formulario de Cupo de Horas-->
     <div class="container-fluid mb-3 mt-4" id='formset-CupoH'>
@@ -66,7 +68,7 @@
     <!--Formulario de Servicios Particulares-->
     <div class="container-fluid mb-3 mt-4" id='formset-det'>
         <h4>
-        Servicios Particulares <small class="text-muted">Definicion de dias y horario</small>
+        Servicios Especificos <small class="text-muted">Definicion de dias y horario</small>
         </h4>
         <div class="row">
             <div class="col-2 p-0 mt-3"> Servicio </div>
@@ -118,7 +120,7 @@
     </div>
     
 
-    <!--Formulario de Servicios Particulares-->
+    <!--Formulario de Limpiezas Profundas-->
     <div class="container-fluid mb-3 mt-4" id='formset-Esp'>
         <h4>
         Limpiezas Profundas <small class="text-muted">Definicion de horas y frecuencia</small>
@@ -157,7 +159,37 @@
 
     </div>
     <div class="row mt-3 justify-content-end">
-        <button id='btnEsp' class="btn btn-outline-info btn-sm">Añadir Especiales</button>
+        <button id='btnEsp' class="btn btn-outline-info btn-sm">Añadir Profundas</button>
+    </div>
+
+    <!--Formulario de Mensualeros-->
+    <div class="container-fluid mb-3 mt-4" id='formset-Men'>
+        <h4>
+        Mensualeros <small class="text-muted">Definicion de cantidad y sueldos acordados</small>
+        </h4>
+        <div class="row">
+            <div class="col-2">Cant. Mensualeros </div>
+            <div class="col-2">Sueldo </div>
+            <div class="col-1">Eliminar? </div>
+        </div>
+	    {% for form in relevamMenFormSet %}
+        {{ form.id }}
+        <div class="row mt-2">
+            <div class="col-2">
+                {{ form.mensuCantidad }}
+            </div>
+            <div class="col-2">
+                {{ form.sueldo }}
+            </div>
+            <div class="col-1 text-center">
+                {{ form.DELETE }}
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+    <div class="row mt-3 justify-content-end">
+        <button id='btnMen' class="btn btn-outline-info btn-sm">Añadir Mensualero</button>
     </div>
     
     <div class="row mt-3">
@@ -245,10 +277,39 @@
         </div>  
 </script>
 
+<script type='template/Mensualeros'>
+    <div class="row mt-2">
+        <div class="col-2">
+            {{ relevamMenFormSet.empty_form.mensuCantidad }}
+        </div>
+        <div class="col-2">
+            {{ relevamMenFormSet.empty_form.sueldo }}
+        </div>
+        <div class="col-1 text-center">
+            {{ relevamMenFormSet.empty_form.DELETE }}
+        </div>
+    </div>
+</script>
+
 
 </div>
 
 <script>
+/**
+ * Number.prototype.format(n, x, s, c)
+ * 
+ * @param integer n: length of decimal
+ * @param integer x: length of whole part
+ * @param mixed   s: sections delimiter
+ * @param mixed   c: decimal delimiter
+ */
+Number.prototype.format = function(n, x, s, c) {
+    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+        num = this.toFixed(Math.max(0, ~~n));
+    
+    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+};
+
 function pad(d) {
     return (d < 10) ? '0' + d.toString() : d.toString();
 }
@@ -331,6 +392,17 @@ $(function(){
         $('#formset-CupoH').append(clon_html);
         $totalCupoHoras.val(total +  1);
     });
+
+    var $totalMensualeros = $('#id_relevamientomensualeros_set-TOTAL_FORMS');
+
+    $('#btnMen').click(function(event) {
+        event.preventDefault();
+        var total = parseInt($totalMensualeros.val(), 10);
+        var clon = $('script[type="template/Mensualeros"]').html();
+        clon_html = replaceAll(clon, '__prefix__', (total).toString());
+        $('#formset-Men').append(clon_html);
+        $totalMensualeros.val(total +  1);
+    });
 });
 
 $('input[id$="cantHoras"]').on('change', function(e){
@@ -395,6 +467,22 @@ $('input[id$="cantCHoras"]').on('change', function(e){
         $('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
 
     });
+
+/*$('input[id$="sueldo"]').on('change', function(e){
+        debugger;
+
+        //aqui empieza el calculo del total de horas especiales
+        var formateado = '';
+        
+        if (!isNaN($(this).val()) && $(this).val() !== '') {
+
+            formateado = Number($(this).val()).format(0, 3, '.', ',');
+
+        }
+        $(this).val(formateado);
+
+    });
+*/
 
 
 </script>

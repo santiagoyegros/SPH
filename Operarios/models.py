@@ -145,6 +145,7 @@ class RelevamientoCab(models.Model):
     puntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
     fecha = models.DateTimeField('Fecha Relevamiento', auto_now_add=True)
     cantidad = models.IntegerField('Cantidad de Operarios', blank=True, null=True)
+    cantAprendices =  models.IntegerField('Cantidad de Aprendices', blank=True, null=True)
     cantidadHrTotal = models.CharField('Cantidad de Horas total por Semana', max_length=8, blank=True, null=True)
     cantidadHrEsp = models.CharField('Cantidad de Horas Especiales por Semana', max_length=8, blank=True, null=True)
     fechaInicio = models.DateField('Fecha Inicio Cobertura', null=True)
@@ -179,7 +180,7 @@ class RelevamientoDet(models.Model):
     tipoServPart = models.ForeignKey(TipoServicioParticular, blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = "Servicios Particulares"
+        verbose_name_plural = "Servicios Especificos"
 
 class RelevamientoEsp(models.Model):
     
@@ -240,7 +241,15 @@ class RelevamientoCupoHoras(models.Model):
         verbose_name = _("Cupo de Horas")
         verbose_name_plural = _("Cupos de Horas")
 
-        
+class RelevamientoMensualeros(models.Model):
+    relevamientoCab =  models.ForeignKey(RelevamientoCab, blank=True, null=True, on_delete=models.CASCADE)
+    mensuCantidad = models.IntegerField('Cantidad de Mensualeros', blank=True, null=True)
+    sueldo = models.IntegerField('Sueldo', blank=True, null=True)
+    
+    class Meta:
+        verbose_name = _("Mensualeros")
+        verbose_name_plural = _("Mensualeros")
+
 
 class PlanificacionCab(models.Model):
     puntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)

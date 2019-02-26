@@ -8,6 +8,7 @@ from Operarios.models import (  PuntoServicio,
                                 RelevamientoDet, 
                                 RelevamientoEsp,
                                 RelevamientoCupoHoras,
+                                RelevamientoMensualeros,
                                 PlanificacionCab, 
                                 PlanificacionDet, 
                                 PlanificacionEsp )
@@ -137,6 +138,7 @@ class RelevamientoForm(forms.ModelForm):
         fields = [
             'puntoServicio',
             'cantidad',
+            'cantAprendices',
             'cantidadHrTotal',
             'cantidadHrEsp',
             'fechaInicio',
@@ -147,8 +149,9 @@ class RelevamientoForm(forms.ModelForm):
         labels = {
             'puntoServicio': 'Punto de Servicio',
             'cantidad': 'Cantidad de Operarios',
-            'cantidadHrTotal': 'Cantidad Total de Horas',
-            'cantidadHrEsp': 'Cantidad Total de Horas Limp Profunda',
+            'cantAprendices': 'Cantidad de Aprendices',
+            'cantidadHrTotal': 'Total de Horas semanal',
+            'cantidadHrEsp': 'Total de Horas Limp. Profunda Mensual',
             'fechaInicio': 'Fecha de Inicio de Cobertura',
             'tipoSalario': 'Tipo de Salario',
             'comentario': 'Comentarios'
@@ -157,6 +160,7 @@ class RelevamientoForm(forms.ModelForm):
         widgets = {
             'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
             'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'cantAprendices': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'cantidadHrTotal': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'cantidadHrEsp': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'fechaInicio': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"}),
@@ -274,6 +278,26 @@ class RelevamientoCupoHorasForm(forms.ModelForm):
             'cantCHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'frecuencia': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'tipoHora': forms.Select(attrs={'class':'form-control form-control-sm'})
+        }
+
+class RelevamientoMensualerosForm(forms.ModelForm):
+    
+    class Meta:
+        model = RelevamientoMensualeros
+        
+        fields = [
+            'mensuCantidad',
+            'sueldo',
+        ]
+
+        labels = {
+            'mensuCantidad': 'Mensualeros',
+            'sueldo': 'Sueldo Pactado',
+        }
+
+        widgets = {
+            'mensuCantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'sueldo': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
         }
 
 

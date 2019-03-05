@@ -25,7 +25,7 @@ background: #FFFFFF;
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="relev-tab" data-toggle="tab" href="#relev" role="tab" aria-controls="home" aria-selected="true">
-        <h4>Relevamiento</h4>
+        <h4>Servicio Aprobado</h4>
     </a>
   </li>
   <li class="nav-item">
@@ -51,109 +51,186 @@ background: #FFFFFF;
                 <div class="col"><u>Cantidad de Horas totales por Semana:</u> {{ relevamiento.cantidadHrTotal }} hrs</div>
             </div>
             <div class="row">
-                <div class="col"><u>Cantidad de Horas Especiales por Semana:</u> {{ relevamiento.cantidadHrEsp }} hrs</div>
+                <div class="col"><u>Cantidad de Horas Especiales por Mes:</u> {{ relevamiento.cantidadHrEsp }} hrs</div>
+            </div>
+            <div class="row">
+                <div class="col"><u>Comentarios:</u> {{ relevamiento.comentario }}</div>
             </div>
         </div>
 
         <div class="container-fluid mb-3 mt-3" id='formset-det-relevamiento'>
-            <h5>
-                Relevamiento realizado <small class="text-muted">Detalle de horas</small>
-            </h5>
-            <table class="table table-sm">
-                <thead>
-                <tr>
-                    <th scope="col-2"> Orden      </th>
-                    <th scope="col-2"> Lunes      </th>
-                    <th scope="col-2"> Martes     </th>
-                    <th scope="col-2"> Miercoles  </th>
-                    <th scope="col-2"> Jueves     </th>
-                    <th scope="col-2"> Viernes    </th>
-                    <th scope="col-2"> Sabado     </th>
-                    <th scope="col-2"> Domingo    </th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for relev in relevamiento.relevamientodet_set.all %}
-                <tr>
-                    <th scope="row">{{ relev.orden }}</th>
-                    <td>
-                        {% if relev.lunEnt %}
-                            {{ relev.lunEnt }} a {{ relev.lunSal }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if relev.marEnt %}
-                        {{ relev.marEnt }} a {{ relev.marSal }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if relev.mieEnt %}
-                        {{ relev.mieEnt }} a {{ relev.mieSal }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if relev.jueEnt %}
-                        {{ relev.jueEnt }} a {{ relev.jueSal }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if relev.vieEnt %}
-                        {{ relev.vieEnt }} a {{ relev.vieSal }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if relev.sabEnt %}
-                        {{ relev.sabEnt }} a {{ relev.sabSal }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if relev.domEnt %}
-                        {{ relev.domEnt }} a {{ relev.domSal }}
-                        {% endif %}
-                    </td>
-                </tr>
-                </tbody>
-                {% endfor %}
-            </table>
-            <h5 class='mt-3'>
-                Relevamiento horas Especiales <small class="text-muted">Detalle de horas</small>
-            </h5>
-            <table class="table table-sm">
-                <thead>
-                <tr>
-                    <th scope="col-2"> Tipo limpieza especial      </th>
-                    <th scope="col-2"> Frecuencia      </th>
-                    <th scope="col-2"> Día     </th>
-                    <th scope="col-2"> Cantidad de Horas  </th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for relevesp in relevamiento.relevamientoesp_set.all %}
-                <tr>
-                    <td scope="row">
-                        {% if relevesp.tipo %}
-                            {{ relevesp.tipo }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if relevesp.frecuencia %}
-                        {{ relevesp.frecuencia }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if relevesp.dia %}
-                        {{ relevesp.dia }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if relevesp.cantHoras %}
-                        {{ relevesp.cantHoras }}
-                        {% endif %}
-                    </td>
-                </tr>
-                </tbody>
-                {% endfor %}
-            </table>
+            <!-- Cupo de Horas -->
+            <div class="container-fluid border mb-4 mt-3">
+                <h5 class='mt-2'>
+                    Cupo de Horas <small class="text-muted">Detalle de horas</small>
+                </h5>
+                <table class="table table-sm table-hover mt-2">
+                    <thead>
+                    <tr>
+                        <th scope="col-2"> Cantidad de Hrs      </th>
+                        <th scope="col-2"> Frecuencia           </th>
+                        <th scope="col-2"> Tipo de Horas        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for relevcupo in relevamiento.relevamientocupohoras_set.all %}
+                    <tr>
+                        <td>
+                            {% if relevcupo.cantCHoras %}
+                                {{ relevcupo.cantCHoras }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relevcupo.frecuencia %}
+                            {{ relevcupo.frecuencia }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relevcupo.tipoHora %}
+                            {{ relevcupo.tipoHora }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+            <!-- Relevamiento realizados -->
+            <div class="container-fluid border mb-4 mt-3">
+                <h5 class='mt-2'>
+                    Servicios Especificos <small class="text-muted">Detalle de servicios</small>
+                </h5>
+                <table class="table table-sm table-hover mt-2">
+                    <thead>
+                    <tr>
+                        <th scope="col-2"> Servicio      </th>
+                        <th scope="col-2"> Lunes      </th>
+                        <th scope="col-2"> Martes     </th>
+                        <th scope="col-2"> Miercoles  </th>
+                        <th scope="col-2"> Jueves     </th>
+                        <th scope="col-2"> Viernes    </th>
+                        <th scope="col-2"> Sabado     </th>
+                        <th scope="col-2"> Domingo    </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for relev in relevamiento.relevamientodet_set.all %}
+                    <tr>
+                        <th scope="row">{{ relev.tipoServPart }}</th>
+                        <td>
+                            {% if relev.lunEnt %}
+                                {{ relev.lunEnt }} a {{ relev.lunSal }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relev.marEnt %}
+                            {{ relev.marEnt }} a {{ relev.marSal }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relev.mieEnt %}
+                            {{ relev.mieEnt }} a {{ relev.mieSal }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relev.jueEnt %}
+                            {{ relev.jueEnt }} a {{ relev.jueSal }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relev.vieEnt %}
+                            {{ relev.vieEnt }} a {{ relev.vieSal }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relev.sabEnt %}
+                            {{ relev.sabEnt }} a {{ relev.sabSal }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relev.domEnt %}
+                            {{ relev.domEnt }} a {{ relev.domSal }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <!-- Relevamiento horas de limpieza profunda -->
+            <div class="container-fluid border mb-4 mt-3">
+                <h5 class='mt-2'>
+                    Limpiezas Profundas <small class="text-muted">Detalle de horas</small>
+                </h5>
+                <table class="table table-sm table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col-2"> Tipo limpieza especial      </th>
+                        <th scope="col-2"> Frecuencia      </th>
+                        <th scope="col-2"> Día     </th>
+                        <th scope="col-2"> Cantidad de Horas  </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for relevesp in relevamiento.relevamientoesp_set.all %}
+                    <tr>
+                        <td scope="row">
+                            {% if relevesp.tipo %}
+                                {{ relevesp.tipo }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relevesp.frecuencia %}
+                            {{ relevesp.frecuencia }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relevesp.dia %}
+                            {{ relevesp.dia }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relevesp.cantHoras %}
+                            {{ relevesp.cantHoras }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <!-- Mensuales -->
+            <div class="container-fluid border mb-4 mt-3">
+                <h5 class='mt-2'>
+                    Mensualeros <small class="text-muted">Detalle de sueldos</small>
+                </h5>
+                <table class="table table-sm table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col-2"> Cantidad     </th>
+                        <th scope="col-2"> Sueldos      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for relevmen in relevamiento.relevamientomensualeros_set.all %}
+                    <tr>
+                        <td scope="row">
+                            {% if relevmen.mensuCantidad %}
+                                {{ relevmen.mensuCantidad }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if relevmen.sueldo %}
+                            {{ relevmen.sueldo }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
+            </div>
 
         </div>
     </div>
@@ -173,7 +250,7 @@ background: #FFFFFF;
             </div>
             
 
-            {{ planifDetFormSet.management_form }}
+            {{ planifOpeFormSet.management_form }}
             {{ planifEspFormSet.management_form }}
 
             
@@ -185,7 +262,7 @@ background: #FFFFFF;
                     <div class="col-3 text-right"> Total Horas: </div>
                     <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm" readonly/></div>
                 </div>
-                {% for form in planifDetFormSet %}
+                {% for form in planifOpeFormSet %}
                 {{ form.id }}
                 <div class="container-fluid border rounded border-top-0 border-bottom-0 border-right-1 border-left-1 border-danger mb-1">
                     <div class="row col-8 mt-4">
@@ -193,39 +270,39 @@ background: #FFFFFF;
                         {{ form.especialista }}
                     </div>
                     <div class="row">
-                        <div class="col">   Lunes       </div>
-                        <div class="col">   Martes      </div>
-                        <div class="col">   Miercoles   </div>
-                        <div class="col">   Jueves      </div>
-                        <div class="col">   Viernes     </div>
-                        <div class="col">   Sabado      </div>
-                        <div class="col">   Domingo     </div>
-                        <div class="col-1"> Eliminar    </div>
+                        <div class="col-1">             Cantidad        </div>
+                        <div class="col-5 text-center"> Dias de semana y Feriado </div>
+                        <div class="col">               Hr Entrada      </div>
+                        <div class="col">               Hr Salida       </div>
+                        <div class="col-1">             Corte           </div>
+                        <div class="col-1">             Total           </div>
+                        <div class="col-1">             Eliminar        </div>
                     </div>
                     <div class="row mt-2 mb-2">
-                        <!--div class="col-1 mt-3">
-                            {{ form.especialista }}
-                        </div-->
-                        <div class="col">
-                            {{ form.lunEnt }}{{ form.lunSal }}
+                        <div class="col-1">
+                            {{ form.cantidad }}
+                        </div>
+                        <div class="col-5 p-0 text-center">
+                            <div class="form-check form-check-inline p-2">{{ form.lun }}<label class="form-check-label p-0">Lu</label></div>
+                            <div class="form-check form-check-inline p-2">{{ form.mar }}<label class="form-check-label p-0">Ma</label></div>
+                            <div class="form-check form-check-inline p-2">{{ form.mie }}<label class="form-check-label p-0">Mi</label></div>
+                            <div class="form-check form-check-inline p-2">{{ form.jue }}<label class="form-check-label p-0">Ju</label></div>
+                            <div class="form-check form-check-inline p-2">{{ form.vie }}<label class="form-check-label p-0">Vi</label></div>
+                            <div class="form-check form-check-inline p-2">{{ form.sab }}<label class="form-check-label p-0">Sa</label></div>
+                            <div class="form-check form-check-inline p-2">{{ form.dom }}<label class="form-check-label p-0">Do</label></div>
+                            <div class="form-check form-check-inline p-2">{{ form.fer }}<label class="form-check-label p-0">Fe</label></div>
                         </div>
                         <div class="col">
-                            {{ form.marEnt }}{{ form.marSal }}
+                            {{ form.ent }}
                         </div>
                         <div class="col">
-                            {{ form.mieEnt }}{{ form.mieSal }}
+                            {{ form.sal }}
                         </div>
-                        <div class="col">
-                            {{ form.jueEnt }}{{ form.jueSal }}
+                        <div class="col-1">
+                            {{ form.corte }}
                         </div>
-                        <div class="col">
-                            {{ form.vieEnt }}{{ form.vieSal }}
-                        </div>
-                        <div class="col">
-                            {{ form.sabEnt }}{{ form.sabSal }}
-                        </div>
-                        <div class="col">
-                            {{ form.domEnt }}{{ form.domSal }}
+                        <div class="col-1">
+                            {{ form.total }}
                         </div>
                         <div class="col-1 text-center">
                             {{ form.DELETE }}
@@ -241,7 +318,7 @@ background: #FFFFFF;
 
             <div class="container-fluid mb-3 mt-4" id='formset-Esp'>
                 <h4>
-                Cupo de Horas Especiales <small class="text-muted">Horas de Servicios Especiales</small>
+                Cupo de Limpiezas Profundas <small class="text-muted"></small>
                 </h4>
                 <div class="row mt-3 mb-2 justify-content-end">
                     <div class="col-3 text-right"> Total Horas Especiales: </div>
@@ -299,42 +376,45 @@ background: #FFFFFF;
     <div class="container-fluid border rounded border-top-0 border-bottom-0 border-right-1 border-left-1 border-danger mb-1">
         <div class="row col-8 mt-4">
             <label for="staticEmail" class="col-sm-2"><p class='text-left'>Perfil:</p> </label>
-            {{ planifDetFormSet.empty_form.especialista }}
+            {{ planifOpeFormSet.empty_form.especialista }}
         </div>
         <div class="row">
-            <div class="col">   Lunes       </div>
-            <div class="col">   Martes      </div>
-            <div class="col">   Miercoles   </div>
-            <div class="col">   Jueves      </div>
-            <div class="col">   Viernes     </div>
-            <div class="col">   Sabado      </div>
-            <div class="col">   Domingo     </div>
-            <div class="col-1"> Eliminar    </div>
+            <div class="col-1">             Cantidad        </div>
+            <div class="col-5 text-center"> Dias de semana y Feriado </div>
+            <div class="col">               Hr Entrada      </div>
+            <div class="col">               Hr Salida       </div>
+            <div class="col-1">             Corte           </div>
+            <div class="col-1">             Total           </div>
+            <div class="col-1">             Eliminar        </div>
         </div>
-        <div class="row mt-2">
-            <div class="col">
-                {{ planifDetFormSet.empty_form.lunEnt }}{{ planifDetFormSet.empty_form.lunSal }}
+        <div class="row mt-2 mb-2">
+            <div class="col-1">
+                {{ planifOpeFormSet.empty_form.cantidad }}
+            </div>
+            <div class="col-5 p-0 text-center">
+                <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.lun }}<label class="form-check-label p-0">Lu</label></div>
+                <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.mar }}<label class="form-check-label p-0">Ma</label></div>
+                <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.mie }}<label class="form-check-label p-0">Mi</label></div>
+                <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.jue }}<label class="form-check-label p-0">Ju</label></div>
+                <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.vie }}<label class="form-check-label p-0">Vi</label></div>
+                <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.sab }}<label class="form-check-label p-0">Sa</label></div>
+                <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.dom }}<label class="form-check-label p-0">Do</label></div>
+                <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.fer }}<label class="form-check-label p-0">Fe</label></div>
             </div>
             <div class="col">
-                {{ planifDetFormSet.empty_form.marEnt }}{{ planifDetFormSet.empty_form.marSal }}
+                {{ planifOpeFormSet.empty_form.ent }}
             </div>
             <div class="col">
-                {{ planifDetFormSet.empty_form.mieEnt }}{{ planifDetFormSet.empty_form.mieSal }}
+                {{ planifOpeFormSet.empty_form.sal }}
             </div>
-            <div class="col">
-                {{ planifDetFormSet.empty_form.jueEnt }}{{ planifDetFormSet.empty_form.jueSal }}
+            <div class="col-1">
+                {{ planifOpeFormSet.empty_form.corte }}
             </div>
-            <div class="col">
-                {{ planifDetFormSet.empty_form.vieEnt }}{{ planifDetFormSet.empty_form.vieSal }}
-            </div>
-            <div class="col">
-                {{ planifDetFormSet.empty_form.sabEnt }}{{ planifDetFormSet.empty_form.sabSal }}
-            </div>
-            <div class="col">
-                {{ planifDetFormSet.empty_form.domEnt }}{{ planifDetFormSet.empty_form.domSal }}
+            <div class="col-1">
+                {{ planifOpeFormSet.empty_form.total }}
             </div>
             <div class="col-1 text-center">
-                {{ planifDetFormSet.empty_form.DELETE }}
+                {{ planifOpeFormSet.empty_form.DELETE }}
             </div>
         </div>
     </div>
@@ -408,6 +488,23 @@ function obtenerNumeroId(id){
     return sp[1];
 }
 
+function mayor(n1, n2){
+/* 
+retorna 1 si n1 es mayor a n2
+retorna 0 si n1 es igual a n2
+retorna -1 si n1 es menor a n2
+*/
+    if(timeInHours(n1) > timeInHours(n2)){
+        return 1;
+    }else if(timeInHours(n1) == timeInHours(n2)){
+        return 0;
+    }else if(timeInHours(n1) < timeInHours(n2)){
+        return -1;
+    }
+
+
+}
+
 $(function(){
 
     // Reemplaza todas las coincidencias en vez de solo la primera
@@ -452,19 +549,19 @@ $('input[id$="-cantHoras"]').change(function() {
                 var frecuencia = $('#id_planificacionesp_set-' + n + '-frecuencia').val();
 
                 if(frecuencia == 'DIA'){
-                    total += Number($(this).val())*7;
+                    total += Number($(this).val())*30;
                 }else if(frecuencia == 'SEM'){
-                    total += Number($(this).val());
+                    total += Number($(this).val())*4;
                 }else if(frecuencia == 'MEN'){
-                    total += Number($(this).val())/4;
+                    total += Number($(this).val());
                 }else if(frecuencia == 'BIM'){
-                    total += Number($(this).val())/8;
+                    total += Number($(this).val())/2;
                 }else if(frecuencia == 'TRI'){
-                    total += Number($(this).val())/12;
+                    total += Number($(this).val())/3;
                 }else if(frecuencia == 'SEM'){
-                    total += Number($(this).val())/24;
+                    total += Number($(this).val())/6;
                 }else if(frecuencia == 'ANU'){
-                    total += Number($(this).val())/48;
+                    total += Number($(this).val())/12;
                 }
                 //total += Number($(this).val());
             }
@@ -473,89 +570,141 @@ $('input[id$="-cantHoras"]').change(function() {
         $('#sumAll_2').val(SumHrMin(total, '00:00'));
 
         //aqui empieza el calculo del total de horas
-        var total = 0;
+        //var total = 0;
         //var sumaDet = timeInHours($('#sumAll_1').val());
-        var sumaEsp = timeInHours($('#sumAll_2').val());
-        total = hoursToString(sumaEsp);
-        $('#id_cantHorasEsp').val(SumHrMin(total, '00:00'));
+        //var sumaEsp = timeInHours($('#sumAll_2').val());
+        //total = hoursToString(sumaEsp);
+        //$('#id_cantHorasEsp').val(SumHrMin(total, '00:00'));
 
     });
 
 
-$('input[id^="id_planificaciondet_set-"]').on('dp.change', function(e){
+$('input[id^="id_planificacionope_set-"]').on('dp.change change', function(e){
         debugger;
         var total_horas_detalle = '00:00';
+        var total_horas_nocturnas = '00:00';
+        var total_horas_diurnas = '00:00';
 
-        var $totalDetalle = $('#id_planificaciondet_set-TOTAL_FORMS');
-        var totalDet = parseInt($totalDetalle.val(), 10);
+        var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS');
+        var totalDet = parseInt(totalDetalleOpe.val(), 10);
+        //var i = obtenerNumeroId(this.id);
 
-        for (i = 0; i < totalDet; i++) { 
-            //Lunes
-            var lunEnt =  $('#id_planificaciondet_set-' + i + '-lunEnt').val();
-            var lunSal =  $('#id_planificaciondet_set-' + i + '-lunSal').val();
+        for(i = 0; i < totalDet; i++){
+            var temp_NocturnasDecimal = 0;
 
-            var totalLunes = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
-            if(!(totalLunes == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalLunes);
+            //Cantidad y corte
+            var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
+            var corte   = $('#id_planificacionope_set-' + i + '-corte').val();
+
+            //Semana
+            var lun     = $('#id_planificacionope_set-' + i + '-lun').prop("checked");
+            var mar     = $('#id_planificacionope_set-' + i + '-mar').prop("checked");
+            var mie     = $('#id_planificacionope_set-' + i + '-mie').prop("checked");
+            var jue     = $('#id_planificacionope_set-' + i + '-jue').prop("checked");
+            var vie     = $('#id_planificacionope_set-' + i + '-vie').prop("checked");
+            var sab     = $('#id_planificacionope_set-' + i + '-sab').prop("checked");
+            var dom     = $('#id_planificacionope_set-' + i + '-dom').prop("checked");
+            var fer     = $('#id_planificacionope_set-' + i + '-fer').prop("checked");
+
+            //Entrada y salida
+            var Ent =  $('#id_planificacionope_set-' + i + '-ent').val();
+            var Sal =  $('#id_planificacionope_set-' + i + '-sal').val();
+
+            //Contamos la cantidad de dias
+            var TotalDias = 0;
+            if(lun){
+                TotalDias +=1;
+            }
+            if(mar){
+                TotalDias +=1;
+            }
+            if(mie){
+                TotalDias +=1;
+            }
+            if(jue){
+                TotalDias +=1;
+            }
+            if(vie){
+                TotalDias +=1;
+            }
+            if(sab){
+                TotalDias +=1;
+            }
+            if(dom){
+                TotalDias +=1;
+            }
+            if(fer){
+                TotalDias +=1;
+            }
+
+            //Determinamos las horas diurnas y nocturnas
+            var limiteInferior = '06:00';
+            var limiteSuperior = '20:00';
+
+            if (mayor(limiteInferior, Ent) == 1){
+                var subLimiteSuperior = limiteInferior;
+                
+                if(mayor(subLimiteSuperior, Sal) == 1){
+                    subLimiteSuperior = Sal;
+                }
+                
+                temp_NocturnasDecimal = (timeInHours(subLimiteSuperior) - timeInHours(Ent))*TotalDias*cantOpe;
+                total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
+                
+            } else if (mayor(Sal, limiteSuperior) == 1){
+                var subLimiteInferior = limiteSuperior;
+
+                if(mayor(Ent, subLimiteInferior) == 1){
+                    subLimiteInferior = Ent;
+                }
+
+                temp_NocturnasDecimal = (timeInHours(Sal) - timeInHours(subLimiteInferior))*TotalDias*cantOpe;
+                total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
+            }
+
+            var totalFilaDecimal = timeInHours(Sal) - timeInHours(Ent);
+            var totalFila = hoursToString(totalFilaDecimal);
+
+            //Calcular el total de fila
+            var totalHorasFilas = (totalFilaDecimal - corte)*TotalDias*cantOpe;
+
+            //Calculamos el total de las horas diurnas de la fila
+            var total_horas_diurnas_fila = hoursToString(totalHorasFilas - temp_NocturnasDecimal);
+            
+            
+            //Seteamos el total de la fila
+            if(!(isNaN(totalHorasFilas))){
+                $('#id_planificacionope_set-' + i + '-total').val(totalHorasFilas);
             }
             
-            //Martes
-            var marEnt =  $('#id_planificaciondet_set-' + i + '-marEnt').val();
-            var marSal =  $('#id_planificaciondet_set-' + i + '-marSal').val();
 
-            var totalMartes = hoursToString(timeInHours(marSal) - timeInHours(marEnt));
-            if(!(totalMartes == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalMartes);
+            if(total_horas_diurnas_fila && total_horas_diurnas_fila != 'NaN:NaN'){
+                total_horas_diurnas = SumHrMin(total_horas_diurnas, total_horas_diurnas_fila);
             }
 
-            //Miercoles
-            var mieEnt =  $('#id_planificaciondet_set-' + i + '-mieEnt').val();
-            var mieSal =  $('#id_planificaciondet_set-' + i + '-mieSal').val();
+        } //Fin del for
 
-            var totalMiercoles = hoursToString(timeInHours(mieSal) - timeInHours(mieEnt));
-            if(!(totalMiercoles == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalMiercoles);
-            }
-
-            //Jueves
-            var jueEnt =  $('#id_planificaciondet_set-' + i + '-jueEnt').val();
-            var jueSal =  $('#id_planificaciondet_set-' + i + '-jueSal').val();
-
-            var totalJueves = hoursToString(timeInHours(jueSal) - timeInHours(jueEnt));
-            if(!(totalJueves == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalJueves);
-            }
-
-            //Viernes
-            var vieEnt =  $('#id_planificaciondet_set-' + i + '-vieEnt').val();
-            var vieSal =  $('#id_planificaciondet_set-' + i + '-vieSal').val();
-
-            var totalViernes = hoursToString(timeInHours(vieSal) - timeInHours(vieEnt));
-            if(!(totalViernes == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalViernes);
-            }
-
-            //Sabado
-            var sabEnt =  $('#id_planificaciondet_set-' + i + '-sabEnt').val();
-            var sabSal =  $('#id_planificaciondet_set-' + i + '-sabSal').val();
-
-            var totalSabado = hoursToString(timeInHours(sabSal) - timeInHours(sabEnt));
-            if(!(totalSabado == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalSabado);
-            }
-
-            //Domingo
-            var domEnt =  $('#id_planificaciondet_set-' + i + '-domEnt').val();
-            var domSal =  $('#id_planificaciondet_set-' + i + '-domSal').val();
-
-            var totalDomingo = hoursToString(timeInHours(domSal) - timeInHours(domEnt));
-            if(!(totalSabado == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
-            }
+        if(total_horas_diurnas && total_horas_diurnas != 'NaN:NaN'){
+            $('#id_cantHoras').val(total_horas_diurnas);
         }
 
-        $('#sumAll_1').val(total_horas_detalle);
-        $('#id_cantHoras').val(total_horas_detalle);
+        if(total_horas_nocturnas && total_horas_nocturnas != 'NaN:NaN' ){
+            $('#id_cantHorasNoc').val(total_horas_nocturnas);
+        }
+
+        /*
+        if(!(isNaN(totalHorasFilas))){
+
+            //total_horas_detalle = SumHrMin(total_horas_detalle, hoursToString(totalHorasFilas));
+            for (j = 0; j < totalDet; j++){
+                total_horas_detalle = SumHrMin(total_horas_detalle, hoursToString($('#id_planificacionope_set-' + j + '-total').val()));
+            }
+            $('#sumAll_1').val(total_horas_detalle);
+            $('#id_cantHoras').val(total_horas_detalle);
+            $('#id_cantHorasNoc').val(total_horas_nocturnas);
+        }
+        */
+        
         
     });
 

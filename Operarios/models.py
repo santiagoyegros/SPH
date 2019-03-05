@@ -265,27 +265,26 @@ class PlanificacionCab(models.Model):
     class Meta:
         verbose_name_plural = "Planificación"
 
-class PlanificacionDet(models.Model):
+class PlanificacionOpe(models.Model):
     planificacionCab =  models.ForeignKey(PlanificacionCab, blank=True, null=True, on_delete=models.SET_NULL)
     especialista = models.ForeignKey(Especializacion, blank=True, null=True, on_delete=models.SET_NULL)
-    orden = models.IntegerField('Orden', blank=True, null=True)
-    lunEnt = models.TimeField('Lunes entradas', blank=True, null=True)
-    lunSal = models.TimeField('Lunes salida', blank=True, null=True)
-    marEnt = models.TimeField('Martes entrada', blank=True, null=True)
-    marSal = models.TimeField('Martes salida', blank=True, null=True)
-    mieEnt = models.TimeField('Miercoles entrada', blank=True, null=True)
-    mieSal = models.TimeField('Miercoles salida', blank=True, null=True)
-    jueEnt = models.TimeField('Jueves entrada', blank=True, null=True)
-    jueSal = models.TimeField('Jueves salida', blank=True, null=True)
-    vieEnt = models.TimeField('Viernes entrada', blank=True, null=True)
-    vieSal = models.TimeField('Viernes salida', blank=True, null=True)
-    sabEnt = models.TimeField('Sabado entrada', blank=True, null=True)
-    sabSal = models.TimeField('Sabado salida', blank=True, null=True)
-    domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
-    domSal = models.TimeField('Domingo salida', blank=True, null=True)
+    cantidad = models.IntegerField('Cantidad', blank=True, null=True)
+    lun = models.BooleanField('Lunes', default=False)
+    mar = models.BooleanField('Martes', default=False)
+    mie = models.BooleanField('Miercoles', default=False)
+    jue = models.BooleanField('Jueves', default=False)
+    vie = models.BooleanField('Viernes', default=False)
+    sab = models.BooleanField('Sabado', default=False)
+    dom = models.BooleanField('Domingo', default=False)
+    fer = models.BooleanField('Feriado', default=False)
+    ent = models.TimeField('Hora Inicio', blank=True, null=True)
+    sal = models.TimeField('Hora Fin', blank=True, null=True)
+    corte = models.DecimalField('corte', max_digits=4, decimal_places=2, null=True)
+    total = models.IntegerField('total', blank=True, null=True)
 
     class Meta:
-        verbose_name_plural = "Planificaciones de Operarios"
+        verbose_name = _("Planificacion de Horas Operarios")
+        verbose_name_plural = _("Planificaciones de Horas de Operarios")
 
 class PlanificacionEsp(models.Model):
     

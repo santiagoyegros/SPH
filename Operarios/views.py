@@ -11,8 +11,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionDet, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal
-from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionDetForm, PlanificacionEspForm
+from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal
+from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm
 
 def index(request):
     return HttpResponse("Vista de Operarios")
@@ -206,22 +206,22 @@ def Planificacion_create(request, id_puntoServicio=None):
     if planificacion == None:
         planificacion = PlanificacionCab()
 
-    planificacionDetFormSet = inlineformset_factory(PlanificacionCab, PlanificacionDet, form=PlanificacionDetForm, extra=1, can_delete=True)
-    planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=PlanificacionEspForm, extra=1, can_delete=True)
+    planificacionOpeFormSet = inlineformset_factory(PlanificacionCab, PlanificacionOpe, form=PlanificacionOpeForm, extra=3, can_delete=True)
+    planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=PlanificacionEspForm, extra=3, can_delete=True)
 
     if request.method == 'POST':
         form = PlanificacionForm(request.POST, instance=planificacion)
-        planifDetFormSet = planificacionDetFormSet(request.POST, instance=planificacion)
+        planifOpeFormSet = planificacionOpeFormSet(request.POST, instance=planificacion)
         planifEspFormSet = planificacionEspFormSet(request.POST, instance=planificacion)
 
-        if form.is_valid(relevamiento.cantidad, relevamiento.cantidadHrTotal, relevamiento.cantidadHrEsp) and planifDetFormSet.is_valid() and planifEspFormSet.is_valid():
+        if form.is_valid(relevamiento.cantidad, relevamiento.cantidadHrTotal, relevamiento.cantidadHrEsp) and planifOpeFormSet.is_valid() and planifEspFormSet.is_valid():
             form.save()
-            planifDetFormSet.save()
+            planifOpeFormSet.save()
             planifEspFormSet.save()
             messages.success(request, 'Se guardo correctamente la planificación')
             return redirect('Operarios:planificar_list')
-        #else:
-            #messages.warning(request, 'No se pudo guardar los cambios')
+        else:
+            messages.warning(request, 'No se pudo guardar los cambios')
     else:
         """
         Seteamos el punto de servicio
@@ -229,13 +229,13 @@ def Planificacion_create(request, id_puntoServicio=None):
         planificacion.puntoServicio = puntoSer
 
         form = PlanificacionForm(instance=planificacion)
-        planifDetFormSet = planificacionDetFormSet(instance=planificacion)
+        planifOpeFormSet = planificacionOpeFormSet(instance=planificacion)
         planifEspFormSet = planificacionEspFormSet(instance=planificacion)
 
     contexto = {
             'title': 'Nueva Planificación',
             'form': form,
-            'planifDetFormSet': planifDetFormSet,
+            'planifOpeFormSet': planifOpeFormSet,
             'planifEspFormSet': planifEspFormSet,
             'relevamiento' : relevamiento,
         }

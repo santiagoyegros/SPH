@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import Ciudad, Operario, Nacionalidad, Especializacion, TipoServicio, Cargo, CargoAsignado
 from .models import AsigJefeFiscal, AsigFiscalPuntoServicio, TipoHorario, TipoSalario, TipoServicioParticular
 from .models import GrupoEmpresarial, Cliente, PuntoServicio, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras
+from .models import AsignacionCab, AsignacionDet
 
 class CiudadAdmin(admin.ModelAdmin):
     list_display = ('NombreCiudad', )
@@ -40,8 +41,14 @@ class RelevamientoEspInline(admin.TabularInline):
 class RelevamientoCupoHorasInline(admin.TabularInline):
     model = RelevamientoCupoHoras
 
-class RelevaminetoCabAdmin(admin.ModelAdmin):
+class RelevamientoCabAdmin(admin.ModelAdmin):
     inlines = (RelevamientoCupoHorasInline, RelevamientoDetInline, RelevamientoEspInline, )
+
+class AsignacionDetInline(admin.TabularInline):
+    model = AsignacionDet
+
+class AsignacionCabAdmin(admin.ModelAdmin):
+    inlines = (AsignacionDetInline, )
 
 class CargoAsignadoAdmin(admin.ModelAdmin):
     list_display = ('user', 'get_name', 'get_last_name', 'cargo', )
@@ -84,8 +91,9 @@ admin.site.register(PuntoServicio, PuntoServicioAdmin)
 admin.site.register(TipoHorario, TipoHorarioAdmin)
 admin.site.register(TipoSalario, TipoSalarioAdmin)
 admin.site.register(TipoServicioParticular, TipoServicioParticularAdmin)
-admin.site.register(RelevamientoCab, RelevaminetoCabAdmin)
+admin.site.register(RelevamientoCab, RelevamientoCabAdmin)
 admin.site.register(Cargo)
 admin.site.register(CargoAsignado, CargoAsignadoAdmin)
 admin.site.register(AsigJefeFiscal, AsigJefeFiscalAdmin)
 admin.site.register(AsigFiscalPuntoServicio)
+admin.site.register(AsignacionCab, AsignacionCabAdmin)

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h2>Asignación de Puntos de Servicio</h2>
+    
+    <form method='POST' action=''> 
+    {% csrf_token %}
+        <div class="form-group">
+        <label for="exampleFormControlSelect1">Punto de Servicio:</label>
+        <select class="form-control" id="exampleFormControlSelect1" name="asig_puntoServ">
+            {% if PuntosServicio %}
+                {% for puntosSer in PuntosServicio %}
+                        <option value={{ puntosSer.id }}>{{ puntosSer.NombrePServicio }}</option>
+                {% endfor %}
+            {% endif %}
+        </select>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Asignar">
+    </form>
+{% endblock %}

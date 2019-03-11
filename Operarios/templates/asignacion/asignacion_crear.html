@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class='col mx-auto'>
+{% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
+<form method='POST' action='#'> 
+    {% csrf_token %}
+    
+    <div class="container-fluid mb-4 mt-4">
+        <div class="row mt-3">
+            <div class="col"> {{ form.puntoServicio.label }} {{ form.puntoServicio }} </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-3"> <p class="font-weight-bold"> Totales </p></div>
+            <div class="col-4"> <p class="font-weight-bold text-center"> Semanales (Lunes a Sabado)</p></div>
+            <div class="col-4"> <p class="font-weight-bold text-center"> Domingo </p></div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-2"> Total Hrs: </div>
+            <div class="col-1"> <input id="sumAll_total" type="text" value="{{ relevamiento.cantidadHrTotal }}" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Diurnas: </div>
+            <div class="col-1"> <input id="tot_sem_diu" type="text" value="{{ sem_diurno }}" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Nocturnas: </div>
+            <div class="col-1"> <input id="tot_sem_noc" type="text" value="{{ sem_nocturno }}" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Diurnas: </div>
+            <div class="col-1"> <input id="tot_dom_diu" type="text" value="{{ dom_diurno }}" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Nocturnas: </div>
+            <div class="col-1"> <input id="tot_dom_noc" type="text" value="{{ dom_nocturno }}" class="form-control form-control-sm" readonly/> </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-2"> Total Hrs Asignadas: </div>
+            <div class="col-1"> {{ form.totalasignado }} </div>
+            <div class="col-1"> Asignada: </div>
+            <div class="col-1"> <input id="sum_sem_diu" type="text" value="" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Asignada: </div>
+            <div class="col-1"> <input id="sum_sem_noc" type="text" value="" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Asignada: </div>
+            <div class="col-1"> <input id="sum_dom_diu" type="text" value="" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Asignada: </div>
+            <div class="col-1"> <input id="sum_dom_noc" type="text" value="" class="form-control form-control-sm" readonly/> </div>
+        </div>
+        <hr/>
+        <div class="row mt-3">
+            <div class="col-2"> Total Hrs Restante: </div>
+            <div class="col-1"> <input id="sumAll_resto" type="text" value="" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Restantes: </div>
+            <div class="col-1"> <input id="res_sem_diu" type="text" value="" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Restantes: </div>
+            <div class="col-1"> <input id="res_sem_noc" type="text" value="" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Restantes: </div>
+            <div class="col-1"> <input id="res_dom_diu" type="text" value="" class="form-control form-control-sm" readonly/> </div>
+            <div class="col-1"> Restantes: </div>
+            <div class="col-1"> <input id="res_dom_noc" type="text" value="" class="form-control form-control-sm" readonly/> </div>
+        </div>
+    </div>
+    
+
+    {{ asigDetFormSet.management_form }}
+
+     <!--Formulario de Servicios Particulares-->
+    <div class="container-fluid mb-3 mt-4" id='formset-det'>
+        <h4>
+        Asignación de Horas <small class="text-muted">Definicion de operarios y horas</small>
+        </h4>
+        <div class="row">
+            <div class="col-2 p-0 mt-3"> Operario </div>
+            <div class="col p-0 text-center"> Lunes </div>
+            <div class="col p-0 text-center"> Martes </div>
+            <div class="col p-0 text-center"> Miercoles </div>
+            <div class="col p-0 text-center"> Jueves </div>
+            <div class="col p-0 text-center"> Viernes </div>
+            <div class="col p-0 text-center"> Sabado </div>
+            <div class="col p-0 text-center"> Domingo </div>
+            <div class="col-1 p-0 text-center"> Eliminar? </div>
+        </div>
+	    {% for form in asigDetFormSet %}
+        {{ form.id }}
+        <div class="row mt-2">
+            <div class="col-2 p-0 mt-3">
+                {{ form.operario }}
+            </div>
+            <div class="col p-0">
+                {{ form.lunEnt }}{{ form.lunSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.marEnt }}{{ form.marSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.mieEnt }}{{ form.mieSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.jueEnt }}{{ form.jueSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.vieEnt }}{{ form.vieSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.sabEnt }}{{ form.sabSal }}
+            </div>
+            <div class="col p-0">
+                {{ form.domEnt }}{{ form.domSal }}
+            </div>
+            <div class="col-1 p-0 text-center">
+                {{ form.DELETE }}
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+    <div class="row mt-3 justify-content-end">
+        <button id='btnDet' class="btn btn-outline-info btn-sm">Añadir Detalle</button>
+    </div>
+    
+    <div class="row mt-5 justify-content-end">
+        <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
+        <a class='btn btn-primary btn-sm' href={% url 'Operarios:asignacion_list' %}>Cancelar</a>
+    </div>
+
+</form>
+</div>
+
+
+  
+<script type='template/Detalle'>
+    <div class="row mt-2">
+            <div class="col-2 p-0 mt-3">
+                {{ asigDetFormSet.empty_form.operario }}
+            </div>
+            <div class="col p-0">
+                {{ asigDetFormSet.empty_form.lunEnt }}{{ asigDetFormSet.empty_form.lunSal }}
+            </div>
+            <div class="col p-0">
+                {{ asigDetFormSet.empty_form.marEnt }}{{ asigDetFormSet.empty_form.marSal }}
+            </div>
+            <div class="col p-0">
+                {{ asigDetFormSet.empty_form.mieEnt }}{{ asigDetFormSet.empty_form.mieSal }}
+            </div>
+            <div class="col p-0">
+                {{ asigDetFormSet.empty_form.jueEnt }}{{ asigDetFormSet.empty_form.jueSal }}
+            </div>
+            <div class="col p-0">
+                {{ asigDetFormSet.empty_form.vieEnt }}{{ asigDetFormSet.empty_form.vieSal }}
+            </div>
+            <div class="col p-0">
+                {{ asigDetFormSet.empty_form.sabEnt }}{{ asigDetFormSet.empty_form.sabSal }}
+            </div>
+            <div class="col p-0">
+                {{ asigDetFormSet.empty_form.domEnt }}{{ asigDetFormSet.empty_form.domSal }}
+            </div>
+            <div class="col-1 p-0 text-center">
+                {{ asigDetFormSet.empty_form.DELETE }}
+            </div>
+        </div>
+</script>
+
+
+</div>
+
+<script>
+/**
+ * Number.prototype.format(n, x, s, c)
+ * 
+ * @param integer n: length of decimal
+ * @param integer x: length of whole part
+ * @param mixed   s: sections delimiter
+ * @param mixed   c: decimal delimiter
+ */
+Number.prototype.format = function(n, x, s, c) {
+    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+        num = this.toFixed(Math.max(0, ~~n));
+    
+    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+};
+
+function pad(d) {
+    return (d < 10) ? '0' + d.toString() : d.toString();
+}
+
+function timeInHours(str){
+   var sp = str.split(":");
+   return parseInt(sp[0]) + parseFloat(sp[1]/60);
+}
+
+function hoursToString(h){
+
+    if (h < 0){
+        return "-" + hoursToString(h*-1);
+    }
+    var hours = Math.floor(h);
+    var minutes = ((h - hours)*60).toFixed(2);
+
+   return pad(hours) + ":" + pad(minutes);
+}
+
+function SumHrMin(h1, h2){
+    var sp = h1.split(":");
+    var hora1 = sp[0];
+    var min1 = sp[1];
+
+    sp = h2.split(":");
+    var hora2 = sp[0];
+    var min2 = sp[1];
+
+    var hora_total = parseInt(hora1) + parseInt(hora2);
+    var min_pre = parseInt(min1) + parseInt(min2);
+
+    var horas_adicionales = Math.floor((min_pre/60));
+    hora_total += horas_adicionales;
+    var min_total = (min_pre - (horas_adicionales*60));
+
+    return hora_total + ":" + pad(min_total);
+
+}
+
+function obtenerNumeroId(id){
+    var sp = id.split("-");
+    return sp[1];
+}
+
+function mayor(n1, n2){
+/* 
+retorna 1 si n1 es mayor a n2
+retorna 0 si n1 es igual a n2
+retorna -1 si n1 es menor a n2
+*/
+    if(timeInHours(n1) > timeInHours(n2)){
+        return 1;
+    }else if(timeInHours(n1) == timeInHours(n2)){
+        return 0;
+    }else if(timeInHours(n1) < timeInHours(n2)){
+        return -1;
+    }
+
+}
+
+function obtenerNocturnas(Ent, Sal){
+    total_horas_nocturnas = '00:00'
+
+    //Determinamos las horas diurnas y nocturnas
+    var limiteInferior = '06:00';
+    var limiteSuperior = '20:00';
+
+
+    if (mayor(limiteInferior, Ent) == 1){
+        var subLimiteSuperior = limiteInferior;
+                
+        if(mayor(subLimiteSuperior, Sal) == 1){
+            subLimiteSuperior = Sal;
+        }
+                
+        temp_NocturnasDecimal = timeInHours(subLimiteSuperior) - timeInHours(Ent);
+        total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
+                
+    } else if (mayor(Sal, limiteSuperior) == 1){
+        var subLimiteInferior = limiteSuperior;
+
+        if(mayor(Ent, subLimiteInferior) == 1){
+            subLimiteInferior = Ent;
+        }
+
+        temp_NocturnasDecimal = timeInHours(Sal) - timeInHours(subLimiteInferior);
+        total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
+    }
+
+    return total_horas_nocturnas;
+
+}
+
+$(function(){
+
+    // Reemplaza todas las coincidencias en vez de solo la primera
+    function replaceAll(text, busca, reemplaza){
+          while (text.toString().indexOf(busca) != -1)
+            text = text.toString().replace(busca, reemplaza);
+          return text;
+    }
+
+    var $totalDetalle = $('#id_relevamientodet_set-TOTAL_FORMS');
+
+    $('#btnDet').click(function(event) {
+        event.preventDefault();
+        var total = parseInt($totalDetalle.val(), 10);
+        var clon = $('script[type="template/Detalle"]').html();
+        clon_html = replaceAll(clon, '__prefix__', (total).toString());
+        $('#formset-det').append(clon_html);
+        $totalDetalle.val(total +  1);
+    });
+
+});
+
+$('input[id^="id_asignaciondet_set-"]').on('dp.change', function(e){
+    debugger;
+    //aqui empieza el calculo del total de horas normales
+    var total_horas_detalle = '00:00';
+        
+    var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
+    var totalDet = parseInt($totalDetalle.val(), 10);
+
+    for (i = 0; i < totalDet; i++) { 
+        //Lunes
+        var lunEnt =  $('#id_asignaciondet_set-' + i + '-lunEnt').val();
+        var lunSal =  $('#id_asignaciondet_set-' + i + '-lunSal').val();
+        var totalLunes = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
+        if(!(totalLunes == 'NaN:NaN')){
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalLunes);
+        }
+            
+        //Martes
+        var marEnt =  $('#id_asignaciondet_set-' + i + '-marEnt').val();
+        var marSal =  $('#id_asignaciondet_set-' + i + '-marSal').val();
+        var totalMartes = hoursToString(timeInHours(marSal) - timeInHours(marEnt));
+        if(!(totalMartes == 'NaN:NaN')){
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalMartes);
+        }
+        //Miercoles
+        var mieEnt =  $('#id_asignaciondet_set-' + i + '-mieEnt').val();
+        var mieSal =  $('#id_asignaciondet_set-' + i + '-mieSal').val();
+        var totalMiercoles = hoursToString(timeInHours(mieSal) - timeInHours(mieEnt));
+        if(!(totalMiercoles == 'NaN:NaN')){
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalMiercoles);
+        }
+        //Jueves
+        var jueEnt =  $('#id_asignaciondet_set-' + i + '-jueEnt').val();
+        var jueSal =  $('#id_asignaciondet_set-' + i + '-jueSal').val();
+        var totalJueves = hoursToString(timeInHours(jueSal) - timeInHours(jueEnt));
+        if(!(totalJueves == 'NaN:NaN')){
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalJueves);
+        }
+        //Viernes
+        var vieEnt =  $('#id_asignaciondet_set-' + i + '-vieEnt').val();
+        var vieSal =  $('#id_asignaciondet_set-' + i + '-vieSal').val();
+        var totalViernes = hoursToString(timeInHours(vieSal) - timeInHours(vieEnt));
+        if(!(totalViernes == 'NaN:NaN')){
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalViernes);
+        }
+        //Sabado
+        var sabEnt =  $('#id_asignaciondet_set-' + i + '-sabEnt').val();
+        var sabSal =  $('#id_asignaciondet_set-' + i + '-sabSal').val();
+        var totalSabado = hoursToString(timeInHours(sabSal) - timeInHours(sabEnt));
+        if(!(totalSabado == 'NaN:NaN')){
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalSabado);
+        }
+        //Domingo
+        var domEnt =  $('#id_asignaciondet_set-' + i + '-domEnt').val();
+        var domSal =  $('#id_asignaciondet_set-' + i + '-domSal').val();
+        var totalDomingo = hoursToString(timeInHours(domSal) - timeInHours(domEnt));
+        if(!(totalDomingo == 'NaN:NaN')){
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
+        }
+    }
+    $('#id_totalasignado').val(total_horas_detalle);
+    $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(total_horas_detalle)));
+});
+
+$('input[id^="id_asignaciondet_set-"]').on('dp.change', function(e){
+    debugger;
+    //aqui empieza el calculo del total de horas normales
+    var total_horas_detalle = '00:00';
+    var total_sem_nocturnas = '00:00';
+    var total_sem_diurnas = '00:00';
+    var total_dom_nocturnas = '00:00';
+    var total_dom_diurnas = '00:00';
+     
+    var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
+    var totalDet = parseInt($totalDetalle.val(), 10);
+
+    for (i = 0; i < totalDet; i++) { 
+        //Lunes
+        var lunEnt =  $('#id_asignaciondet_set-' + i + '-lunEnt').val();
+        var lunSal =  $('#id_asignaciondet_set-' + i + '-lunSal').val();
+        temp = obtenerNocturnas(lunEnt, lunSal);
+
+        var totalLunes = timeInHours(lunSal) - timeInHours(lunEnt);
+        if(!(totalLunes == 'NaN:NaN') && !isNaN(totalLunes)){
+            total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalLunes - timeInHours(temp)));
+            total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+        }
+    
+        //Martes
+        var marEnt =  $('#id_asignaciondet_set-' + i + '-marEnt').val();
+        var marSal =  $('#id_asignaciondet_set-' + i + '-marSal').val();
+        temp = obtenerNocturnas(marEnt, marSal);
+
+        var totalMartes = timeInHours(marSal) - timeInHours(marEnt);
+        if(!(totalMartes == 'NaN:NaN') && !isNaN(totalMartes)){
+            total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMartes - timeInHours(temp)));
+            total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+        }
+
+        //Miercoles
+        var mieEnt =  $('#id_asignaciondet_set-' + i + '-mieEnt').val();
+        var mieSal =  $('#id_asignaciondet_set-' + i + '-mieSal').val();
+        temp = obtenerNocturnas(mieEnt, mieSal);
+
+        var totalMiercoles = timeInHours(mieSal) - timeInHours(mieEnt);
+        if(!(totalMiercoles == 'NaN:NaN') && !isNaN(totalMiercoles)){
+            total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMiercoles - timeInHours(temp)));
+            total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+        }
+
+        //Jueves
+        var jueEnt =  $('#id_asignaciondet_set-' + i + '-jueEnt').val();
+        var jueSal =  $('#id_asignaciondet_set-' + i + '-jueSal').val();
+        temp = obtenerNocturnas(jueEnt, jueSal);
+
+        var totalJueves = timeInHours(jueSal) - timeInHours(jueEnt);
+        if(!(totalJueves == 'NaN:NaN') && !isNaN(totalJueves)){
+            total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalJueves - timeInHours(temp)));
+            total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+        }
+
+        //Viernes
+        var vieEnt =  $('#id_asignaciondet_set-' + i + '-vieEnt').val();
+        var vieSal =  $('#id_asignaciondet_set-' + i + '-vieSal').val();
+        temp = obtenerNocturnas(vieEnt, vieSal);
+
+        var totalViernes = timeInHours(vieSal) - timeInHours(vieEnt);
+        if(!(totalViernes == 'NaN:NaN') && !isNaN(totalViernes)){
+            total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalViernes - timeInHours(temp)));
+            total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+        }
+
+        //Sabado
+        var sabEnt =  $('#id_asignaciondet_set-' + i + '-sabEnt').val();
+        var sabSal =  $('#id_asignaciondet_set-' + i + '-sabSal').val();
+        temp = obtenerNocturnas(sabEnt, sabSal);
+
+        var totalSabado = timeInHours(sabSal) - timeInHours(sabEnt);
+        if(!(totalSabado == 'NaN:NaN') && !isNaN(totalSabado)){
+            total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalSabado - timeInHours(temp)));
+            total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+        }
+
+
+        //Domingo
+        var domEnt =  $('#id_asignaciondet_set-' + i + '-domEnt').val();
+        var domSal =  $('#id_asignaciondet_set-' + i + '-domSal').val();
+        temp = obtenerNocturnas(domEnt, domSal);
+
+        var totalDomingo = timeInHours(domSal) - timeInHours(domEnt);
+        if(!(totalDomingo == 'NaN:NaN') && !isNaN(totalDomingo)){
+            total_dom_diurnas = SumHrMin(total_dom_diurnas, hoursToString(totalDomingo - timeInHours(temp)));
+            total_dom_nocturnas = SumHrMin(total_dom_nocturnas, temp);
+        }
+    }
+    $('#sum_sem_diu').val(total_sem_diurnas);
+    $('#sum_sem_noc').val(total_sem_nocturnas);
+    $('#sum_dom_diu').val(total_dom_diurnas);
+    $('#sum_dom_noc').val(total_dom_nocturnas);
+
+    //$('#id_totalasignado').val(total_horas_detalle);
+    $('#res_sem_diu').val(hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas))));
+    $('#res_sem_noc').val(hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas))));
+    $('#res_dom_diu').val(hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas))));
+    $('#res_dom_noc').val(hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas))));
+});
+
+
+</script>
+
+{% endblock %}

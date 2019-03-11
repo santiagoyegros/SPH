@@ -409,3 +409,41 @@ class HisAsigFiscalPuntoServicio(models.Model):
         return self.userFiscal.first_name
 
 
+class AsignacionCab(models.Model):
+    puntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.CASCADE)
+    fechaUltimaMod = models.DateTimeField('Fecha Relevamiento', auto_now_add=True)
+    usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    totalasignado = models.CharField('Total Asignado', max_length=8, null=True)
+
+    class Meta:
+        verbose_name = _("Asignacion")
+        verbose_name_plural = _("Asignaciones")
+
+    def __str__(self):
+        return self.puntoServicio.NombrePServicio
+
+class AsignacionDet(models.Model):
+    asignacionCab =  models.ForeignKey(AsignacionCab, blank=True, null=True, on_delete=models.SET_NULL)
+    lunEnt = models.TimeField('Lunes entradas', blank=True, null=True)
+    lunSal = models.TimeField('Lunes salida', blank=True, null=True)
+    marEnt = models.TimeField('Martes entrada', blank=True, null=True)
+    marSal = models.TimeField('Martes salida', blank=True, null=True)
+    mieEnt = models.TimeField('Miercoles entrada', blank=True, null=True)
+    mieSal = models.TimeField('Miercoles salida', blank=True, null=True)
+    jueEnt = models.TimeField('Jueves entrada', blank=True, null=True)
+    jueSal = models.TimeField('Jueves salida', blank=True, null=True)
+    vieEnt = models.TimeField('Viernes entrada', blank=True, null=True)
+    vieSal = models.TimeField('Viernes salida', blank=True, null=True)
+    sabEnt = models.TimeField('Sabado entrada', blank=True, null=True)
+    sabSal = models.TimeField('Sabado salida', blank=True, null=True)
+    domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
+    domSal = models.TimeField('Domingo salida', blank=True, null=True)
+    operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
+    
+
+    class Meta:
+        verbose_name = _("Asignacion Detalle")
+        verbose_name_plural = _("Asignacion Detalles")
+
+
+

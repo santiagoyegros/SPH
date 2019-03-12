@@ -448,7 +448,39 @@ $('input[id^="id_asignaciondet_set-"]').on('dp.change', function(e){
     $('#sum_dom_diu').val(total_dom_diurnas);
     $('#sum_dom_noc').val(total_dom_nocturnas);
 
-    //$('#id_totalasignado').val(total_horas_detalle);
+    //total_sem_diurnas
+    temp = hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas)));
+    if (temp.substring(0, 1) == '-'){
+        document.getElementById("res_sem_diu").style.color="#ff0000";
+    } else {
+        document.getElementById("res_sem_diu").style.color="#000000";
+    }
+
+    //total_sem_nocturnas
+    temp = hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas)));
+    if (temp.substring(0, 1) == '-'){
+        document.getElementById("res_sem_noc").style.color="#ff0000";
+    } else {
+        document.getElementById("res_sem_noc").style.color="#000000";
+    }
+
+    //total_dom_diurnas
+    temp = hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas)));
+    if (temp.substring(0, 1) == '-'){
+        document.getElementById("res_dom_diu").style.color="#ff0000";
+    } else {
+        document.getElementById("res_dom_diu").style.color="#000000";
+    }
+
+    //total_dom_nocturnas
+    temp = hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas)));
+    if (temp.substring(0, 1) == '-'){
+        document.getElementById("res_dom_noc").style.color="#ff0000";
+    } else {
+        document.getElementById("res_dom_noc").style.color="#000000";
+    }
+
+
     $('#res_sem_diu').val(hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas))));
     $('#res_sem_noc').val(hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas))));
     $('#res_dom_diu').val(hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas))));

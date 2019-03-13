@@ -386,7 +386,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     ''' Obtenemos el relevamiento para mostrar en la pantalla '''
     relevamiento = RelevamientoCab.objects.filter(puntoServicio_id = puntoSer.id).first()
     if relevamiento == None:
-        logging.getLogger("error_logger").error('El punto de servicio no tiene servicio aprobado no existe: {0}'.format(err))
+        logging.getLogger("error_logger").error('El punto de servicio no tiene servicio aprobado')
         raise Http404("El punto de servicio no tiene Servicio aprobado")
 
     if relevamiento.relevamientocupohoras_set.exists():

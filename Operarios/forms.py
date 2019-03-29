@@ -29,7 +29,8 @@ class PuntoServicioForm(forms.ModelForm):
             'Contacto',
             'MailContacto',
             'TelefonoContacto',
-            'Coordenadas'
+            'Coordenadas',
+            'NumeroMarcador',
         ]
 
         labels = {
@@ -42,7 +43,8 @@ class PuntoServicioForm(forms.ModelForm):
             'Contacto': 'Contacto',
             'MailContacto': 'Mail del Contacto',
             'TelefonoContacto': 'Telefono del Contacto',
-            'Coordenadas': 'Coordenadas'
+            'Coordenadas': 'Coordenadas',
+            'NumeroMarcador': 'Numero del Marcador',
         }
 
         widgets = {
@@ -55,7 +57,8 @@ class PuntoServicioForm(forms.ModelForm):
             'Contacto' : forms.TextInput(attrs={'class':'form-control'}),
             'MailContacto' : forms.TextInput(attrs={'class':'form-control'}),
             'TelefonoContacto' : forms.TextInput(attrs={'class':'form-control'}),
-            'Coordenadas' : forms.TextInput(attrs={'class':'form-control'})
+            'Coordenadas' : forms.TextInput(attrs={'class':'form-control'}),
+            'NumeroMarcador' : forms.TextInput(attrs={'class':'form-control'}),
         }
 
 class OperarioForm(forms.ModelForm):
@@ -163,8 +166,8 @@ class RelevamientoForm(forms.ModelForm):
             'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
             'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'cantAprendices': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
-            'cantidadHrTotal': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
-            'cantidadHrEsp': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'cantidadHrTotal': forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
+            'cantidadHrEsp': forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
             'fechaInicio': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"}),
             'tipoSalario': forms.Select(attrs={'class':'form-control form-control-sm'}), 
             'comentario': forms.Textarea(attrs={'class':'form-control form-control-sm', 'rows':4, 'cols':60}),
@@ -281,6 +284,35 @@ class RelevamientoCupoHorasForm(forms.ModelForm):
             'frecuencia': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'tipoHora': forms.Select(attrs={'class':'form-control form-control-sm'})
         }
+
+    def is_valid(self):
+        #Se prueba si es valido
+        valid = super(RelevamientoCupoHorasForm, self).is_valid()
+
+        if not valid:
+            return valid
+
+        try:
+            testCantChoras = self.cleaned_data["cantCHoras"]
+            try:
+                testfrecuencia = self.cleaned_data["frecuencia"]
+                testtipoHora = self.cleaned_data["tipoHora"]
+                if testCantChoras is None:
+                    self.add_error(None, 'El cupo de hora no esta cargado correctamente')
+                    self.add_error('tipoHora', 'El cupo de hora no esta cargado correctamente')
+                    self.fields['cantCHoras'].widget.attrs['class'] += " is-invalid"
+                    return False
+                elif testtipoHora is None:
+                    self.add_error(None, 'El cupo de hora no esta cargado correctamente')
+                    self.add_error('tipoHora', 'El cupo de hora no esta cargado correctamente')
+                    self.fields['tipoHora'].widget.attrs['class'] += " is-invalid"
+            except KeyError:
+                return False    
+        except KeyError:
+            print('No pasa nada')
+            
+        #Si llegamos aca todo esta bien
+        return True
 
 class RelevamientoMensualerosForm(forms.ModelForm):
     

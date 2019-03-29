@@ -8,7 +8,7 @@
     
     <div class="container-fluid mb-4 mt-4">
         <div class="row mt-3">
-            <div class="col"> {{ form.puntoServicio.label }} {{ form.puntoServicio }} </div>
+            <div class="col h4"><u><strong> {{ form.puntoServicio.label }}:</strong></u> ({{ pservicio.CodPuntoServicio }}) - {{ pservicio.NombrePServicio }} {{ form.puntoServicio.as_hidden  }} </div>
         </div>
         <div class="row mt-3">
             <div class="col-3"> <p class="font-weight-bold"> Totales </p></div>
@@ -117,6 +117,55 @@
     </div>
 
 </form>
+</div>
+
+<a class='btn btn-success btn-sm' href='' data-toggle="modal" data-target="#exampleModalCenter"> Asignar Fiscal </a>
+<a class='btn btn-secondary btn-sm' href='{% url 'Operarios:jefes_list' %}' > Volver </a>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Fiscales no Asignados</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <!--Table-->
+        <table id="tablePreview" class="table table-hover table-sm">
+        <!--Table head-->
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Fiscal</th>
+                <th>Seleccionar</td>
+            </tr>
+        </thead>
+        <!--Table head-->
+        <!--Table body-->
+        <tbody>
+            {% if Fiscales_disp %}
+            {% for fiscal in Fiscales_disp %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ fiscal.last_name }}, {{ fiscal.first_name }}</td>
+                <td><a class="btn btn-primary btn-sm" href='{% url 'Operarios:jefes_asig' Jefe.id fiscal.id %}'>Asignar</button></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+        <!--Table body-->
+        </table>
+        <!--Table-->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    </div>
+    </div>
+</div>
 </div>
 
 

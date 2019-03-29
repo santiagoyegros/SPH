@@ -12,11 +12,11 @@ background: #FFFFFF;
 </style>
 
 {% if form.non_field_errors %}
-    <div class='container'>
-        {% for error in form.non_field_errors %}
+<div class='container'>
+    {% for error in form.non_field_errors %}
         <div class="alert alert-danger messages">Error: {{ error }}<br/></div>
-        {% endfor %}
-    </div>
+    {% endfor %}
+</div>
 {% endif %}
 <div class='col mx-auto'>
 {% if title %}<h1 class='my-3'>{{ title }} - {{relevamiento.puntoServicio.NombrePServicio}} ({{ relevamiento.puntoServicio }}){% endif %} </h1>

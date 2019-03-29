@@ -98,6 +98,7 @@ class PuntoServicio(models.Model):
     MailContacto = models.CharField('E-Mail Contacto', max_length=70, blank=True)
     TelefonoContacto = models.CharField('Telefono del Contacto', max_length=100)
     Coordenadas = models.CharField('Coordenadas', max_length=100)
+    NumeroMarcador = models.CharField('Numero Marcador', max_length=15, blank=True, null=True)
 
     def __str__(self):
         return self.CodPuntoServicio
@@ -279,7 +280,7 @@ class PlanificacionOpe(models.Model):
     fer = models.BooleanField('Feriado', default=False)
     ent = models.TimeField('Hora Inicio', blank=True, null=True)
     sal = models.TimeField('Hora Fin', blank=True, null=True)
-    corte = models.DecimalField('corte', max_digits=4, decimal_places=2, null=True)
+    corte = models.DecimalField('corte', max_digits=4, decimal_places=2, null=True, blank=True,)
     total = models.IntegerField('total', blank=True, null=True)
 
     class Meta:
@@ -446,4 +447,51 @@ class AsignacionDet(models.Model):
         verbose_name_plural = _("Asignacion Detalles")
 
 
+class HorasProcesadas(models.Model):
+    NumCedulaOperario = models.CharField('N° Cedula', max_length=30)
+    puntoServicio = models.ForeignKey(PuntoServicio, on_delete=models.CASCADE)
+    Hentrada = models.TimeField('Horario de entrada', blank=True, null=True)
+    Hsalida = models.TimeField('Horario de salida', blank=True, null=True)
+    total = models.TimeField('Total de Horas', blank=True, null=True)
+    fecha = models.DateField('Fecha')
+    TipoHora = models.CharField('Tipo de Hora', max_length=10)
+    comentario = models.CharField('comentarios', max_length=500, blank=True, null=True)
+    asignacionDet =  models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
 
+    class Meta:
+        verbose_name = _("Hora Procesada")
+        verbose_name_plural = _("Horas Procesadass")
+
+    def __str__(self):
+        return self.NumCedulaOperario
+
+class HorasNoProcesadas(models.Model):
+    NumCedulaOperario = models.CharField('N° Cedula', max_length=30)
+    puntoServicio = models.ForeignKey(PuntoServicio, on_delete=models.CASCADE)
+    Hentrada = models.TimeField('Horario de entrada', blank=True, null=True)
+    Hsalida = models.TimeField('Horario de salida', blank=True, null=True)
+    total = models.TimeField('Total de Horas', blank=True, null=True)
+    fecha = models.DateField('Fecha')
+    TipoHora = models.CharField('Tipo de Hora', max_length=10)
+    comentario = models.CharField('comentarios', max_length=500, blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Hora No Procesada")
+        verbose_name_plural = _("Horas No Procesadas")
+
+    def __str__(self):
+        return self.NumCedulaOperario
+
+class EsmeEmMarcaciones(models.Model):
+    idpersonaevento = models.AutoField(db_column='IdPersonaEvento', primary_key=True)  # Field name made lowercase.
+    codoperacion = models.CharField(db_column='CodOperacion', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    codpersona = models.CharField(db_column='CodPersona', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    codcategoria = models.CharField(db_column='CodCategoria', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    numlinea = models.CharField(db_column='NumLinea', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    codubicacion = models.CharField(db_column='CodUbicacion', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    fecha = models.DateTimeField(db_column='Fecha', blank=True, null=True)  # Field name made lowercase.
+    estado = models.CharField(db_column='Estado', max_length=20, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'ESME_EM_Marcaciones'

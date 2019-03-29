@@ -71,6 +71,8 @@ class PuntoServicioDeleteView(SuccessMessageMixin, DeleteView):
 @login_required
 @permission_required(['Operarios.add_relevamientocab', 'Operarios.view_relevamientocab'], raise_exception=True)
 def Relevamiento(request, id_puntoServicio=None):
+    primeraVez = 0
+
     try:
         """
         Obtenemos el punto de servicio
@@ -82,6 +84,7 @@ def Relevamiento(request, id_puntoServicio=None):
     relevamiento = RelevamientoCab.objects.filter(puntoServicio_id = puntoSer.id).first()
 
     if relevamiento == None:
+        primeraVez = 1
         relevamiento = RelevamientoCab()
 
        
@@ -112,7 +115,11 @@ def Relevamiento(request, id_puntoServicio=None):
         """
         relevamiento.puntoServicio = puntoSer
 
-        form = RelevamientoForm(instance=relevamiento)
+        if primeraVez == 1:
+            form = RelevamientoForm(instance=relevamiento, initial={'tipoSalario': 1})
+        else:
+            form = RelevamientoForm(instance=relevamiento)
+
         relevamDetFormSet =     relevamientoDetFormSet(instance=relevamiento)
         relevamEspFormSet =     relevamientoEspFormSet(instance=relevamiento)
         relevamCuHrFormSet =    relevamientoCupoHorasFormSet(instance=relevamiento)
@@ -434,6 +441,7 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     contexto = {
             'title': 'Nueva Asignación',
+            'pservicio': puntoSer,
             'form': form,
             'asigDetFormSet': AsigDetFormSet,
             'relevamiento' : relevamiento,

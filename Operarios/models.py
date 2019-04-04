@@ -53,7 +53,7 @@ class Operario(models.Model):
     Profesion = models.CharField(max_length=20, blank=True)
     Nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE)
     FechaInicio = models.DateField('Fecha Inicio')
-    FechaFin = models.DateField('Fecha Fin')
+    FechaFin = models.DateField('Fecha Fin', blank=True, null=True)
 
     def __str__(self):
         return self.NumCedula + ' - ' +  self.Nombre  
@@ -281,7 +281,7 @@ class PlanificacionOpe(models.Model):
     ent = models.TimeField('Hora Inicio', blank=True, null=True)
     sal = models.TimeField('Hora Fin', blank=True, null=True)
     corte = models.DecimalField('corte', max_digits=4, decimal_places=2, null=True, blank=True,)
-    total = models.IntegerField('total', blank=True, null=True)
+    total = models.DecimalField('total', max_digits=7, decimal_places=2, blank=True, null=True)
 
     class Meta:
         verbose_name = _("Planificacion de Horas Operarios")

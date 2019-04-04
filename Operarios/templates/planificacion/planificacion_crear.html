@@ -453,7 +453,7 @@ function pad(d) {
 
 function timeInHours(str){
    var sp = str.split(":");
-   return parseInt(sp[0]) + parseFloat(sp[1]/60);
+   return Math.round((parseInt(sp[0]) + parseFloat(sp[1]/60)) * 100) / 100;
 }
 
 function hoursToString(h){
@@ -506,7 +506,6 @@ retorna -1 si n1 es menor a n2
 }
 
 $(function(){
-
     // Reemplaza todas las coincidencias en vez de solo la primera
     function replaceAll(text, busca, reemplaza){
           while (text.toString().indexOf(busca) != -1)
@@ -514,9 +513,10 @@ $(function(){
           return text;
     }
 
-    var $totalDetalle = $('#id_planificaciondet_set-TOTAL_FORMS');
+    var $totalDetalle = $('#id_planificacionope_set-TOTAL_FORMS');
 
     $('#btnDet').click(function(event) {
+        debugger;
         event.preventDefault();
         var total = parseInt($totalDetalle.val(), 10);
         var clon = $('script[type="template/Detalle"]').html();
@@ -574,7 +574,7 @@ $('input[id$="-cantHoras"]').change(function() {
         //var sumaDet = timeInHours($('#sumAll_1').val());
         //var sumaEsp = timeInHours($('#sumAll_2').val());
         //total = hoursToString(sumaEsp);
-        //$('#id_cantHorasEsp').val(SumHrMin(total, '00:00'));
+        $('#id_cantHorasEsp').val(SumHrMin(total, '00:00'));
 
     });
 
@@ -662,7 +662,7 @@ $('input[id^="id_planificacionope_set-"]').on('dp.change change', function(e){
                 total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
             }
 
-            var totalFilaDecimal = timeInHours(Sal) - timeInHours(Ent);
+            var totalFilaDecimal = Math.round((timeInHours(Sal) - timeInHours(Ent)) * 100) / 100;
             var totalFila = hoursToString(totalFilaDecimal);
 
             //Calcular el total de fila

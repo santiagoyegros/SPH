@@ -1,5 +1,6 @@
 from django import forms
 import logging
+import datetime
 from bootstrap_datepicker_plus import DatePickerInput, TimePickerInput
 
 from Operarios.models import (  PuntoServicio, 
@@ -85,8 +86,7 @@ class OperarioForm(forms.ModelForm):
             'NombreContacto',
             'Profesion',
             'Nacionalidad',
-            'FechaInicio',
-            'FechaFin'
+            'FechaInicio'
         ]
 
         labels = {
@@ -109,7 +109,6 @@ class OperarioForm(forms.ModelForm):
             'Profesion':'Profesión',
             'Nacionalidad':'Nacionalidad',
             'FechaInicio':'Fecha de Inicio',
-            'FechaFin':' Fecha de Terminación'
         }
 
         widgets = {
@@ -131,8 +130,7 @@ class OperarioForm(forms.ModelForm):
             'NombreContacto': forms.TextInput(attrs={'class':'form-control'}),
             'Profesion': forms.TextInput(attrs={'class':'form-control'}),
             'Nacionalidad': forms.Select(attrs={'class':'form-control'}),
-            'FechaInicio':  DatePickerInput(format='%d/%m/%Y'),
-            'FechaFin':   DatePickerInput(format='%d/%m/%Y')
+            'FechaInicio':  DatePickerInput(format='%d/%m/%Y')
         }
 
 class RelevamientoForm(forms.ModelForm):

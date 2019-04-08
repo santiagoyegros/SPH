@@ -94,21 +94,28 @@ def Relevamiento(request, id_puntoServicio=None):
     relevamientoMensuFormSet =      inlineformset_factory(RelevamientoCab, RelevamientoMensualeros, form=RelevamientoMensualerosForm, extra=1, can_delete=True)
 
     if request.method == 'POST':
-        form = RelevamientoForm(request.POST, instance=relevamiento)
-        relevamDetFormSet = relevamientoDetFormSet(request.POST, instance=relevamiento)
-        relevamEspFormSet = relevamientoEspFormSet(request.POST, instance=relevamiento)
-        relevamCuHrFormSet = relevamientoCupoHorasFormSet(request.POST, instance=relevamiento)
-        relevamMenFormSet = relevamientoMensuFormSet(request.POST, instance=relevamiento)
-
-        if form.is_valid() and relevamDetFormSet.is_valid() and relevamEspFormSet.is_valid() and relevamCuHrFormSet.is_valid() and relevamMenFormSet.is_valid():
-            form.save()
-            relevamDetFormSet.save()
-            relevamEspFormSet.save()
-            relevamCuHrFormSet.save()
-            relevamMenFormSet.save()
-            return redirect('Operarios:puntoServicio_list')
+        if  (request.POST.get('action') == 'add_det') or (request.POST.get('action') == 'add_esp'):
+            form = RelevamientoForm(request.POST, instance=relevamiento)
+            relevamDetFormSet = relevamientoDetFormSet(request.POST, instance=relevamiento)
+            relevamEspFormSet = relevamientoEspFormSet(request.POST, instance=relevamiento)
+            relevamCuHrFormSet = relevamientoCupoHorasFormSet(request.POST, instance=relevamiento)
+            relevamMenFormSet = relevamientoMensuFormSet(request.POST, instance=relevamiento)
         else:
-            messages.warning(request, 'No se pudo guardar los cambios')
+            form = RelevamientoForm(request.POST, instance=relevamiento)
+            relevamDetFormSet = relevamientoDetFormSet(request.POST, instance=relevamiento)
+            relevamEspFormSet = relevamientoEspFormSet(request.POST, instance=relevamiento)
+            relevamCuHrFormSet = relevamientoCupoHorasFormSet(request.POST, instance=relevamiento)
+            relevamMenFormSet = relevamientoMensuFormSet(request.POST, instance=relevamiento)
+
+            if form.is_valid() and relevamDetFormSet.is_valid() and relevamEspFormSet.is_valid() and relevamCuHrFormSet.is_valid() and relevamMenFormSet.is_valid():
+                form.save()
+                relevamDetFormSet.save()
+                relevamEspFormSet.save()
+                relevamCuHrFormSet.save()
+                relevamMenFormSet.save()
+                return redirect('Operarios:puntoServicio_list')
+            else:
+                messages.warning(request, 'No se pudo guardar los cambios')
     else:
         """
         Seteamos el punto de servicio
@@ -213,22 +220,28 @@ def Planificacion_create(request, id_puntoServicio=None):
     if planificacion == None:
         planificacion = PlanificacionCab()
 
-    planificacionOpeFormSet = inlineformset_factory(PlanificacionCab, PlanificacionOpe, form=PlanificacionOpeForm, extra=4, can_delete=True)
-    planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=PlanificacionEspForm, extra=4, can_delete=True)
+    planificacionOpeFormSet = inlineformset_factory(PlanificacionCab, PlanificacionOpe, form=PlanificacionOpeForm, extra=1, can_delete=True)
+    planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=PlanificacionEspForm, extra=1, can_delete=True)
 
     if request.method == 'POST':
-        form = PlanificacionForm(request.POST, instance=planificacion)
-        planifOpeFormSet = planificacionOpeFormSet(request.POST, instance=planificacion)
-        planifEspFormSet = planificacionEspFormSet(request.POST, instance=planificacion)
 
-        if form.is_valid(relevamiento.cantidad, relevamiento.cantidadHrTotal, relevamiento.cantidadHrEsp) and planifOpeFormSet.is_valid() and planifEspFormSet.is_valid():
-            form.save()
-            planifOpeFormSet.save()
-            planifEspFormSet.save()
-            messages.success(request, 'Se guardo correctamente la planificación')
-            return redirect('Operarios:planificar_list')
+        if  (request.POST.get('action') == 'add_det') or (request.POST.get('action') == 'add_esp'):
+            form = PlanificacionForm(request.POST, instance=planificacion)
+            planifOpeFormSet = planificacionOpeFormSet(request.POST, instance=planificacion)
+            planifEspFormSet = planificacionEspFormSet(request.POST, instance=planificacion)
         else:
-            messages.warning(request, 'No se pudo guardar los cambios')
+            form = PlanificacionForm(request.POST, instance=planificacion)
+            planifOpeFormSet = planificacionOpeFormSet(request.POST, instance=planificacion)
+            planifEspFormSet = planificacionEspFormSet(request.POST, instance=planificacion)
+
+            if form.is_valid(relevamiento.cantidad, relevamiento.cantidadHrTotal, relevamiento.cantidadHrEsp) and planifOpeFormSet.is_valid() and planifEspFormSet.is_valid():
+                form.save()
+                planifOpeFormSet.save()
+                planifEspFormSet.save()
+                messages.success(request, 'Se guardo correctamente la planificación')
+                return redirect('Operarios:planificar_list')
+            else:
+                messages.warning(request, 'No se pudo guardar los cambios')
     else:
         """
         Seteamos el punto de servicio

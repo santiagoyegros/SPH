@@ -190,7 +190,8 @@ class RelevamientoEsp(models.Model):
     MENSUAL = 'MEN'
     BIMESTRAL = 'BIM'
     TRIMESTRAL = 'TRI'
-    SEMESTRAL = 'SEM'
+    CUATRIMESTRAL = 'CUA'
+    SEMESTRAL = 'SEL'
     ANUAL = 'ANU'
 
     FRECUENCIA = (
@@ -199,6 +200,7 @@ class RelevamientoEsp(models.Model):
         (MENSUAL, 'Mensual'),
         (BIMESTRAL, 'Bimestral'),
         (TRIMESTRAL, 'Trimestral'),
+        (CUATRIMESTRAL, 'Cuatrimestral'),
         (SEMESTRAL, 'Semestral'),
         (ANUAL, 'Anual'),
     )
@@ -294,7 +296,8 @@ class PlanificacionEsp(models.Model):
     MENSUAL = 'MEN'
     BIMESTRAL = 'BIM'
     TRIMESTRAL = 'TRI'
-    SEMESTRAL = 'SEM'
+    CUATRIMESTRAL = 'CUA'
+    SEMESTRAL = 'SEL'
     ANUAL = 'ANU'
 
     FRECUENCIA = (
@@ -303,6 +306,7 @@ class PlanificacionEsp(models.Model):
         (MENSUAL, 'Mensual'),
         (BIMESTRAL, 'Bimestral'),
         (TRIMESTRAL, 'Trimestral'),
+        (CUATRIMESTRAL, 'Cuatrimestral'),
         (SEMESTRAL, 'Semestral'),
         (ANUAL, 'Anual'),
     )

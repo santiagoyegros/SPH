@@ -16,7 +16,8 @@
 
 <div class='col mx-auto'>
 {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
-<form method='POST' action='#'> 
+<form method='POST' action='#' name='formulario' id='formulario'>
+    <input type="hidden" id="action" name="action" value=""> 
     {% csrf_token %}
     
     <div class="container-fluid mb-4 mt-4">
@@ -129,7 +130,7 @@
 
     </div>
     <div class="row mt-3 justify-content-end">
-        <button id='btnDet' class="btn btn-outline-info btn-sm">Añadir Detalle</button>
+        <button type='submit' id='btnDet' class="btn btn-outline-info btn-sm" name='add_det'>Añadir Detalle</button>
     </div>
     
 
@@ -172,7 +173,7 @@
 
     </div>
     <div class="row mt-3 justify-content-end">
-        <button id='btnEsp' class="btn btn-outline-info btn-sm">Añadir Profundas</button>
+        <button type='submit' id='btnEsp' class="btn btn-outline-info btn-sm" name='add_esp'>Añadir Profundas</button>
     </div>
 
     <!--Formulario de Mensualeros-->
@@ -382,6 +383,11 @@ $(function(){
         clon_html = replaceAll(clon, '__prefix__', (total).toString());
         $('#formset-det').append(clon_html);
         $totalDetalle.val(total +  1);
+
+        //Seteamos action
+        document.getElementById('action').value = 'add_det';
+        //hacemos submit
+        document.getElementById('formulario').submit();
     });
 
     var $totalEspeciales = $('#id_relevamientoesp_set-TOTAL_FORMS');
@@ -393,6 +399,11 @@ $(function(){
         clon_html = replaceAll(clon, '__prefix__', (total).toString());
         $('#formset-Esp').append(clon_html);
         $totalEspeciales.val(total +  1);
+
+        //Seteamos action
+        document.getElementById('action').value = 'add_esp';
+        //hacemos submit
+        document.getElementById('formulario').submit();
     });
 
     var $totalCupoHoras = $('#id_relevamientocupohoras_set-TOTAL_FORMS');
@@ -439,7 +450,9 @@ $('input[id$="cantHoras"]').on('change', function(e){
                     total += Number($(this).val())/2;
                 }else if(frecuencia == 'TRI'){
                     total += Number($(this).val())/3;
-                }else if(frecuencia == 'SEM'){
+                }else if(frecuencia == 'CUA'){
+                    total += Number($(this).val())/4;
+                }else if(frecuencia == 'SEL'){
                     total += Number($(this).val())/6;
                 }else if(frecuencia == 'ANU'){
                     total += Number($(this).val())/12;

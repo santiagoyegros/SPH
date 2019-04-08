@@ -24,18 +24,18 @@ background: #FFFFFF;
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" id="relev-tab" data-toggle="tab" href="#relev" role="tab" aria-controls="home" aria-selected="true">
+    <a class="nav-link" id="relev-tab" data-toggle="tab" href="#relev" role="tab" aria-controls="home" aria-selected="true">
         <h4>Servicio Aprobado</h4>
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="plani-tab" data-toggle="tab" href="#plani" role="tab" aria-controls="plani" aria-selected="false">
+    <a class="nav-link active" id="plani-tab" data-toggle="tab" href="#plani" role="tab" aria-controls="plani" aria-selected="false">
         <h4>Planificación</h4>
     </a>
   </li>
 </ul>
 <div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="relev" role="tabpanel" aria-labelledby="relev-tab">
+  <div class="tab-pane fade" id="relev" role="tabpanel" aria-labelledby="relev-tab">
     <div class="card-body">
         <div class="container-fluid mb-1 mt-2 ">
             <div class="row">
@@ -235,9 +235,10 @@ background: #FFFFFF;
         </div>
     </div>
   </div>
-  <div class="tab-pane fade" id="plani" role="tabpanel" aria-labelledby="plani-tab">
+  <div class="tab-pane fade show active" id="plani" role="tabpanel" aria-labelledby="plani-tab">
     <div class="card-body">
-        <form method='POST' action='#'> 
+        <form method='POST' action='#' name='formulario' id='formulario'>
+            <input type="hidden" id="action" name="action" value="">
             {% csrf_token %}
             {{ form.puntoServicio.as_hidden }}
             <div class="container-fluid mb-3 mt-1">
@@ -312,7 +313,7 @@ background: #FFFFFF;
                 {% endfor %}
             </div>
             <div class="row justify-content-end">
-                    <button id='btnDet' class="btn btn-outline-info btn-sm">Añadir Detalle</button>
+                    <button type='submit' id='btnDet' class="btn btn-outline-info btn-sm" name='add_det'>Añadir Detalle</button>
             </div>
 
 
@@ -357,7 +358,7 @@ background: #FFFFFF;
                 {% endfor %}
             </div>
             <div class="row justify-content-end">
-                    <button id='btnEsp' class="btn btn-outline-info btn-sm">Añadir Especiales</button>
+                    <button type='submit' id='btnEsp' class="btn btn-outline-info btn-sm" name='add_esp'>Añadir Profundas</button>
             </div>
             <div class="row mt-5 justify-content-end">
                 <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
@@ -523,6 +524,11 @@ $(function(){
         clon_html = replaceAll(clon, '__prefix__', (total).toString());
         $('#formset-det').append(clon_html);
         $totalDetalle.val(total +  1);
+
+        //Seteamos action
+        document.getElementById('action').value = 'add_det';
+        //hacemos submit
+        document.getElementById('formulario').submit();
     });
 
     var $totalEspeciales = $('#id_planificacionesp_set-TOTAL_FORMS');
@@ -534,6 +540,11 @@ $(function(){
         clon_html = replaceAll(clon, '__prefix__', (total).toString());
         $('#formset-Esp').append(clon_html);
         $totalEspeciales.val(total +  1);
+
+        //Seteamos action
+        document.getElementById('action').value = 'add_esp';
+        //hacemos submit
+        document.getElementById('formulario').submit();
     });
 });
 
@@ -558,7 +569,9 @@ $('input[id$="-cantHoras"]').change(function() {
                     total += Number($(this).val())/2;
                 }else if(frecuencia == 'TRI'){
                     total += Number($(this).val())/3;
-                }else if(frecuencia == 'SEM'){
+                }else if(frecuencia == 'CUA'){
+                    total += Number($(this).val())/4;
+                }else if(frecuencia == 'SEL'){
                     total += Number($(this).val())/6;
                 }else if(frecuencia == 'ANU'){
                     total += Number($(this).val())/12;

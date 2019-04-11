@@ -236,7 +236,7 @@ class RelevamientoCupoHoras(models.Model):
     )
     
     relevamientoCab =  models.ForeignKey(RelevamientoCab, blank=True, null=True, on_delete=models.CASCADE)
-    cantCHoras = models.IntegerField('Cantidad de Horas', db_column='cantHoras', blank=True, null=True)
+    cantCHoras = models.DecimalField('Cantidad de Horas', max_digits=7, decimal_places=1, db_column='cantHoras', blank=True, null=True)
     frecuencia = models.CharField('Frecuencia', max_length = 3, choices = CUPO_FRECUENCIA, default = SEMANAL, )
     tipoHora = models.ForeignKey(TipoHorario, blank=True, null=True, on_delete=models.CASCADE)
 
@@ -364,8 +364,8 @@ def save_user_cargoasignado(sender, instance, **kwargs):
 
 
 class AsigJefeFiscal(models.Model):
-    userJefe = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name='JefeOp_AsigJefeFiscal')
-    userFiscal = models.OneToOneField(User, on_delete=models.CASCADE, related_name='Fiscal_AsigJefeFiscal')
+    userJefe = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name='JefeOpAsigJefeFiscal')
+    userFiscal = models.OneToOneField(User, on_delete=models.CASCADE, related_name='FiscalAsigJefeFiscal')
     
 
     class Meta:
@@ -376,8 +376,8 @@ class AsigJefeFiscal(models.Model):
         return self.userJefe.first_name
 
 class AsigFiscalPuntoServicio(models.Model):
-    userFiscal = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Fiscal_AsigFiscalPuntoServicio')
-    puntoServicio = models.OneToOneField(PuntoServicio, on_delete=models.CASCADE, related_name='puntoServicio_AsigFiscalPuntoServicio')
+    userFiscal = models.ForeignKey(User, on_delete=models.CASCADE, related_name='FiscalAsigFiscalPuntoServicio')
+    puntoServicio = models.OneToOneField(PuntoServicio, on_delete=models.CASCADE, related_name='puntoServicioAsigFiscalPuntoServicio')
 
     class Meta:
         verbose_name = _("Asignacion Fiscal-PuntoServicio")

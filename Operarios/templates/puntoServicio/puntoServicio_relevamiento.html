@@ -494,6 +494,26 @@ $('input[id$="cantCHoras"]').on('change', function(e){
 
     });
 
+
+$('input[id$="cantCHoras"]').keyup(function(){
+    debugger;
+    var val = $(this).val();
+    if(isNaN(val)){
+        val = val.replace(/[^0-9\.]/g,'');
+        if(val.split('.').length>2){
+            val =val.replace(/\.+$/,"");
+        }
+    }else{
+        decimales = val.split('.');
+        if(decimales[1].length > 1){
+            val = decimales[0] + '.' + decimales[1].substring(0,1);
+        }
+    }
+    
+        
+    
+    $(this).val(val); 
+});
 /*$('input[id$="sueldo"]').on('change', function(e){
         debugger;
 

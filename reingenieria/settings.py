@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'reingenieria.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
-        'HOST': 'baudeletsql2k12',
+        'HOST': 'gbdbdev',
         'USER': 'reuser',
         'PASSWORD': 'r3us3r',
         'NAME': 'reingenieria',

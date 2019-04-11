@@ -721,6 +721,29 @@ $('input[id^="id_planificacionope_set-"]').on('dp.change change', function(e){
         
     });
 
+$('input[id$="-cantidad"]').change(function() {
+    debugger;
+    //aqui empieza el calculo de la cantidad total de Operarios
+    var total = 0;
+    var subtotal = 0;
+    
+    var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS');
+    var totalDet = parseInt(totalDetalleOpe.val(), 10);
+
+    for(i = 0; i < totalDet; i++){
+        var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
+        if (parseInt(cantOpe) > 0){
+            total += parseInt(cantOpe);
+        }
+    }
+
+    //Cargamos el total en input de cantidad de operarios
+    $('#id_cantidad').val(total);
+
+
+
+});
+
 
 </script>
 

@@ -32,9 +32,36 @@ class PuntosServicioList(ListView):
     context_object_name = 'PuntoServicio'
     template_name = "puntoServicio/puntoServicio_list.html"
     def get_queryset(self):
-        consulta = PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal=self.request.user.id).query
-        logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-        return PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal=self.request.user.id)
+        try:
+            #Traemos el cargo asignado
+            ConsultaCargoUsuario = Cargo.objects.filter(cargoasignado__user=self.request.user.id).query
+            logging.getLogger("error_logger").error('La consulta del cargo del usuario logueado ejecutada es: {0}'.format(ConsultaCargoUsuario))
+            cargoUsuario = Cargo.objects.get(cargoasignado__user=self.request.user.id)
+
+            if (cargoUsuario.cargo == 'Fiscal'):
+                #Si es fiscal, le trae sus puntos de servicios. 'Fiscal'
+                consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id).query
+                logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
+                return PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)
+
+            elif (cargoUsuario.cargo == 'Jefe de Operaciones'):
+                #Si es jefe de operaciones -> Trae todo los puntos de servicio de sus fiscales. 'Jefe de Operaciones'
+                consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id).query
+                logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
+                return PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)
+                pass
+            elif (cargoUsuario.cargo == 'Gerente de Operaciones'):
+                #Si es Gerente de Operaciones/SubGerente -> Todos los contratos. 'Gerente de Operaciones'
+                consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id).query
+                logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
+                return PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)
+                pass
+
+            else:
+                #Else: algun error, de no tener el rol correcto.
+                pass
+        except Cargo.DoesNotExist:
+            raise Http404("El usuario no tiene el cargo requerido para ingresar")        
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.add_puntoservicio', raise_exception=True), name='dispatch')
@@ -294,13 +321,13 @@ def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
         asignacion.save()
         
     #Se traen todos los fiscales que estan asignados al jefe de operaciones en cuestion
-    fiscales_asig = User.objects.filter(Fiscal_AsigJefeFiscal__userJefe=id_user_jefe)
-    consulta = User.objects.filter(Fiscal_AsigJefeFiscal__userJefe=id_user_jefe).query
+    fiscales_asig = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe)
+    consulta = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
 
     #se trae los fiscales disponibles
-    fiscales_disp = User.objects.filter(Fiscal_AsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal')
-    consulta2 = User.objects.filter(Fiscal_AsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal').query
+    fiscales_disp = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal')
+    consulta2 = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal').query
     logging.getLogger("error_logger").error('La consulta de fiscales disponibles ejecutada es: {0}'.format(consulta2))
 
     #cargamos el contexto
@@ -342,13 +369,13 @@ def Fiscales_asig(request, id_user_fiscal=None, id_puntoServicio=None):
         asignacion.save()
         
     #Se traen todos los puntos de servicio que estan asignados al fiscal en cuestion
-    puntosServ_asig = PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal=id_user_fiscal)
-    consulta = PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal=id_user_fiscal).query
+    puntosServ_asig = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal)
+    consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
 
     #se trae los puntos de servicio disponibles
-    puntosServ_disp = PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal__isnull=True)
-    consulta2 = PuntoServicio.objects.filter(puntoServicio_AsigFiscalPuntoServicio__userFiscal__isnull=True).query
+    puntosServ_disp = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True)
+    consulta2 = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True).query
     logging.getLogger("error_logger").error('La consulta de puntos de servicio disponibles ejecutada es: {0}'.format(consulta2))
 
     #cargamos el contexto

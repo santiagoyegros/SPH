@@ -119,7 +119,7 @@ class OperarioForm(forms.ModelForm):
             'NroLegajo': forms.TextInput(attrs={'class':'form-control'}),
             'Telefono': forms.TextInput(attrs={'class':'form-control'}),
             'Email': forms.TextInput(attrs={'class':'form-control'}),
-            'FechaNacimiento': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"}),
+            'FechaNacimiento': DatePickerInput(format='%d/%m/%Y', options={"useCurrent": False, "locale": "es"}),
             'LugarNacimiento': forms.TextInput(attrs={'class':'form-control'}),
             'NumCedula': forms.TextInput(attrs={'class':'form-control'}),
             'NumPasaporte': forms.TextInput(attrs={'class':'form-control'}),
@@ -130,7 +130,7 @@ class OperarioForm(forms.ModelForm):
             'NombreContacto': forms.TextInput(attrs={'class':'form-control'}),
             'Profesion': forms.TextInput(attrs={'class':'form-control'}),
             'Nacionalidad': forms.Select(attrs={'class':'form-control'}),
-            'FechaInicio':  DatePickerInput(format='%d/%m/%Y')
+            'FechaInicio':  DatePickerInput(format='%d/%m/%Y', options={"useCurrent": False, "locale": "es"})
         }
 
 class RelevamientoForm(forms.ModelForm):
@@ -218,20 +218,20 @@ class RelevamientoDetForm(forms.ModelForm):
         widgets = {
             'orden': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'tipoServPart': forms.Select(attrs={'class':'form-control form-control-sm'}),
-            'lunEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Lunes'),
-            'lunSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Lunes'),
-            'marEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Martes'),
-            'marSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Martes'),
-            'mieEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Miercoles'),
-            'mieSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Miercoles'),
-            'jueEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Jueves'),
-            'jueSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Jueves'),
-            'vieEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Viernes'),
-            'vieSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Viernes'),
-            'sabEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Sabado'),
-            'sabSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Sabado'),
-            'domEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Domingo'),
-            'domSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Domingo')
+            'lunEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Lunes'),
+            'lunSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Lunes'),
+            'marEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Martes'),
+            'marSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Martes'),
+            'mieEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Miercoles'),
+            'mieSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Miercoles'),
+            'jueEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Jueves'),
+            'jueSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Jueves'),
+            'vieEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Viernes'),
+            'vieSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Viernes'),
+            'sabEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Sabado'),
+            'sabSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Sabado'),
+            'domEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Domingo'),
+            'domSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Domingo')
         }
 
 class RelevamientoEspForm(forms.ModelForm):
@@ -452,8 +452,8 @@ class PlanificacionOpeForm(forms.ModelForm):
             'sab': forms.CheckboxInput(attrs={'class':'form-check-input p-0'}),
             'dom': forms.CheckboxInput(attrs={'class':'form-check-input p-0'}),
             'fer': forms.CheckboxInput(attrs={'class':'form-check-input p-0'}),
-            'ent': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Lunes'),
-            'sal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Lunes'),
+            'ent': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Lunes'),
+            'sal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Lunes'),
             'corte': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'total': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             
@@ -551,20 +551,20 @@ class AsignacionDetForm(forms.ModelForm):
 
         widgets = {
             'operario': forms.Select(attrs={'class':'form-control form-control-sm'}),
-            'lunEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Lunes'),
-            'lunSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Lunes'),
-            'marEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Martes'),
-            'marSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Martes'),
-            'mieEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Miercoles'),
-            'mieSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Miercoles'),
-            'jueEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Jueves'),
-            'jueSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Jueves'),
-            'vieEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Viernes'),
-            'vieSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Viernes'),
-            'sabEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Sabado'),
-            'sabSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Sabado'),
-            'domEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).start_of('Domingo'),
-            'domSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"showTodayButton": False, "stepping": 5}).end_of('Domingo')
+            'lunEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Lunes'),
+            'lunSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Lunes'),
+            'marEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Martes'),
+            'marSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Martes'),
+            'mieEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Miercoles'),
+            'mieSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Miercoles'),
+            'jueEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Jueves'),
+            'jueSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Jueves'),
+            'vieEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Viernes'),
+            'vieSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Viernes'),
+            'sabEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Sabado'),
+            'sabSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Sabado'),
+            'domEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Domingo'),
+            'domSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Domingo')
         }
 
 def timeInHours(str):

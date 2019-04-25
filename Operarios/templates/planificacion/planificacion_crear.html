@@ -316,7 +316,7 @@ background: #FFFFFF;
                 {% endfor %}
             </div>
             <div class="row justify-content-end">
-                    <button type='submit' id='btnDet' class="btn btn-outline-info btn-sm" name='add_det'>Añadir Detalle</button>
+                <button type='submit' id='btnDet' class="btn btn-outline-info btn-sm" name='add_det'>Añadir Detalle</button>
             </div>
 
 
@@ -364,7 +364,7 @@ background: #FFFFFF;
                 {% endfor %}
             </div>
             <div class="row justify-content-end">
-                    <button type='submit' id='btnEsp' class="btn btn-outline-info btn-sm" name='add_esp'>Añadir Profundas</button>
+                <button type='submit' id='btnEsp' class="btn btn-outline-info btn-sm" name='add_esp'>Añadir Profundas</button>
             </div>
             <div class="row mt-5 justify-content-end">
                 <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
@@ -707,7 +707,7 @@ function RecalcularHorasEsp(){
 
             var n = obtenerNumeroId(this.id);
 
-            if(!($('#leaveFormEsp-'+ i).css('display') == 'none')){
+            if(!($('#leaveFormEsp-'+ n).css('display') == 'none')){
                 var frecuencia = $('#id_planificacionesp_set-' + n + '-frecuencia').val();
 
                 if(frecuencia == 'DIA'){

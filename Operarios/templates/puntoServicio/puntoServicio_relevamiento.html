@@ -56,8 +56,8 @@
             <div class="col-1">Eliminar? </div>
         </div>
 	    {% for form in relevamCuHrFormSet %}
-        {{ form.id }}
-        <div class="row mt-2">
+        <div class="row mt-2 leaveFormCup" id="leaveFormCup-{{ forloop.counter0 }}">
+            {{ form.id }}
             <div class="col">
                 {{ form.cantCHoras }}
             </div>
@@ -68,7 +68,10 @@
                 {{ form.tipoHora }}
             </div>
             <div class="col-1 text-center">
-                {{ form.DELETE }}
+                <input type="checkbox" style="display:none" name="relevamientocupohoras_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
+                <a href="javascript:void(0);" onclick="deleteLeaveRowCup(this, {{ forloop.counter0 }});" class="remove muted pull-right">
+                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                </a>
             </div>
         </div>
         {% endfor %}
@@ -96,8 +99,8 @@
             <div class="col-1 p-0 text-center"> Eliminar? </div>
         </div>
 	    {% for form in relevamDetFormSet %}
-        {{ form.id }}
-        <div class="row mt-2">
+        <div class="row mt-2 leaveFormDet" id="leaveFormDet-{{ forloop.counter0 }}">
+            {{ form.id }}
             <div class="col-2 p-0 mt-3">
                 {{ form.tipoServPart }}
             </div>
@@ -123,7 +126,10 @@
                 {{ form.domEnt }}{{ form.domSal }}
             </div>
             <div class="col-1 p-0 text-center">
-                {{ form.DELETE }}
+                <input type="checkbox" style="display:none" name="relevamientodet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
+                <a href="javascript:void(0);" onclick="deleteLeaveRowDet(this, {{ forloop.counter0 }});" class="remove muted pull-right">
+                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                </a>
             </div>
         </div>
         {% endfor %}
@@ -151,8 +157,8 @@
             <div class="col-1">Eliminar? </div>
         </div>
 	    {% for form in relevamEspFormSet %}
-        {{ form.id }}
-        <div class="row mt-2">
+        <div class="row mt-2 leaveFormEsp"  id="leaveFormEsp-{{ forloop.counter0 }}">
+            {{ form.id }}
             <div class="col">
                 {{ form.tipo }}
             </div>
@@ -166,14 +172,17 @@
                 {{ form.cantHoras }}
             </div>
             <div class="col-1 text-center">
-                {{ form.DELETE }}
+                <input type="checkbox" style="display:none" name="relevamientoesp_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
+                <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, {{ forloop.counter0 }});" class="remove muted pull-right">
+                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                </a>
             </div>
         </div>
         {% endfor %}
 
     </div>
     <div class="row mt-3 justify-content-end">
-        <button type='submit' id='btnEsp' class="btn btn-outline-info btn-sm" name='add_esp'>Añadir Profundas</button>
+        <button id='btnEsp' class="btn btn-outline-info btn-sm">Añadir Profundas</button>
     </div>
 
     <!--Formulario de Mensualeros-->
@@ -187,8 +196,8 @@
             <div class="col-1">Eliminar? </div>
         </div>
 	    {% for form in relevamMenFormSet %}
-        {{ form.id }}
-        <div class="row mt-2">
+        <div class="row mt-2 leaveFormMen" id="leaveFormMen-{{ forloop.counter0 }}">
+            {{ form.id }}
             <div class="col-2">
                 {{ form.mensuCantidad }}
             </div>
@@ -196,7 +205,10 @@
                 {{ form.sueldo }}
             </div>
             <div class="col-1 text-center">
-                {{ form.DELETE }}
+                <input type="checkbox" style="display:none" name="relevamientomensualeros_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
+                <a href="javascript:void(0);" onclick="deleteLeaveRowMen(this, {{ forloop.counter0 }});" class="remove muted pull-right">
+                    <div class="fa fa-times fa-lg" title="Delete day off" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                </a>
             </div>
         </div>
         {% endfor %}
@@ -222,7 +234,7 @@
   
 <!-- Script que carga las filas dinamicamente -->
 <script type='template/CupoHoras'>
-    <div class="row mt-2">
+    <div class="row mt-2 leaveFormCup" id="leaveFormCup-__prefix__">
         <div class="col">
             {{ relevamCuHrFormSet.empty_form.cantCHoras }}
         </div>
@@ -233,13 +245,16 @@
             {{ relevamCuHrFormSet.empty_form.tipoHora }}
         </div>
         <div class="col-1 text-center">
-            {{ relevamCuHrFormSet.empty_form.DELETE }}
+            <input type="checkbox" style="display:none" name="relevamientocupohoras_set-__prefix__-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
+            <a href="javascript:void(0);" onclick="deleteLeaveRowCup(this, __prefix__);" class="remove muted pull-right">
+                <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+            </a>
         </div>
     </div>
 </script>
 
 <script type='template/Detalle'>
-    <div class="row mt-2">
+    <div class="row mt-2 leaveFormDet" id="leaveFormDet-__prefix__">
             <div class="col-2 p-0 mt-3">
                 {{ relevamDetFormSet.empty_form.tipoServPart }}
             </div>
@@ -265,14 +280,17 @@
                 {{ relevamDetFormSet.empty_form.domEnt }}{{ relevamDetFormSet.empty_form.domSal }}
             </div>
             <div class="col-1 p-0 text-center">
-                {{ relevamDetFormSet.empty_form.DELETE }}
+                <input type="checkbox" style="display:none" name="relevamientodet_set-__prefix__-{{ relevamDetFormSet.empty_form.DELETE.name }}" id="{{ relevamDetFormSet.empty_form.DELETE.id_for_label }}" />
+                <a href="javascript:void(0);" onclick="deleteLeaveRowDet(this, __prefix__);" class="remove muted pull-right">
+                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                </a>
             </div>
         </div>
 </script>
 
 
 <script type='template/Especiales'>
-    <div class="row mt-2">
+    <div class="row mt-2 leaveFormMen" id="leaveFormMen-__prefix__>
             <div class="col">
                 {{ relevamEspFormSet.empty_form.tipo }}
             </div>
@@ -286,13 +304,16 @@
                 {{ relevamEspFormSet.empty_form.cantHoras }}
             </div>
             <div class="col-1 text-center">
-                {{ relevamEspFormSet.empty_form.DELETE }}
+                <input type="checkbox" style="display:none" name="relevamientoesp_set-__prefix__-{{ relevamEspFormSet.empty_form.DELETE.name }}" id="{{ relevamEspFormSet.empty_form.DELETE.id_for_label }}" />
+                <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, __prefix__);" class="remove muted pull-right">
+                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                </a>
             </div>
         </div>  
 </script>
 
 <script type='template/Mensualeros'>
-    <div class="row mt-2">
+    <div class="row mt-2 leaveFormMen" id="leaveFormMen-__prefix__">
         <div class="col-2">
             {{ relevamMenFormSet.empty_form.mensuCantidad }}
         </div>
@@ -300,7 +321,10 @@
             {{ relevamMenFormSet.empty_form.sueldo }}
         </div>
         <div class="col-1 text-center">
-            {{ relevamMenFormSet.empty_form.DELETE }}
+            <input type="checkbox" style="display:none" name="relevamientomensualeros_set-__prefix__-{{ relevamMenFormSet.empty_form.DELETE.name }}" id="{{ relevamMenFormSet.empty_form.DELETE.id_for_label }}" />
+            <a href="javascript:void(0);" onclick="deleteLeaveRowMen(this, __prefix__);" class="remove muted pull-right">
+                <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+            </a>
         </div>
     </div>
 </script>
@@ -365,6 +389,104 @@ function obtenerNumeroId(id){
     return sp[1];
 }
 
+function deleteLeaveRowCup(deleteLink, id) {
+    debugger;
+    $(deleteLink).closest('.leaveFormCup').hide();
+
+    $("#id_relevamientocupohoras_set-" + id + "-DELETE").prop("checked", true);
+    RecalcularHorasCup();
+}
+
+function deleteLeaveRowDet(deleteLink, id) {
+    debugger;
+    $(deleteLink).closest('.leaveFormDet').hide();
+
+    $("#id_relevamientodet_set-" + id + "-DELETE").prop("checked", true);
+}
+
+function deleteLeaveRowEsp(deleteLink, id) {
+    debugger;
+    $(deleteLink).closest('.leaveFormEsp').hide();
+
+    $("#id_relevamientoesp_set-" + id + "-DELETE").prop("checked", true);
+    RecalcularHorasEsp();
+}
+
+function deleteLeaveRowMen(deleteLink, id) {
+    debugger;
+    $(deleteLink).closest('.leaveFormMen').hide();
+
+    $("#id_relevamientomensualeros_set-" + id + "-DELETE").prop("checked", true);
+}
+
+function RecalcularHorasCup(){
+    //aqui empieza el calculo del total de Cupo de horas 
+    var total = 0;
+    var subtotal = 0;
+    $('input[id$="cantCHoras"]').each(function() {
+        if (!isNaN($(this).val()) && $(this).val() !== '') {
+
+            var n = obtenerNumeroId(this.id);
+            if(!($('#leaveFormCup-'+ n).css('display') == 'none')){
+                total += Number($(this).val());
+            }
+
+        }
+    })
+        
+    total = hoursToString(total);
+    $('#sumAll_1').val(SumHrMin(total, '00:00'));
+
+    //aqui empieza el calculo del total de horas
+    var total = 0;
+    var sumaEsp = timeInHours($('#sumAll_1').val());
+    total = hoursToString(sumaEsp);
+    $('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
+}
+
+function RecalcularHorasEsp(){
+    //aqui empieza el calculo del total de horas especiales
+    var total = 0;
+    var subtotal = 0;
+    $('input[id$="cantHoras"]').each(function() {
+        if (!isNaN($(this).val()) && $(this).val() !== '') {
+
+            var n = obtenerNumeroId(this.id);
+            if(!($('#leaveFormEsp-'+ n).css('display') == 'none')){
+                var frecuencia = $('#id_relevamientoesp_set-' + n + '-frecuencia').val();
+
+                if(frecuencia == 'DIA'){
+                    total += Number($(this).val())*30;
+                }else if(frecuencia == 'SEM'){
+                    total += Number($(this).val())*4;
+                }else if(frecuencia == 'MEN'){
+                    total += Number($(this).val());
+                }else if(frecuencia == 'BIM'){
+                    total += Number($(this).val())/2;
+                }else if(frecuencia == 'TRI'){
+                    total += Number($(this).val())/3;
+                }else if(frecuencia == 'CUA'){
+                    total += Number($(this).val())/4;
+                }else if(frecuencia == 'SEL'){
+                    total += Number($(this).val())/6;
+                }else if(frecuencia == 'ANU'){
+                    total += Number($(this).val())/12;
+                }
+                //total += Number($(this).val());
+            }
+        }
+    })
+    total = hoursToString(total);
+    $('#sumAll_2').val(SumHrMin(total, '00:00'));
+
+    //aqui empieza el calculo del total de horas
+    var total = 0;
+    var sumaEsp = timeInHours($('#sumAll_2').val());
+    total = hoursToString(sumaEsp);
+    $('#id_cantidadHrEsp').val(SumHrMin(total, '00:00'));
+
+}
+
 $(function(){
 
     // Reemplaza todas las coincidencias en vez de solo la primera
@@ -401,9 +523,9 @@ $(function(){
         $totalEspeciales.val(total +  1);
 
         //Seteamos action
-        document.getElementById('action').value = 'add_esp';
+        //document.getElementById('action').value = 'add_esp';
         //hacemos submit
-        document.getElementById('formulario').submit();
+        //document.getElementById('formulario').submit();
     });
 
     var $totalCupoHoras = $('#id_relevamientocupohoras_set-TOTAL_FORMS');
@@ -431,68 +553,13 @@ $(function(){
 
 $('input[id$="cantHoras"], [id$="frecuencia"]').on('change', function(e){
         debugger;
-        //aqui empieza el calculo del total de horas especiales
-        var total = 0;
-        var subtotal = 0;
-        $('input[id$="cantHoras"]').each(function() {
-            if (!isNaN($(this).val()) && $(this).val() !== '') {
-
-                var n = obtenerNumeroId(this.id);
-                var frecuencia = $('#id_relevamientoesp_set-' + n + '-frecuencia').val();
-
-                if(frecuencia == 'DIA'){
-                    total += Number($(this).val())*30;
-                }else if(frecuencia == 'SEM'){
-                    total += Number($(this).val())*4;
-                }else if(frecuencia == 'MEN'){
-                    total += Number($(this).val());
-                }else if(frecuencia == 'BIM'){
-                    total += Number($(this).val())/2;
-                }else if(frecuencia == 'TRI'){
-                    total += Number($(this).val())/3;
-                }else if(frecuencia == 'CUA'){
-                    total += Number($(this).val())/4;
-                }else if(frecuencia == 'SEL'){
-                    total += Number($(this).val())/6;
-                }else if(frecuencia == 'ANU'){
-                    total += Number($(this).val())/12;
-                }
-                //total += Number($(this).val());
-            }
-        })
-        total = hoursToString(total);
-        $('#sumAll_2').val(SumHrMin(total, '00:00'));
-
-        //aqui empieza el calculo del total de horas
-        var total = 0;
-        var sumaEsp = timeInHours($('#sumAll_2').val());
-        total = hoursToString(sumaEsp);
-        $('#id_cantidadHrEsp').val(SumHrMin(total, '00:00'));
-
-    });
+        RecalcularHorasEsp();
+});
 
 $('input[id$="cantCHoras"]').on('change', function(e){
         debugger;
-        //aqui empieza el calculo del total de horas especiales
-        var total = 0;
-        var subtotal = 0;
-        $('input[id$="cantCHoras"]').each(function() {
-            if (!isNaN($(this).val()) && $(this).val() !== '') {
-
-                total += Number($(this).val());
-
-            }
-        })
-        total = hoursToString(total);
-        $('#sumAll_1').val(SumHrMin(total, '00:00'));
-
-        //aqui empieza el calculo del total de horas
-        var total = 0;
-        var sumaEsp = timeInHours($('#sumAll_1').val());
-        total = hoursToString(sumaEsp);
-        $('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
-
-    });
+        RecalcularHorasCup();
+});
 
 
 $('input[id$="cantCHoras"]').keyup(function(){

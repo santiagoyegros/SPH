@@ -121,7 +121,7 @@ def Relevamiento(request, id_puntoServicio=None):
     relevamientoMensuFormSet =      inlineformset_factory(RelevamientoCab, RelevamientoMensualeros, form=RelevamientoMensualerosForm, extra=1, can_delete=True)
 
     if request.method == 'POST':
-        if  (request.POST.get('action') == 'add_det') or (request.POST.get('action') == 'add_esp'):
+        if  (request.POST.get('action') == 'add_det'):
             form = RelevamientoForm(request.POST, instance=relevamiento)
             relevamDetFormSet = relevamientoDetFormSet(request.POST, instance=relevamiento)
             relevamEspFormSet = relevamientoEspFormSet(request.POST, instance=relevamiento)
@@ -476,20 +476,24 @@ def Asignacion_create(request, id_puntoServicio=None):
     if asignacion == None:
         asignacion = AsignacionCab()
 
-    asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=3, can_delete=True)
+    asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
 
     if request.method == 'POST':
-        form = AsignacionCabForm(request.POST, instance=asignacion)
-        AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
 
-
-        if form.is_valid() and AsigDetFormSet.is_valid():
-            form.save()
-            AsigDetFormSet.save()
-            messages.success(request, 'Se guardo correctamente la asignacion')
-            return redirect('Operarios:asignacion_list')
+        if  (request.POST.get('action') == 'add_det'):
+            form = AsignacionCabForm(request.POST, instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
         else:
-            messages.warning(request, 'No se pudo guardar los cambios')
+            form = AsignacionCabForm(request.POST, instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
+
+            if form.is_valid() and AsigDetFormSet.is_valid():
+                form.save()
+                AsigDetFormSet.save()
+                messages.success(request, 'Se guardo correctamente la asignacion')
+                return redirect('Operarios:asignacion_list')
+            else:
+                messages.warning(request, 'No se pudo guardar los cambios')
     else:
         """
         Seteamos el punto de servicio

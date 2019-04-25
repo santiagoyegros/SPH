@@ -244,11 +244,28 @@ def Planificacion_create(request, id_puntoServicio=None):
     ''' Obtenemos la planificacion en caso de que exista una '''
     planificacion = PlanificacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
 
+    initial = []
+    CantlimpiezaProf = 1
     if planificacion == None:
         planificacion = PlanificacionCab()
 
+        if relevamiento:
+            for relevesp in relevamiento.relevamientoesp_set.all():
+                initial.append({'tipo': relevesp.tipo, 
+                                'frecuencia': relevesp.dia,
+                                'dia': relevesp.dia,
+                                'cantHoras': relevesp.cantHoras})
+                # initial=[
+                #         {'especialista': 2, 
+                #         'tipo': 2,
+                #         'frecuencia': 'ANUAL',
+                #         'dia': 'SAB',
+                #         'cantHoras': 99}
+                #         ]
+            CantlimpiezaProf = len(initial)
+
     planificacionOpeFormSet = inlineformset_factory(PlanificacionCab, PlanificacionOpe, form=PlanificacionOpeForm, extra=1, can_delete=True)
-    planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=PlanificacionEspForm, extra=1, can_delete=True)
+    planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=PlanificacionEspForm, extra=CantlimpiezaProf, can_delete=True)
 
     if request.method == 'POST':
 
@@ -277,7 +294,10 @@ def Planificacion_create(request, id_puntoServicio=None):
 
         form = PlanificacionForm(instance=planificacion)
         planifOpeFormSet = planificacionOpeFormSet(instance=planificacion)
-        planifEspFormSet = planificacionEspFormSet(instance=planificacion)
+        if len(initial) > 0:
+            planifEspFormSet = planificacionEspFormSet(instance=planificacion, initial=initial)
+        else:
+            planifEspFormSet = planificacionEspFormSet(instance=planificacion)
 
     contexto = {
             'title': 'Nueva Planificación',

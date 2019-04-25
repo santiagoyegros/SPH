@@ -264,8 +264,8 @@ background: #FFFFFF;
                     <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm" readonly/></div>
                 </div>
                 {% for form in planifOpeFormSet %}
+                <div id="leaveForm-{{ forloop.counter0 }}" class="container-fluid border rounded border-top-0 border-bottom-0 border-right-1 border-left-1 border-danger mb-1 leaveForm">
                 {{ form.id }}
-                <div class="container-fluid border rounded border-top-0 border-bottom-0 border-right-1 border-left-1 border-danger mb-1">
                     <div class="row col-8 mt-4">
                         <label for="staticEmail" class="col-sm-2"><p class='text-left'>Perfil:</p> </label>
                         {{ form.especialista }}
@@ -306,7 +306,10 @@ background: #FFFFFF;
                             {{ form.total }}
                         </div>
                         <div class="col-1 text-center">
-                            {{ form.DELETE }}
+                            <input type="checkbox" style="display:none" name="planificacionope_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
+                            <a href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});" class="remove muted pull-right">
+                                <div class="fa fa-times fa-lg" title="Delete day off" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -334,8 +337,8 @@ background: #FFFFFF;
                     <div class="col-1">Eliminar? </div>
                 </div>
                 {% for form in planifEspFormSet %}
+                <div class="row mt-2 leaveFormEsp" id="leaveFormEsp-{{ forloop.counter0 }}">
                 {{ form.id }}
-                <div class="row mt-2">
                     <div class="col">
                         {{ form.especialista }}
                     </div>
@@ -352,7 +355,10 @@ background: #FFFFFF;
                         {{ form.cantHoras }}
                     </div>
                     <div class="col-1 text-center">
-                        {{ form.DELETE }}
+                        <input type="checkbox" style="display:none" name="planificacionesp_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
+                        <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, {{ forloop.counter0 }});" class="remove muted pull-right">
+                            <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                        </a>
                     </div>
                 </div>
                 {% endfor %}
@@ -506,6 +512,235 @@ retorna -1 si n1 es menor a n2
 
 }
 
+function updateFormElementIndices(formClass) {
+  var forms = $('.' + formClass);
+
+  forms.each(function(i, el) {
+      var curIndex = $(el).attr('id').match(/\d+/)[0];
+
+      $(el).attr('id', $(el).attr('id').replace(curIndex, i));
+
+      var inputs = $(el).find('.' + formClass + 'Input');
+
+      inputs.each(function(j, input) {
+          $(input).attr('id', $(input).attr('id').replace(curIndex, i));
+          $(input).attr('name', $(input).attr('name').replace(curIndex, i));
+      });
+  });
+}
+
+function deleteLeaveRow(deleteLink, id) {
+    debugger;
+    //var totalFormsField = $('#id_planificacionope_set-TOTAL_FORMS');
+    //var totalForms = parseInt(totalFormsField.val()) - 1;
+    //totalFormsField.val(totalForms);
+
+    $(deleteLink).closest('.leaveForm').hide();
+
+    $("#id_planificacionope_set-" + id + "-DELETE").prop("checked", true);
+    RecalcularHoras();
+    // for formset functionality to work properly, need to update all existing form ids so they're sequential
+    //updateFormElementIndices('leaveForm');
+
+    // Have to destroy and rebind all the datepicker elements, otherwise they will be bound to the wrong
+    // form element as rows are added and removed.
+    //$('.datepicker').each(function() {
+    //    $(this).datepicker('destroy');
+    //    $(this).datepicker({altFormat:"yy-mm-dd"});
+    //});
+
+    //if (totalForms == 0) {
+    //    $('#requestLeaveButton').addClass('disabled');
+    //}
+
+    //updateLeaveTotal();
+}
+
+function deleteLeaveRowEsp(deleteLink, id) {
+    debugger;
+
+    $(deleteLink).closest('.leaveFormEsp').hide();
+
+    $("#id_planificacionesp_set-" + id + "-DELETE").prop("checked", true);
+    RecalcularHorasEsp();
+
+}
+
+function RecalcularHoras(){
+        var total_horas_detalle = '00:00';
+        var total_horas_nocturnas = '00:00';
+        var total_horas_diurnas = '00:00';
+
+        var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS');
+        var totalDet = parseInt(totalDetalleOpe.val(), 10);
+        //var i = obtenerNumeroId(this.id);
+
+        for(i = 0; i < totalDet; i++){
+            if(!($('#leaveForm-'+ i).css('display') == 'none')){ 
+                //Esta condicion controla las filas eliminadas
+
+                var temp_NocturnasDecimal = 0;
+
+                //Cantidad y corte
+                var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
+                var corte   = $('#id_planificacionope_set-' + i + '-corte').val();
+
+                //Semana
+                var lun     = $('#id_planificacionope_set-' + i + '-lun').prop("checked");
+                var mar     = $('#id_planificacionope_set-' + i + '-mar').prop("checked");
+                var mie     = $('#id_planificacionope_set-' + i + '-mie').prop("checked");
+                var jue     = $('#id_planificacionope_set-' + i + '-jue').prop("checked");
+                var vie     = $('#id_planificacionope_set-' + i + '-vie').prop("checked");
+                var sab     = $('#id_planificacionope_set-' + i + '-sab').prop("checked");
+                var dom     = $('#id_planificacionope_set-' + i + '-dom').prop("checked");
+                var fer     = $('#id_planificacionope_set-' + i + '-fer').prop("checked");
+
+                //Entrada y salida
+                var Ent =  $('#id_planificacionope_set-' + i + '-ent').val();
+                var Sal =  $('#id_planificacionope_set-' + i + '-sal').val();
+
+                //Contamos la cantidad de dias
+                var TotalDias = 0;
+                if(lun){
+                    TotalDias +=1;
+                }
+                if(mar){
+                    TotalDias +=1;
+                }
+                if(mie){
+                    TotalDias +=1;
+                }
+                if(jue){
+                    TotalDias +=1;
+                }
+                if(vie){
+                    TotalDias +=1;
+                }
+                if(sab){
+                    TotalDias +=1;
+                }
+                if(dom){
+                    TotalDias +=1;
+                }
+                if(fer){
+                    TotalDias +=1;
+                }
+
+                //Determinamos las horas diurnas y nocturnas
+                var limiteInferior = '06:00';
+                var limiteSuperior = '20:00';
+
+                if (mayor(limiteInferior, Ent) == 1){
+                    var subLimiteSuperior = limiteInferior;
+                    
+                    if(mayor(subLimiteSuperior, Sal) == 1){
+                        subLimiteSuperior = Sal;
+                    }
+                    
+                    temp_NocturnasDecimal = (timeInHours(subLimiteSuperior) - timeInHours(Ent))*TotalDias*cantOpe;
+                    total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
+                    
+                } else if (mayor(Sal, limiteSuperior) == 1){
+                    var subLimiteInferior = limiteSuperior;
+
+                    if(mayor(Ent, subLimiteInferior) == 1){
+                        subLimiteInferior = Ent;
+                    }
+
+                    temp_NocturnasDecimal = (timeInHours(Sal) - timeInHours(subLimiteInferior))*TotalDias*cantOpe;
+                    total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
+                }
+
+                var totalFilaDecimal = Math.round((timeInHours(Sal) - timeInHours(Ent)) * 100) / 100;
+                var totalFila = hoursToString(totalFilaDecimal);
+
+                //Calcular el total de fila
+                var totalHorasFilas = (totalFilaDecimal - corte)*TotalDias*cantOpe;
+
+                //Calculamos el total de las horas diurnas de la fila
+                var total_horas_diurnas_fila = hoursToString(totalHorasFilas - temp_NocturnasDecimal);
+                
+                
+                //Seteamos el total de la fila
+                if(!(isNaN(totalHorasFilas))){
+                    $('#id_planificacionope_set-' + i + '-total').val(totalHorasFilas);
+                }
+                
+
+                if(total_horas_diurnas_fila && total_horas_diurnas_fila != 'NaN:NaN'){
+                    total_horas_diurnas = SumHrMin(total_horas_diurnas, total_horas_diurnas_fila);
+                }
+            }
+
+        } //Fin del for
+
+        if(total_horas_diurnas && total_horas_diurnas != 'NaN:NaN'){
+            $('#id_cantHoras').val(total_horas_diurnas);
+        }
+
+        if(total_horas_nocturnas && total_horas_nocturnas != 'NaN:NaN' ){
+            $('#id_cantHorasNoc').val(total_horas_nocturnas);
+        }
+
+        /*
+        if(!(isNaN(totalHorasFilas))){
+
+            //total_horas_detalle = SumHrMin(total_horas_detalle, hoursToString(totalHorasFilas));
+            for (j = 0; j < totalDet; j++){
+                total_horas_detalle = SumHrMin(total_horas_detalle, hoursToString($('#id_planificacionope_set-' + j + '-total').val()));
+            }
+            $('#sumAll_1').val(total_horas_detalle);
+            $('#id_cantHoras').val(total_horas_detalle);
+            $('#id_cantHorasNoc').val(total_horas_nocturnas);
+        }
+        */ 
+    
+    }
+
+function RecalcularHorasEsp(){
+    debugger;
+    //aqui empieza el calculo del total de horas especiales
+    var total = 0;
+    var subtotal = 0;
+    $('input[id$="-cantHoras"]').each(function() {
+        if (!isNaN($(this).val()) && $(this).val() !== '') {
+
+            var n = obtenerNumeroId(this.id);
+
+            if(!($('#leaveFormEsp-'+ i).css('display') == 'none')){
+                var frecuencia = $('#id_planificacionesp_set-' + n + '-frecuencia').val();
+
+                if(frecuencia == 'DIA'){
+                    total += Number($(this).val())*30;
+                }else if(frecuencia == 'SEM'){
+                    total += Number($(this).val())*4;
+                }else if(frecuencia == 'MEN'){
+                    total += Number($(this).val());
+                }else if(frecuencia == 'BIM'){
+                    total += Number($(this).val())/2;
+                }else if(frecuencia == 'TRI'){
+                    total += Number($(this).val())/3;
+                }else if(frecuencia == 'CUA'){
+                    total += Number($(this).val())/4;
+                }else if(frecuencia == 'SEL'){
+                    total += Number($(this).val())/6;
+                }else if(frecuencia == 'ANU'){
+                    total += Number($(this).val())/12;
+                }
+                //total += Number($(this).val());
+            }
+        }
+    })
+    total = hoursToString(total);
+    $('#sumAll_2').val(SumHrMin(total, '00:00'));
+    //aqui empieza el calculo del total de horas
+    //var total = 0;
+    //var sumaDet = timeInHours($('#sumAll_1').val());
+    //var sumaEsp = timeInHours($('#sumAll_2').val());
+    //total = hoursToString(sumaEsp);
+    $('#id_cantHorasEsp').val(SumHrMin(total, '00:00'));    
+}
+
 $(function(){
     // Reemplaza todas las coincidencias en vez de solo la primera
     function replaceAll(text, busca, reemplaza){
@@ -549,177 +784,15 @@ $(function(){
 });
 
 $('input[id$="-cantHoras"], [id$="frecuencia"]').change(function() {
-        debugger;
-        //aqui empieza el calculo del total de horas especiales
-        var total = 0;
-        var subtotal = 0;
-        $('input[id$="-cantHoras"]').each(function() {
-            if (!isNaN($(this).val()) && $(this).val() !== '') {
-
-                var n = obtenerNumeroId(this.id);
-                var frecuencia = $('#id_planificacionesp_set-' + n + '-frecuencia').val();
-
-                if(frecuencia == 'DIA'){
-                    total += Number($(this).val())*30;
-                }else if(frecuencia == 'SEM'){
-                    total += Number($(this).val())*4;
-                }else if(frecuencia == 'MEN'){
-                    total += Number($(this).val());
-                }else if(frecuencia == 'BIM'){
-                    total += Number($(this).val())/2;
-                }else if(frecuencia == 'TRI'){
-                    total += Number($(this).val())/3;
-                }else if(frecuencia == 'CUA'){
-                    total += Number($(this).val())/4;
-                }else if(frecuencia == 'SEL'){
-                    total += Number($(this).val())/6;
-                }else if(frecuencia == 'ANU'){
-                    total += Number($(this).val())/12;
-                }
-                //total += Number($(this).val());
-            }
-        })
-        total = hoursToString(total);
-        $('#sumAll_2').val(SumHrMin(total, '00:00'));
-
-        //aqui empieza el calculo del total de horas
-        //var total = 0;
-        //var sumaDet = timeInHours($('#sumAll_1').val());
-        //var sumaEsp = timeInHours($('#sumAll_2').val());
-        //total = hoursToString(sumaEsp);
-        $('#id_cantHorasEsp').val(SumHrMin(total, '00:00'));
-
-    });
+    debugger;
+    RecalcularHorasEsp()
+});
 
 
 $('input[id^="id_planificacionope_set-"]').on('dp.change change', function(e){
-        debugger;
-        var total_horas_detalle = '00:00';
-        var total_horas_nocturnas = '00:00';
-        var total_horas_diurnas = '00:00';
-
-        var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS');
-        var totalDet = parseInt(totalDetalleOpe.val(), 10);
-        //var i = obtenerNumeroId(this.id);
-
-        for(i = 0; i < totalDet; i++){
-            var temp_NocturnasDecimal = 0;
-
-            //Cantidad y corte
-            var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
-            var corte   = $('#id_planificacionope_set-' + i + '-corte').val();
-
-            //Semana
-            var lun     = $('#id_planificacionope_set-' + i + '-lun').prop("checked");
-            var mar     = $('#id_planificacionope_set-' + i + '-mar').prop("checked");
-            var mie     = $('#id_planificacionope_set-' + i + '-mie').prop("checked");
-            var jue     = $('#id_planificacionope_set-' + i + '-jue').prop("checked");
-            var vie     = $('#id_planificacionope_set-' + i + '-vie').prop("checked");
-            var sab     = $('#id_planificacionope_set-' + i + '-sab').prop("checked");
-            var dom     = $('#id_planificacionope_set-' + i + '-dom').prop("checked");
-            var fer     = $('#id_planificacionope_set-' + i + '-fer').prop("checked");
-
-            //Entrada y salida
-            var Ent =  $('#id_planificacionope_set-' + i + '-ent').val();
-            var Sal =  $('#id_planificacionope_set-' + i + '-sal').val();
-
-            //Contamos la cantidad de dias
-            var TotalDias = 0;
-            if(lun){
-                TotalDias +=1;
-            }
-            if(mar){
-                TotalDias +=1;
-            }
-            if(mie){
-                TotalDias +=1;
-            }
-            if(jue){
-                TotalDias +=1;
-            }
-            if(vie){
-                TotalDias +=1;
-            }
-            if(sab){
-                TotalDias +=1;
-            }
-            if(dom){
-                TotalDias +=1;
-            }
-            if(fer){
-                TotalDias +=1;
-            }
-
-            //Determinamos las horas diurnas y nocturnas
-            var limiteInferior = '06:00';
-            var limiteSuperior = '20:00';
-
-            if (mayor(limiteInferior, Ent) == 1){
-                var subLimiteSuperior = limiteInferior;
-                
-                if(mayor(subLimiteSuperior, Sal) == 1){
-                    subLimiteSuperior = Sal;
-                }
-                
-                temp_NocturnasDecimal = (timeInHours(subLimiteSuperior) - timeInHours(Ent))*TotalDias*cantOpe;
-                total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
-                
-            } else if (mayor(Sal, limiteSuperior) == 1){
-                var subLimiteInferior = limiteSuperior;
-
-                if(mayor(Ent, subLimiteInferior) == 1){
-                    subLimiteInferior = Ent;
-                }
-
-                temp_NocturnasDecimal = (timeInHours(Sal) - timeInHours(subLimiteInferior))*TotalDias*cantOpe;
-                total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
-            }
-
-            var totalFilaDecimal = Math.round((timeInHours(Sal) - timeInHours(Ent)) * 100) / 100;
-            var totalFila = hoursToString(totalFilaDecimal);
-
-            //Calcular el total de fila
-            var totalHorasFilas = (totalFilaDecimal - corte)*TotalDias*cantOpe;
-
-            //Calculamos el total de las horas diurnas de la fila
-            var total_horas_diurnas_fila = hoursToString(totalHorasFilas - temp_NocturnasDecimal);
-            
-            
-            //Seteamos el total de la fila
-            if(!(isNaN(totalHorasFilas))){
-                $('#id_planificacionope_set-' + i + '-total').val(totalHorasFilas);
-            }
-            
-
-            if(total_horas_diurnas_fila && total_horas_diurnas_fila != 'NaN:NaN'){
-                total_horas_diurnas = SumHrMin(total_horas_diurnas, total_horas_diurnas_fila);
-            }
-
-        } //Fin del for
-
-        if(total_horas_diurnas && total_horas_diurnas != 'NaN:NaN'){
-            $('#id_cantHoras').val(total_horas_diurnas);
-        }
-
-        if(total_horas_nocturnas && total_horas_nocturnas != 'NaN:NaN' ){
-            $('#id_cantHorasNoc').val(total_horas_nocturnas);
-        }
-
-        /*
-        if(!(isNaN(totalHorasFilas))){
-
-            //total_horas_detalle = SumHrMin(total_horas_detalle, hoursToString(totalHorasFilas));
-            for (j = 0; j < totalDet; j++){
-                total_horas_detalle = SumHrMin(total_horas_detalle, hoursToString($('#id_planificacionope_set-' + j + '-total').val()));
-            }
-            $('#sumAll_1').val(total_horas_detalle);
-            $('#id_cantHoras').val(total_horas_detalle);
-            $('#id_cantHorasNoc').val(total_horas_nocturnas);
-        }
-        */
-        
-        
-    });
+    debugger;
+    RecalcularHoras();
+});
 
 $('input[id$="-cantidad"]').change(function() {
     debugger;

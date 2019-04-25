@@ -9,7 +9,13 @@
 {% url 'remplazos' as remplazos_url %}
 {% url 'alertas' as alertas_url %}
 
-
+<script>
+debugger;
+$("#salir").on('click',"a[data-window='external']", function() {
+    window.open($(this).attr('href')); 
+    return false; 
+});
+</script>
 <nav class="navbar navbar-expand-md navbar-dark mb-4" style="background-color: #7A0C25;">
     <div class='container'>
         <a class="navbar-brand" href="{{ home_url }}">
@@ -56,7 +62,7 @@
                     <a class="dropdown-item" href="#">Reporte 2</a>
                     <a class="dropdown-item" href="#">Reporte 3</a>
                     <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a>
+                    <!--a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a-->
                     </div>
                 </li>
                 <li class="nav-item">
@@ -76,7 +82,7 @@
             <div class="modal-body">
                 <p><i class="fa fa-question-circle"></i> Esta seguro que desea salir? <br /></p>
                 <div class="actionsBtns">
-                        <a href="{% url 'logout' %}" class="btn btn-primary" data-dismiss="modal" value="Logout" />Logout</a>
+                        <a id='salir' href="{% url 'logout' %}" class="btn btn-primary" data-dismiss="modal" value="Logout" data-window="external" />Logout</a>
                         <button class="btn btn-default" data-dismiss="modal">Cancel</button>
 
                 </div>

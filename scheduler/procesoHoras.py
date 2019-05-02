@@ -14,10 +14,16 @@ def procesarEntradaSalida(marcacion, marcacion2):
     consulta = AsignacionDet.objects.filter(asignacionCab__puntoServicio__CodPuntoServicio=PuntoServicioCod, operario_id__NumCedula=CodPersona).query
     logging.getLogger("error_logger").error('La consulta para buscar las asignaciones es: {0}'.format(consulta))
     
-    PuntoServicioObj = PuntoServicio.objects.get(CodPuntoServicio=PuntoServicioCod)
+    try:
+        PuntoServicioObj = PuntoServicio.objects.get(CodPuntoServicio=PuntoServicioCod)
+    except PuntoServicio.DoesNotExist as err:
+        logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
+        pass
 
     #Paso 2: Si existe asginacion se almacena las horas
+    print ("Se encontraron {0}".format(len(Asignaciones)) )
     if len(Asignaciones) != 0:
+        hits = 0
         for asignacion in Asignaciones:
             if DiaSemana == 0:
                 EntradaAsig = asignacion.lunEnt
@@ -83,7 +89,8 @@ def procesarEntradaSalida(marcacion, marcacion2):
                         asignacionDet=asignacion
                     )
                     HoraPro.save()
-                    return 'PRO'
+                    hits +=1
+                    #return 'PRO'
                 else:
                     #Procesamos como sin Asignacion
                     print("Sin A")
@@ -108,17 +115,25 @@ def procesarEntradaSalida(marcacion, marcacion2):
                             comentario='Hora sin asignacion',
                         )
                     HoraNoPro.save()
-                    return 'SINA'
+                    #return 'SINA'
+                #Fin If
+            #Fin If
+        #Fin for
+
+        if(hits > 0):
+            return 'PRO'
+        else:
+            return 'SINA'
     #Paso 3: Si no existe asignacion se almacena las horas sin aginacion.
     else:
         #Registramos la sin asignacion
         print("Sin A")
-        diff = HorarioSalida - HorarioEntrada
+        diff = dt.datetime.combine(dt.date.min, HorarioSalida) - dt.datetime.combine(dt.date.min, HorarioEntrada)
         HorasTrabajadas_sinA_segundos = diff.total_seconds() 
         hours   = divmod(HorasTrabajadas_sinA_segundos, 3600)
         minutes = divmod(hours[1], 60)
         seconds = divmod(minutes[1], 1)
-        total_horas_sinA = dt.datetime.time(hour=int(hours[0]), minute=int(minutes[0]), second=int(seconds[0]))
+        total_horas_sinA = dt.time(hour=int(hours[0]), minute=int(minutes[0]), second=int(seconds[0]))
 
         fecha_sinA = marcacion.fecha.date()
         TipoDeHora_sinA = 'HNORM'
@@ -156,7 +171,8 @@ def proceso_de_horas():
                     #print('Test' + str(i))
                     if (marcacion.codpersona == marcacion2.codpersona 
                         and marcacion.codubicacion == marcacion2.codubicacion 
-                        and marcacion2.codoperacion == 'HS' and marcacion2.estado != 'PROCESADO'):
+                        and marcacion2.codoperacion == 'HS' and marcacion2.estado != 'PROCESADO'
+                        and marcacion.fecha.date() == marcacion2.fecha.date()):
 
                         print('Encontre una pareja')
                         print(marcacion.fecha)
@@ -171,6 +187,8 @@ def proceso_de_horas():
 
                         marcacion.save()
                         marcacion2.save()
+                        #Al procesar una pareja de marcacion, se rompe el loop
+                        break
 
                         
     #Paso 3: Recorrer el resto de las marcaciones no emparejada, para registrar la sin entrada

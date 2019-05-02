@@ -60,6 +60,7 @@ background: #FFFFFF;
 
         <div class="container-fluid mb-3 mt-3" id='formset-det-relevamiento'>
             <!-- Cupo de Horas -->
+            {% if relevamiento.relevamientocupohoras_set.all %}
             <div class="container-fluid border mb-4 mt-3">
                 <h5 class='mt-2'>
                     Cupo de Horas <small class="text-muted">Detalle de horas</small>
@@ -82,7 +83,7 @@ background: #FFFFFF;
                         </td>
                         <td>
                             {% if relevcupo.frecuencia %}
-                            {{ relevcupo.frecuencia }}
+                            {{ relevcupo.get_frecuencia_display}}
                             {% endif %}
                         </td>
                         <td>
@@ -95,7 +96,10 @@ background: #FFFFFF;
                     {% endfor %}
                 </table>
             </div>
+            {% endif %}
+
             <!-- Relevamiento realizados -->
+            {% if relevamiento.relevamientodet_set.all %}
             <div class="container-fluid border mb-4 mt-3">
                 <h5 class='mt-2'>
                     Servicios Especificos <small class="text-muted">Detalle de servicios</small>
@@ -157,8 +161,10 @@ background: #FFFFFF;
                     {% endfor %}
                 </table>
             </div>
+            {% endif %}
 
             <!-- Relevamiento horas de limpieza profunda -->
+            {% if relevamiento.relevamientoesp_set.all %}
             <div class="container-fluid border mb-4 mt-3">
                 <h5 class='mt-2'>
                     Limpiezas Profundas <small class="text-muted">Detalle de horas</small>
@@ -182,12 +188,12 @@ background: #FFFFFF;
                         </td>
                         <td>
                             {% if relevesp.frecuencia %}
-                            {{ relevesp.frecuencia }}
+                            {{ relevesp.get_frecuencia_display }}
                             {% endif %}
                         </td>
                         <td>
                             {% if relevesp.dia %}
-                            {{ relevesp.dia }}
+                            {{ relevesp.get_dia_display }}
                             {% endif %}
                         </td>
                         <td>
@@ -200,8 +206,10 @@ background: #FFFFFF;
                     {% endfor %}
                 </table>
             </div>
+            {% endif %}
 
             <!-- Mensuales -->
+            {% if relevamiento.relevamientomensualeros_set.all %}
             <div class="container-fluid border mb-4 mt-3">
                 <h5 class='mt-2'>
                     Mensualeros <small class="text-muted">Detalle de sueldos</small>
@@ -231,6 +239,7 @@ background: #FFFFFF;
                     {% endfor %}
                 </table>
             </div>
+            {% endif %}
 
         </div>
     </div>

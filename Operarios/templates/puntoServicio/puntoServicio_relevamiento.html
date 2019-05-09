@@ -152,7 +152,6 @@
         <div class="row">
             <div class="col">Tipo limpieza especial </div>
             <div class="col">Frecuencia </div>
-            <div class="col">Día </div>
             <div class="col">Cantidad de Horas </div>
             <div class="col-1">Eliminar? </div>
         </div>
@@ -164,9 +163,6 @@
             </div>
             <div class="col">
                 {{ form.frecuencia }}
-            </div>
-            <div class="col">
-                {{ form.dia }}
             </div>
             <div class="col">
                 {{ form.cantHoras }}
@@ -298,9 +294,6 @@
                 {{ relevamEspFormSet.empty_form.frecuencia }}
             </div>
             <div class="col">
-                {{ relevamEspFormSet.empty_form.dia }}
-            </div>
-            <div class="col">
                 {{ relevamEspFormSet.empty_form.cantHoras }}
             </div>
             <div class="col-1 text-center">
@@ -421,62 +414,68 @@ function deleteLeaveRowMen(deleteLink, id) {
 
 function RecalcularHorasCup(){
     //aqui empieza el calculo del total de Cupo de horas 
-    var total = 0;
+    var total = '00:00';
     var subtotal = 0;
     $('input[id$="cantCHoras"]').each(function() {
-        if (!isNaN($(this).val()) && $(this).val() !== '') {
+        debugger;
+        if ($(this).val() !== '') {
 
             var n = obtenerNumeroId(this.id);
             if(!($('#leaveFormCup-'+ n).css('display') == 'none')){
-                total += Number($(this).val());
+                var frecuenciaCupo = $('#id_relevamientocupohoras_set-' + n + '-frecuencia').val();
+
+                if (frecuenciaCupo != 'FER'){
+                    total = SumHrMin($(this).val(), total) ;
+                }
+                
             }
 
         }
     })
         
-    total = hoursToString(total);
-    $('#sumAll_1').val(SumHrMin(total, '00:00'));
+    //total = hoursToString(total);
+    $('#sumAll_1').val(total);
 
     //aqui empieza el calculo del total de horas
-    var total = 0;
+    var subtotal = 0;
     var sumaEsp = timeInHours($('#sumAll_1').val());
-    total = hoursToString(sumaEsp);
-    $('#id_cantidadHrTotal').val(SumHrMin(total, '00:00'));
+    subtotal = hoursToString(sumaEsp);
+    $('#id_cantidadHrTotal').val(SumHrMin(subtotal, '00:00'));
 }
 
 function RecalcularHorasEsp(){
     //aqui empieza el calculo del total de horas especiales
-    var total = 0;
+    var total = '00:00';
     var subtotal = 0;
     $('input[id$="cantHoras"]').each(function() {
-        if (!isNaN($(this).val()) && $(this).val() !== '') {
+        debugger;
+        if ($(this).val() !== '') {
 
             var n = obtenerNumeroId(this.id);
             if(!($('#leaveFormEsp-'+ n).css('display') == 'none')){
                 var frecuencia = $('#id_relevamientoesp_set-' + n + '-frecuencia').val();
 
                 if(frecuencia == 'DIA'){
-                    total += Number($(this).val())*30;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())*30), total);
                 }else if(frecuencia == 'SEM'){
-                    total += Number($(this).val())*4;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())*4), total);
                 }else if(frecuencia == 'MEN'){
-                    total += Number($(this).val());
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())), total);
                 }else if(frecuencia == 'BIM'){
-                    total += Number($(this).val())/2;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())/2), total);
                 }else if(frecuencia == 'TRI'){
-                    total += Number($(this).val())/3;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())/3), total);
                 }else if(frecuencia == 'CUA'){
-                    total += Number($(this).val())/4;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())/4), total);
                 }else if(frecuencia == 'SEL'){
-                    total += Number($(this).val())/6;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())/6), total);
                 }else if(frecuencia == 'ANU'){
-                    total += Number($(this).val())/12;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())/12), total);
                 }
-                //total += Number($(this).val());
             }
         }
     })
-    total = hoursToString(total);
+    //total = hoursToString(total);
     $('#sumAll_2').val(SumHrMin(total, '00:00'));
 
     //aqui empieza el calculo del total de horas
@@ -551,52 +550,23 @@ $(function(){
     });
 });
 
-$('input[id$="cantHoras"], [id$="frecuencia"]').on('change', function(e){
-        debugger;
+$('input[id$="cantCHoras"], input[id$="cantHoras"]').on('change', function(e){
+    debugger;
+    str = $(this).val();
+    if ( !/:/.test( str ) ) { 
+        str += ':00'; 
+    }
+
+    $(this).val(str.replace(/^\d{1}:/, '0$&').replace(/:\d{1}$/, '$&0' )); 
+});
+
+$('input[id$="cantHoras"], [id^="id_relevamientoesp_set"]').on('change', function(e){
         RecalcularHorasEsp();
 });
 
-$('input[id$="cantCHoras"]').on('change', function(e){
-        debugger;
+$('input[id$="cantCHoras"], [id^="id_relevamientocupohoras_set-"]').on('change', function(e){
         RecalcularHorasCup();
 });
-
-
-$('input[id$="cantCHoras"]').keyup(function(){
-    debugger;
-    var val = $(this).val();
-    if(isNaN(val)){
-        val = val.replace(/[^0-9\.]/g,'');
-        if(val.split('.').length>2){
-            val =val.replace(/\.+$/,"");
-        }
-    }else{
-        decimales = val.split('.');
-        if(decimales[1].length > 1){
-            val = decimales[0] + '.' + decimales[1].substring(0,1);
-        }
-    }
-    
-        
-    
-    $(this).val(val); 
-});
-/*$('input[id$="sueldo"]').on('change', function(e){
-        debugger;
-
-        //aqui empieza el calculo del total de horas especiales
-        var formateado = '';
-        
-        if (!isNaN($(this).val()) && $(this).val() !== '') {
-
-            formateado = Number($(this).val()).format(0, 3, '.', ',');
-
-        }
-        $(this).val(formateado);
-
-    });
-*/
-
 
 </script>
 

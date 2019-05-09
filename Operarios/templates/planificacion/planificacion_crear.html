@@ -192,11 +192,6 @@ background: #FFFFFF;
                             {% endif %}
                         </td>
                         <td>
-                            {% if relevesp.dia %}
-                            {{ relevesp.get_dia_display }}
-                            {% endif %}
-                        </td>
-                        <td>
                             {% if relevesp.cantHoras %}
                             {{ relevesp.cantHoras }}
                             {% endif %}
@@ -341,7 +336,7 @@ background: #FFFFFF;
                     <div class="col">Perfil Operario </div>
                     <div class="col">Tipo limpieza especial </div>
                     <div class="col">Frecuencia </div>
-                    <div class="col">Día </div>
+                    <div class="col">Fecha Inicio </div>
                     <div class="col">Cantidad de Horas </div>
                     <div class="col-1">Eliminar? </div>
                 </div>
@@ -358,7 +353,7 @@ background: #FFFFFF;
                         {{ form.frecuencia }}
                     </div>
                     <div class="col">
-                        {{ form.dia }}
+                        {{ form.fechaLimpProf }}
                     </div>
                     <div class="col">
                         {{ form.cantHoras }}
@@ -449,7 +444,7 @@ background: #FFFFFF;
                 {{ planifEspFormSet.empty_form.frecuencia }}
             </div>
             <div class="col">
-                {{ planifEspFormSet.empty_form.dia }}
+                {{ planifEspFormSet.empty_form.fechaLimpProf }}
             </div>
             <div class="col">
                 {{ planifEspFormSet.empty_form.cantHoras }}
@@ -474,7 +469,7 @@ function timeInHours(str){
 
 function hoursToString(h){
    var hours = Math.floor(h);
-   var minutes = ((h - hours)*60).toFixed(2);
+   var minutes = ((h - hours)*60).toFixed(0);
 
    return pad(hours) + ":" + pad(minutes);
 }
@@ -662,9 +657,13 @@ function RecalcularHoras(){
 
                 var totalFilaDecimal = Math.round((timeInHours(Sal) - timeInHours(Ent)) * 100) / 100;
                 var totalFila = hoursToString(totalFilaDecimal);
+                var corteDecimal = 0;
+                if(corte != ''){
+                    corteDecimal = timeInHours(corte);
+                }
 
                 //Calcular el total de fila
-                var totalHorasFilas = (totalFilaDecimal - corte)*TotalDias*cantOpe;
+                var totalHorasFilas = (totalFilaDecimal - corteDecimal)*TotalDias;
 
                 //Calculamos el total de las horas diurnas de la fila
                 var total_horas_diurnas_fila = hoursToString(totalHorasFilas - temp_NocturnasDecimal);
@@ -672,7 +671,7 @@ function RecalcularHoras(){
                 
                 //Seteamos el total de la fila
                 if(!(isNaN(totalHorasFilas))){
-                    $('#id_planificacionope_set-' + i + '-total').val(totalHorasFilas);
+                    $('#id_planificacionope_set-' + i + '-total').val(total_horas_diurnas_fila);
                 }
                 
 
@@ -690,29 +689,16 @@ function RecalcularHoras(){
         if(total_horas_nocturnas && total_horas_nocturnas != 'NaN:NaN' ){
             $('#id_cantHorasNoc').val(total_horas_nocturnas);
         }
-
-        /*
-        if(!(isNaN(totalHorasFilas))){
-
-            //total_horas_detalle = SumHrMin(total_horas_detalle, hoursToString(totalHorasFilas));
-            for (j = 0; j < totalDet; j++){
-                total_horas_detalle = SumHrMin(total_horas_detalle, hoursToString($('#id_planificacionope_set-' + j + '-total').val()));
-            }
-            $('#sumAll_1').val(total_horas_detalle);
-            $('#id_cantHoras').val(total_horas_detalle);
-            $('#id_cantHorasNoc').val(total_horas_nocturnas);
-        }
-        */ 
     
     }
 
 function RecalcularHorasEsp(){
     debugger;
     //aqui empieza el calculo del total de horas especiales
-    var total = 0;
+    var total = '00:00';
     var subtotal = 0;
     $('input[id$="-cantHoras"]').each(function() {
-        if (!isNaN($(this).val()) && $(this).val() !== '') {
+        if ($(this).val() !== '') {
 
             var n = obtenerNumeroId(this.id);
 
@@ -720,34 +706,31 @@ function RecalcularHorasEsp(){
                 var frecuencia = $('#id_planificacionesp_set-' + n + '-frecuencia').val();
 
                 if(frecuencia == 'DIA'){
-                    total += Number($(this).val())*30;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())*30), total);
                 }else if(frecuencia == 'SEM'){
-                    total += Number($(this).val())*4;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())*4), total);
                 }else if(frecuencia == 'MEN'){
-                    total += Number($(this).val());
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())), total);
                 }else if(frecuencia == 'BIM'){
-                    total += Number($(this).val())/2;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())/2), total);
                 }else if(frecuencia == 'TRI'){
-                    total += Number($(this).val())/3;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())/3), total);
                 }else if(frecuencia == 'CUA'){
-                    total += Number($(this).val())/4;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())/4), total);
                 }else if(frecuencia == 'SEL'){
-                    total += Number($(this).val())/6;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())/6), total);
                 }else if(frecuencia == 'ANU'){
-                    total += Number($(this).val())/12;
+                    total = SumHrMin(hoursToString(timeInHours($(this).val())/12), total);
                 }
                 //total += Number($(this).val());
             }
         }
     })
-    total = hoursToString(total);
-    $('#sumAll_2').val(SumHrMin(total, '00:00'));
+    //total = hoursToString(total);
+    $('#sumAll_2').val(total);
     //aqui empieza el calculo del total de horas
-    //var total = 0;
-    //var sumaDet = timeInHours($('#sumAll_1').val());
-    //var sumaEsp = timeInHours($('#sumAll_2').val());
-    //total = hoursToString(sumaEsp);
-    $('#id_cantHorasEsp').val(SumHrMin(total, '00:00'));    
+
+    $('#id_cantHorasEsp').val(total);    
 }
 
 $(function(){
@@ -792,9 +775,19 @@ $(function(){
     });
 });
 
+$('input[id$="corte"], input[id$="total"], input[id$="cantHoras"]').on('change', function(e){
+    debugger;
+    str = $(this).val();
+    if ( !/:/.test( str ) ) { 
+        str += ':00'; 
+    }
+
+    $(this).val(str.replace(/^\d{1}:/, '0$&').replace(/:\d{1}$/, '$&0' )); 
+});
+
 $('input[id$="-cantHoras"], [id$="frecuencia"]').change(function() {
     debugger;
-    RecalcularHorasEsp()
+    RecalcularHorasEsp();
 });
 
 
@@ -818,12 +811,8 @@ $('input[id$="-cantidad"]').change(function() {
             total += parseInt(cantOpe);
         }
     }
-
     //Cargamos el total en input de cantidad de operarios
     $('#id_cantidad').val(total);
-
-
-
 });
 
 

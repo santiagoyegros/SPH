@@ -242,21 +242,21 @@ class RelevamientoEspForm(forms.ModelForm):
         fields = [
             'tipo',
             'frecuencia',
-            'dia',
+            #'dia',
             'cantHoras' 
         ]
 
         labels = {
             'tipo': 'Tipo limpieza especial',
             'frecuencia': 'Frecuencia',
-            'dia': 'Día',
+            #'dia': 'Día',
             'cantHoras': 'Cantidad de Horas'
         }
 
         widgets = {
             'tipo': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'frecuencia': forms.Select(attrs={'class':'form-control form-control-sm'}),
-            'dia': forms.Select(attrs={'class':'form-control form-control-sm'}),
+            #'dia': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'})
         }
 
@@ -468,24 +468,27 @@ class PlanificacionEspForm(forms.ModelForm):
             'especialista',
             'tipo',
             'frecuencia',
-            'dia',
-            'cantHoras' 
+            #'dia',
+            'cantHoras',
+            'fechaLimpProf'
         ]
 
         labels = {
             'especialista': 'Especialista',
             'tipo': 'Tipo limpieza especial',
             'frecuencia': 'Frecuencia',
-            'dia': 'Día',
-            'cantHoras': 'Cantidad de Horas'
+            #'dia': 'Día',
+            'cantHoras': 'Cantidad de Horas',
+            'fechaLimpProf': 'Fecha Inicio'
         }
 
         widgets = {
             'especialista': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'tipo': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'frecuencia': forms.Select(attrs={'class':'form-control form-control-sm'}),
-            'dia': forms.Select(attrs={'class':'form-control form-control-sm'}),
-            'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'})
+            #'dia': forms.Select(attrs={'class':'form-control form-control-sm'}),
+            'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'fechaLimpProf': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"})
         }
 
 class AsignacionCabForm(forms.ModelForm):

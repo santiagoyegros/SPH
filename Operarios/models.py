@@ -218,8 +218,9 @@ class RelevamientoEsp(models.Model):
     relevamientoCab =  models.ForeignKey(RelevamientoCab, blank=True, null=True, on_delete=models.CASCADE)
     tipo = models.ForeignKey(TipoServicio, blank=True, null=True, on_delete=models.CASCADE)
     frecuencia = models.CharField('Frecuencia', max_length = 3, choices = FRECUENCIA, default = MENSUAL, )
-    dia = models.CharField('Dia', max_length = 3, choices = DIA)
-    cantHoras = models.IntegerField('Cantidad de Horas', blank=True, null=True)
+    #dia = models.CharField('Dia', max_length = 3, choices = DIA)
+    #cantHoras = models.IntegerField('Cantidad de Horas', blank=True, null=True)
+    cantHoras = models.TimeField('Cantidad de Horas', blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Cupo de Horas Limpieza Profunda"
@@ -236,7 +237,8 @@ class RelevamientoCupoHoras(models.Model):
     )
     
     relevamientoCab =  models.ForeignKey(RelevamientoCab, blank=True, null=True, on_delete=models.CASCADE)
-    cantCHoras = models.DecimalField('Cantidad de Horas', max_digits=7, decimal_places=1, db_column='cantHoras', blank=True, null=True)
+    cantCHoras = models.TimeField('Cantidad de Horas', blank=True, null=True, db_column='cantHoras')
+    #cantCHoras = models.DecimalField('Cantidad de Horas', max_digits=7, decimal_places=1, db_column='cantHoras', blank=True, null=True)
     frecuencia = models.CharField('Frecuencia', max_length = 3, choices = CUPO_FRECUENCIA, default = SEMANAL, )
     tipoHora = models.ForeignKey(TipoHorario, blank=True, null=True, on_delete=models.CASCADE)
 
@@ -282,8 +284,10 @@ class PlanificacionOpe(models.Model):
     fer = models.BooleanField('Feriado', default=False)
     ent = models.TimeField('Hora Inicio', blank=True, null=True)
     sal = models.TimeField('Hora Fin', blank=True, null=True)
-    corte = models.DecimalField('corte', max_digits=4, decimal_places=2, null=True, blank=True,)
-    total = models.DecimalField('total', max_digits=7, decimal_places=2, blank=True, null=True)
+    #corte = models.DecimalField('corte', max_digits=4, decimal_places=2, null=True, blank=True,)
+    corte = models.TimeField('Corte', blank=True, null=True)
+    #total = models.DecimalField('total', max_digits=7, decimal_places=2, blank=True, null=True)
+    total = models.TimeField('Total', blank=True, null=True)
 
     class Meta:
         verbose_name = _("Planificacion de Horas Operarios")
@@ -325,8 +329,10 @@ class PlanificacionEsp(models.Model):
     especialista = models.ForeignKey(Especializacion, blank=True, null=True, on_delete=models.SET_NULL)
     tipo = models.ForeignKey(TipoServicio, blank=True, null=True, on_delete=models.CASCADE)
     frecuencia = models.CharField('Frecuencia', max_length = 3, choices = FRECUENCIA, default = MENSUAL, )
-    dia = models.CharField('Dia', max_length = 3, choices = DIA)
-    cantHoras = models.IntegerField('Cantidad de Horas', blank=True, null=True)
+    #dia = models.CharField('Dia', max_length = 3, choices = DIA)
+    cantHoras = models.TimeField('Cantidad de Horas', blank=True, null=True)
+    #cantHoras = models.IntegerField('Cantidad de Horas', blank=True, null=True)
+    fechaLimpProf = models.DateField('Fecha Inicio Limpieza Prof', null=True)
 
 class Cargo(models.Model):
     cargo = models.CharField(max_length=100)

@@ -663,7 +663,7 @@ function RecalcularHoras(){
                 }
 
                 //Calcular el total de fila
-                var totalHorasFilas = (totalFilaDecimal - corteDecimal)*TotalDias;
+                var totalHorasFilas = (totalFilaDecimal - corteDecimal)*TotalDias*cantOpe;
 
                 //Calculamos el total de las horas diurnas de la fila
                 var total_horas_diurnas_fila = hoursToString(totalHorasFilas - temp_NocturnasDecimal);
@@ -671,7 +671,7 @@ function RecalcularHoras(){
                 
                 //Seteamos el total de la fila
                 if(!(isNaN(totalHorasFilas))){
-                    $('#id_planificacionope_set-' + i + '-total').val(total_horas_diurnas_fila);
+                    $('#id_planificacionope_set-' + i + '-total').val(hoursToString(totalHorasFilas));
                 }
                 
 

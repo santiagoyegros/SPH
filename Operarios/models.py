@@ -505,3 +505,13 @@ class EsmeEmMarcaciones(models.Model):
     class Meta:
         managed = False
         db_table = 'ESME_EM_Marcaciones'
+
+class AsignacionesProcesadas(models.Model):
+    NumCedulaOperario = models.CharField('N° Cedula', max_length=30)
+    fecha = models.DateField('Fecha')
+    puntoServicio = models.ForeignKey(PuntoServicio, on_delete=models.CASCADE)
+    asignacionDet = models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        verbose_name = _("Asignacion Procesada")
+        verbose_name_plural = _("Asignaciones Procesadas")

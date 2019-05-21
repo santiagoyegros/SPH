@@ -252,8 +252,7 @@ def Planificacion_create(request, id_puntoServicio=None):
         if relevamiento:
             for relevesp in relevamiento.relevamientoesp_set.all():
                 initial.append({'tipo': relevesp.tipo, 
-                                'frecuencia': relevesp.dia,
-                                'dia': relevesp.dia,
+                                'frecuencia': relevesp.frecuencia,
                                 'cantHoras': relevesp.cantHoras})
                 # initial=[
                 #         {'especialista': 2, 

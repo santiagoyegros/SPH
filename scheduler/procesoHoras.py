@@ -1,6 +1,6 @@
 import logging
 import datetime as dt
-from Operarios.models import HorasNoProcesadas, HorasProcesadas, EsmeEmMarcaciones, AsignacionDet, AsignacionCab, PuntoServicio
+from Operarios.models import HorasNoProcesadas, HorasProcesadas, EsmeEmMarcaciones, AsignacionDet, AsignacionCab, PuntoServicio, AsignacionesProcesadas
 
 def procesarEntradaSalida(marcacion, marcacion2):
     #Paso 1: Busco la asignacion de la persona en el contrato, en el dia. 
@@ -9,21 +9,29 @@ def procesarEntradaSalida(marcacion, marcacion2):
     HorarioEntrada = marcacion.fecha.time()
     HorarioSalida = marcacion2.fecha.time()
     DiaSemana = marcacion.fecha.weekday()
+    fecha = marcacion.fecha.date()
+
+    #AsignacionesPro = AsignacionesProcesadas.objects.filter(NumCedulaOperario=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod, fecha=fecha).values('asignacionDet_id')
+    #consulta = AsignacionesProcesadas.objects.filter(NumCedulaOperario=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod, fecha=fecha).values('asignacionDet_id').query
+    #logging.getLogger("error_logger").error('La consulta para buscar las asignaciones ya procesadas es: {0}'.format(consulta))
 
     Asignaciones = AsignacionDet.objects.filter(asignacionCab__puntoServicio__CodPuntoServicio=PuntoServicioCod, operario_id__NumCedula=CodPersona)
     consulta = AsignacionDet.objects.filter(asignacionCab__puntoServicio__CodPuntoServicio=PuntoServicioCod, operario_id__NumCedula=CodPersona).query
     logging.getLogger("error_logger").error('La consulta para buscar las asignaciones es: {0}'.format(consulta))
     
     try:
-        PuntoServicioObj = PuntoServicio.objects.get(CodPuntoServicio=PuntoServicioCod)
+        PuntoServicioObj = PuntoServicio.objects.filter(CodPuntoServicio=PuntoServicioCod).first()
     except PuntoServicio.DoesNotExist as err:
         logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         pass
+
 
     #Paso 2: Si existe asginacion se almacena las horas
     print ("Se encontraron {0}".format(len(Asignaciones)) )
     if len(Asignaciones) != 0:
         hits = 0
+        repetida = 0
+
         for asignacion in Asignaciones:
             if DiaSemana == 0:
                 EntradaAsig = asignacion.lunEnt
@@ -74,22 +82,53 @@ def procesarEntradaSalida(marcacion, marcacion2):
                     seconds = divmod(minutes[1], 1) 
 
                     total_horas = dt.time(hour=int(hours[0]), minute=int(minutes[0]), second=int(seconds[0]))
-                    fecha = marcacion.fecha.date()
+                    #fecha = marcacion.fecha.date()
                     TipoDeHora = 'HNORM'
 
-                    HoraPro = HorasProcesadas(
-                        NumCedulaOperario=CodPersona,
-                        puntoServicio=PuntoServicioObj,
-                        Hentrada=LimiteInferior,
-                        Hsalida=LimiteSuperior,
-                        total=total_horas,
-                        fecha=fecha,
-                        TipoHora=TipoDeHora,
-                        comentario='Hora Procesada',
-                        asignacionDet=asignacion
-                    )
-                    HoraPro.save()
-                    hits +=1
+                    #Determinamos si la asiginacion ya fue procesado
+                    AsignacionesPro = AsignacionesProcesadas.objects.filter(NumCedulaOperario=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod, fecha=fecha, asignacionDet=asignacion)
+                    consulta = AsignacionesProcesadas.objects.filter(NumCedulaOperario=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod, fecha=fecha, asignacionDet=asignacion).query
+                    logging.getLogger("error_logger").error('La consulta para buscar las asignaciones ya procesadas es: {0}'.format(consulta))
+
+                    if (len(AsignacionesPro) == 0): 
+                        #Si la asignacion no fue procesada anteriormente.
+                        HoraPro = HorasProcesadas(
+                            NumCedulaOperario=CodPersona,
+                            puntoServicio=PuntoServicioObj,
+                            Hentrada=LimiteInferior,
+                            Hsalida=LimiteSuperior,
+                            total=total_horas,
+                            fecha=fecha,
+                            TipoHora=TipoDeHora,
+                            comentario='Hora Procesada',
+                            asignacionDet=asignacion
+                        )
+                        HoraPro.save()
+                        hits +=1
+
+                        #Guardamos que la asignacion ya fue procesada para esta fecha
+                        AsigPro = AsignacionesProcesadas(
+                            NumCedulaOperario=CodPersona,
+                            puntoServicio=PuntoServicioObj,
+                            fecha=fecha,
+                            asignacionDet=asignacion
+                        )
+                        AsigPro.save()
+                    else:
+                        #Si la asignacion si fue procesada anteriormente, guardamos el evento
+                        HoraNoPro = HorasNoProcesadas(
+                            NumCedulaOperario=CodPersona,
+                            puntoServicio=PuntoServicioObj,
+                            Hentrada=LimiteInferior,
+                            Hsalida=LimiteSuperior,
+                            total=total_horas,
+                            fecha=fecha,
+                            TipoHora=TipoDeHora,
+                            comentario='Hora repetida',
+                        )
+                        HoraNoPro.save()
+                        repetida +=1
+
                     #return 'PRO'
                 else:
                     #Procesamos como sin Asignacion
@@ -101,7 +140,7 @@ def procesarEntradaSalida(marcacion, marcacion2):
                     seconds = divmod(minutes[1], 1)
                     total_horas_sinA = dt.time(hour=int(hours[0]), minute=int(minutes[0]), second=int(seconds[0]))
 
-                    fecha_sinA = marcacion.fecha.date()
+                    #fecha_sinA = marcacion.fecha.date()
                     TipoDeHora_sinA = 'HNORM'
 
                     HoraNoPro = HorasNoProcesadas(
@@ -110,7 +149,7 @@ def procesarEntradaSalida(marcacion, marcacion2):
                             Hentrada=HorarioEntrada,
                             Hsalida=HorarioSalida,
                             total=total_horas_sinA,
-                            fecha=fecha_sinA,
+                            fecha=fecha,
                             TipoHora=TipoDeHora_sinA,
                             comentario='Hora sin asignacion',
                         )
@@ -119,11 +158,14 @@ def procesarEntradaSalida(marcacion, marcacion2):
                 #Fin If
             #Fin If
         #Fin for
-
-        if(hits > 0):
-            return 'PRO'
+        if(repetida):
+            return 'REPE'
         else:
-            return 'SINA'
+            if(hits > 0):
+                return 'PRO'
+            else:
+                return 'SINA'
+
     #Paso 3: Si no existe asignacion se almacena las horas sin aginacion.
     else:
         #Registramos la sin asignacion
@@ -135,7 +177,7 @@ def procesarEntradaSalida(marcacion, marcacion2):
         seconds = divmod(minutes[1], 1)
         total_horas_sinA = dt.time(hour=int(hours[0]), minute=int(minutes[0]), second=int(seconds[0]))
 
-        fecha_sinA = marcacion.fecha.date()
+        #fecha_sinA = marcacion.fecha.date()
         TipoDeHora_sinA = 'HNORM'
 
         HoraNoPro = HorasNoProcesadas(
@@ -144,7 +186,7 @@ def procesarEntradaSalida(marcacion, marcacion2):
                 Hentrada=HorarioEntrada,
                 Hsalida=HorarioSalida,
                 total=total_horas_sinA,
-                fecha=fecha_sinA,
+                fecha=fecha,
                 TipoHora=TipoDeHora_sinA,
                 comentario='Hora sin asignacion',
             )

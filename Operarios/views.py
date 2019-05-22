@@ -331,6 +331,7 @@ def Jefes_list(request):
 @permission_required('Operarios.view_operario', raise_exception=True)
 def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
     try:
+        
         user_jefe = User.objects.get(pk=id_user_jefe)   
     except User.DoesNotExist as err:
         logging.getLogger("error_logger").error('Usuario de Jefe de Operaciones no existe: {0}'.format(err))
@@ -480,14 +481,14 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     if request.method == 'POST':
 
-        if  (request.POST.get('action') == 'add_det'):
+        if  (request.POST.get('action') == 'add_det'): """Se le dio click a agregar detalle"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
-            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
-        else:
+            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion) """se prepara para agregar otro"""
+        else: """Se le dio click al boton guardar"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
 
-            if form.is_valid() and AsigDetFormSet.is_valid():
+            if form.is_valid() and AsigDetFormSet.is_valid(): """Se guarda completo"""
                 form.save()
                 AsigDetFormSet.save()
                 messages.success(request, 'Se guardo correctamente la asignacion')

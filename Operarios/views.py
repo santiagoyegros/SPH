@@ -481,14 +481,18 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     if request.method == 'POST':
 
-        if  (request.POST.get('action') == 'add_det'): """Se le dio click a agregar detalle"""
+        if  (request.POST.get('action') == 'add_det'): 
+            """Se le dio click a agregar detalle"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
-            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion) """se prepara para agregar otro"""
-        else: """Se le dio click al boton guardar"""
+            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion) 
+            """se prepara para agregar otro"""
+        else: 
+            """Se le dio click al boton guardar"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
 
-            if form.is_valid() and AsigDetFormSet.is_valid(): """Se guarda completo"""
+            if form.is_valid() and AsigDetFormSet.is_valid():
+                """Se guarda completo"""
                 form.save()
                 AsigDetFormSet.save()
                 messages.success(request, 'Se guardo correctamente la asignacion')

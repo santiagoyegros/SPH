@@ -324,7 +324,8 @@ def Planificacion_list(request):
 @permission_required('Operarios.view_operario', raise_exception=True)
 def Jefes_list(request):
     jefes = User.objects.filter(cargoasignado__cargo__cargo='Jefe de Operaciones')
-    contexto = {'Jefes': jefes}
+    fiscales = User.objects.filter(cargoasignado__cargo__cargo='Fiscal')
+    contexto = {'Jefes': jefes,'Fiscales':fiscales}
     return render(request, 'jefes/jefes_list.html', context=contexto)
 
 @login_required
@@ -393,8 +394,8 @@ def Fiscales_asig(request, id_user_fiscal=None, id_puntoServicio=None):
     puntosServ_asig = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal)
     consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
-
-    #se trae los puntos de servicio disponibles
+    print("Asignados",puntosServ_asig)
+    #se trae los puntos de servicio disponibles 
     puntosServ_disp = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True)
     consulta2 = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True).query
     logging.getLogger("error_logger").error('La consulta de puntos de servicio disponibles ejecutada es: {0}'.format(consulta2))

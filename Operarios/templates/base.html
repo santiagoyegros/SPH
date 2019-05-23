@@ -8,9 +8,54 @@
 <script type="text/javascript" src="/static/bootstrap_datepicker_plus/js/datepicker-widget.js"></script> 
 <script type="text/javascript" src="{% static 'vendor/multi-select/js/jquery.multi-select.js'%}"></script> 
 <script>
-    $('.keep-order').multiSelect({keepOrder: true});
-
-</script>
+        $('#my-select, #pre-selected-options').multiSelect()
+        </script>
+        <script>
+        $('#callbacks').multiSelect({
+        afterSelect: function(values) {
+        alert("Select value: " + values);
+        },
+        afterDeselect: function(values) {
+        alert("Deselect value: " + values);
+        }
+        });
+        </script>
+        <script>
+        $('.keep-order').multiSelect({ keepOrder: true });
+        </script>
+        <script>
+        $('#public-methods').multiSelect();
+        $('#select-all').click(function() {
+        $('#public-methods').multiSelect('select_all');
+        return false;
+        });
+        $('#deselect-all').click(function() {
+        $('#public-methods').multiSelect('deselect_all');
+        return false;
+        });
+        $('#refresh').on('click', function() {
+        $('#public-methods').multiSelect('refresh');
+        return false;
+        });
+        $('#add-option').on('click', function() {
+        $('#public-methods').multiSelect('addOption', { value: 42, text: 'test 42', index: 0 });
+        return false;
+        });
+        </script>
+        <script>
+        $('#optgroup').multiSelect({ selectableOptgroup: true });
+        </script>
+        <script>
+        $('#disabled-attribute').multiSelect();
+        </script>
+        <script>
+        $('#custom-headers').multiSelect({
+        selectableHeader: "<div class='custom-header'>Selectable items</div>",
+        selectionHeader: "<div class='custom-header'>Selection items</div>",
+        selectableFooter: "<div class='custom-header'>Selectable footer</div>",
+        selectionFooter: "<div class='custom-header'>Selection footer</div>"
+        });
+        </script>
 <!DOCTYPE html>
     <html lang="es">
     <head>

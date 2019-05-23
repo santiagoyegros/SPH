@@ -331,6 +331,7 @@ def Jefes_list(request):
 @login_required
 @permission_required('Operarios.view_operario', raise_exception=True)
 def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
+    print("Fiscales",request.POST)
     try:
         
         user_jefe = User.objects.get(pk=id_user_jefe)   
@@ -338,10 +339,11 @@ def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
         logging.getLogger("error_logger").error('Usuario de Jefe de Operaciones no existe: {0}'.format(err))
 
     if id_user_fiscal != None:
+        print("Hola, aca obtengo los fiscales")
         user_fiscal = User.objects.get(pk=id_user_fiscal)
         asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
         asignacion.save()
-        
+    
     #Se traen todos los fiscales que estan asignados al jefe de operaciones en cuestion
     fiscales_asig = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe)
     consulta = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe).query

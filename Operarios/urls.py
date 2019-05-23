@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^jefes/listar/', Jefes_list, name='jefes_list'),
     url(r'^jefes/asig/(?P<id_user_jefe>\d+)/$', Jefes_asig, name='jefes_asig'),
     url(r'^jefes/asig/(?P<id_user_jefe>\d+)/(?P<id_user_fiscal>\d+)/$', Jefes_asig, name='jefes_asig'),
+    url(r'^jefes/asigFiscales/(?P<id_user_jefe>\d+)/$', Jefes_asig, name='jefes_asigFiscales'),
     url(r'^jefes/eliminar/(?P<id_user_jefe>\d+)/(?P<id_user_fiscal>\d+)/$', Jefes_delete, name='jefes_del'),
     url(r'^fiscales/asig/(?P<id_user_fiscal>\d+)/$', Fiscales_asig, name='fiscales_asig'),
     url(r'^fiscales/asig/(?P<id_user_fiscal>\d+)/(?P<id_puntoServicio>\d+)/$', Fiscales_asig, name='fiscales_asig'),

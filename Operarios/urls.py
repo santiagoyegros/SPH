@@ -7,9 +7,8 @@ from django.contrib.auth.decorators import login_required
 from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView
 from Operarios.views import Relevamiento, Operarios_list, Operarios_create, Operarios_update, Operarios_delete
 from Operarios.views import Planificacion_list, Planificacion_create, Jefes_list, Jefes_asig, Jefes_delete
-from Operarios.views import Asignacion_list, Asignacion_create
 from Operarios.views import Fiscales_asig, Fiscales_delete
-
+from Operarios import viewsAsignacion
 app_name = 'Operarios'
 
 urlpatterns = [
@@ -35,6 +34,6 @@ urlpatterns = [
     url(r'^fiscales/asig/(?P<id_user_fiscal>\d+)/$', Fiscales_asig, name='fiscales_asig'),
     url(r'^fiscales/asig/(?P<id_user_fiscal>\d+)/(?P<id_puntoServicio>\d+)/$', Fiscales_asig, name='fiscales_asig'),
     url(r'^fiscales/eliminar/(?P<id_user_fiscal>\d+)/(?P<id_puntoServicio>\d+)/$', Fiscales_delete, name='fiscales_del'),
-    url(r'^asignacion/listar/', Asignacion_list, name='asignacion_list'),
-    url(r'^asignacion/asignar/(?P<id_puntoServicio>\d+)/$', Asignacion_create, name='asignacion_create'),
+    url(r'^asignacion/listar/', viewsAsignacion.Asignacion_list, name='asignacion_list'),
+    url(r'^asignacion/asignar/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_create, name='asignacion_create'),
 ]   

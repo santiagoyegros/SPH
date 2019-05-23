@@ -64,6 +64,7 @@
         Asignación de Horas <small class="text-muted">Definicion de operarios y horas</small>
         </h4>
         <div class="row">
+            <div class="col-1 p-0 mt-3">  </div>
             <div class="col-2 p-0 mt-3"> Operario </div>
             <div class="col p-0 text-center"> Lunes </div>
             <div class="col p-0 text-center"> Martes </div>
@@ -76,9 +77,18 @@
         </div>
 	    {% for form in asigDetFormSet %}
         <div class="row mt-2 leaveForm" id="leaveForm-{{ forloop.counter0 }}">
+
+            <div class="col-1 p-0 text-center">
+                <a class="btn btn-info btn-block" style="height: 39px;" ><i class="fa fa-search"></i></a>
+            </div>
+            
             {{ form.id }}
-            <div class="col-2 p-0 mt-3">
+                
+            <div class="col-2 p-0">
                 {{ form.operario }}
+            </div>
+            <div class="col-2 p-0">
+                {{ form.fechaInicio }}
             </div>
             <div class="col p-0">
                 {{ form.lunEnt }}{{ form.lunSal }}

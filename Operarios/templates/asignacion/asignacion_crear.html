@@ -79,7 +79,7 @@
         <div class="row mt-2 leaveForm" id="leaveForm-{{ forloop.counter0 }}">
 
             <div class="col-1 p-0 text-center">
-                <a class="btn btn-info btn-block" style="height: 39px;" ><i class="fa fa-search"></i></a>
+                <a class="btn btn-info btn-block" style="height: 39px;" href='' data-toggle="modal" data-target="#modalFiltro"><i class="fa fa-search"></i></a>
             </div>
             
             {{ form.id }}
@@ -132,6 +132,57 @@
 
 </form>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalFiltro" tabindex="-1" role="dialog" aria-labelledby="modalFiltro" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFiltro">Asignar Operario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--Table-->
+
+                <div>
+                    <span>Filtros</span>
+                </div> 
+                <table id="tablePreview" class="table table-hover table-sm">
+                <!--Table head-->
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Puntuacion</td>
+                        <th>Cantidad Horas</td>
+                    </tr>
+                </thead>
+                <!--Table head-->
+                <!--Table body-->
+                <tbody>
+                    
+                  <tr>
+                        <th scope="row"></th>
+                        <td></td>
+                        <td>Asignar</td>
+                </tr>
+                    
+                </tbody>
+                <!--Table body-->
+                </table>
+                <!--Table-->
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-info" style="height: 39px;" >Asignar</a>
+
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+            </div>
+        </div>
+        </div>
 
 
   

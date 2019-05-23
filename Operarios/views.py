@@ -331,24 +331,40 @@ def Jefes_list(request):
 @login_required
 @permission_required('Operarios.view_operario', raise_exception=True)
 def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
-    print("Fiscales",request.POST)
+
     try:
         
         user_jefe = User.objects.get(pk=id_user_jefe)   
     except User.DoesNotExist as err:
         logging.getLogger("error_logger").error('Usuario de Jefe de Operaciones no existe: {0}'.format(err))
 
+
+    #Se traen todos los fiscales que estan asignados al jefe de operaciones en cuestion
+    fiscales_asig = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe)
+    consulta = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe).query
+    logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
+    
+    '''Se obtienen todos los ids seleccionados, si no estan asignados al jefe, se procede'''
+    if request.method == 'POST':
+        if request.POST.getlist('fiscales_disp'):
+            print(request.POST.getlist('fiscales_disp'))
+            for fisAsig in fiscales_asig:
+                user_fiscal = User.objects.get(pk=fisAsig.id)
+                asignacion = AsigJefeFiscal.objects.get(userJefe=user_jefe, userFiscal=user_fiscal)
+                asignacion.delete()
+
+            for fd_id in request.POST.getlist('fiscales_disp'):
+                user_fiscal = User.objects.get(pk=fd_id)
+                asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
+                asignacion.save() 
+
+    ''' El if siguiente es utilizado en la version anterior de asignacion de fiscales'''   
     if id_user_fiscal != None:
         print("Hola, aca obtengo los fiscales")
         user_fiscal = User.objects.get(pk=id_user_fiscal)
         asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
         asignacion.save()
     
-    #Se traen todos los fiscales que estan asignados al jefe de operaciones en cuestion
-    fiscales_asig = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe)
-    consulta = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe).query
-    logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
-
     #se trae los fiscales disponibles
     fiscales_disp = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal')
     consulta2 = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal').query

@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from django.core.validators import MaxValueValidator
 
 class Ciudad(models.Model):
     NombreCiudad = models.CharField("Ciudad", max_length=70)
@@ -34,26 +34,29 @@ class Especializacion(models.Model):
         verbose_name_plural = "Especializaciones"
 
 class Operario(models.Model):
-    Nombre = models.CharField(max_length=70)
-    Direccion = models.CharField(max_length=100)
-    Ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    Barrios = models.CharField(max_length=70)
+    Nombre = models.CharField(max_length=70, blank=False)
+    Apellido=models.CharField(max_length=70, blank=False, default="")
+    Direccion = models.CharField(max_length=100, blank=False)
+    Ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE, blank=False)
+    Barrios = models.CharField(max_length=70, blank=False)
     NroLegajo = models.CharField('Numero de Legajo', max_length=6, blank=True)
-    Telefono = models.CharField(max_length=15)
+    Telefono = models.BigIntegerField(blank=False, validators=[MaxValueValidator(9999999999)])
     Email = models.CharField(max_length=30, blank=True)
-    FechaNacimiento = models.DateField('Fecha Nacimiento')
+    FechaNacimiento = models.DateField('Fecha Nacimiento', blank=False)
     LugarNacimiento = models.CharField('Lugar de Nacimiento', max_length=30)
-    NumCedula = models.CharField('N° Cedula', max_length=30)
+    NumCedula = models.CharField('N° Cedula', max_length=30, blank=False)
     NumPasaporte = models.CharField('Numero de Pasaporte', max_length=10)
-    Especialidad = models.ForeignKey(Especializacion, blank=True, null=True, on_delete=models.CASCADE)
-    Banco = models.CharField(max_length=30, blank=True)
-    CtaBanco = models.CharField(max_length=20, blank=True)
-    Clase = models.CharField(max_length=10, blank=True)
+    Banco = models.CharField(max_length=30, blank=False)
+    CtaBanco = models.CharField(max_length=20, blank=False)
     NombreContacto = models.CharField(max_length=70, blank=True)
-    Profesion = models.CharField(max_length=20, blank=True)
+    TelefonoContacto=models.BigIntegerField('Telefono Contacto', blank=False, null=True, validators=[MaxValueValidator(9999999999)])
     Nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE)
-    FechaInicio = models.DateField('Fecha Inicio')
+    FechaInicio = models.DateField('Fecha Inicio', blank=False)
     FechaFin = models.DateField('Fecha Fin', blank=True, null=True)
+    latitud=models.FloatField(blank=False, null=True, default=None)
+    longitud=models.FloatField(blank=False, null=True, default=None)
+    escolaridad= models.CharField('Escolaridad', max_length=70, blank=True)
+
 
     def __str__(self):
         return self.NumCedula + ' - ' +  self.Nombre  
@@ -531,3 +534,4 @@ class EsmeEmMarcaciones(models.Model):
     class Meta:
         managed = False
         db_table = 'ESME_EM_Marcaciones'
+

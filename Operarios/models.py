@@ -451,6 +451,8 @@ class AsignacionDet(models.Model):
     domSal = models.TimeField('Domingo salida', blank=True, null=True)
     operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
     fechaInicio = models.DateField('Fecha Inicio Operario', null=True)
+    totalHoras = models.CharField('Total Asignado', max_length=8, null=True)
+
     
 
     class Meta:

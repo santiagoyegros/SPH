@@ -2,17 +2,44 @@
 {% load static %}
 
 {% block content %}
-    <h2>Puntos de Servicio Asignados</h2>
-    <div class="container-fluid mb-3 mt-4">
+    <div class="container-fluid mb-3 mt-4  p-0">
         <div class="row">
             {% if Fiscal %}
                 <div class="col"><b>Fiscal: </b>{{ Fiscal.last_name }}, {{ Fiscal.first_name }} </div>
             {% endif %}
         </div>
     </div>
-    <!--Table-->
+    <form method="post" action="{% url 'Operarios:fiscales_puntos' Fiscal.id %}">
+        {% csrf_token %}
+        <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                        <h5>Puntos de Servicio disponibles</h5>
+                </div>
+                <div class="col-md-6">
+                        <h5 style="    margin: 0px 40px;">Puntos de Servicio Asignados</h5>
+                </div>
+            </div>
+                <select name="puntos_disp" class="keep-order" id="puntos_disp" multiple='multiple'>
+                    {% for puntoS in PuntosSer_disp %}
+                        <option value="{{puntoS.id}}">{{ puntoS.CodPuntoServicio }} - {{ puntoS.NombrePServicio }} </option>
+                    {% endfor %}
+                    {% for puntoS in PuntosSer %}
+                        <option value="{{puntoS.id}}" selected>{{ puntoS.CodPuntoServicio }} - {{ puntoS.NombrePServicio }} </option>
+                    {% endfor %}
+                </select>
+            </div>
+    </div>
+    <div class="col-md-12" style="    text-align: right;margin: 15px 0px;padding: 0px !important;">
+        <a href='{% url 'Operarios:jefes_list' %}' class='btn btn-danger btn-sm'>Volver</a>
+        <button type="submit" class='btn btn-primary btn-sm'>Guardar</button>
+    </div>
+    
+</form>
+<!--   
     <table id="tablePreview" class="table table-hover table-sm">
-    <!--Table head-->
+   
     <thead>
         <tr>
             <th>#</th>
@@ -20,8 +47,7 @@
             <th>Desasignar</th>
         </tr>
     </thead>
-    <!--Table head-->
-    <!--Table body-->
+ 
     <tbody>
         {% if PuntosSer %}
         {% for puntoS in PuntosSer %}
@@ -33,14 +59,14 @@
         {% endfor %}
         {% endif %}
     </tbody>
-    <!--Table body-->
+
     </table>
-    <!--Table-->
+  
     <a class='btn btn-success btn-sm' href='' data-toggle="modal" data-target="#exampleModalCenter"> Asignar Punto de Servicio </a>
     <a class='btn btn-secondary btn-sm' href='{% url 'Operarios:jefes_list' %}' > Volver </a>
 
 
-    <!-- Modal -->
+  
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -51,9 +77,9 @@
             </button>
         </div>
         <div class="modal-body">
-            <!--Table-->
+         
             <table id="tablePreview" class="table table-hover table-sm">
-            <!--Table head-->
+            
             <thead>
                 <tr>
                     <th>#</th>
@@ -61,8 +87,7 @@
                     <th>Seleccionar</td>
                 </tr>
             </thead>
-            <!--Table head-->
-            <!--Table body-->
+           
             <tbody>
                 {% if PuntosSer_disp %}
                 {% for puntoS in PuntosSer_disp %}
@@ -74,15 +99,17 @@
                 {% endfor %}
                 {% endif %}
             </tbody>
-            <!--Table body-->
+        
             </table>
-            <!--Table-->
+       
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
         </div>
         </div>
     </div>
-    </div>
-
+    </div> -->
+    <script>
+        $('#puntos_disp').multiSelect();
+    </script>
 {% endblock %}

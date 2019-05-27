@@ -15,7 +15,7 @@ class EspecializacionAdmin(admin.ModelAdmin):
     list_display = ('especializacion', )
 
 class OperarioAdmin(admin.ModelAdmin):
-    list_display = ('NumCedula','NroLegajo' ,'Nombre', 'Email', )
+    list_display = ('numCedula','nroLegajo' ,'nombre', 'email', )
 
 class ClienteAdmin(admin.ModelAdmin):
     list_display = ('Cliente', 'GrupoEmpresarial', )

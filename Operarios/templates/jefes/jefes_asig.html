@@ -15,15 +15,7 @@
                 {% csrf_token %}
                 <div class="row">
                 <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-6">
-                                <h5>Fiscales disponibles</h5>
-                        </div>
-                        <div class="col-md-6">
-                                <h5 style="    margin: 0px 40px;">Fiscales Asignados</h5>
-                        </div>
-                    </div>
-                    
+              
                         <select name="fiscales_disp" class="keep-order" id="fiscales_disp" multiple='multiple'>
                             {% for fiscal_disp in Fiscales_disp %}
                                 <option value="{{fiscal_disp.id}}">{{ fiscal_disp.last_name }} , {{ fiscal_disp.first_name }} </option>
@@ -36,8 +28,8 @@
                     </div>
             </div>
             <div class="col-md-12" style="    text-align: right;margin: 15px 0px;padding: 0px !important;">
-                <a href='{% url 'Operarios:jefes_list' %}' class='btn btn-danger btn-sm'>Volver</a>   
-                <button type="submit" class='btn btn-primary btn-sm'>Guardar</button>
+                <a href='{% url 'Operarios:jefes_list' %}' class='btn btn-danger'>Volver</a>   
+                <button type="submit" class='btn btn-primary '>Guardar</button>
             </div>
             
         </form>
@@ -127,11 +119,20 @@
     </div>
     </div> -->
     <script>
-        $('#fiscales_disp').multiSelect();
+        $('#fiscales_disp').multiSelect(
+            {
+                selectableHeader: "<h5 class='custom-header'>Fiscales Disponibles</h5>",
+                selectionHeader: "<h5 class='custom-header'>Fiscales Asignados</h5>"
+            }
+        );
         $('#select-all').click(function(){
-             $('#public-methods').multiSelect('select_all');
+             $('#fiscales_disp').multiSelect('select_all');
              return false;
-    });
+        });
+        $('#deselect-all').click(function(){
+            $('#fiscales_disp').multiSelect('deselect_all');
+            return false;
+        });
     </script>
    
 {% endblock %}

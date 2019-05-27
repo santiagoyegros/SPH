@@ -12,6 +12,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet
+from Operarios.models import Ciudad, Cliente, Nacionalidad
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 
 def index(request):
@@ -67,11 +68,13 @@ class PuntosServicioList(ListView):
 @method_decorator(permission_required('Operarios.add_puntoservicio', raise_exception=True), name='dispatch')
 class PuntoServicioCreate(SuccessMessageMixin, CreateView):
     model = PuntoServicio
+    ciudades = Ciudad.objects.all()
+    clientes = Cliente.objects.all()
     form_class = PuntoServicioForm
     template_name = "puntoServicio/puntoServicio_form.html"
     success_url = reverse_lazy('Operarios:puntoServicio_list')
     success_message = 'Punto de Servicio Creado correctamente'
-    extra_context = {'title': 'Nuevo Punto de Servicio'}
+    extra_context = {'title': 'Nuevo Punto de Servicio','ciudades':ciudades,'clientes':clientes}
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.change_puntoservicio', raise_exception=True), name='dispatch')
@@ -82,6 +85,28 @@ class PuntoServicioUpdateView(SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy('Operarios:puntoServicio_list')
     success_message = 'Punto de Servicio modificado correctamente'
     extra_context = {'title': 'Editar Punto de Servicio '}
+
+
+@login_required
+@permission_required('Operarios.change_puntoservicio', raise_exception=True)
+def PuntosServicios_update(request, pk):
+    puntoServicio = PuntoServicio.objects.get(id=pk)
+  
+    if request.method == 'GET':
+        form = PuntoServicioForm(instance=puntoServicio)
+        contexto = {
+            'title': 'Editar Punto de servicio',
+            'form': form,
+            'puntoServicio':puntoServicio 
+        }
+    else:
+        form = PuntoServicioForm(request.POST, instance=puntoServicio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Punto de Servicio modificado correctamente.')
+        return redirect('Operarios:puntoServicio_list')
+
+    return render(request, 'operarios/puntoServicio_list.html', context=contexto)
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.delete_puntoservicio', raise_exception=True), name='dispatch')
@@ -173,6 +198,8 @@ def Relevamiento(request, id_puntoServicio=None):
 @login_required
 @permission_required('Operarios.add_operario', raise_exception=True)
 def Operarios_create(request):
+    ciudades = Ciudad.objects.all()
+    nacionalidades = Nacionalidad.objects.all()
     if request.method == 'POST': 
         form = OperarioForm(request.POST)
         if form.is_valid():
@@ -185,7 +212,9 @@ def Operarios_create(request):
         form = OperarioForm()
         contexto = {
             'title': 'Nuevo Operario',
-            'form': form
+            'form': form,
+            'ciudades':ciudades,
+            'nacionalidades':nacionalidades
         }
     
     return render(request, 'operarios/operarios_form.html', context=contexto)
@@ -200,15 +229,25 @@ def Operarios_list(request):
 @login_required
 @permission_required('Operarios.change_operario', raise_exception=True)
 def Operarios_update(request, pk):
-    operarios = Operario.objects.get(id=pk)
+    operario = Operario.objects.get(id=pk)
+    print(operario.FechaNacimiento)
+    FechaNacimiento = operario.FechaNacimiento.strftime("%d/%m/%Y")
+    FechaInicio = operario.FechaInicio.strftime("%d/%m/%Y")
+    ciudades = Ciudad.objects.all()
+    nacionalidades = Nacionalidad.objects.all()
     if request.method == 'GET':
-        form = OperarioForm(instance=operarios)
+        form = OperarioForm(instance=operario)
         contexto = {
             'title': 'Editar Operario',
-            'form': form
+            'form': form,
+            'operario':operario ,
+            'ciudades':ciudades,
+            'FechaNacimiento':FechaNacimiento,
+            'FechaInicio':FechaInicio,
+            'nacionalidades':nacionalidades
         }
     else:
-        form = OperarioForm(request.POST, instance=operarios)
+        form = OperarioForm(request.POST, instance=operario)
         if form.is_valid():
             form.save()
             messages.success(request, 'Operario modificado correctamente.')
@@ -324,9 +363,15 @@ def Planificacion_list(request):
 @permission_required('Operarios.view_operario', raise_exception=True)
 def Jefes_list(request):
     jefes = User.objects.filter(cargoasignado__cargo__cargo='Jefe de Operaciones')
-    fiscales = User.objects.filter(cargoasignado__cargo__cargo='Fiscal')
-    contexto = {'Jefes': jefes,'Fiscales':fiscales}
+    contexto = {'Jefes': jefes}
     return render(request, 'jefes/jefes_list.html', context=contexto)
+
+@login_required
+@permission_required('Operarios.view_operario', raise_exception=True)
+def Fiscales_list(request):
+    fiscales = User.objects.filter(cargoasignado__cargo__cargo='Fiscal')
+    contexto = {'Fiscales':fiscales}
+    return render(request, 'fiscales/fiscales_list.html', context=contexto) 
 
 @login_required
 @permission_required('Operarios.view_operario', raise_exception=True)

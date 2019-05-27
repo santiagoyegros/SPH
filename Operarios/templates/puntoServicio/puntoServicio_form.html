@@ -1,16 +1,82 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class='col-12 col-md-6 mx-auto'>
+<div class='col-12 col-md-12 mx-auto'>
 {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
 <form method='POST' action='{% if action_url %}{{ action_url }}{% endif %}'> 
     {% csrf_token %}
     {% if next_url %}
     <input type='hidden' name='next' value='{{ next_url }}' />
     {% endif %}
-  {{ form.as_p }}
+
+  <!-- {{ form.as_p }} -->
+<div class="row">
+  <div class="col-md-6">
+      <p>
+          <label for="id_Cliente">Cliente:</label> 
+          <select name="Cliente" class="form-control" required="" id="id_Cliente">
+          <option value="" selected="">---------</option>
+            {% for cliente in clientes %}
+              <option value="{{cliente.pk}}">{{cliente.Cliente}}</option>
+            {% endfor %}
+          </select>
+        </p>
+        <p>
+          <label for="id_CodPuntoServicio">Punto de Servicio:</label> 
+          <input type="text" name="CodPuntoServicio" class="form-control" maxlength="50" required="" id="id_CodPuntoServicio">
+        </p>
+        <p>
+          <label for="id_NombrePServicio">Nombre de Punto de Servicio:</label> 
+          <input type="text" name="NombrePServicio" class="form-control" maxlength="100" required="" id="id_NombrePServicio">
+        </p>
+        <p>
+          <label for="id_DireccionContrato">Direccion del Punto de Servicio:</label> 
+          <input type="text" name="DireccionContrato" class="form-control" maxlength="150" required="" id="id_DireccionContrato">
+        </p>
+        <p>
+          <label for="id_Ciudad">Ciudad:</label> 
+          <select name="Ciudad" class="form-control" required="" id="id_Ciudad">
+            <option value="" selected="">---------</option>
+            {% for ciudad in ciudades %}
+              <option value="{{ciudad.pk}}">{{ciudad.NombreCiudad}}</option>
+            {% endfor %}
+          </select>
+        </p>
+        <p>
+          <label for="id_Barrios">Barrio:</label> 
+          <input type="text" name="Barrios" class="form-control" maxlength="70" required="" id="id_Barrios">
+        </p>
+       
+  </div>
+  <div class="col-md-6">
+      <p>
+          <label for="id_Contacto">Contacto:</label> 
+          <input type="text" name="Contacto" class="form-control" maxlength="100" required="" id="id_Contacto">
+        </p>
+      <p>
+          <label for="id_MailContacto">Mail del Contacto:</label> 
+          <input type="text" name="MailContacto" class="form-control" maxlength="70" id="id_MailContacto">
+        </p>
+        <p>
+          <label for="id_TelefonoContacto">Telefono del Contacto:</label> 
+          <input type="text" name="TelefonoContacto" class="form-control" maxlength="100" required="" id="id_TelefonoContacto">
+        </p>
+        <p>
+          <label for="id_Coordenadas">Coordenadas:</label> 
+          <input type="text" name="Coordenadas" class="form-control" maxlength="100" required="" id="id_Coordenadas">
+        </p>
+        <p>
+          <label for="id_NumeroMarcador">Numero del Marcador:</label> 
+          <input type="text" name="NumeroMarcador" class="form-control" maxlength="15" id="id_NumeroMarcador">
+        </p>
+      
+  </div>
+</div>
+ 
   <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
   <a class='btn btn-primary btn-sm' href={% url 'Operarios:puntoServicio_list' %}>Cancelar</a>
 </form>
 </div>
 {% endblock %}
+
+

@@ -2,16 +2,94 @@
 
 
 {% block content %}
-<div class='col-12 col-md-6 mx-auto'>
-{% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
-<form method='POST' action='{% if action_url %}{{ action_url }}{% endif %}'> 
+<div class='col-12 col-md-12 mx-auto'>
+  {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
+
+  <form method='POST' action='{% if action_url %}{{ action_url }}{% endif %}'>
     {% csrf_token %}
     {% if next_url %}
     <input type='hidden' name='next' value='{{ next_url }}' />
     {% endif %}
-  {{ form.as_p }}
-  <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
-  <a class='btn btn-primary btn-sm' href={% url 'Operarios:operarios_list' %}>Cancelar</a>
-</form>
+     <!-- {{ form.as_p }} -->
+   
+    <div class="row">
+      <div class="col-md-6">
+          <p><label for="id_Nombre">Nombre:</label> <input type="text" name="Nombre" class="form-control" maxlength="70"
+            required="" id="id_Nombre" value="{{operario.Nombre}}"></p>
+        <p><label for="id_Direccion">Direccion:</label> <input type="text" name="Direccion" class="form-control"
+            maxlength="100" required="" id="id_Direccion" value="{{operario.Direccion}}"></p>
+        <p><label for="id_Ciudad">Ciudad:</label> <select name="Ciudad" class="form-control" required="" id="id_Ciudad">
+            <option value="" selected="">---------</option>
+            {% for ciudad in ciudades %}
+              {% if operario.Ciudad.pk ==  ciudad.pk %}
+                <option value="{{ciudad.pk}}" selected>{{ciudad.NombreCiudad}}</option>
+              {% else %}
+                <option value="{{ciudad.pk}}">{{ciudad.NombreCiudad}}</option>
+              {% endif %}
+            {% endfor %}
+    
+          </select></p>
+        <p><label for="id_Barrios">Barrio:</label> <input type="text" name="Barrios" class="form-control" maxlength="70"
+            required="" id="id_Barrios" value="{{operario.Barrios}}"></p>
+        <p><label for="id_NroLegajo">Numero Legajo:</label> <input type="text" name="NroLegajo" class="form-control"
+            maxlength="6" id="id_NroLegajo" value="{{operario.NroLegajo}}"></p>
+        <p><label for="id_Telefono">Telefono:</label> <input type="text" name="Telefono" class="form-control" required=""
+            id="id_Telefono" value="{{operario.Telefono}}"></p>
+        <p><label for="id_Email">E-mail:</label> <input type="text" name="Email" class="form-control" maxlength="30"
+            id="id_Email" value="{{operario.Email}}"></p>
+        <p><label for="id_FechaNacimiento">Fecha de Nacimiento:</label> </p>
+        <div class="input-group date">
+            <input type="text" name="FechaNacimiento" class="form-control" required="" id="id_FechaNacimiento" value="{{FechaNacimiento}}"
+              dp_config="{&quot;id&quot;: &quot;dp_1&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;useCurrent&quot;: false, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+            <div class="input-group-addon input-group-append" data-target="#datetimepicker1" data-toggle="datetimepickerv">
+              <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+            </div>
+          </div>
+          <p></p>
+      </div>
+      <div class="col-md-6">
+          <p><label for="id_LugarNacimiento">Lugar de Nacimiento:</label> <input type="text" name="LugarNacimiento"
+            class="form-control" maxlength="30" required="" id="id_LugarNacimiento" value="{{operario.LugarNacimiento}}"></p>
+        <p><label for="id_NumCedula">N° Cedula:</label> <input type="text" name="NumCedula" class="form-control"
+            maxlength="30" required="" id="id_NumCedula" value="{{operario.NumCedula}}"></p>
+        <p><label for="id_NumPasaporte">N° Pasaporte:</label> <input type="text" name="NumPasaporte" class="form-control"
+            maxlength="10" required="" id="id_NumPasaporte" value="{{operario.NumPasaporte}}"></p>
+        <p><label for="id_Banco">Banco:</label> <input type="text" name="Banco" class="form-control" maxlength="30"
+            required="" id="id_Banco" value="{{operario.Banco}}"></p>
+        <p><label for="id_CtaBanco">Numero de Cuenta:</label> <input type="text" name="CtaBanco" class="form-control"
+            maxlength="20" required="" id="id_CtaBanco" value="{{operario.CtaBanco}}"></p>
+        <p><label for="id_NombreContacto">Nombre de Contacto:</label> <input type="text" name="NombreContacto"
+            class="form-control" maxlength="70" id="id_NombreContacto" value="{{operario.NombreContacto}}"></p>
+        <p><label for="id_Nacionalidad">Nacionalidad:</label> <select name="Nacionalidad" class="form-control" required=""
+            id="id_Nacionalidad">
+            <option value="" selected="">---------</option>
+            {% for nacionalidad in nacionalidades %}
+              {% if operario.Nacionalidad.pk ==  nacionalidad.pk %}
+                <option value="{{nacionalidad.pk}}" selected>{{nacionalidad.Pais}}</option>
+              {% else %}
+                <option value="{{nacionalidad.pk}}">{{nacionalidad.Pais}}</option>
+              {% endif %}
+          {% endfor %}
+            
+    
+          </select></p>
+        <p><label for="id_FechaInicio">Fecha de Inicio:</label> </p>
+        <div class="input-group date">
+          <input type="text" name="FechaInicio" class="form-control" required="" id="id_FechaInicio" value="{{FechaInicio}}"
+            dp_config="{&quot;id&quot;: &quot;dp_2&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;useCurrent&quot;: false, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+          <div class="input-group-addon input-group-append" data-target="#datetimepicker1" data-toggle="datetimepickerv">
+            <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+          </div>
+        </div>
+        <p></p>
+      </div>
+    </div>
+   
+   
+  
+   
+    <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
+    <a class='btn btn-primary btn-sm' href={% url 'Operarios:operarios_list' %}>Cancelar</a>
+  </form>
 </div>
 {% endblock %}

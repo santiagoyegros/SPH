@@ -5,6 +5,7 @@
 {% url 'Operarios:puntoServicio_list' as punto_servicio_url %}
 {% url 'Operarios:operarios_list' as operarios_url %}
 {% url 'Operarios:jefes_list' as jefes_url %}
+{% url 'Operarios:fiscales_list' as fiscales_url %} 
 {% url 'marcaciones' as marcaciones_url %}
 {% url 'remplazos' as remplazos_url %}
 {% url 'alertas' as alertas_url %}
@@ -40,8 +41,10 @@ $("#salir").on('click',"a[data-window='external']", function() {
                     <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="{{ punto_servicio_url }}">Puntos de Servicio</a>
                     <a class="dropdown-item" href="{{ operarios_url }}">Operarios</a>
-                    <a class="dropdown-item" href="{{ jefes_url }}">Estructura de Jefes/Fiscales</a>
-                    </div>
+                    <a class="dropdown-item" href="{{ jefes_url }}">Jefes</a>
+                    <a class="dropdown-item" href="{{ fiscales_url }}">Fiscales</a>
+                    
+                </div> 
                 </li>
                 <li class="nav-item {% if request.path == marcaciones_url %}active{% endif %}">
                     <a class="nav-link" href="{{ marcaciones_url }}">Marcaciones</a>

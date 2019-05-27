@@ -116,7 +116,8 @@
       selectableLi
         .data('ms-value', value)
         .addClass('ms-elem-selectable')
-        .attr('id', elementId+'-selectable');
+        .attr('id', elementId+'-selectable')
+        .attr('title', 'Click para asignar o desasignar');
 
       selectedLi
         .data('ms-value', value)

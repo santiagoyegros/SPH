@@ -22,6 +22,11 @@
     this.$element = $(element);
     this.$container = $('<div/>', { 'class': "ms-container" });
     this.$selectableContainer = $('<div/>', { 'class': 'ms-selectable' });
+    this.$optionsContainer = $('<div/>', { 'class': 'ms-buttons d-flex align-items-center flex-column' });
+    this.$selectallContainer = $('<div/>', { 'class': 'ms-selectall mb-auto bd-highlight' });
+    this.$deselectallContainer = $('<div/>', { 'class': 'ms-deselectall mt-auto bd-highlight' });
+    this.$selectableAll = $('<a/>', {'title':'Seleccionar todos', 'id': 'select-all','href':'#','class':'btn btn-primary btn-selects' });
+    this.$deselectableAll = $('<a/>', {'title':'Deseleccionar todos', 'id': 'deselect-all','href':'#','class':'btn btn-primary btn-selects' });
     this.$selectionContainer = $('<div/>', { 'class': 'ms-selection' });
     this.$selectableUl = $('<ul/>', { 'class': "ms-list", 'tabindex' : '-1' });
     this.$selectionUl = $('<ul/>', { 'class': "ms-list", 'tabindex' : '-1' });
@@ -62,8 +67,16 @@
         if (that.options.selectionFooter){
           that.$selectionContainer.append(that.options.selectionFooter);
         }
-
+        this.$iconAll = $('<i/>', { 'class': "fas fa-angle-double-right" });
+        this.$iconNone = $('<i/>', { 'class': "fas fa-angle-double-left"});
+        that.$selectableAll.append(this.$iconAll);
+        that.$deselectableAll.append(this.$iconNone);
+        that.$selectallContainer.append(that.$selectableAll);
+        that.$deselectallContainer.append(that.$deselectableAll);
+        that.$optionsContainer.append(that.$selectallContainer);
+        that.$optionsContainer.append(that.$deselectallContainer);
         that.$container.append(that.$selectableContainer);
+        that.$container.append(that.$optionsContainer);
         that.$container.append(that.$selectionContainer);
         ms.after(that.$container);
 
@@ -116,12 +129,14 @@
       selectableLi
         .data('ms-value', value)
         .addClass('ms-elem-selectable')
-        .attr('id', elementId+'-selectable');
+        .attr('id', elementId+'-selectable')
+        .attr('title', 'Click para asignar');
 
       selectedLi
         .data('ms-value', value)
         .addClass('ms-elem-selection')
         .attr('id', elementId+'-selection')
+        .attr('title', 'Click para desasignar')
         .hide();
 
       if ($option.prop('disabled') || ms.prop('disabled')){

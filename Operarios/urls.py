@@ -5,10 +5,11 @@ from django.views.generic import TemplateView, RedirectView
 from django.conf.urls import url, include
 from django.contrib.auth.decorators import login_required
 from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView
-from Operarios.views import Relevamiento, Operarios_list, Operarios_create, Operarios_update, Operarios_delete
+from Operarios.views import Relevamiento
 from Operarios.views import Planificacion_list, Planificacion_create, Jefes_list, Jefes_asig, Jefes_delete, asignarFiscales
 from Operarios.views import Fiscales_asig, Fiscales_delete
 from Operarios import viewsAsignacion 
+from Operarios import viewsOperario
 app_name = 'Operarios'
 
 urlpatterns = [
@@ -21,10 +22,10 @@ urlpatterns = [
     url(r'^puntoServicio/eliminar/(?P<pk>\d+)/$', PuntoServicioDeleteView.as_view(), name='puntoServicio_delete'),
     url(r'^puntoServicio/relevamiento/(?P<id_puntoServicio>\d+)/$', Relevamiento, name='relevamiento'),
     url(r'^puntoServicio/relevamiento/$', Relevamiento, name='relevamiento_nuevo'),
-    url(r'^operarios/listar/', Operarios_list , name='operarios_list'),
-    url(r'^operarios/nuevo/', Operarios_create, name='operarios_create'),
-    url(r'^operarios/editar/(?P<pk>\d+)/$', Operarios_update, name='operarios_update'),
-    url(r'^operarios/eliminar/(?P<pk>\d+)/$', Operarios_delete, name='operarios_delete'),
+    url(r'^operarios/listar/', viewsOperario.Operarios_list , name='operarios_list'),
+    url(r'^operarios/nuevo/', viewsOperario.Operarios_create, name='operarios_create'),
+    url(r'^operarios/editar/(?P<pk>\d+)/$', viewsOperario.Operarios_update, name='operarios_update'),
+    url(r'^operarios/eliminar/(?P<pk>\d+)/$', viewsOperario.Operarios_delete, name='operarios_delete'),
     url(r'^planificacion/listar/', Planificacion_list, name='planificar_list'),
     url(r'^planificacion/planificar/(?P<id_puntoServicio>\d+)/$', Planificacion_create, name='planificar_create'),
     url(r'^jefes/listar/', Jefes_list, name='jefes_list'),

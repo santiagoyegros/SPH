@@ -170,61 +170,6 @@ def Relevamiento(request, id_puntoServicio=None):
     #return render_to_response('puntoServicio/puntoServicio_relevamiento.html', locals())
     return render(request, 'puntoServicio/puntoServicio_relevamiento.html', context=contexto)
 
-@login_required
-@permission_required('Operarios.add_operario', raise_exception=True)
-def Operarios_create(request):
-    if request.method == 'POST': 
-        form = OperarioForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Operario creado correctamente.')
-        else:
-            messages.warning(request, 'No se pudo cargar el Operario')
-        return redirect('Operarios:operarios_list')
-    else:
-        form = OperarioForm()
-        contexto = {
-            'title': 'Nuevo Operario',
-            'form': form
-        }
-    
-    return render(request, 'operarios/operarios_form.html', context=contexto)
-
-@login_required
-@permission_required('Operarios.view_operario', raise_exception=True)
-def Operarios_list(request):
-    operarios = Operario.objects.all()
-    contexto = {'Operarios': operarios}
-    return render(request, 'operarios/operarios_list.html', context=contexto)
-
-@login_required
-@permission_required('Operarios.change_operario', raise_exception=True)
-def Operarios_update(request, pk):
-    operarios = Operario.objects.get(id=pk)
-    if request.method == 'GET':
-        form = OperarioForm(instance=operarios)
-        contexto = {
-            'title': 'Editar Operario',
-            'form': form
-        }
-    else:
-        form = OperarioForm(request.POST, instance=operarios)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Operario modificado correctamente.')
-        return redirect('Operarios:operarios_list')
-
-    return render(request, 'operarios/operarios_form.html', context=contexto)
-
-@login_required
-@permission_required('Operarios.delete_operario', raise_exception=True)
-def Operarios_delete(request, pk):
-    operarios = Operario.objects.get(id=pk)
-    if request.method == 'POST':
-        operarios.delete()
-        messages.warning(request, 'Operario eliminado correctamente')
-        return redirect('Operarios:operarios_list')
-    return render(request, 'operarios/operarios_delete.html', {'operarios': operarios})
 
 
 @login_required

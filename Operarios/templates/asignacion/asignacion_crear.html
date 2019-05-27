@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class='col mx-auto'>
+<div class="container-fluid">
 {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
 <form method='POST' action='#' name='formulario' id='formulario'> 
     <input type="hidden" id="action" name="action" value="">
     {% csrf_token %}
     
-    <div class="container-fluid mb-4 mt-4">
+    <div class="col-lg-12 col-md-12 container-main">
         <div class="row mt-3">
             <div class="col h4"><u><strong> {{ form.puntoServicio.label }}:</strong></u> ({{ pservicio.CodPuntoServicio }}) - {{ pservicio.NombrePServicio }} {{ form.puntoServicio.as_hidden  }} </div>
         </div>
@@ -59,13 +59,32 @@
     {{ asigDetFormSet.management_form }}
 
      <!--Formulario de Servicios Particulares-->
-    <div class="container-fluid mb-3 mt-4" id='formset-det'>
-        <h4>
-        Asignación de Horas <small class="text-muted">Definicion de operarios y horas</small>
-        </h4>
+    
+    <div class="container-main col-lg-12 col-md-12" id='formset-det'>
+           
+            <div class="row" >
+                <div class="col-lg-12 col-md-12">
+                    <h4>
+                    Asignación de Horas <small class="text-muted">Definicion de operarios y horas</small>
+                    </h4>
+                </div>
+                <div class="col-lg-12 col-md-12" style="text-align: right" >
+                    <button type='submit' class='btn btn-success'>Guardar</button>
+                    <a class='btn btn-default' href={% url 'Operarios:asignacion_list' %}>Cancelar</a>
+                </div>
+                    
+            </div>
+           
+        <div class="row container-main">
+                <div class="col-lg-12 col-md-12" style="text-align: right" >
+                    <button type='submit' id='btnDet' class="btn btn-info" name='add_det'>
+                        <i class="fa fa-plus"></i>Agregar Detalle</button>
+        </div>
+        </div>
         <div class="row">
             <div class="col-1 p-0 mt-3">  </div>
             <div class="col-2 p-0 mt-3"> Operario </div>
+            <div class="col-2 p-0 mt-3"> Fecha Inicio </div>
             <div class="col p-0 text-center"> Lunes </div>
             <div class="col p-0 text-center"> Martes </div>
             <div class="col p-0 text-center"> Miercoles </div>
@@ -73,6 +92,7 @@
             <div class="col p-0 text-center"> Viernes </div>
             <div class="col p-0 text-center"> Sabado </div>
             <div class="col p-0 text-center"> Domingo </div>
+            <div class="col p-0 text-center"> Horas Requeridas </div>
             <div class="col-1 p-0 text-center"> Eliminar? </div>
         </div>
 	    {% for form in asigDetFormSet %}
@@ -111,24 +131,22 @@
             <div class="col p-0">
                 {{ form.domEnt }}{{ form.domSal }}
             </div>
-            <div class="col-1 p-0 text-center">
+            <div class="col p-0">
+                    {{ form.totalHoras }}{{ form.totalHoras }}
+                </div>
+            <div class="col-1 p-0 text-left">
                 <input type="checkbox" style="display:none" name="asignaciondet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
                 <a href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                    <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span class="visible-xs"></span>
                 </a>
             </div>
         </div>
         {% endfor %}
 
     </div>
-    <div class="row mt-3 justify-content-end">
-        <button type='submit' id='btnDet' class="btn btn-outline-info btn-sm" name='add_det'>Añadir Detalle</button>
-    </div>
     
-    <div class="row mt-5 justify-content-end">
-        <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
-        <a class='btn btn-primary btn-sm' href={% url 'Operarios:asignacion_list' %}>Cancelar</a>
-    </div>
+    
+   
 
 </form>
 </div>

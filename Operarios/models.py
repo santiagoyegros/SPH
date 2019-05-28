@@ -482,8 +482,8 @@ class AsignacionDetAux(models.Model):
     domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
     domSal = models.TimeField('Domingo salida', blank=True, null=True)
     operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
-    fechaInicio = models.DateField('Fecha Inicio Operario', null=True)
-
+    fechaInicio = models.DateField('Fecha Inicio Operario Aux', null=True)
+    totalHoras = models.CharField('Total de horas necesarias tabla aux', max_length=8, null=True)
     class Meta:
         verbose_name = _("Asignacion Detalle Auxiliar")
         verbose_name_plural = _("Asignacion Detalles Auxiliares")

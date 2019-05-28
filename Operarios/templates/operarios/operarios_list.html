@@ -2,8 +2,24 @@
 {% load static %}
 
 {% block content %}
-    <h2>Operarios</h2>
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <h2>Operarios</h2>
+            </div>
+        </div>
+    
+            <div class="row">
+                    <div class="col-lg-12 col-md-12" style="text-align: right">
+                            <a class='btn btn-primary' href='{% url 'Operarios:operarios_create' %}' > <i class="fa fa-plus">
+
+                            </i>Agregar </a>
+                    </div>
+            </div>
+                
+    
     <!--Table-->
+    <div class="col-lg-12 col-md-12 container-main">
     <table id="tablePreview" class="table table-hover table-sm">
     <!--Table head-->
     <thead>
@@ -23,9 +39,9 @@
         {% for operario in Operarios %}
         <tr>
             <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ operario.NroLegajo }}</td>
-            <td>{{ operario.NumCedula }}</td>
-            <td>{{ operario.Nombre }}</td>
+            <td>{{ operario.nroLegajo }}</td>
+            <td>{{ operario.numCedula }}</td>
+            <td>{{ operario.nombre}} {{operario.apellido}}</td>
             <td> <a class='btn btn-primary btn-sm' href={% url 'Operarios:operarios_update' operario.id %}>Editar</a> </td>
             <td> <a class='btn btn-danger btn-sm' href={% url 'Operarios:operarios_delete' operario.id %}>Eliminar</a> </td>
         </tr>
@@ -34,8 +50,9 @@
     </tbody>
     <!--Table body-->
     </table>
+    </div>
     <!--Table-->
-    <a class='btn btn-success btn-sm' href='{% url 'Operarios:operarios_create' %}' > Nuevo Operario </a>
+    </div>
 
 
 {% endblock %}

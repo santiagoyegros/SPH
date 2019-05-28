@@ -176,69 +176,12 @@ def Relevamiento(request, id_puntoServicio=None):
     #return render_to_response('puntoServicio/puntoServicio_relevamiento.html', locals())
     return render(request, 'puntoServicio/puntoServicio_relevamiento.html', context=contexto)
 
-@login_required
-@permission_required('Operarios.add_operario', raise_exception=True)
-def Operarios_create(request):
-    if request.method == 'POST': 
-        form = OperarioForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Operario creado correctamente.')
-        else:
-            messages.warning(request, 'No se pudo cargar el Operario')
-        return redirect('Operarios:operarios_list')
-    else:
-        form = OperarioForm()
-        contexto = {
-            'title': 'Nuevo Operario',
-            'form': form
-        }
-    
-    return render(request, 'operarios/operarios_form.html', context=contexto)
-
-@login_required
-@permission_required('Operarios.view_operario', raise_exception=True)
-def Operarios_list(request):
-    operarios = Operario.objects.all()
-    contexto = {'Operarios': operarios}
-    return render(request, 'operarios/operarios_list.html', context=contexto)
-
-@login_required
-@permission_required('Operarios.change_operario', raise_exception=True)
-def Operarios_update(request, pk):
-    operarios = Operario.objects.get(id=pk)
-    if request.method == 'GET':
-        form = OperarioForm(instance=operarios)
-        contexto = {
-            'title': 'Editar Operario',
-            'form': form
-        }
-    else:
-        form = OperarioForm(request.POST, instance=operarios)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Operario modificado correctamente.')
-        return redirect('Operarios:operarios_list')
-
-    return render(request, 'operarios/operarios_form.html', context=contexto)
-
 class MarcacionListView(ExportMixin,SingleTableMixin,FilterView):
     table_class= MarcacionTable
     model= EsmeEmMarcaciones
     template_name='marcacion/marcacion_list.html'
     filterset_class= MarcacionFilter
     table_pagination={"per_page":10}
-
-
-@login_required
-@permission_required('Operarios.delete_operario', raise_exception=True)
-def Operarios_delete(request, pk):
-    operarios = Operario.objects.get(id=pk)
-    if request.method == 'POST':
-        operarios.delete()
-        messages.warning(request, 'Operario eliminado correctamente')
-        return redirect('Operarios:operarios_list')
-    return render(request, 'operarios/operarios_delete.html', {'operarios': operarios})
 
 
 @login_required
@@ -266,8 +209,7 @@ def Planificacion_create(request, id_puntoServicio=None):
         if relevamiento:
             for relevesp in relevamiento.relevamientoesp_set.all():
                 initial.append({'tipo': relevesp.tipo, 
-                                'frecuencia': relevesp.dia,
-                                'dia': relevesp.dia,
+                                'frecuencia': relevesp.frecuencia,
                                 'cantHoras': relevesp.cantHoras})
                 # initial=[
                 #         {'especialista': 2, 
@@ -347,7 +289,6 @@ def Jefes_list(request):
 def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
 
     try:
-        
         user_jefe = User.objects.get(pk=id_user_jefe)   
     except User.DoesNotExist as err:
         logging.getLogger("error_logger").error('Usuario de Jefe de Operaciones no existe: {0}'.format(err))
@@ -357,20 +298,6 @@ def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
     fiscales_asig = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe)
     consulta = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
-    
-    '''Se obtienen todos los ids seleccionados, si no estan asignados al jefe, se procede'''
-    if request.method == 'POST':
-        if request.POST.getlist('fiscales_disp'):
-            print(request.POST.getlist('fiscales_disp'))
-            for fisAsig in fiscales_asig:
-                user_fiscal = User.objects.get(pk=fisAsig.id)
-                asignacion = AsigJefeFiscal.objects.get(userJefe=user_jefe, userFiscal=user_fiscal)
-                asignacion.delete()
-
-            for fd_id in request.POST.getlist('fiscales_disp'):
-                user_fiscal = User.objects.get(pk=fd_id)
-                asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
-                asignacion.save() 
 
     ''' El if siguiente es utilizado en la version anterior de asignacion de fiscales'''   
     if id_user_fiscal != None:
@@ -383,13 +310,41 @@ def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
     fiscales_disp = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal')
     consulta2 = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal').query
     logging.getLogger("error_logger").error('La consulta de fiscales disponibles ejecutada es: {0}'.format(consulta2))
-
+    print("HOOOOOOLA", fiscales_disp)
     #cargamos el contexto
     contexto = {'Fiscales': fiscales_asig,
                 'Jefe': user_jefe,
                 'Fiscales_disp': fiscales_disp
             }
     return render(request, 'jefes/jefes_asig.html', context=contexto)
+
+@permission_required('Operarios.view_operario', raise_exception=True)
+def asignarFiscales(request,id_user_jefe=None ):
+
+    try:
+        user_jefe = User.objects.get(pk=id_user_jefe)   
+    except User.DoesNotExist as err:
+        logging.getLogger("error_logger").error('Usuario de Jefe de Operaciones no existe: {0}'.format(err))
+
+    #Se traen todos los fiscales que estan asignados al jefe de operaciones en cuestion
+    fiscales_asig = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe)
+    consulta = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe).query
+    logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
+    
+    '''Se obtienen todos los ids seleccionados'''
+    if request.method == 'POST':
+        if request.POST.getlist('fiscales_disp') != None:
+            print(request.POST.getlist('fiscales_disp')) 
+            for fisAsig in fiscales_asig:
+                asignacion = AsigJefeFiscal.objects.get(userJefe=user_jefe, userFiscal=fisAsig)
+                asignacion.delete()
+
+            for fd_id in request.POST.getlist('fiscales_disp'):
+                user_fiscal = User.objects.get(pk=fd_id)
+                asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
+                asignacion.save() 
+
+    return redirect('Operarios:jefes_asigFiscales', id_user_jefe=id_user_jefe)
 
 @login_required
 @permission_required('Operarios.delete_operario', raise_exception=True)
@@ -427,6 +382,7 @@ def Fiscales_asig(request, id_user_fiscal=None, id_puntoServicio=None):
     consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
     print("Asignados",puntosServ_asig)
+   
     #se trae los puntos de servicio disponibles 
     puntosServ_disp = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True)
     consulta2 = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True).query
@@ -438,6 +394,38 @@ def Fiscales_asig(request, id_user_fiscal=None, id_puntoServicio=None):
                 'PuntosSer_disp': puntosServ_disp
             }
     return render(request, 'fiscales/fiscales_asig.html', context=contexto)
+
+
+@permission_required('Operarios.view_operario', raise_exception=True)
+def asignarPuntosServicio(request,id_user_fiscal=None):
+
+    try:
+        user_fiscal = User.objects.get(pk=id_user_fiscal)   
+    except User.DoesNotExist as err:
+        logging.getLogger("error_logger").error('Usuario de Fiscal no existe: {0}'.format(err))
+
+    #Se traen todos los puntos de servicio que estan asignados al fiscal en cuestion
+    puntosServ_asig = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal)
+    consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal).query
+    logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
+    
+    '''Se obtienen todos los ids seleccionados'''
+    if request.method == 'POST':
+        print("HOOOOOOLA",request.POST.getlist('puntos_disp'),puntosServ_asig)
+        if request.POST.getlist('puntos_disp') != None:
+            for PSAsig in puntosServ_asig:
+                print("Punto de servicio",PSAsig)
+                asignacion = AsigFiscalPuntoServicio.objects.get(userFiscal=user_fiscal, puntoServicio=PSAsig)
+                print("BORRADO")
+                asignacion.delete()
+
+            for PS_id in request.POST.getlist('puntos_disp'):
+                nuevoPunto = PuntoServicio.objects.get(pk=PS_id)
+                print(nuevoPunto)
+                asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=nuevoPunto)
+                asignacion.save() 
+
+    return redirect('Operarios:fiscales_asig', id_user_fiscal=id_user_fiscal)
 
 @login_required
 @permission_required('Operarios.delete_operario', raise_exception=True)

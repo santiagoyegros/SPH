@@ -2,7 +2,7 @@ from django import forms
 import logging
 import datetime
 from bootstrap_datepicker_plus import DatePickerInput, TimePickerInput
-
+from Operarios.models import Ciudad, Nacionalidad, Especializacion
 from Operarios.models import (  PuntoServicio, 
                                 Operario, 
                                 RelevamientoCab, 
@@ -63,75 +63,40 @@ class PuntoServicioForm(forms.ModelForm):
         }
 
 class OperarioForm(forms.ModelForm):
+
     
+    nombre: forms.CharField(max_length=70, required=True, error_messages={'required':'Ingrese un nombre para el Operario'})
+    apellido: forms.CharField(max_length=70, required=True, error_messages={'required':'Ingrese un apellido para el Operario'})
+    direccion: forms.CharField(max_length=100, required=True, error_messages={'required':'Ingrese la direccion del Operario'})
+    numCedula: forms.CharField(max_length=30, required=True, error_messages={'required':'Ingrese un numero de cedula valida', 'max_length': 'La cedula debe tener como maximo 30 caracteres'})
+    numPasaporte = forms.CharField(max_length=10, required=False)
+    nroLegajo = forms.CharField(max_length=6)
+    """
+    nacionalidad = forms.IntegerField(required=True)
+    ciudad = forms.IntegerField(required=True, error_messages={'required':'Seleccione una ciudad'})
+    """
+    escolaridad= forms.CharField(max_length=70, required=False, error_messages={'max_length':'Ha superado los 70 caracteres'})
+    nombreContacto= forms.CharField(max_length=70)
+    telefono=forms.IntegerField(required=True, error_messages={'required':'Ingrese numero de telefono'})
+    telefonoContacto=forms.IntegerField(required=True, error_messages={'required':'Ingrese numero de telefono de contacto'})
+    """
+    profesion=forms.IntegerField(required=True, error_messages={'required':'Seleccione al menos una profesion'})
+    """
+    banco=forms.CharField(required=True, error_messages={'required':'Ingrese un banco'})
+    ctaBanco=forms.IntegerField(required=True, error_messages={'required':'Ingrese un numero de banco'})
+    lugarNacimiento=forms.CharField(max_length=30, required=False)
+    fechaInicio=forms.DateField(required=True, error_messages={'required':'Ingrese la fecha de ingreso del operario'})
+    fechaFin=forms.DateField(required=False)
+    email=forms.EmailField(required=False)
+    latitud=forms.FloatField()
+    longitud=forms.FloatField()
+    direccion=forms.CharField(required=True, error_messages={'required':'Ingrese la direccion del operario'})
+    barrios=forms.CharField(required=True, error_messages={'required':'Ingrese el barrio'})
     class Meta:
         model = Operario
+        fields=['nombre', 'apellido', 'direccion', 'numCedula', 'numPasaporte', 'nacionalidad', 'escolaridad', 'telefono','ciudad','profesion', 'fechaNacimiento','lugarNacimiento', 'banco', 'ctaBanco', 'nombreContacto', 'telefonoContacto','email', 'nroLegajo', 'fechaFin', 'fechaInicio', 'latitud', 'longitud', 'barrios'   ]
 
-        fields = [
-            'Nombre',
-            'Direccion',
-            'Ciudad',
-            'Barrios',
-            'NroLegajo',
-            'Telefono',
-            'Email',
-            'FechaNacimiento',
-            'LugarNacimiento',
-            'NumCedula',
-            'NumPasaporte',
-            'Especialidad',
-            'Banco',
-            'CtaBanco',
-            'Clase',
-            'NombreContacto',
-            'Profesion',
-            'Nacionalidad',
-            'FechaInicio'
-        ]
-
-        labels = {
-            'Nombre':'Nombre',
-            'Direccion':'Direccion',
-            'Ciudad':'Ciudad',
-            'Barrios':'Barrio',
-            'NroLegajo':'Numero Legajo',
-            'Telefono':'Telefono',
-            'Email':'E-mail',
-            'FechaNacimiento':'Fecha de Nacimiento',
-            'LugarNacimiento':'Lugar de Nacimiento',
-            'NumCedula':'N° Cedula',
-            'NumPasaporte':'N° Pasaporte',
-            'Especialidad': 'Especialidad',
-            'Banco':'Banco',
-            'CtaBanco':'Numero de Cuenta',
-            'Clase':'Clase',
-            'NombreContacto':'Nombre de Contacto',
-            'Profesion':'Profesión',
-            'Nacionalidad':'Nacionalidad',
-            'FechaInicio':'Fecha de Inicio',
-        }
-
-        widgets = {
-            'Nombre': forms.TextInput(attrs={'class':'form-control'}),
-            'Direccion': forms.TextInput(attrs={'class':'form-control'}),
-            'Ciudad': forms.Select(attrs={'class':'form-control'}),
-            'Barrios': forms.TextInput(attrs={'class':'form-control'}),
-            'NroLegajo': forms.TextInput(attrs={'class':'form-control'}),
-            'Telefono': forms.TextInput(attrs={'class':'form-control'}),
-            'Email': forms.TextInput(attrs={'class':'form-control'}),
-            'FechaNacimiento': DatePickerInput(format='%d/%m/%Y', options={"useCurrent": False, "locale": "es"}),
-            'LugarNacimiento': forms.TextInput(attrs={'class':'form-control'}),
-            'NumCedula': forms.TextInput(attrs={'class':'form-control'}),
-            'NumPasaporte': forms.TextInput(attrs={'class':'form-control'}),
-            'Especialidad': forms.Select(attrs={'class':'form-control'}),
-            'Banco': forms.TextInput(attrs={'class':'form-control'}),
-            'CtaBanco': forms.TextInput(attrs={'class':'form-control'}),
-            'Clase': forms.TextInput(attrs={'class':'form-control'}),
-            'NombreContacto': forms.TextInput(attrs={'class':'form-control'}),
-            'Profesion': forms.TextInput(attrs={'class':'form-control'}),
-            'Nacionalidad': forms.Select(attrs={'class':'form-control'}),
-            'FechaInicio':  DatePickerInput(format='%d/%m/%Y', options={"useCurrent": False, "locale": "es"})
-        }
+    
 
 class RelevamientoForm(forms.ModelForm):
 
@@ -532,7 +497,8 @@ class AsignacionDetForm(forms.ModelForm):
             'sabEnt',
             'sabSal',
             'domEnt',
-            'domSal'
+            'domSal',
+            'totalHoras',
         ]
 
         labels = {
@@ -551,7 +517,8 @@ class AsignacionDetForm(forms.ModelForm):
             'sabEnt': 'Sabado Entrada',
             'sabSal': 'Sabado Salida',
             'domEnt': 'Domingo Entrada',
-            'domSal': 'Domingo Salida'
+            'domSal': 'Domingo Salida',
+            'totalHoras':'Total Horas' 
         }
 
         widgets = {
@@ -570,8 +537,10 @@ class AsignacionDetForm(forms.ModelForm):
             'sabEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Sabado'),
             'sabSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Sabado'),
             'domEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Domingo'),
-            'domSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Domingo')
+            'domSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Domingo'),
+            'totalHoras': forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly' }),
         }
+        
 
 def timeInHours(str):
     tokens = str.split(':')

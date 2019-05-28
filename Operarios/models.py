@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from django.core.validators import MaxValueValidator
 
 class Ciudad(models.Model):
     NombreCiudad = models.CharField("Ciudad", max_length=70)
@@ -34,29 +34,33 @@ class Especializacion(models.Model):
         verbose_name_plural = "Especializaciones"
 
 class Operario(models.Model):
-    Nombre = models.CharField(max_length=70)
-    Direccion = models.CharField(max_length=100)
-    Ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    Barrios = models.CharField(max_length=70)
-    NroLegajo = models.CharField('Numero de Legajo', max_length=6, blank=True)
-    Telefono = models.CharField(max_length=15)
-    Email = models.CharField(max_length=30, blank=True)
-    FechaNacimiento = models.DateField('Fecha Nacimiento')
-    LugarNacimiento = models.CharField('Lugar de Nacimiento', max_length=30)
-    NumCedula = models.CharField('N° Cedula', max_length=30)
-    NumPasaporte = models.CharField('Numero de Pasaporte', max_length=10)
-    Especialidad = models.ForeignKey(Especializacion, blank=True, null=True, on_delete=models.CASCADE)
-    Banco = models.CharField(max_length=30, blank=True)
-    CtaBanco = models.CharField(max_length=20, blank=True)
-    Clase = models.CharField(max_length=10, blank=True)
-    NombreContacto = models.CharField(max_length=70, blank=True)
-    Profesion = models.CharField(max_length=20, blank=True)
-    Nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE)
-    FechaInicio = models.DateField('Fecha Inicio')
-    FechaFin = models.DateField('Fecha Fin', blank=True, null=True)
+    nombre = models.CharField(max_length=70, blank=False)
+    apellido=models.CharField(max_length=70, blank=False, default="")
+    direccion = models.CharField(max_length=100, blank=False)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE, blank=False)
+    barrios = models.CharField(max_length=70, blank=False)
+    nroLegajo = models.CharField('Numero de Legajo', max_length=6, blank=True)
+    telefono = models.BigIntegerField(blank=False, validators=[MaxValueValidator(9999999999)], null=True)
+    email = models.CharField(max_length=30, blank=True)
+    fechaNacimiento = models.DateField('Fecha Nacimiento', blank=False)
+    lugarNacimiento = models.CharField('Lugar de Nacimiento', max_length=30)
+    numCedula = models.CharField('N° Cedula', max_length=30, blank=False)
+    numPasaporte = models.CharField('Numero de Pasaporte', max_length=10, blank=True)
+    banco = models.CharField(max_length=30, blank=True)
+    ctaBanco = models.CharField(max_length=20, blank=True)
+    nombreContacto = models.CharField(max_length=70, blank=True)
+    telefonoContacto=models.BigIntegerField('Telefono Contacto', blank=False, null=True, validators=[MaxValueValidator(9999999999)])
+    nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE)
+    fechaInicio = models.DateField('Fecha Inicio', blank=False, null=True)
+    fechaFin = models.DateField('Fecha Fin', blank=True, null=True)
+    latitud=models.FloatField(blank=True, null=True)
+    longitud=models.FloatField(blank=True, null=True)
+    escolaridad= models.CharField('Escolaridad', max_length=70, blank=True)
+    profesion=models.ManyToManyField(Especializacion)
+
 
     def __str__(self):
-        return self.NumCedula + ' - ' +  self.Nombre  
+        return self.numCedula + ' - ' +  self.nombre  
 
 class GrupoEmpresarial(models.Model):
     GrupoEmpresarial = models.CharField('Grupo Empresarial', max_length=100)
@@ -150,6 +154,8 @@ class RelevamientoCab(models.Model):
     cantidadHrTotal = models.CharField('Cantidad de Horas total por Semana', max_length=8, blank=True, null=True)
     cantidadHrEsp = models.CharField('Cantidad de Horas Especiales por Semana', max_length=8, blank=True, null=True)
     fechaInicio = models.DateField('Fecha Inicio Cobertura', null=True)
+    fechaFin= models.DateField('Fecha Fin Cobertura', blank=True, null=True)
+    estado=models.CharField('Estado del relevamiento', max_length=30, blank=False, default='Aprobado')
     usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     tipoSalario = models.ForeignKey(TipoSalario, blank=True, null=True, on_delete=models.CASCADE)
     comentario = models.CharField('Comentarios del servicio aprobado', max_length=550, blank=True, null=True)
@@ -451,6 +457,8 @@ class AsignacionDet(models.Model):
     domSal = models.TimeField('Domingo salida', blank=True, null=True)
     operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
     fechaInicio = models.DateField('Fecha Inicio Operario', null=True)
+    totalHoras = models.CharField('Total Asignado', max_length=8, null=True)
+
     
 
     class Meta:
@@ -529,3 +537,14 @@ class EsmeEmMarcaciones(models.Model):
     class Meta:
         managed = False
         db_table = 'ESME_EM_Marcaciones'
+
+class AsignacionesProcesadas(models.Model):
+    NumCedulaOperario = models.CharField('N° Cedula', max_length=30)
+    fecha = models.DateField('Fecha')
+    puntoServicio = models.ForeignKey(PuntoServicio, on_delete=models.CASCADE)
+    asignacionDet = models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        verbose_name = _("Asignacion Procesada")
+        verbose_name_plural = _("Asignaciones Procesadas")
+

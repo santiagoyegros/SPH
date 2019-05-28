@@ -12,7 +12,7 @@
                 <tr>
                     <th>#</th>
                     <th>Nombre Jefe Op</th>
-                    <th>Asignar Fiscal</th>
+                    <th style="text-align: center;">Asignar Fiscal</th>
                 </tr>
             </thead>
             <!--Table head-->
@@ -21,9 +21,10 @@
                 {% if Jefes %}
                 {% for jefe in Jefes %}
                 <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ jefe.last_name }}, {{ jefe.first_name }}</td>
-                    <td> <a class='btn btn-danger btn-sm' href={% url 'Operarios:jefes_asig' jefe.id %}>Asignar</a> </td>
+                    <td style="width: 5%;">{{ forloop.counter }}</td>
+                    <td style="    width: 350px;">{{ jefe.last_name }}, {{ jefe.first_name }}</td>
+                    <td style="    text-align: center;
+                    width: 275px;"> <a class='btn btn-danger btn-sm' href={% url 'Operarios:jefes_asig' jefe.id %}>Asignar</a> </td>
                 </tr>
                 {% endfor %}
                 {% endif %}
@@ -41,8 +42,8 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Nombre del Fiscal</th>
-                    <th>Asignar Fiscal</th>
+                    <th>Nombre Fiscal</th>
+                    <th style="text-align: center;">Asignar Puntos de Servicio</th>
                 </tr>
             </thead>
             <!--Table head-->
@@ -51,9 +52,10 @@
                 {% if Fiscales %}
                 {% for fiscal in Fiscales %}
                 <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ fiscal.last_name }}, {{ fiscal.first_name }}</td>
-                    <td> <a class='btn btn-danger btn-sm' href={% url 'Operarios:jefes_asig' fiscal.id %}>Asignar</a> </td>
+                    <td style="width: 5%;">{{ forloop.counter }}</td>
+                    <td style="    width: 350px;">{{ fiscal.last_name }}, {{ fiscal.first_name }}</td>
+                    <td style="    text-align: center;
+                    width: 275px;"> <a class='btn btn-danger btn-sm'  href={% url 'Operarios:fiscales_asig' fiscal.id %}>Asignar</a> </td>
                 </tr>
                 {% endfor %}
                 {% endif %}

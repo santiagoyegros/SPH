@@ -3,40 +3,39 @@
 
 {% block content %}
 
-<div class="container-fluid mb-3 mt-4">
+<div class="container-fluid mb-3 mt-4 p-0">
         <div class="row">
             {% if Jefe %}
                 <div class="col"><b>Jefe/a: </b>{{ Jefe.last_name }}, {{ Jefe.first_name }} </div>
             {% endif %}
         </div>
-    </div>
-        <form method="post" action="{% url 'Operarios:jefes_asigFiscales' Jefe.id %}">
+    </div>  
+
+        <form method="post" action="{% url 'Operarios:jefes_fiscales' Jefe.id %}">
                 {% csrf_token %}
                 <div class="row">
-                <div class="col-md-6">
-                        <h5>Fiscales disponibles</h5>
+                <div class="col-md-12">
+              
                         <select name="fiscales_disp" class="keep-order" id="fiscales_disp" multiple='multiple'>
-                            {% for fiscal in Fiscales_disp %}
-                                <option value="{{fiscal.id}}">{{ fiscal.last_name }} , {{ fiscal.first_name }} </option>
+                            {% for fiscal_disp in Fiscales_disp %}
+                                <option value="{{fiscal_disp.id}}">{{ fiscal_disp.last_name }} , {{ fiscal_disp.first_name }} </option>
                             {% endfor %}
-                            {% for fiscal in Fiscales %}
-                                <option value="{{fiscal.id}}" selected>{{ fiscal.last_name }} , {{ fiscal.first_name }} </option>
+                            {% for fiscal_asig in Fiscales %}
+                                <option value="{{fiscal_asig.id}}" selected>{{ fiscal_asig.last_name }} , {{ fiscal_asig.first_name }} </option>
                             {% endfor %}
                         </select>
-                        <!-- <ul>
-                                {% for fiscal in Fiscales_disp %}
-                            <li>
-                                    {{ fiscal.last_name }} , {{ fiscal.first_name }}                 
-                            </li>
-                            {% endfor %}
-                        </ul> -->
+                       
                     </div>
-        </div>
-            <button type="submit">Asignar</button>
+            </div>
+            <div class="col-md-12" style="    text-align: right;margin: 15px 0px;padding: 0px !important;">
+                <a href='{% url 'Operarios:jefes_list' %}' class='btn btn-danger'>Volver</a>   
+                <button type="submit" class='btn btn-primary '>Guardar</button>
+            </div>
+            
         </form>
            
 
-    
+<!--     
     <h2>Fiscales asignados de Operaciones</h2>
     <div class="container-fluid mb-3 mt-4">
         <div class="row">
@@ -45,9 +44,9 @@
             {% endif %}
         </div>
     </div>
-    <!--Table-->
+  
     <table id="tablePreview" class="table table-hover table-sm">
-    <!--Table head-->
+   
     <thead>
         <tr>
             <th>#</th>
@@ -56,8 +55,7 @@
             <th>Desasignar</th>
         </tr>
     </thead>
-    <!--Table head-->
-    <!--Table body-->
+
     <tbody>
         {% if Fiscales %}
         {% for fiscal in Fiscales %}
@@ -70,14 +68,14 @@
         {% endfor %}
         {% endif %}
     </tbody>
-    <!--Table body-->
+  
     </table>
-    <!--Table-->
+
     <a class='btn btn-success btn-sm' href='' data-toggle="modal" data-target="#exampleModalCenter"> Asignar Fiscal </a>
     <a class='btn btn-secondary btn-sm' href='{% url 'Operarios:jefes_list' %}' > Volver </a>
 
 
-    <!-- Modal -->
+    
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -88,9 +86,9 @@
             </button>
         </div>
         <div class="modal-body">
-            <!--Table-->
+        
             <table id="tablePreview" class="table table-hover table-sm">
-            <!--Table head-->
+      
             <thead>
                 <tr>
                     <th>#</th>
@@ -98,8 +96,7 @@
                     <th>Seleccionar</td>
                 </tr>
             </thead>
-            <!--Table head-->
-            <!--Table body-->
+        
             <tbody>
                 {% if Fiscales_disp %}
                 {% for fiscal in Fiscales_disp %}
@@ -111,15 +108,31 @@
                 {% endfor %}
                 {% endif %}
             </tbody>
-            <!--Table body-->
+       
             </table>
-            <!--Table-->
+      
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
         </div>
         </div>
     </div>
-    </div>
-
+    </div> -->
+    <script>
+        $('#fiscales_disp').multiSelect(
+            {
+                selectableHeader: "<h5 class='custom-header'>Fiscales Disponibles</h5>",
+                selectionHeader: "<h5 class='custom-header'>Fiscales Asignados</h5>"
+            }
+        );
+        $('#select-all').click(function(){
+             $('#fiscales_disp').multiSelect('select_all');
+             return false;
+        });
+        $('#deselect-all').click(function(){
+            $('#fiscales_disp').multiSelect('deselect_all');
+            return false;
+        });
+    </script>
+   
 {% endblock %}

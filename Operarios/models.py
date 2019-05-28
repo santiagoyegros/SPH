@@ -517,14 +517,14 @@ class HorasNoProcesadas(models.Model):
         return self.NumCedulaOperario
 
 class EsmeEmMarcaciones(models.Model):
-    idpersonaevento = models.AutoField(db_column='IdPersonaEvento', primary_key=True)  # Field name made lowercase.
-    codoperacion = models.CharField(db_column='CodOperacion', max_length=2, blank=True, null=True)  # Field name made lowercase.
-    codpersona = models.CharField(db_column='CodPersona', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    codcategoria = models.CharField(db_column='CodCategoria', max_length=2, blank=True, null=True)  # Field name made lowercase.
-    numlinea = models.CharField(db_column='NumLinea', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    codubicacion = models.CharField(db_column='CodUbicacion', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    fecha = models.DateTimeField(db_column='Fecha', blank=True, null=True)  # Field name made lowercase.
-    estado = models.CharField(db_column='Estado', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    idpersonaevento = models.AutoField(db_column='IdPersonaEvento', primary_key=True,verbose_name='ID Marcacion')  # Field name made lowercase.
+    codoperacion = models.CharField(db_column='CodOperacion', max_length=2, blank=True, null=True,verbose_name='Codigo de Operacion')  # Field name made lowercase.
+    codpersona = models.CharField(db_column='CodPersona', max_length=10, blank=True, null=True,verbose_name='Codigo de Persona')  # Field name made lowercase.
+    codcategoria = models.CharField(db_column='CodCategoria', max_length=2, blank=True, null=True,verbose_name='Codigo de Categoria')  # Field name made lowercase.
+    numlinea = models.CharField(db_column='NumLinea', max_length=10, blank=True, null=True,verbose_name='Numero de Linea')  # Field name made lowercase.
+    codubicacion = models.CharField(db_column='CodUbicacion', max_length=30, blank=True, null=True,verbose_name='Codigo de ubicacion')  # Field name made lowercase.
+    fecha = models.DateTimeField(db_column='Fecha', blank=True, null=True,verbose_name='Fecha')  # Field name made lowercase.
+    estado = models.CharField(db_column='Estado', max_length=20, blank=True, null=True,verbose_name='Estado')  # Field name made lowercase.
 
     class Meta:
         managed = False

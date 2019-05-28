@@ -4,7 +4,7 @@ from . import views
 from django.views.generic import TemplateView, RedirectView
 from django.conf.urls import url, include
 from django.contrib.auth.decorators import login_required
-from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView
+from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView,MarcacionListView
 from Operarios.views import Relevamiento, Operarios_list, Operarios_create, Operarios_update, Operarios_delete
 from Operarios.views import Planificacion_list, Planificacion_create, Jefes_list, Jefes_asig, Jefes_delete
 from Operarios.views import Fiscales_asig, Fiscales_delete
@@ -37,4 +37,5 @@ urlpatterns = [
     url(r'^fiscales/eliminar/(?P<id_user_fiscal>\d+)/(?P<id_puntoServicio>\d+)/$', Fiscales_delete, name='fiscales_del'),
     url(r'^asignacion/listar/', viewsAsignacion.Asignacion_list, name='asignacion_list'),
     url(r'^asignacion/asignar/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_create, name='asignacion_create'),
+    url(r'^marcacion/listar/', MarcacionListView.as_view() , name='marcaciones_url')
 ]   

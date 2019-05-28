@@ -548,3 +548,20 @@ class AsignacionesProcesadas(models.Model):
         verbose_name = _("Asignacion Procesada")
         verbose_name_plural = _("Asignaciones Procesadas")
 
+class Parametros(models.Model):
+    tipo = models.CharField('Tipo de Parametro', max_length=30)
+    parametro = models.CharField('Parametro', max_length=50)
+    valor = models.CharField('Parametro', max_length=150)
+
+    class Meta:
+        verbose_name = _("Parametro de Sistema")
+        verbose_name_plural = _("Parametros de Sistema")
+
+class Feriados(models.Model):
+    anho = models.IntegerField('Año', blank=True, null=True)
+    fecha = models.DateField('Fecha Inicio Cobertura', null=True)
+    descripcion = models.CharField('Parametro', max_length=200)
+
+    class Meta:
+        verbose_name = _("Parametro de Sistema")
+        verbose_name_plural = _("Parametros de Sistema")

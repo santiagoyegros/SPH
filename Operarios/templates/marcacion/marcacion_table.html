@@ -1,6 +1,7 @@
 {% load django_tables2 %}
 {% load i18n %}
 {% block table-wrapper %}
+<a href="{% export_url 'xls'%}">Descargar</a>
 <div class="table-container">
     {% block table %}
         <table {% render_attrs table.attrs class="table" %}>

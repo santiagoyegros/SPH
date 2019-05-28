@@ -9,6 +9,7 @@ from django_filters.views import FilterView
 from django.forms.models import inlineformset_factory
 from django.template import RequestContext
 from django_tables2.views import SingleTableMixin
+from django_tables2.export.views import ExportMixin
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
@@ -221,7 +222,7 @@ def Operarios_update(request, pk):
 
     return render(request, 'operarios/operarios_form.html', context=contexto)
 
-class MarcacionListView(SingleTableMixin,FilterView):
+class MarcacionListView(ExportMixin,SingleTableMixin,FilterView):
     table_class= MarcacionTable
     model= EsmeEmMarcaciones
     template_name='marcacion/marcacion_list.html'

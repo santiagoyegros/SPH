@@ -44,7 +44,7 @@ $("#salir").on('click',"a[data-window='external']", function() {
                     </div>
                 </li>
                 <li class="nav-item {% if request.path == marcaciones_url %}active{% endif %}">
-                    <a class="nav-link" href="{{ marcaciones_url }}">Marcaciones</a>
+                    <a class="nav-link" href="/reingenieria/marcacion/listar/">Marcaciones</a>
                 </li>
                 <li class="nav-item {% if request.path == remplazos_url %}active{% endif %}">
                     <a class="nav-link" href="{{ remplazos_url }}">Reemplazos</a>

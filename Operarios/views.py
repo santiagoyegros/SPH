@@ -5,14 +5,20 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django_filters.views import FilterView
 from django.forms.models import inlineformset_factory
 from django.template import RequestContext
+from django_tables2.views import SingleTableMixin
+from django_tables2.export.views import ExportMixin
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
-
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet
+from django_tables2.paginators import Paginator
+from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet,EsmeEmMarcaciones
+from Operarios.tables import MarcacionTable
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
+from Operarios.filters import MarcacionFilter
+
 
 def index(request):
     return HttpResponse("Vista de Operarios")
@@ -170,6 +176,12 @@ def Relevamiento(request, id_puntoServicio=None):
     #return render_to_response('puntoServicio/puntoServicio_relevamiento.html', locals())
     return render(request, 'puntoServicio/puntoServicio_relevamiento.html', context=contexto)
 
+class MarcacionListView(ExportMixin,SingleTableMixin,FilterView):
+    table_class= MarcacionTable
+    model= EsmeEmMarcaciones
+    template_name='marcacion/marcacion_list.html'
+    filterset_class= MarcacionFilter
+    table_pagination={"per_page":10}
 
 
 @login_required

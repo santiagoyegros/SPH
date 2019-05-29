@@ -3,12 +3,17 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" type="text/css" media="all" rel="stylesheet">
 <link href="/static/bootstrap_datepicker_plus/css/datepicker-widget.css" type="text/css" media="all" rel="stylesheet">
 <link href="{% static 'vendor/multi-select/css/multi-select.css' %}" type="text/css" media="all" rel="stylesheet">
+<link href="{% static 'style/main.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
+<link href="{% static 'vendor/bootstrap-select/dist/css/bootstrap-select.min.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
 <link href="{% static 'lib/style.css' %}" type="text/css" media="all" rel="stylesheet">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="/static/bootstrap_datepicker_plus/js/datepicker-widget.js"></script> 
 <script type="text/javascript" src="{% static 'vendor/multi-select/js/jquery.multi-select.js'%}"></script> 
+<script type="text/javascript" src="{% static 'vendor/bootstrap-select/dist/js/bootstrap-select.min.js'%}"></script> 
+<script type="text/javascript" src="{% static 'vendor/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js'%}"></script> 
+
 <script>
         $('#my-select, #pre-selected-options').multiSelect()
         </script>
@@ -71,8 +76,8 @@
     </head>
     <body>
       {% block navbar %}{% include 'base/navbar.html' %}{% endblock %}
-      <div class="row"></div>
-      <div class='container'>
+    
+      <div class="container">
         {% if messages %}
             {% for message in messages %}
                 {% if message.tags == 'warning' %}

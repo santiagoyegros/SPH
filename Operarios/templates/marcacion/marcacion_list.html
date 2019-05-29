@@ -2,47 +2,15 @@
 {% load static %}
 
 {% block content %}
-    <h2>Lista de Marcaciones</h2>
-    
-    <div class="col-md-12">
-            <!--Table-->
-            <table id="tablePreview" class="table table-hover table-sm mt-3">
-            <!--Table head-->
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Operacion
-                    <th>Persona</th>
-                    <th>Categoria</th>
-                    <th>NumLinea</th>
-                    <th>Ubicacion</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-
-                </tr>
-            </thead>
-            <!--Table head-->
-            <!--Table body-->
-            <tbody>
-                {% if marcaciones %}
-                {% for marcacion in marcaciones %}
-                <tr>
-                    <th scope="row">{{ marcacion.counter }}</th>
-                    <td>{{marcacion.operacion}}</td>
-                    <td>{{marcacion.persona}}</td>
-                    <td>{{marcacion.categoria}}</td>
-                    <td>{{marcacion.numeroLinea}}</td>
-                    <td>{{marcacion.ubicacion}}</td>
-                    <td>{{marcacion.fecha}}</td>
-                    <td>{{marcacion.estado}}</td>
-                    <td> <a class='btn btn-danger btn-sm' href={% url 'Operarios:jefes_asig' jefe.id %}>Asignar</a> </td>
-                </tr>
-                {% endfor %}
-                {% endif %}
-            </tbody>
-            <!--Table body-->
-            </table>
-            <!--Table-->
+    {% load render_table from django_tables2 %}
+    {% load bootstrap3 %}
+    {% if filter%}
+    <form action="" method="GET" class="form form-inline">
+        {% bootstrap_form filter.form layout='inline' %}
+        {% bootstrap_button 'Filtrar' %}
         
-    </div>
+    </form>
+    {% endif %}
+    {% render_table table%}
+
 {% endblock %}

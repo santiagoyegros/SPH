@@ -34,32 +34,33 @@ class Especializacion(models.Model):
         verbose_name_plural = "Especializaciones"
 
 class Operario(models.Model):
-    Nombre = models.CharField(max_length=70, blank=False)
-    Apellido=models.CharField(max_length=70, blank=False, default="")
-    Direccion = models.CharField(max_length=100, blank=False)
-    Ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE, blank=False)
-    Barrios = models.CharField(max_length=70, blank=False)
-    NroLegajo = models.CharField('Numero de Legajo', max_length=6, blank=True)
-    Telefono = models.BigIntegerField(blank=False, validators=[MaxValueValidator(9999999999)])
-    Email = models.CharField(max_length=30, blank=True)
-    FechaNacimiento = models.DateField('Fecha Nacimiento', blank=False)
-    LugarNacimiento = models.CharField('Lugar de Nacimiento', max_length=30)
-    NumCedula = models.CharField('N° Cedula', max_length=30, blank=False)
-    NumPasaporte = models.CharField('Numero de Pasaporte', max_length=10)
-    Banco = models.CharField(max_length=30, blank=False)
-    CtaBanco = models.CharField(max_length=20, blank=False)
-    NombreContacto = models.CharField(max_length=70, blank=True)
-    TelefonoContacto=models.BigIntegerField('Telefono Contacto', blank=False, null=True, validators=[MaxValueValidator(9999999999)])
-    Nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE)
-    FechaInicio = models.DateField('Fecha Inicio', blank=False)
-    FechaFin = models.DateField('Fecha Fin', blank=True, null=True)
-    latitud=models.FloatField(blank=False, null=True, default=None)
-    longitud=models.FloatField(blank=False, null=True, default=None)
+    nombre = models.CharField(max_length=70, blank=False)
+    apellido=models.CharField(max_length=70, blank=False, default="")
+    direccion = models.CharField(max_length=100, blank=False)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE, blank=False)
+    barrios = models.CharField(max_length=70, blank=False)
+    nroLegajo = models.CharField('Numero de Legajo', max_length=6, blank=True)
+    telefono = models.BigIntegerField(blank=False, validators=[MaxValueValidator(9999999999)], null=True)
+    email = models.CharField(max_length=30, blank=True)
+    fechaNacimiento = models.DateField('Fecha Nacimiento', blank=False)
+    lugarNacimiento = models.CharField('Lugar de Nacimiento', max_length=30)
+    numCedula = models.CharField('N° Cedula', max_length=30, blank=False)
+    numPasaporte = models.CharField('Numero de Pasaporte', max_length=10, blank=True)
+    banco = models.CharField(max_length=30, blank=True)
+    ctaBanco = models.CharField(max_length=20, blank=True)
+    nombreContacto = models.CharField(max_length=70, blank=True)
+    telefonoContacto=models.BigIntegerField('Telefono Contacto', blank=False, null=True, validators=[MaxValueValidator(9999999999)])
+    nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE)
+    fechaInicio = models.DateField('Fecha Inicio', blank=False, null=True)
+    fechaFin = models.DateField('Fecha Fin', blank=True, null=True)
+    latitud=models.FloatField(blank=True, null=True)
+    longitud=models.FloatField(blank=True, null=True)
     escolaridad= models.CharField('Escolaridad', max_length=70, blank=True)
+    profesion=models.ManyToManyField(Especializacion)
 
 
     def __str__(self):
-        return self.NumCedula + ' - ' +  self.Nombre  
+        return self.numCedula + ' - ' +  self.nombre  
 
 class GrupoEmpresarial(models.Model):
     GrupoEmpresarial = models.CharField('Grupo Empresarial', max_length=100)
@@ -153,6 +154,8 @@ class RelevamientoCab(models.Model):
     cantidadHrTotal = models.CharField('Cantidad de Horas total por Semana', max_length=8, blank=True, null=True)
     cantidadHrEsp = models.CharField('Cantidad de Horas Especiales por Semana', max_length=8, blank=True, null=True)
     fechaInicio = models.DateField('Fecha Inicio Cobertura', null=True)
+    fechaFin= models.DateField('Fecha Fin Cobertura', blank=True, null=True)
+    estado=models.CharField('Estado del relevamiento', max_length=30, blank=False, default='Aprobado')
     usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     tipoSalario = models.ForeignKey(TipoSalario, blank=True, null=True, on_delete=models.CASCADE)
     comentario = models.CharField('Comentarios del servicio aprobado', max_length=550, blank=True, null=True)
@@ -479,8 +482,8 @@ class AsignacionDetAux(models.Model):
     domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
     domSal = models.TimeField('Domingo salida', blank=True, null=True)
     operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
-    fechaInicio = models.DateField('Fecha Inicio Operario', null=True)
-
+    fechaInicio = models.DateField('Fecha Inicio Operario Aux', null=True)
+    totalHoras = models.CharField('Total de horas necesarias tabla aux', max_length=8, null=True)
     class Meta:
         verbose_name = _("Asignacion Detalle Auxiliar")
         verbose_name_plural = _("Asignacion Detalles Auxiliares")
@@ -522,16 +525,43 @@ class HorasNoProcesadas(models.Model):
         return self.NumCedulaOperario
 
 class EsmeEmMarcaciones(models.Model):
-    idpersonaevento = models.AutoField(db_column='IdPersonaEvento', primary_key=True)  # Field name made lowercase.
-    codoperacion = models.CharField(db_column='CodOperacion', max_length=2, blank=True, null=True)  # Field name made lowercase.
-    codpersona = models.CharField(db_column='CodPersona', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    codcategoria = models.CharField(db_column='CodCategoria', max_length=2, blank=True, null=True)  # Field name made lowercase.
-    numlinea = models.CharField(db_column='NumLinea', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    codubicacion = models.CharField(db_column='CodUbicacion', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    fecha = models.DateTimeField(db_column='Fecha', blank=True, null=True)  # Field name made lowercase.
-    estado = models.CharField(db_column='Estado', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    idpersonaevento = models.AutoField(db_column='IdPersonaEvento', primary_key=True,verbose_name='ID Marcacion')  # Field name made lowercase.
+    codoperacion = models.CharField(db_column='CodOperacion', max_length=2, blank=True, null=True,verbose_name='Codigo de Operacion')  # Field name made lowercase.
+    codpersona = models.CharField(db_column='CodPersona', max_length=10, blank=True, null=True,verbose_name='Codigo de Persona')  # Field name made lowercase.
+    codcategoria = models.CharField(db_column='CodCategoria', max_length=2, blank=True, null=True,verbose_name='Codigo de Categoria')  # Field name made lowercase.
+    numlinea = models.CharField(db_column='NumLinea', max_length=10, blank=True, null=True,verbose_name='Numero de Linea')  # Field name made lowercase.
+    codubicacion = models.CharField(db_column='CodUbicacion', max_length=30, blank=True, null=True,verbose_name='Codigo de ubicacion')  # Field name made lowercase.
+    fecha = models.DateTimeField(db_column='Fecha', blank=True, null=True,verbose_name='Fecha')  # Field name made lowercase.
+    estado = models.CharField(db_column='Estado', max_length=20, blank=True, null=True,verbose_name='Estado')  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'ESME_EM_Marcaciones'
 
+class AsignacionesProcesadas(models.Model):
+    NumCedulaOperario = models.CharField('N° Cedula', max_length=30)
+    fecha = models.DateField('Fecha')
+    puntoServicio = models.ForeignKey(PuntoServicio, on_delete=models.CASCADE)
+    asignacionDet = models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        verbose_name = _("Asignacion Procesada")
+        verbose_name_plural = _("Asignaciones Procesadas")
+
+class Parametros(models.Model):
+    tipo = models.CharField('Tipo de Parametro', max_length=30)
+    parametro = models.CharField('Parametro', max_length=50)
+    valor = models.CharField('Parametro', max_length=150)
+
+    class Meta:
+        verbose_name = _("Parametro de Sistema")
+        verbose_name_plural = _("Parametros de Sistema")
+
+class Feriados(models.Model):
+    anho = models.IntegerField('Año', blank=True, null=True)
+    fecha = models.DateField('Fecha Inicio Cobertura', null=True)
+    descripcion = models.CharField('Parametro', max_length=200)
+
+    class Meta:
+        verbose_name = _("Parametro de Sistema")
+        verbose_name_plural = _("Parametros de Sistema")

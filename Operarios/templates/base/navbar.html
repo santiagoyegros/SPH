@@ -18,7 +18,8 @@ $("#salir").on('click',"a[data-window='external']", function() {
 });
 </script>
 <nav class="navbar navbar-expand-md navbar-dark mb-4" style="background-color: #7A0C25;">
-    <div class='container'>
+    <div class='container' style="width: 100% !important;
+    max-width: 100%;">
         <a class="navbar-brand" href="{{ home_url }}">
             <img src="{% static 'logo-blanco.png' %}" height="30" class="d-inline-block align-top" alt="El mejor">
         </a>
@@ -41,8 +42,8 @@ $("#salir").on('click',"a[data-window='external']", function() {
                     <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="{{ punto_servicio_url }}">Puntos de Servicio</a>
                     <a class="dropdown-item" href="{{ operarios_url }}">Operarios</a>
-                    <a class="dropdown-item" href="{{ jefes_url }}">Jefes</a>
-                    <a class="dropdown-item" href="{{ fiscales_url }}">Fiscales</a>
+                    <a class="dropdown-item" href="/reingenieria/operaciones/jefes/listar">Jefes</a> 
+                    <a class="dropdown-item" href="/reingenieria/operaciones/fiscales/listar">Fiscales</a>
                     
                 </div> 
                 </li>

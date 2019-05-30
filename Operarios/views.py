@@ -385,12 +385,12 @@ def Jefes_list(request):
 @permission_required('Operarios.view_operario', raise_exception=True)
 def Fiscales_list(request):
     fiscales = User.objects.filter(cargoasignado__cargo__cargo='Fiscal')
-    contexto = {'Fiscales':fiscales}
+    contexto = {'Fiscales':fiscales} 
     return render(request, 'fiscales/fiscales_list.html', context=contexto) 
 
 @login_required
 @permission_required('Operarios.view_operario', raise_exception=True)
-def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
+def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None): 
 
     try:
         user_jefe = User.objects.get(pk=id_user_jefe)   
@@ -404,17 +404,16 @@ def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
 
     ''' El if siguiente es utilizado en la version anterior de asignacion de fiscales'''   
-    if id_user_fiscal != None:
-        print("Hola, aca obtengo los fiscales")
-        user_fiscal = User.objects.get(pk=id_user_fiscal)
-        asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
-        asignacion.save()
+    # if id_user_fiscal != None:
+    #     print("Hola, aca obtengo los fiscales")
+    #     user_fiscal = User.objects.get(pk=id_user_fiscal)
+    #     asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
+    #     asignacion.save()
     
     #se trae los fiscales disponibles
     fiscales_disp = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal')
     consulta2 = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal').query
     logging.getLogger("error_logger").error('La consulta de fiscales disponibles ejecutada es: {0}'.format(consulta2))
-    print("HOOOOOOLA", fiscales_disp)
     #cargamos el contexto
     contexto = {'Fiscales': fiscales_asig,
                 'Jefe': user_jefe,
@@ -460,7 +459,7 @@ def Jefes_delete(request, id_user_jefe=None, id_user_fiscal=None):
         asignacion = AsigJefeFiscal.objects.get(userJefe=user_jefe, userFiscal=user_fiscal)
         asignacion.delete()
         messages.warning(request, 'Asignación eliminada correctamente')
-        return redirect('Operarios:jefes_asig', id_user_jefe=id_user_jefe)
+        return redirect('Operarios:jefes_asigFiscales', id_user_jefe=id_user_jefe)
     
     #cargamos el contexto
     contexto = {'Jefe': user_jefe,

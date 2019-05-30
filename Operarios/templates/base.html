@@ -77,7 +77,8 @@
     <body>
       {% block navbar %}{% include 'base/navbar.html' %}{% endblock %}
     
-      <div class="container">
+      <div class="container" style="width: 100% !important;
+      max-width: 100%;">
         {% if messages %}
             {% for message in messages %}
                 {% if message.tags == 'warning' %}

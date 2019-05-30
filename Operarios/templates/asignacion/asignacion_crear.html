@@ -2,164 +2,354 @@
 
 {% block content %}
 <div class="container-fluid">
-{% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
-<form method='POST' action='#' name='formulario' id='formulario'> 
-    <input type="hidden" id="action" name="action" value="">
-    {% csrf_token %}
-    
-    <div class="col-lg-12 col-md-12 container-main">
-        <div class="row mt-3">
-            <div class="col h4"><u><strong> {{ form.puntoServicio.label }}:</strong></u> ({{ pservicio.CodPuntoServicio }}) - {{ pservicio.NombrePServicio }} {{ form.puntoServicio.as_hidden  }} </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-3"> <p class="font-weight-bold"> Totales </p></div>
-            <div class="col-4"> <p class="font-weight-bold text-center"> Semanales (Lunes a Sabado)</p></div>
-            <div class="col-4"> <p class="font-weight-bold text-center"> Domingo </p></div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-2"> Total Hrs: </div>
-            <div class="col-1"> <input id="sumAll_total" type="text" value="{{ relevamiento.cantidadHrTotal }}" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Diurnas: </div>
-            <div class="col-1"> <input id="tot_sem_diu" type="text" value="{{ sem_diurno }}" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Nocturnas: </div>
-            <div class="col-1"> <input id="tot_sem_noc" type="text" value="{{ sem_nocturno }}" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Diurnas: </div>
-            <div class="col-1"> <input id="tot_dom_diu" type="text" value="{{ dom_diurno }}" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Nocturnas: </div>
-            <div class="col-1"> <input id="tot_dom_noc" type="text" value="{{ dom_nocturno }}" class="form-control form-control-sm" readonly/> </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-2"> Total Hrs Asignadas: </div>
-            <div class="col-1"> {{ form.totalasignado }} </div>
-            <div class="col-1"> Asignada: </div>
-            <div class="col-1"> <input id="sum_sem_diu" type="text" value="" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Asignada: </div>
-            <div class="col-1"> <input id="sum_sem_noc" type="text" value="" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Asignada: </div>
-            <div class="col-1"> <input id="sum_dom_diu" type="text" value="" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Asignada: </div>
-            <div class="col-1"> <input id="sum_dom_noc" type="text" value="" class="form-control form-control-sm" readonly/> </div>
-        </div>
-        <hr/>
-        <div class="row mt-3">
-            <div class="col-2"> Total Hrs Restante: </div>
-            <div class="col-1"> <input id="sumAll_resto" type="text" value="" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Restantes: </div>
-            <div class="col-1"> <input id="res_sem_diu" type="text" value="" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Restantes: </div>
-            <div class="col-1"> <input id="res_sem_noc" type="text" value="" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Restantes: </div>
-            <div class="col-1"> <input id="res_dom_diu" type="text" value="" class="form-control form-control-sm" readonly/> </div>
-            <div class="col-1"> Restantes: </div>
-            <div class="col-1"> <input id="res_dom_noc" type="text" value="" class="form-control form-control-sm" readonly/> </div>
-        </div>
-    </div>
-    
+    {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
+    <form method='POST' action='#' name='formulario' id='formulario'>
+        <input type="hidden" id="action" name="action" value="">
+        {% csrf_token %}
 
-    {{ asigDetFormSet.management_form }}
+        <div class="col-lg-12 col-md-12">
+            <div class="row mt-3">
+                <div class="col h4"><u><strong> {{ form.puntoServicio.label }}:</strong></u>
+                    ({{ pservicio.CodPuntoServicio }}) - {{ pservicio.NombrePServicio }}
+                    {{ form.puntoServicio.as_hidden  }} </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-3">
+                    <p class="font-weight-bold"> Totales </p>
+                </div>
+                <div class="col-4">
+                    <p class="font-weight-bold text-center"> Semanales (Lunes a Sabado)</p>
+                </div>
+                <div class="col-4">
+                    <p class="font-weight-bold text-center"> Domingo </p>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-2"> Total Hrs: </div>
+                <div class="col-1"> <input id="sumAll_total" type="text" value="{{ relevamiento.cantidadHrTotal }}"
+                        class="form-control form-control-sm" readonly /> </div>
+                <div class="col-1"> Diurnas: </div>
+                <div class="col-1"> <input id="tot_sem_diu" type="text" value="{{ sem_diurno }}"
+                        class="form-control form-control-sm" readonly /> </div>
+                <div class="col-1"> Nocturnas: </div>
+                <div class="col-1"> <input id="tot_sem_noc" type="text" value="{{ sem_nocturno }}"
+                        class="form-control form-control-sm" readonly /> </div>
+                <div class="col-1"> Diurnas: </div>
+                <div class="col-1"> <input id="tot_dom_diu" type="text" value="{{ dom_diurno }}"
+                        class="form-control form-control-sm" readonly /> </div>
+                <div class="col-1"> Nocturnas: </div>
+                <div class="col-1"> <input id="tot_dom_noc" type="text" value="{{ dom_nocturno }}"
+                        class="form-control form-control-sm" readonly /> </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-2"> Total Hrs Asignadas: </div>
+                <div class="col-1"> {{ form.totalasignado }} </div>
+                <div class="col-1"> Asignada: </div>
+                <div class="col-1"> <input id="sum_sem_diu" type="text" value="" class="form-control form-control-sm"
+                        readonly /> </div>
+                <div class="col-1"> Asignada: </div>
+                <div class="col-1"> <input id="sum_sem_noc" type="text" value="" class="form-control form-control-sm"
+                        readonly /> </div>
+                <div class="col-1"> Asignada: </div>
+                <div class="col-1"> <input id="sum_dom_diu" type="text" value="" class="form-control form-control-sm"
+                        readonly /> </div>
+                <div class="col-1"> Asignada: </div>
+                <div class="col-1"> <input id="sum_dom_noc" type="text" value="" class="form-control form-control-sm"
+                        readonly /> </div>
+            </div>
+            <hr />
+            <div class="row mt-3">
+                <div class="col-2"> Total Hrs Restante: </div>
+                <div class="col-1"> <input id="sumAll_resto" type="text" value="" class="form-control form-control-sm"
+                        readonly /> </div>
+                <div class="col-1"> Restantes: </div>
+                <div class="col-1"> <input id="res_sem_diu" type="text" value="" class="form-control form-control-sm"
+                        readonly /> </div>
+                <div class="col-1"> Restantes: </div>
+                <div class="col-1"> <input id="res_sem_noc" type="text" value="" class="form-control form-control-sm"
+                        readonly /> </div>
+                <div class="col-1"> Restantes: </div>
+                <div class="col-1"> <input id="res_dom_diu" type="text" value="" class="form-control form-control-sm"
+                        readonly /> </div>
+                <div class="col-1"> Restantes: </div>
+                <div class="col-1"> <input id="res_dom_noc" type="text" value="" class="form-control form-control-sm"
+                        readonly /> </div>
+            </div>
+        </div>
 
-     <!--Formulario de Servicios Particulares-->
-    
-    <div class="container-main col-lg-12 col-md-12" id='formset-det'>
-           
-            <div class="row" >
+
+        {{ asigDetFormSet.management_form }}
+
+        <!--Formulario de Servicios Particulares-->
+
+        <div class="container-main col-lg-12 col-md-12" id='formset-det'>
+
+            <div class="row">
                 <div class="col-lg-12 col-md-12">
                     <h4>
-                    Asignación de Horas <small class="text-muted">Definicion de operarios y horas</small>
+                        Asignación de Horas <small class="text-muted">Definicion de operarios y horas</small>
                     </h4>
                 </div>
-                <div class="col-lg-12 col-md-12" style="text-align: right" >
-                    <button type='submit' class='btn btn-success'>Guardar</button>
-                    <a class='btn btn-default' href={% url 'Operarios:asignacion_list' %}>Cancelar</a>
-                </div>
-                    
+
             </div>
-           
-        <div class="row container-main">
-                <div class="col-lg-12 col-md-12" style="text-align: right" >
+
+            <div class="row container-main">
+                <div class="col-lg-12 col-md-12" style="text-align: right;margin-bottom: 15px;">
                     <button type='submit' id='btnDet' class="btn btn-info" name='add_det'>
                         <i class="fa fa-plus"></i>Agregar Detalle</button>
-        </div>
-        </div>
-        <div class="row">
-            <div class="col-1 p-0 mt-3">  </div>
-            <div class="col-2 p-0 mt-3"> Operario </div>
-            <div class="col-2 p-0 mt-3"> Fecha Inicio </div>
-            <div class="col p-0 text-center"> Lunes </div>
-            <div class="col p-0 text-center"> Martes </div>
-            <div class="col p-0 text-center"> Miercoles </div>
-            <div class="col p-0 text-center"> Jueves </div>
-            <div class="col p-0 text-center"> Viernes </div>
-            <div class="col p-0 text-center"> Sabado </div>
-            <div class="col p-0 text-center"> Domingo </div>
-            <div class="col p-0 text-center"> Horas Requeridas </div>
-            <div class="col-1 p-0 text-center"> Eliminar? </div>
-        </div>
-	    {% for form in asigDetFormSet %}
-        <div class="row mt-2 leaveForm" id="leaveForm-{{ forloop.counter0 }}">
-
-            <div class="col-1 p-0 text-center">
-                <a class="btn btn-info btn-block" style="height: 39px;" href='' data-toggle="modal" data-target="#modalFiltro"><i class="fa fa-search"></i></a>
-            </div>
-            
-            {{ form.id }}
-                
-            <div class="col-2 p-0">
-                {{ form.operario }}
-            </div>
-            <div class="col-2 p-0">
-                {{ form.fechaInicio }}
-            </div>
-            <div class="col p-0">
-                {{ form.lunEnt }}{{ form.lunSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.marEnt }}{{ form.marSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.mieEnt }}{{ form.mieSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.jueEnt }}{{ form.jueSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.vieEnt }}{{ form.vieSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.sabEnt }}{{ form.sabSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.domEnt }}{{ form.domSal }}
-            </div>
-            <div class="col p-0">
-                    {{ form.totalHoras }}{{ form.totalHoras }}
                 </div>
-            <div class="col-1 p-0 text-left">
-                <input type="checkbox" style="display:none" name="asignaciondet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
-                <a href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                    <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span class="visible-xs"></span>
-                </a>
             </div>
+            <div class="row">
+                <div class="col-md-4 p-0 mt-3" style="text-align: center;"> Operario </div>
+                <div class="col p-0 text-center"> Horas Requeridas </div>
+                <div class="col p-0 text-center"> Lunes </div>
+                <div class="col p-0 text-center"> Martes </div>
+                <div class="col p-0 text-center"> Miercoles </div>
+                <div class="col p-0 text-center"> Jueves </div>
+                <div class="col p-0 text-center"> Viernes </div>
+                <div class="col p-0 text-center"> Sabado </div>
+                <div class="col p-0 text-center"> Domingo </div>
+                <div class="col-1 p-0 text-center"> Eliminar? </div>
+            </div>
+            {% for form in asigDetFormSet %}
+            <div class="row mt-2 leaveForm" id="leaveForm-{{ forloop.counter0 }}" style="    margin-bottom: 30px;">
+                <div class="col-md-4">
+                    <div class="row" style="margin: 0px 0px 10px 0px;"> 
+                            <div class="col-md-4 text-center p-0">
+                                    <a class="btn btn-info btn-block" style="    height: 39px;
+                                        border-top-right-radius: 0px;
+                                        border-bottom-right-radius: 0px;" href='' data-toggle="modal" data-target="#modalFiltro"><i
+                                            class="fa fa-search"></i></a>
+                                </div>
+                                <input type="hidden" name="asignaciondet_set-0-id" id="id_asignaciondet_set-0-id">
+                                <!-- {{ form.id }} -->
+                                <div class="col-md-8 p-0">
+                                    <input type="text" name="asignaciondet_set-0-operario" class="form-control form-control-sm"
+                                        readonly="readonly" style="height:39px !important;border-top-left-radius: 0px;border-bottom-left-radius: 0px;" id="id_asignaciondet_set-0-operario">
+                                </div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-6">
+                                    <div class="input-group date">
+                                        <input type="text" name="asignaciondet_set-0-fechaInicio" placeholder="Fecha Inicio" class="form-control"
+                                            id="id_asignaciondet_set-0-fechaInicio"
+                                            dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                        <div class="input-group date">
+                                            <input type="text" name="asignaciondet_set-0-fechaFin" placeholder="Fecha Fin" class="form-control"
+                                                id="id_asignaciondet_set-0-fechaFin"
+                                                dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+                                            <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                                data-toggle="datetimepickerv">
+                                                <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                    </div>
+                    
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                            <div class="col pl-0">
+                                    <div class="input-group date" style="    margin: 0px 0px 10px 0px;
+                                    height: 39px;">
+                                        <input type="text" name="asignaciondet_set-0-totalHoras" class="form-control form-control-sm"
+                                            readonly="readonly" maxlength="8" id="id_asignaciondet_set-0-totalHoras">
+                                    </div>
+                                    <div class="input-group date" style=" 
+                                    height: 39px;">
+                                        <input type="text"
+                                        name="asignaciondet_set-0-totalHoras" class="form-control form-control-sm" readonly="readonly"
+                                        maxlength="8" id="id_asignaciondet_set-0-totalHoras">
+                                    </div>
+                                </div>
+                            <div class="col pl-0">
+                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        <input type="text" name="asignaciondet_set-0-lunEnt" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-lunEnt"
+                                            dp_config="{&quot;id&quot;: &quot;dp_20&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group date">
+                                        <input type="text" name="asignaciondet_set-0-lunSal" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-lunSal"
+                                            dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col pl-0">
+                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        <input type="text" name="asignaciondet_set-0-marEnt" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-marEnt"
+                                            dp_config="{&quot;id&quot;: &quot;dp_22&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group date" >
+                                        <input type="text" name="asignaciondet_set-0-marSal" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-marSal"
+                                            dp_config="{&quot;id&quot;: &quot;dp_23&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_22&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col pl-0">
+                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        <input type="text" name="asignaciondet_set-0-mieEnt" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-mieEnt"
+                                            dp_config="{&quot;id&quot;: &quot;dp_24&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group date">
+                                        <input type="text" name="asignaciondet_set-0-mieSal" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-mieSal"
+                                            dp_config="{&quot;id&quot;: &quot;dp_25&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_24&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col pl-0">
+                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        <input type="text" name="asignaciondet_set-0-jueEnt" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-jueEnt"
+                                            dp_config="{&quot;id&quot;: &quot;dp_26&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group date">
+                                        <input type="text" name="asignaciondet_set-0-jueSal" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-jueSal"
+                                            dp_config="{&quot;id&quot;: &quot;dp_27&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_26&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col pl-0">
+                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        <input type="text" name="asignaciondet_set-0-vieEnt" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-vieEnt"
+                                            dp_config="{&quot;id&quot;: &quot;dp_28&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group date">
+                                        <input type="text" name="asignaciondet_set-0-vieSal" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-vieSal"
+                                            dp_config="{&quot;id&quot;: &quot;dp_29&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_28&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col pl-0">
+                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        <input type="text" name="asignaciondet_set-0-sabEnt" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-sabEnt"
+                                            dp_config="{&quot;id&quot;: &quot;dp_30&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group date">
+                                        <input type="text" name="asignaciondet_set-0-sabSal" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-sabSal"
+                                            dp_config="{&quot;id&quot;: &quot;dp_31&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_30&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col pl-0">
+                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        <input type="text" name="asignaciondet_set-0-domEnt" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-domEnt"
+                                            dp_config="{&quot;id&quot;: &quot;dp_32&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group date">
+                                        <input type="text" name="asignaciondet_set-0-domSal" class="form-control form-control-sm"
+                                            id="id_asignaciondet_set-0-domSal"
+                                            dp_config="{&quot;id&quot;: &quot;dp_33&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_32&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                
+                                <div class="col-1 pl-0" style="display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                color: red !important;
+                                font-size: 25px;">
+                                    <input type="checkbox" style="display:none"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
+                                        id="{{ form.DELETE.id_for_label }}" />
+                                    <a  href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});"
+                                        class="remove muted pull-right">
+                                        <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span class="visible-xs"></span>
+                                    </a>
+                                </div>
+                    </div>
+                       
+                </div>
+                
+            </div>
+            {% endfor %}
+
         </div>
-        {% endfor %}
+        <div class="col-lg-12 col-md-12" style="text-align: right;margin:15px 0px;">
+            <button type='submit' class='btn btn-success'>Guardar</button>
+            <a class='btn btn-danger' href={% url 'Operarios:asignacion_list' %}>Cancelar</a>
+        </div>
 
-    </div>
-    
-    
-   
 
-</form>
+
+    </form>
 </div>
 
 
 <!-- Modal -->
 <div class="modal fade" id="modalFiltro" tabindex="-1" role="dialog" aria-labelledby="modalFiltro" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalFiltro">Asignar Operario</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
@@ -167,43 +357,45 @@
 
                 <div>
                     <span>Filtros</span>
-                </div> 
+                </div>
                 <table id="tablePreview" class="table table-hover table-sm">
-                <!--Table head-->
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nombre</th>
-                        <th>Puntuacion</td>
-                        <th>Cantidad Horas</td>
-                    </tr>
-                </thead>
-                <!--Table head-->
-                <!--Table body-->
-                <tbody>
-                    
-                  <tr>
-                        <th scope="row"></th>
-                        <td></td>
-                        <td>Asignar</td>
-                </tr>
-                    
-                </tbody>
-                <!--Table body-->
+                    <!--Table head-->
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre</th>
+                            <th>Legajo</td>
+                            <th>Antiguedad</td>
+                            <th>Otros contratos</td>
+                            <th>Total de horas asignado</td>
+                        </tr>
+                    </thead>
+                    <!--Table head-->
+                    <!--Table body-->
+                    <tbody>
+
+                        <tr>
+                            <th scope="row"></th>
+                            <td></td>
+                            <td>Asignar</td>
+                        </tr>
+
+                    </tbody>
+                    <!--Table body-->
                 </table>
                 <!--Table-->
             </div>
             <div class="modal-footer">
-                <a class="btn btn-info" style="height: 39px;" >Asignar</a>
+                <a class="btn btn-info" style="height: 39px;">Asignar</a>
 
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
             </div>
-            </div>
         </div>
-        </div>
+    </div>
+</div>
 
 
-  
+
 <script type='template/Detalle'>
     <div class="row mt-2">
             <div class="col-2 p-0 mt-3">
@@ -240,363 +432,363 @@
 </div>
 
 <script>
-/**
- * Number.prototype.format(n, x, s, c)
- * 
- * @param integer n: length of decimal
- * @param integer x: length of whole part
- * @param mixed   s: sections delimiter
- * @param mixed   c: decimal delimiter
- */
-Number.prototype.format = function(n, x, s, c) {
-    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
-        num = this.toFixed(Math.max(0, ~~n));
-    
-    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
-};
+    /**
+     * Number.prototype.format(n, x, s, c)
+     * 
+     * @param integer n: length of decimal
+     * @param integer x: length of whole part
+     * @param mixed   s: sections delimiter
+     * @param mixed   c: decimal delimiter
+     */
+    Number.prototype.format = function (n, x, s, c) {
+        var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+            num = this.toFixed(Math.max(0, ~~n));
 
-function pad(d) {
-    return (d < 10) ? '0' + d.toString() : d.toString();
-}
+        return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+    };
 
-function timeInHours(str){
-   var sp = str.split(":");
-   return parseInt(sp[0]) + parseFloat(sp[1]/60);
-}
-
-function hoursToString(h){
-
-    if (h < 0){
-        return "-" + hoursToString(h*-1);
-    }
-    var hours = Math.floor(h);
-    var minutes = ((h - hours)*60).toFixed(2);
-
-   return pad(hours) + ":" + pad(minutes);
-}
-
-function SumHrMin(h1, h2){
-    var sp = h1.split(":");
-    var hora1 = sp[0];
-    var min1 = sp[1];
-
-    sp = h2.split(":");
-    var hora2 = sp[0];
-    var min2 = sp[1];
-
-    var hora_total = parseInt(hora1) + parseInt(hora2);
-    var min_pre = parseInt(min1) + parseInt(min2);
-
-    var horas_adicionales = Math.floor((min_pre/60));
-    hora_total += horas_adicionales;
-    var min_total = (min_pre - (horas_adicionales*60));
-
-    return hora_total + ":" + pad(min_total);
-
-}
-
-function obtenerNumeroId(id){
-    var sp = id.split("-");
-    return sp[1];
-}
-
-function mayor(n1, n2){
-/* 
-retorna 1 si n1 es mayor a n2
-retorna 0 si n1 es igual a n2
-retorna -1 si n1 es menor a n2
-*/
-    if(timeInHours(n1) > timeInHours(n2)){
-        return 1;
-    }else if(timeInHours(n1) == timeInHours(n2)){
-        return 0;
-    }else if(timeInHours(n1) < timeInHours(n2)){
-        return -1;
+    function pad(d) {
+        return (d < 10) ? '0' + d.toString() : d.toString();
     }
 
-}
+    function timeInHours(str) {
+        var sp = str.split(":");
+        return parseInt(sp[0]) + parseFloat(sp[1] / 60);
+    }
 
-function obtenerNocturnas(Ent, Sal){
-    total_horas_nocturnas = '00:00'
+    function hoursToString(h) {
 
-    //Determinamos las horas diurnas y nocturnas
-    var limiteInferior = '06:00';
-    var limiteSuperior = '20:00';
-
-
-    if (mayor(limiteInferior, Ent) == 1){
-        var subLimiteSuperior = limiteInferior;
-                
-        if(mayor(subLimiteSuperior, Sal) == 1){
-            subLimiteSuperior = Sal;
+        if (h < 0) {
+            return "-" + hoursToString(h * -1);
         }
-                
-        temp_NocturnasDecimal = timeInHours(subLimiteSuperior) - timeInHours(Ent);
-        total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
-                
-    } else if (mayor(Sal, limiteSuperior) == 1){
-        var subLimiteInferior = limiteSuperior;
+        var hours = Math.floor(h);
+        var minutes = ((h - hours) * 60).toFixed(2);
 
-        if(mayor(Ent, subLimiteInferior) == 1){
-            subLimiteInferior = Ent;
+        return pad(hours) + ":" + pad(minutes);
+    }
+
+    function SumHrMin(h1, h2) {
+        var sp = h1.split(":");
+        var hora1 = sp[0];
+        var min1 = sp[1];
+
+        sp = h2.split(":");
+        var hora2 = sp[0];
+        var min2 = sp[1];
+
+        var hora_total = parseInt(hora1) + parseInt(hora2);
+        var min_pre = parseInt(min1) + parseInt(min2);
+
+        var horas_adicionales = Math.floor((min_pre / 60));
+        hora_total += horas_adicionales;
+        var min_total = (min_pre - (horas_adicionales * 60));
+
+        return hora_total + ":" + pad(min_total);
+
+    }
+
+    function obtenerNumeroId(id) {
+        var sp = id.split("-");
+        return sp[1];
+    }
+
+    function mayor(n1, n2) {
+        /* 
+        retorna 1 si n1 es mayor a n2
+        retorna 0 si n1 es igual a n2
+        retorna -1 si n1 es menor a n2
+        */
+        if (timeInHours(n1) > timeInHours(n2)) {
+            return 1;
+        } else if (timeInHours(n1) == timeInHours(n2)) {
+            return 0;
+        } else if (timeInHours(n1) < timeInHours(n2)) {
+            return -1;
         }
 
-        temp_NocturnasDecimal = timeInHours(Sal) - timeInHours(subLimiteInferior);
-        total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
     }
 
-    return total_horas_nocturnas;
+    function obtenerNocturnas(Ent, Sal) {
+        total_horas_nocturnas = '00:00'
 
-}
+        //Determinamos las horas diurnas y nocturnas
+        var limiteInferior = '06:00';
+        var limiteSuperior = '20:00';
 
-function deleteLeaveRow(deleteLink, id) {
-    debugger;
-    $(deleteLink).closest('.leaveForm').hide();
 
-    $("#id_asignaciondet_set-" + id + "-DELETE").prop("checked", true);
-    RecalcularHoras();
-    RecalcularTipoHoras();
+        if (mayor(limiteInferior, Ent) == 1) {
+            var subLimiteSuperior = limiteInferior;
 
-}
+            if (mayor(subLimiteSuperior, Sal) == 1) {
+                subLimiteSuperior = Sal;
+            }
 
-function RecalcularHoras(){
-    //aqui empieza el calculo del total de horas normales
-    var total_horas_detalle = '00:00';
-        
-    var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
-    var totalDet = parseInt($totalDetalle.val(), 10);
+            temp_NocturnasDecimal = timeInHours(subLimiteSuperior) - timeInHours(Ent);
+            total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
 
-    for (i = 0; i < totalDet; i++) {
-        if(!($('#leaveForm-'+ i).css('display') == 'none')){
-            //Lunes
-            var lunEnt =  $('#id_asignaciondet_set-' + i + '-lunEnt').val();
-            var lunSal =  $('#id_asignaciondet_set-' + i + '-lunSal').val();
-            var totalLunes = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
-            if(!(totalLunes == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalLunes);
+        } else if (mayor(Sal, limiteSuperior) == 1) {
+            var subLimiteInferior = limiteSuperior;
+
+            if (mayor(Ent, subLimiteInferior) == 1) {
+                subLimiteInferior = Ent;
             }
-                
-            //Martes
-            var marEnt =  $('#id_asignaciondet_set-' + i + '-marEnt').val();
-            var marSal =  $('#id_asignaciondet_set-' + i + '-marSal').val();
-            var totalMartes = hoursToString(timeInHours(marSal) - timeInHours(marEnt));
-            if(!(totalMartes == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalMartes);
-            }
-            //Miercoles
-            var mieEnt =  $('#id_asignaciondet_set-' + i + '-mieEnt').val();
-            var mieSal =  $('#id_asignaciondet_set-' + i + '-mieSal').val();
-            var totalMiercoles = hoursToString(timeInHours(mieSal) - timeInHours(mieEnt));
-            if(!(totalMiercoles == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalMiercoles);
-            }
-            //Jueves
-            var jueEnt =  $('#id_asignaciondet_set-' + i + '-jueEnt').val();
-            var jueSal =  $('#id_asignaciondet_set-' + i + '-jueSal').val();
-            var totalJueves = hoursToString(timeInHours(jueSal) - timeInHours(jueEnt));
-            if(!(totalJueves == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalJueves);
-            }
-            //Viernes
-            var vieEnt =  $('#id_asignaciondet_set-' + i + '-vieEnt').val();
-            var vieSal =  $('#id_asignaciondet_set-' + i + '-vieSal').val();
-            var totalViernes = hoursToString(timeInHours(vieSal) - timeInHours(vieEnt));
-            if(!(totalViernes == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalViernes);
-            }
-            //Sabado
-            var sabEnt =  $('#id_asignaciondet_set-' + i + '-sabEnt').val();
-            var sabSal =  $('#id_asignaciondet_set-' + i + '-sabSal').val();
-            var totalSabado = hoursToString(timeInHours(sabSal) - timeInHours(sabEnt));
-            if(!(totalSabado == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalSabado);
-            }
-            //Domingo
-            var domEnt =  $('#id_asignaciondet_set-' + i + '-domEnt').val();
-            var domSal =  $('#id_asignaciondet_set-' + i + '-domSal').val();
-            var totalDomingo = hoursToString(timeInHours(domSal) - timeInHours(domEnt));
-            if(!(totalDomingo == 'NaN:NaN')){
-                total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
-            }
+
+            temp_NocturnasDecimal = timeInHours(Sal) - timeInHours(subLimiteInferior);
+            total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
         }
-    }
-    $('#id_totalasignado').val(total_horas_detalle);
-    $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(total_horas_detalle)));
-}
 
-function RecalcularTipoHoras(){
-    //aqui empieza el calculo de los distintos tipos de horas
-    var total_horas_detalle = '00:00';
-    var total_sem_nocturnas = '00:00';
-    var total_sem_diurnas = '00:00';
-    var total_dom_nocturnas = '00:00';
-    var total_dom_diurnas = '00:00';
-     
-    var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
-    var totalDet = parseInt($totalDetalle.val(), 10);
+        return total_horas_nocturnas;
 
-    for (i = 0; i < totalDet; i++) {
-        if(!($('#leaveForm-'+ i).css('display') == 'none')){
-            //Lunes
-            var lunEnt =  $('#id_asignaciondet_set-' + i + '-lunEnt').val();
-            var lunSal =  $('#id_asignaciondet_set-' + i + '-lunSal').val();
-            temp = obtenerNocturnas(lunEnt, lunSal);
-
-            var totalLunes = timeInHours(lunSal) - timeInHours(lunEnt);
-            if(!(totalLunes == 'NaN:NaN') && !isNaN(totalLunes)){
-                total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalLunes - timeInHours(temp)));
-                total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
-            }
-        
-            //Martes
-            var marEnt =  $('#id_asignaciondet_set-' + i + '-marEnt').val();
-            var marSal =  $('#id_asignaciondet_set-' + i + '-marSal').val();
-            temp = obtenerNocturnas(marEnt, marSal);
-
-            var totalMartes = timeInHours(marSal) - timeInHours(marEnt);
-            if(!(totalMartes == 'NaN:NaN') && !isNaN(totalMartes)){
-                total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMartes - timeInHours(temp)));
-                total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
-            }
-
-            //Miercoles
-            var mieEnt =  $('#id_asignaciondet_set-' + i + '-mieEnt').val();
-            var mieSal =  $('#id_asignaciondet_set-' + i + '-mieSal').val();
-            temp = obtenerNocturnas(mieEnt, mieSal);
-
-            var totalMiercoles = timeInHours(mieSal) - timeInHours(mieEnt);
-            if(!(totalMiercoles == 'NaN:NaN') && !isNaN(totalMiercoles)){
-                total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMiercoles - timeInHours(temp)));
-                total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
-            }
-
-            //Jueves
-            var jueEnt =  $('#id_asignaciondet_set-' + i + '-jueEnt').val();
-            var jueSal =  $('#id_asignaciondet_set-' + i + '-jueSal').val();
-            temp = obtenerNocturnas(jueEnt, jueSal);
-
-            var totalJueves = timeInHours(jueSal) - timeInHours(jueEnt);
-            if(!(totalJueves == 'NaN:NaN') && !isNaN(totalJueves)){
-                total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalJueves - timeInHours(temp)));
-                total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
-            }
-
-            //Viernes
-            var vieEnt =  $('#id_asignaciondet_set-' + i + '-vieEnt').val();
-            var vieSal =  $('#id_asignaciondet_set-' + i + '-vieSal').val();
-            temp = obtenerNocturnas(vieEnt, vieSal);
-
-            var totalViernes = timeInHours(vieSal) - timeInHours(vieEnt);
-            if(!(totalViernes == 'NaN:NaN') && !isNaN(totalViernes)){
-                total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalViernes - timeInHours(temp)));
-                total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
-            }
-
-            //Sabado
-            var sabEnt =  $('#id_asignaciondet_set-' + i + '-sabEnt').val();
-            var sabSal =  $('#id_asignaciondet_set-' + i + '-sabSal').val();
-            temp = obtenerNocturnas(sabEnt, sabSal);
-
-            var totalSabado = timeInHours(sabSal) - timeInHours(sabEnt);
-            if(!(totalSabado == 'NaN:NaN') && !isNaN(totalSabado)){
-                total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalSabado - timeInHours(temp)));
-                total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
-            }
-
-
-            //Domingo
-            var domEnt =  $('#id_asignaciondet_set-' + i + '-domEnt').val();
-            var domSal =  $('#id_asignaciondet_set-' + i + '-domSal').val();
-            temp = obtenerNocturnas(domEnt, domSal);
-
-            var totalDomingo = timeInHours(domSal) - timeInHours(domEnt);
-            if(!(totalDomingo == 'NaN:NaN') && !isNaN(totalDomingo)){
-                total_dom_diurnas = SumHrMin(total_dom_diurnas, hoursToString(totalDomingo - timeInHours(temp)));
-                total_dom_nocturnas = SumHrMin(total_dom_nocturnas, temp);
-            }
-        }
-    }
-    $('#sum_sem_diu').val(total_sem_diurnas);
-    $('#sum_sem_noc').val(total_sem_nocturnas);
-    $('#sum_dom_diu').val(total_dom_diurnas);
-    $('#sum_dom_noc').val(total_dom_nocturnas);
-
-    //total_sem_diurnas
-    temp = hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas)));
-    if (temp.substring(0, 1) == '-'){
-        document.getElementById("res_sem_diu").style.color="#ff0000";
-    } else {
-        document.getElementById("res_sem_diu").style.color="#000000";
     }
 
-    //total_sem_nocturnas
-    temp = hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas)));
-    if (temp.substring(0, 1) == '-'){
-        document.getElementById("res_sem_noc").style.color="#ff0000";
-    } else {
-        document.getElementById("res_sem_noc").style.color="#000000";
-    }
-
-    //total_dom_diurnas
-    temp = hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas)));
-    if (temp.substring(0, 1) == '-'){
-        document.getElementById("res_dom_diu").style.color="#ff0000";
-    } else {
-        document.getElementById("res_dom_diu").style.color="#000000";
-    }
-
-    //total_dom_nocturnas
-    temp = hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas)));
-    if (temp.substring(0, 1) == '-'){
-        document.getElementById("res_dom_noc").style.color="#ff0000";
-    } else {
-        document.getElementById("res_dom_noc").style.color="#000000";
-    }
-
-
-    $('#res_sem_diu').val(hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas))));
-    $('#res_sem_noc').val(hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas))));
-    $('#res_dom_diu').val(hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas))));
-    $('#res_dom_noc').val(hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas))));
-}
-
-$(function(){
-
-    // Reemplaza todas las coincidencias en vez de solo la primera
-    function replaceAll(text, busca, reemplaza){
-          while (text.toString().indexOf(busca) != -1)
-            text = text.toString().replace(busca, reemplaza);
-          return text;
-    }
-
-    var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
-
-    $('#btnDet').click(function(event) {
+    function deleteLeaveRow(deleteLink, id) {
         debugger;
-        event.preventDefault();
-        var total = parseInt($totalDetalle.val(), 10);
-        var clon = $('script[type="template/Detalle"]').html();
-        clon_html = replaceAll(clon, '__prefix__', (total).toString());
-        $('#formset-det').append(clon_html);
-        $totalDetalle.val(total +  1);
+        $(deleteLink).closest('.leaveForm').hide();
 
-        //Seteamos action
-        document.getElementById('action').value = 'add_det';
-        //hacemos submit
-        document.getElementById('formulario').submit();
+        $("#id_asignaciondet_set-" + id + "-DELETE").prop("checked", true);
+        RecalcularHoras();
+        RecalcularTipoHoras();
+
+    }
+
+    function RecalcularHoras() {
+        //aqui empieza el calculo del total de horas normales
+        var total_horas_detalle = '00:00';
+
+        var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
+        var totalDet = parseInt($totalDetalle.val(), 10);
+
+        for (i = 0; i < totalDet; i++) {
+            if (!($('#leaveForm-' + i).css('display') == 'none')) {
+                //Lunes
+                var lunEnt = $('#id_asignaciondet_set-' + i + '-lunEnt').val();
+                var lunSal = $('#id_asignaciondet_set-' + i + '-lunSal').val();
+                var totalLunes = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
+                if (!(totalLunes == 'NaN:NaN')) {
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalLunes);
+                }
+
+                //Martes
+                var marEnt = $('#id_asignaciondet_set-' + i + '-marEnt').val();
+                var marSal = $('#id_asignaciondet_set-' + i + '-marSal').val();
+                var totalMartes = hoursToString(timeInHours(marSal) - timeInHours(marEnt));
+                if (!(totalMartes == 'NaN:NaN')) {
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalMartes);
+                }
+                //Miercoles
+                var mieEnt = $('#id_asignaciondet_set-' + i + '-mieEnt').val();
+                var mieSal = $('#id_asignaciondet_set-' + i + '-mieSal').val();
+                var totalMiercoles = hoursToString(timeInHours(mieSal) - timeInHours(mieEnt));
+                if (!(totalMiercoles == 'NaN:NaN')) {
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalMiercoles);
+                }
+                //Jueves
+                var jueEnt = $('#id_asignaciondet_set-' + i + '-jueEnt').val();
+                var jueSal = $('#id_asignaciondet_set-' + i + '-jueSal').val();
+                var totalJueves = hoursToString(timeInHours(jueSal) - timeInHours(jueEnt));
+                if (!(totalJueves == 'NaN:NaN')) {
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalJueves);
+                }
+                //Viernes
+                var vieEnt = $('#id_asignaciondet_set-' + i + '-vieEnt').val();
+                var vieSal = $('#id_asignaciondet_set-' + i + '-vieSal').val();
+                var totalViernes = hoursToString(timeInHours(vieSal) - timeInHours(vieEnt));
+                if (!(totalViernes == 'NaN:NaN')) {
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalViernes);
+                }
+                //Sabado
+                var sabEnt = $('#id_asignaciondet_set-' + i + '-sabEnt').val();
+                var sabSal = $('#id_asignaciondet_set-' + i + '-sabSal').val();
+                var totalSabado = hoursToString(timeInHours(sabSal) - timeInHours(sabEnt));
+                if (!(totalSabado == 'NaN:NaN')) {
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalSabado);
+                }
+                //Domingo
+                var domEnt = $('#id_asignaciondet_set-' + i + '-domEnt').val();
+                var domSal = $('#id_asignaciondet_set-' + i + '-domSal').val();
+                var totalDomingo = hoursToString(timeInHours(domSal) - timeInHours(domEnt));
+                if (!(totalDomingo == 'NaN:NaN')) {
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
+                }
+            }
+        }
+        $('#id_totalasignado').val(total_horas_detalle);
+        $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(total_horas_detalle)));
+    }
+
+    function RecalcularTipoHoras() {
+        //aqui empieza el calculo de los distintos tipos de horas
+        var total_horas_detalle = '00:00';
+        var total_sem_nocturnas = '00:00';
+        var total_sem_diurnas = '00:00';
+        var total_dom_nocturnas = '00:00';
+        var total_dom_diurnas = '00:00';
+
+        var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
+        var totalDet = parseInt($totalDetalle.val(), 10);
+
+        for (i = 0; i < totalDet; i++) {
+            if (!($('#leaveForm-' + i).css('display') == 'none')) {
+                //Lunes
+                var lunEnt = $('#id_asignaciondet_set-' + i + '-lunEnt').val();
+                var lunSal = $('#id_asignaciondet_set-' + i + '-lunSal').val();
+                temp = obtenerNocturnas(lunEnt, lunSal);
+
+                var totalLunes = timeInHours(lunSal) - timeInHours(lunEnt);
+                if (!(totalLunes == 'NaN:NaN') && !isNaN(totalLunes)) {
+                    total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalLunes - timeInHours(temp)));
+                    total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+                }
+
+                //Martes
+                var marEnt = $('#id_asignaciondet_set-' + i + '-marEnt').val();
+                var marSal = $('#id_asignaciondet_set-' + i + '-marSal').val();
+                temp = obtenerNocturnas(marEnt, marSal);
+
+                var totalMartes = timeInHours(marSal) - timeInHours(marEnt);
+                if (!(totalMartes == 'NaN:NaN') && !isNaN(totalMartes)) {
+                    total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMartes - timeInHours(temp)));
+                    total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+                }
+
+                //Miercoles
+                var mieEnt = $('#id_asignaciondet_set-' + i + '-mieEnt').val();
+                var mieSal = $('#id_asignaciondet_set-' + i + '-mieSal').val();
+                temp = obtenerNocturnas(mieEnt, mieSal);
+
+                var totalMiercoles = timeInHours(mieSal) - timeInHours(mieEnt);
+                if (!(totalMiercoles == 'NaN:NaN') && !isNaN(totalMiercoles)) {
+                    total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMiercoles - timeInHours(temp)));
+                    total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+                }
+
+                //Jueves
+                var jueEnt = $('#id_asignaciondet_set-' + i + '-jueEnt').val();
+                var jueSal = $('#id_asignaciondet_set-' + i + '-jueSal').val();
+                temp = obtenerNocturnas(jueEnt, jueSal);
+
+                var totalJueves = timeInHours(jueSal) - timeInHours(jueEnt);
+                if (!(totalJueves == 'NaN:NaN') && !isNaN(totalJueves)) {
+                    total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalJueves - timeInHours(temp)));
+                    total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+                }
+
+                //Viernes
+                var vieEnt = $('#id_asignaciondet_set-' + i + '-vieEnt').val();
+                var vieSal = $('#id_asignaciondet_set-' + i + '-vieSal').val();
+                temp = obtenerNocturnas(vieEnt, vieSal);
+
+                var totalViernes = timeInHours(vieSal) - timeInHours(vieEnt);
+                if (!(totalViernes == 'NaN:NaN') && !isNaN(totalViernes)) {
+                    total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalViernes - timeInHours(temp)));
+                    total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+                }
+
+                //Sabado
+                var sabEnt = $('#id_asignaciondet_set-' + i + '-sabEnt').val();
+                var sabSal = $('#id_asignaciondet_set-' + i + '-sabSal').val();
+                temp = obtenerNocturnas(sabEnt, sabSal);
+
+                var totalSabado = timeInHours(sabSal) - timeInHours(sabEnt);
+                if (!(totalSabado == 'NaN:NaN') && !isNaN(totalSabado)) {
+                    total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalSabado - timeInHours(temp)));
+                    total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
+                }
+
+
+                //Domingo
+                var domEnt = $('#id_asignaciondet_set-' + i + '-domEnt').val();
+                var domSal = $('#id_asignaciondet_set-' + i + '-domSal').val();
+                temp = obtenerNocturnas(domEnt, domSal);
+
+                var totalDomingo = timeInHours(domSal) - timeInHours(domEnt);
+                if (!(totalDomingo == 'NaN:NaN') && !isNaN(totalDomingo)) {
+                    total_dom_diurnas = SumHrMin(total_dom_diurnas, hoursToString(totalDomingo - timeInHours(temp)));
+                    total_dom_nocturnas = SumHrMin(total_dom_nocturnas, temp);
+                }
+            }
+        }
+        $('#sum_sem_diu').val(total_sem_diurnas);
+        $('#sum_sem_noc').val(total_sem_nocturnas);
+        $('#sum_dom_diu').val(total_dom_diurnas);
+        $('#sum_dom_noc').val(total_dom_nocturnas);
+
+        //total_sem_diurnas
+        temp = hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas)));
+        if (temp.substring(0, 1) == '-') {
+            document.getElementById("res_sem_diu").style.color = "#ff0000";
+        } else {
+            document.getElementById("res_sem_diu").style.color = "#000000";
+        }
+
+        //total_sem_nocturnas
+        temp = hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas)));
+        if (temp.substring(0, 1) == '-') {
+            document.getElementById("res_sem_noc").style.color = "#ff0000";
+        } else {
+            document.getElementById("res_sem_noc").style.color = "#000000";
+        }
+
+        //total_dom_diurnas
+        temp = hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas)));
+        if (temp.substring(0, 1) == '-') {
+            document.getElementById("res_dom_diu").style.color = "#ff0000";
+        } else {
+            document.getElementById("res_dom_diu").style.color = "#000000";
+        }
+
+        //total_dom_nocturnas
+        temp = hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas)));
+        if (temp.substring(0, 1) == '-') {
+            document.getElementById("res_dom_noc").style.color = "#ff0000";
+        } else {
+            document.getElementById("res_dom_noc").style.color = "#000000";
+        }
+
+
+        $('#res_sem_diu').val(hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas))));
+        $('#res_sem_noc').val(hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas))));
+        $('#res_dom_diu').val(hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas))));
+        $('#res_dom_noc').val(hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas))));
+    }
+
+    $(function () {
+
+        // Reemplaza todas las coincidencias en vez de solo la primera
+        function replaceAll(text, busca, reemplaza) {
+            while (text.toString().indexOf(busca) != -1)
+                text = text.toString().replace(busca, reemplaza);
+            return text;
+        }
+
+        var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
+
+        $('#btnDet').click(function (event) {
+            debugger;
+            event.preventDefault();
+            var total = parseInt($totalDetalle.val(), 10);
+            var clon = $('script[type="template/Detalle"]').html();
+            clon_html = replaceAll(clon, '__prefix__', (total).toString());
+            $('#formset-det').append(clon_html);
+            $totalDetalle.val(total + 1);
+
+            //Seteamos action
+            document.getElementById('action').value = 'add_det';
+            //hacemos submit
+            document.getElementById('formulario').submit();
+        });
+
     });
 
-});
+    $('input[id^="id_asignaciondet_set-"]').on('dp.change', function (e) {
+        debugger;
+        RecalcularHoras();
+    });
 
-$('input[id^="id_asignaciondet_set-"]').on('dp.change', function(e){
-    debugger;
-    RecalcularHoras();
-});
-
-$('input[id^="id_asignaciondet_set-"]').on('dp.change', function(e){
-    debugger;
-    RecalcularTipoHoras();
-});
+    $('input[id^="id_asignaciondet_set-"]').on('dp.change', function (e) {
+        debugger;
+        RecalcularTipoHoras();
+    });
 
 
 </script>

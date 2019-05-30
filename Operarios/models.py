@@ -5,13 +5,12 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MaxValueValidator
-
+from django.db import connection
 class Ciudad(models.Model):
     NombreCiudad = models.CharField("Ciudad", max_length=70)
 
     def __str__(self):
         return self.NombreCiudad
-
     class Meta:
         verbose_name_plural = "Ciudades"
 
@@ -457,6 +456,7 @@ class AsignacionDet(models.Model):
     domSal = models.TimeField('Domingo salida', blank=True, null=True)
     operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
     fechaInicio = models.DateField('Fecha Inicio Operario', null=True)
+    fechaFin = models.DateField('Fecha Inicio Operario', null=True)
     totalHoras = models.CharField('Total Asignado', max_length=8, null=True)
 
     
@@ -565,3 +565,30 @@ class Feriados(models.Model):
     class Meta:
         verbose_name = _("Parametro de Sistema")
         verbose_name_plural = _("Parametros de Sistema")
+
+class OperariosDisponibles (models.Model):
+    id_opeario= models.IntegerField()
+    nombres=models.CharField(max_length=200)
+    nroLegajo=models.CharField(max_length=6)
+    nombres_puntoServicio=models.CharField(max_length=200)
+    ids_puntoServicio=models.CharField(max_length=100)
+    totalHoras=models.FloatField()
+    perfil=models.CharField(max_length=400)
+    antiguedad=models.IntegerField()
+    class Meta:
+        managed=False
+    
+    @staticmethod
+    def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp):
+        conn= connection.cursor()
+        sql = """\
+            DECLARE @out nvarchar(max);
+            EXEC [dbo].[operarios_disponibles] @puntoServicio=?, @totalHoras=?, @lunEntReq=?, @lunSalReq=?, @marEntReq=?, @marSalReq=?, @mierEntReq=?, @mierSalReq=?, @juevEntReq=?, @juevSalReq=?, @vieEntReq=?, @vieSlReq=?, @sabEntReq=?, @sabSalReq=?, @domEntReq=?, @domSalReq=?, @fechaInicioOperario=?, @param_out = @out OUTPUT;
+            SELECT @out AS the_output;
+        """
+        """conn.callproc('operarios_disponibles', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
+        params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp)
+        conn.execute("{CALL operarios_disponibles (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}", params)
+        result = conn.fetchall()
+        conn.close()
+        return [OperariosDisponibles(*row) for row in result]

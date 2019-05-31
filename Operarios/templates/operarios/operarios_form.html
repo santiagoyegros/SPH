@@ -142,7 +142,18 @@
               </div>
               <div class="form-group">
                   <label>Lugar Nacimiento</label>
-                  <input id="lugarNacimiento" name="{{form.lugarNacimiento.name}}" value="{{form.lugarNacimiento.value}}"  class="form-control" type="text">
+                  <select id="lugarNacimiento" name="{{form.lugarNacimiento.name}}" value="{{form.lugarNacimiento.value}}"  class="selectpicker form-control" data-live-search="true" data-size="5" title="Seleccionar...."> 
+                    {% for ciudad in ciudadesList %}
+                    {% if ciudad.id == lugarSelect.id %}
+                    <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected"
+                      value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                    {% else %}
+                      <option data-tokens="{{ciudad.NombreCiudad}}"
+                      value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                  
                   {{ form.lugarNacimiento.errors }}
                 </div>
               <div class="form-group">

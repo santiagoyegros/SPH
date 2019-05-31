@@ -549,7 +549,8 @@ class OperariosAsignacionDet (models.Model):
     class Meta:
         verbose_name = _("Operario disponible")
         verbose_name_plural = _("Operarios disponibles")
-        managed=True
+        managed = False
+        db_table = 'operariosasignaciondet'
     
 
 class AsignacionesProcesadas(models.Model):

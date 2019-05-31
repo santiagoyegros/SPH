@@ -84,12 +84,14 @@ class OperarioForm(forms.ModelForm):
     """
     banco=forms.CharField(required=True, error_messages={'required':'Ingrese un banco'})
     ctaBanco=forms.IntegerField(required=True, error_messages={'required':'Ingrese un numero de banco'})
+    """
     lugarNacimiento=forms.CharField(max_length=30, required=False)
+    """
     fechaInicio=forms.DateField(required=True, error_messages={'required':'Ingrese la fecha de ingreso del operario'})
     fechaFin=forms.DateField(required=False)
     email=forms.EmailField(required=False)
-    latitud=forms.FloatField()
-    longitud=forms.FloatField()
+    latitud=forms.CharField()
+    longitud=forms.CharField()
     direccion=forms.CharField(required=True, error_messages={'required':'Ingrese la direccion del operario'})
     barrios=forms.CharField(required=True, error_messages={'required':'Ingrese el barrio'})
     class Meta:

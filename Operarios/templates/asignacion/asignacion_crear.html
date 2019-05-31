@@ -111,6 +111,7 @@
                 <div class="col p-0 text-center"> Domingo </div>
                 <div class="col-1 p-0 text-center"> Eliminar? </div>
             </div>
+            <!-- data-toggle="modal" data-target="#modalFiltro" -->
             {% for form in asigDetFormSet %}
             <div class="row mt-2 leaveForm" id="leaveForm-{{ forloop.counter0 }}" style="    margin-bottom: 30px;">
                 <div class="col-md-4">
@@ -118,7 +119,7 @@
                             <div class="col-md-4 text-center p-0">
                                     <a class="btn btn-info btn-block" style="    height: 39px;
                                         border-top-right-radius: 0px;
-                                        border-bottom-right-radius: 0px;" href='' data-toggle="modal" data-target="#modalFiltro"><i
+                                        border-bottom-right-radius: 0px;" href={% url 'Operarios:asignacion_url' %}><i
                                             class="fa fa-search"></i></a>
                                 </div>
                                 <input type="hidden" name="asignaciondet_set-0-id" id="id_asignaciondet_set-0-id">
@@ -358,6 +359,7 @@
                 <div>
                     <span>Filtros</span>
                 </div>
+            
                 <table id="tablePreview" class="table table-hover table-sm">
                     <!--Table head-->
                     <thead>

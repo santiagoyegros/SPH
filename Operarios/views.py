@@ -282,6 +282,7 @@ class MarcacionListView(ExportMixin,SingleTableMixin,FilterView):
 
 
 
+
 @login_required
 @permission_required('Operarios.add_planificacioncab', raise_exception=True)
 def Planificacion_create(request, id_puntoServicio=None):

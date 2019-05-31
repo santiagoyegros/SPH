@@ -566,7 +566,7 @@ class Feriados(models.Model):
         verbose_name = _("Parametro de Sistema")
         verbose_name_plural = _("Parametros de Sistema")
 
-class OperariosDisponibles (models.Model):
+class OperariosDisponibles(models.Model):
     id_opeario= models.IntegerField()
     nombres=models.CharField(max_length=200)
     nroLegajo=models.CharField(max_length=6)
@@ -574,10 +574,8 @@ class OperariosDisponibles (models.Model):
     ids_puntoServicio=models.CharField(max_length=100)
     totalHoras=models.FloatField()
     perfil=models.CharField(max_length=400)
-    antiguedad=models.IntegerField()
-    class Meta:
-        managed=False
-    
+    antiguedad=models.IntegerField() 
+
     @staticmethod
     def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp):
         conn= connection.cursor()
@@ -592,3 +590,6 @@ class OperariosDisponibles (models.Model):
         result = conn.fetchall()
         conn.close()
         return [OperariosDisponibles(*row) for row in result]
+    
+    class Meta:
+        managed = False

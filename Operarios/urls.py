@@ -12,6 +12,7 @@ from Operarios.views import Fiscales_asig, Fiscales_delete
 from Operarios import viewsAsignacion 
 from Operarios import viewsOperario
 from Operarios.views import PuntosServicios_update
+from Operarios.viewsAsignacion import AsignacionListView
 app_name = 'Operarios'
 
 urlpatterns = [
@@ -43,5 +44,6 @@ urlpatterns = [
     url(r'^fiscales/eliminar/(?P<id_user_fiscal>\d+)/(?P<id_puntoServicio>\d+)/$', Fiscales_delete, name='fiscales_del'),
     url(r'^asignacion/listar/', viewsAsignacion.Asignacion_list, name='asignacion_list'),
     url(r'^asignacion/asignar/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_create, name='asignacion_create'),
-    url(r'^marcacion/listar/', MarcacionListView.as_view() , name='marcaciones_url')
+    url(r'^marcacion/listar/', MarcacionListView.as_view() , name='marcaciones_url'),
+    url(r'^asignacion/operarios', AsignacionListView.as_view() , name='asignacion_url') 
 ]   

@@ -17,30 +17,34 @@
         $(function() {
 
             $("#jsGrid").jsGrid({
-                
                 height: "90%",
                 width: "100%",
-
-                filtering: true,
+                /*filtering: true,
                 inserting: true,
                 editing: true,
                 sorting: true,
                 paging: true,
+                autoload: true,*/
+                filtering: true,
+                inserting: false,
+                editing: false,
+                sorting: true,
+                paging: true,
                 autoload: true,
-
                 pageSize: 10,
+                pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
                 pageButtonCount: 1,
                 pagePrevText: "Anterior",
                 pageNextText: "Siguiente",
                 pageFirstText: "Primera",
                 pageLastText: "Ultima",
-
+                noDataContent: "No se han encontrado registros",
                 deleteConfirm: "Desea eliminar el registro?",
-
+                loadMessage: "Por favor, espere...",
+                invalidMessage: "Datos no válidos",
                 controller: {
                     loadData: function(filter) {
                         var d = $.Deferred();
-
                         $.ajax({
                             type: "GET",
                             url: "/reingenieria/marcacion/listar",
@@ -54,7 +58,6 @@
 
                         return d.promise();
                     },
-
                     insertItem: function(item) {
                         return $.ajax({
                             type: "POST",
@@ -62,7 +65,6 @@
                             data: item
                         });
                     },
-
                     updateItem: function(item) {
                         return $.ajax({
                             type: "PUT",
@@ -70,7 +72,6 @@
                             data: item
                         });
                     },
-
                     deleteItem: function(item) {
                         return $.ajax({
                             type: "DELETE",
@@ -80,13 +81,13 @@
                 },
 
                 fields: [
-                    { name: "codoperacion",type:"text", width: 150 },
-                    { name: "codpersona",type:"text", width: 150 },
-                    { name: "codcategoria",type:"text", width: 150 },
-                    { name: "numlinea",type:"text", width: 150 },
-                    { name: "codubicacion",type:"text", width: 150 },
-                    { name: "fecha",type:"date", width: 150 },
-                    { name: "estado",type:"text", width: 150 },
+                    { name: "codoperacion",type:"text", width: 150,title: "Operacion"},
+                    { name: "codpersona",type:"text", width: 150,title: "Cédula" },
+                    { name: "codcategoria",type:"text", width: 150,title: "Código Categoría" },
+                    { name: "numlinea",type:"text", width: 150,title: "Nro de Linea" },
+                    { name: "codubicacion",type:"text", width: 150,title: "Ubicacion" },
+                    { name: "fecha",type:"date", width: 150,title: "Fecha" },
+                    { name: "estado",type:"text", width: 150,title: "Estado" },
                     { type: "control" }
                 ]
             });

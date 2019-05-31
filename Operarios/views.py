@@ -18,12 +18,12 @@ from django.contrib.auth.models import User
 
 from Operarios.models import Ciudad, Cliente, Nacionalidad
 from django_tables2.paginators import Paginator
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet,EsmeEmMarcaciones
+from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet,EsmeEmMarcaciones, Feriados
 from Operarios.tables import MarcacionTable
 
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 from Operarios.filters import MarcacionFilter
-
+import json
 
 def index(request):
     return HttpResponse("Vista de Operarios")
@@ -554,6 +554,9 @@ def Fiscales_delete(request, id_user_fiscal=None, id_puntoServicio=None):
 def obtenerMarcacion(request):
     return render(request, 'marcacion/marcacion_list.html');
 
+def obtenerFeriado(request):
+    return render(request, 'feriados/feriados_list.html');
+
 def getMarcaciones(request):
         marcacion = EsmeEmMarcaciones.objects.all();
         #if request.GET.get('codoperacion')  is not None:
@@ -571,6 +574,32 @@ def getMarcaciones(request):
         #if request.GET.get('estado') is not None:
             #marcacion=marcacion.filter(estado__contains = request.GET.get('estado'));
         return HttpResponse(serializers.serialize('json', marcacion), content_type = 'application/json', status = 200);
+
+def getFeriados(request):
+        feriados = Feriados.objects.all();
+        #if request.GET.get('fecha')  is not None:
+            #feriados=feriados.filter(fecha= datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ%'));
+        return HttpResponse(serializers.serialize('json', feriados), content_type = 'application/json', status = 200);
+def makeFeriados(request):
+        Feriados.objects.create(
+            anho= request.POST.get("anho"),
+            fecha=datetime.strptime(request.POST.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ'),
+            descripcion= request.POST.get("descripcion"))
+        return HttpResponse(status = 201)
+def editFeriados(request,feriado_id):
+        feriado=Feriados.objects.get(id = feriado_id);
+        if request.POST.get('anho') is not None:
+            feriado.anho=request.POST.get('anho');
+        if request.POST.get('descripcion') is not None:
+            feriado.descripcion=request.POST.get('descripcion');
+        if request.POST.get('fecha') is not None:
+            feriado.fecha=datetime.strptime(request.POST.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ');
+        feriado.save();
+        return HttpResponse(status = 201)
+def deleteFeriados(request,feriado_id):
+        feriado=Feriados.objects.get(id = feriado_id);
+        feriado.delete();
+        return HttpResponse(status = 201)
 
 
 class EsmeEmMarcacionesClass(ListView):

@@ -6,6 +6,7 @@
 {% url 'Operarios:operarios_list' as operarios_url %}
 {% url 'Operarios:jefes_list' as jefes_url %}
 {% url 'Operarios:marcaciones_url' as marcaciones_url %}
+{% url 'Operarios:feriados_url' as feriados_url %}
 {% url 'Operarios:fiscales_list' as fiscales_url %} 
 {% url 'remplazos' as remplazos_url %}
 {% url 'alertas' as alertas_url %}
@@ -44,11 +45,12 @@ $("#salir").on('click',"a[data-window='external']", function() {
                     <a class="dropdown-item" href="{{ operarios_url }}">Operarios</a>
                     <a class="dropdown-item" href="/reingenieria/operaciones/jefes/listar">Jefes</a> 
                     <a class="dropdown-item" href="/reingenieria/operaciones/fiscales/listar">Fiscales</a>
+                    <a class="dropdown-item" href="{{ feriados_url}}">Feriados</a>
                     
                 </div> 
                 </li>
                 <li class="nav-item {% if request.path == marcaciones_url %}active{% endif %}">
-                    <a class="nav-link" href="/reingenieria/marcacion/listar/">Marcaciones</a>
+                    <a class="nav-link" href="{{marcaciones_url}}">Marcaciones</a>
                 </li>
                 <li class="nav-item {% if request.path == remplazos_url %}active{% endif %}">
                     <a class="nav-link" href="{{ remplazos_url }}">Reemplazos</a>

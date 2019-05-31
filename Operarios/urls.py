@@ -5,15 +5,9 @@ from django.views.generic import TemplateView, RedirectView
 from django.conf.urls import url, include
 from django.contrib.auth.decorators import login_required
 
-<<<<<<< HEAD
-from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView,EsmeEmMarcacionesClass
-from Operarios.views import Relevamiento
-from Operarios.views import Planificacion_list, Planificacion_create, Jefes_list, Jefes_asig, Jefes_delete, asignarFiscales, asignarPuntosServicio
-=======
 from Operarios.views import Relevamiento, Operarios_list, Operarios_create, Operarios_update, Operarios_delete
-from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView,MarcacionListView
+from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView,EsmeEmMarcacionesClass
 from Operarios.views import Planificacion_list, Planificacion_create, Jefes_list,Fiscales_list, Jefes_asig, Jefes_delete, asignarFiscales, asignarPuntosServicio
->>>>>>> 03eeb8c4a7ded5ee1ba80099ad1355bbd88e1262
 from Operarios.views import Fiscales_asig, Fiscales_delete
 from Operarios.views import obtenerMarcacion,getMarcaciones
 from Operarios import viewsAsignacion 

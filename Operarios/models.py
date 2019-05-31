@@ -580,4 +580,3 @@ class Feriados(models.Model):
     class Meta:
         verbose_name = _("Parametro de Sistema")
         verbose_name_plural = _("Parametros de Sistema")
-

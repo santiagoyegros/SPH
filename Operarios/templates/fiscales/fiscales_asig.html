@@ -2,10 +2,16 @@
 {% load static %}
 
 {% block content %}
+<div class="row">
+    <div class="col-md-12">
+            <h2>Asignación de Puntos de Servicio</h2>
+    </div>
+</div>
     <div class="container-fluid mb-3 mt-4  p-0">
         <div class="row">
             {% if Fiscal %}
-                <div class="col"><b>Fiscal: </b>{{ Fiscal.last_name }}, {{ Fiscal.first_name }} </div>
+                <div class="col"><h5>Fiscal: <p style="    display: inline;
+                    font-weight: 100;">{{ Fiscal.last_name }}, {{ Fiscal.first_name }}</p> </h5> </div>
             {% endif %}
         </div>
     </div>
@@ -25,7 +31,7 @@
             </div>
     </div>
     <div class="col-md-12" style="    text-align: right;margin: 15px 0px;padding: 0px !important;">
-        <a href='{% url 'Operarios:jefes_list' %}' class='btn btn-danger'>Volver</a>
+        <a href='{% url 'Operarios:fiscales_list' %}' class='btn btn-danger'>Volver</a>
         <button type="submit" class='btn btn-primary'>Guardar</button>
     </div>
     

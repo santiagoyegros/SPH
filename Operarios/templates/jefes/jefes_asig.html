@@ -2,16 +2,23 @@
 {% load static %}
 
 {% block content %}
-
+<div class="row">
+        <div class="col-md-12">
+                <h2>Asignación de Fiscales</h2>
+        </div>
+    </div>
 <div class="container-fluid mb-3 mt-4 p-0">
         <div class="row">
             {% if Jefe %}
-                <div class="col"><b>Jefe/a: </b>{{ Jefe.last_name }}, {{ Jefe.first_name }} </div>
+            <div class="col"><h5>Jefe/a: <p style="    display: inline;
+                font-weight: 100;">{{ Jefe.last_name }}, {{ Jefe.first_name }}</p> </h5> </div>
+        
             {% endif %}
+           
         </div>
     </div>  
 
-        <form method="post" action="{% url 'Operarios:jefes_fiscales' Jefe.id %}">
+        <form method="post" action="{% url 'Operarios:jefes_fiscales' id_user_jefe=Jefe.id %}"> 
                 {% csrf_token %}
                 <div class="row">
                 <div class="col-md-12">
@@ -32,7 +39,7 @@
                 <button type="submit" class='btn btn-primary '>Guardar</button>
             </div>
             
-        </form>
+        </form> 
            
 
 <!--     

@@ -142,7 +142,18 @@
               </div>
               <div class="form-group">
                   <label>Lugar Nacimiento</label>
-                  <input id="lugarNacimiento" name="{{form.lugarNacimiento.name}}" value="{{form.lugarNacimiento.value}}"  class="form-control" type="text">
+                  <select id="lugarNacimiento" name="{{form.lugarNacimiento.name}}" value="{{form.lugarNacimiento.value}}"  class="selectpicker form-control" data-live-search="true" data-size="5" title="Seleccionar...."> 
+                    {% for ciudad in ciudadesList %}
+                    {% if ciudad.id == lugarSelect.id %}
+                    <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected"
+                      value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                    {% else %}
+                      <option data-tokens="{{ciudad.NombreCiudad}}"
+                      value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                  
                   {{ form.lugarNacimiento.errors }}
                 </div>
               <div class="form-group">
@@ -233,12 +244,12 @@
                   <div class="row">
                   <div class="col-lg-6 col-md-6">
                     <label>Coordenadas de Latitud</label>
-                    <input id="latitud" name="{{form.latitud.name}}" value="{{form.latitud.value}}"  type="number" class="form-control" >
+                    <input id="latitud" name="{{form.latitud.name}}" value="{{form.latitud.value}}"  type="text" class="form-control" >
                     {{ form.latitud.errors }}
                   </div>
                   <div class="col-lg-6 col-md-6">
                       <label> Coordenadas de Longitud</label>
-                      <input id="longitud" name="{{form.longitud.name}}" value="{{form.longitud.value}}"  type="number" class="form-control" >
+                      <input id="longitud" name="{{form.longitud.name}}" value="{{form.longitud.value}}"  type="text" class="form-control" >
                       {{ form.longitud.errors }}
                   </div>
               </div>

@@ -1,6 +1,6 @@
 import django_filters
 from django.forms.widgets import TextInput
-from Operarios.models import EsmeEmMarcaciones
+from Operarios.models import EsmeEmMarcaciones, OperariosDisponibles
 
 class MarcacionFilter(django_filters.FilterSet):
     codoperacion=django_filters.CharFilter(lookup_expr='icontains',widget=TextInput(attrs={'placeholder':'codoperacion'}))
@@ -17,4 +17,17 @@ class MarcacionFilter(django_filters.FilterSet):
             'codubicacion',
             'fecha',
             'estado'
+        }
+
+class OperariosFilter(django_filters.FilterSet):
+
+    class Meta:
+        model= OperariosDisponibles
+        fields={
+            'nombres',
+            'antiguedad',
+            'nroLegajo',
+            'ids_puntoServicio',
+            'totalHoras',
+            'perfil'
         }

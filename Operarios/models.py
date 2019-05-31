@@ -5,13 +5,12 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MaxValueValidator
-
+from django.db import connection
 class Ciudad(models.Model):
     NombreCiudad = models.CharField("Ciudad", max_length=70)
 
     def __str__(self):
         return self.NombreCiudad
-
     class Meta:
         verbose_name_plural = "Ciudades"
 
@@ -43,7 +42,7 @@ class Operario(models.Model):
     telefono = models.BigIntegerField(blank=False, validators=[MaxValueValidator(9999999999)], null=True)
     email = models.CharField(max_length=30, blank=True)
     fechaNacimiento = models.DateField('Fecha Nacimiento', blank=False)
-    lugarNacimiento = models.CharField('Lugar de Nacimiento', max_length=30)
+    lugarNacimiento = models.ForeignKey(Ciudad, on_delete=models.CASCADE, related_name='%(class)s_requests_created')
     numCedula = models.CharField('N° Cedula', max_length=30, blank=False)
     numPasaporte = models.CharField('Numero de Pasaporte', max_length=10, blank=True)
     banco = models.CharField(max_length=30, blank=True)
@@ -53,8 +52,8 @@ class Operario(models.Model):
     nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE)
     fechaInicio = models.DateField('Fecha Inicio', blank=False, null=True)
     fechaFin = models.DateField('Fecha Fin', blank=True, null=True)
-    latitud=models.FloatField(blank=True, null=True)
-    longitud=models.FloatField(blank=True, null=True)
+    latitud=models.CharField('Latitud', max_length=20,blank=True)
+    longitud=models.CharField('Longitud', max_length=20,blank=True)
     escolaridad= models.CharField('Escolaridad', max_length=70, blank=True)
     profesion=models.ManyToManyField(Especializacion)
 
@@ -457,6 +456,7 @@ class AsignacionDet(models.Model):
     domSal = models.TimeField('Domingo salida', blank=True, null=True)
     operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
     fechaInicio = models.DateField('Fecha Inicio Operario', null=True)
+    fechaFin = models.DateField('Fecha Inicio Operario', null=True)
     totalHoras = models.CharField('Total Asignado', max_length=8, null=True)
 
     
@@ -482,8 +482,8 @@ class AsignacionDetAux(models.Model):
     domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
     domSal = models.TimeField('Domingo salida', blank=True, null=True)
     operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
-    fechaInicio = models.DateField('Fecha Inicio Operario', null=True)
-
+    fechaInicio = models.DateField('Fecha Inicio Operario Aux', null=True)
+    totalHoras = models.CharField('Total de horas necesarias tabla aux', max_length=8, null=True)
     class Meta:
         verbose_name = _("Asignacion Detalle Auxiliar")
         verbose_name_plural = _("Asignacion Detalles Auxiliares")
@@ -537,6 +537,21 @@ class EsmeEmMarcaciones(models.Model):
     class Meta:
         managed = False
         db_table = 'ESME_EM_Marcaciones'
+class OperariosAsignacionDet (models.Model):
+    id_opeario= models.IntegerField()
+    nombres=models.CharField(max_length=200)
+    nroLegajo=models.CharField(max_length=6)
+    nombres_puntoServicio=models.CharField(max_length=200)
+    ids_puntoServicio=models.CharField(max_length=100)
+    totalHoras=models.FloatField()
+    perfil=models.CharField(max_length=400)
+    antiguedad=models.IntegerField()
+    class Meta:
+        verbose_name = _("Operario disponible")
+        verbose_name_plural = _("Operarios disponibles")
+        managed = False
+        db_table = 'operariosasignaciondet'
+    
 
 class AsignacionesProcesadas(models.Model):
     NumCedulaOperario = models.CharField('N° Cedula', max_length=30)
@@ -548,3 +563,20 @@ class AsignacionesProcesadas(models.Model):
         verbose_name = _("Asignacion Procesada")
         verbose_name_plural = _("Asignaciones Procesadas")
 
+class Parametros(models.Model):
+    tipo = models.CharField('Tipo de Parametro', max_length=30)
+    parametro = models.CharField('Parametro', max_length=50)
+    valor = models.CharField('Parametro', max_length=150)
+
+    class Meta:
+        verbose_name = _("Parametro de Sistema")
+        verbose_name_plural = _("Parametros de Sistema")
+
+class Feriados(models.Model):
+    anho = models.IntegerField('Año', blank=True, null=True)
+    fecha = models.DateField('Fecha Inicio Cobertura', null=True)
+    descripcion = models.CharField('Parametro', max_length=200)
+
+    class Meta:
+        verbose_name = _("Parametro de Sistema")
+        verbose_name_plural = _("Parametros de Sistema")

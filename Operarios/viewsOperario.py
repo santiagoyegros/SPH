@@ -35,7 +35,8 @@ def Operarios_create(request):
             'form': form, 
             'nacionalidadList': nacionalidadList, 
             'ciudadesList': ciudadesList, 
-            'especialidadesList': especialidadesList
+            'especialidadesList': especialidadesList,
+            
             
             }
         
@@ -86,6 +87,8 @@ def Operarios_update(request, pk):
 
         nacionalidadList=Nacionalidad.objects.all()
         nacionalidadSelect=operarios.nacionalidad
+
+        lugarSelect=operarios.lugarNacimiento
         contexto = {
             'title': 'Editar Operario',
             'form': form,
@@ -95,7 +98,8 @@ def Operarios_update(request, pk):
             'especialidadSelect':especialidadSelect,
             'nacionalidadList':nacionalidadList,
             'nacionalidadSelect':nacionalidadSelect,
-            'especialidadSelect':especialidadSelect
+            'especialidadSelect':especialidadSelect, 
+            'lugarSelect':lugarSelect
         }
     else:
         form = OperarioForm(request.POST, instance=operarios)
@@ -114,6 +118,8 @@ def Operarios_update(request, pk):
 
             nacionalidadList=Nacionalidad.objects.all()
             nacionalidadSelect=operarios.nacionalidad
+
+            lugarSelect=operarios.lugarNacimiento
             contexto = {
                 'title': 'Editar Operario',
                 'form': form,
@@ -123,7 +129,8 @@ def Operarios_update(request, pk):
                 'especialidadSelect':especialidadSelect,
                 'nacionalidadList':nacionalidadList,
                 'nacionalidadSelect':nacionalidadSelect,
-                'especialidadSelect':especialidadSelect
+                'especialidadSelect':especialidadSelect,
+                 'lugarSelect':lugarSelect
             }
         
 

@@ -15,9 +15,12 @@ from django_tables2.export.views import ExportMixin
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
+
+from Operarios.models import Ciudad, Cliente, Nacionalidad
 from django_tables2.paginators import Paginator
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet,EsmeEmMarcaciones
 from Operarios.tables import MarcacionTable
+
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 from Operarios.filters import MarcacionFilter
 
@@ -75,11 +78,13 @@ class PuntosServicioList(ListView):
 @method_decorator(permission_required('Operarios.add_puntoservicio', raise_exception=True), name='dispatch')
 class PuntoServicioCreate(SuccessMessageMixin, CreateView):
     model = PuntoServicio
+    ciudades = Ciudad.objects.all()
+    clientes = Cliente.objects.all()
     form_class = PuntoServicioForm
     template_name = "puntoServicio/puntoServicio_form.html"
     success_url = reverse_lazy('Operarios:puntoServicio_list')
     success_message = 'Punto de Servicio Creado correctamente'
-    extra_context = {'title': 'Nuevo Punto de Servicio'}
+    extra_context = {'title': 'Nuevo Punto de Servicio','ciudades':ciudades,'clientes':clientes}
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.change_puntoservicio', raise_exception=True), name='dispatch')
@@ -90,6 +95,28 @@ class PuntoServicioUpdateView(SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy('Operarios:puntoServicio_list')
     success_message = 'Punto de Servicio modificado correctamente'
     extra_context = {'title': 'Editar Punto de Servicio '}
+
+
+@login_required
+@permission_required('Operarios.change_puntoservicio', raise_exception=True)
+def PuntosServicios_update(request, pk):
+    puntoServicio = PuntoServicio.objects.get(id=pk)
+  
+    if request.method == 'GET':
+        form = PuntoServicioForm(instance=puntoServicio)
+        contexto = {
+            'title': 'Editar Punto de servicio',
+            'form': form,
+            'puntoServicio':puntoServicio 
+        }
+    else:
+        form = PuntoServicioForm(request.POST, instance=puntoServicio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Punto de Servicio modificado correctamente.')
+        return redirect('Operarios:puntoServicio_list')
+
+    return render(request, 'operarios/puntoServicio_list.html', context=contexto)
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.delete_puntoservicio', raise_exception=True), name='dispatch')
@@ -178,14 +205,8 @@ def Relevamiento(request, id_puntoServicio=None):
     #return render_to_response('puntoServicio/puntoServicio_relevamiento.html', locals())
     return render(request, 'puntoServicio/puntoServicio_relevamiento.html', context=contexto)
 
-'''
-class MarcacionListView(ExportMixin,SingleTableMixin,FilterView):
-    table_class= MarcacionTable
-    model= EsmeEmMarcaciones
-    template_name='marcacion/marcacion_list.html'
-    filterset_class= MarcacionFilter
-    table_pagination={"per_page":10}
-'''
+
+
 
 
 @login_required
@@ -284,13 +305,19 @@ def Planificacion_list(request):
 @permission_required('Operarios.view_operario', raise_exception=True)
 def Jefes_list(request):
     jefes = User.objects.filter(cargoasignado__cargo__cargo='Jefe de Operaciones')
-    fiscales = User.objects.filter(cargoasignado__cargo__cargo='Fiscal')
-    contexto = {'Jefes': jefes,'Fiscales':fiscales}
+    contexto = {'Jefes': jefes}
     return render(request, 'jefes/jefes_list.html', context=contexto)
 
 @login_required
 @permission_required('Operarios.view_operario', raise_exception=True)
-def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
+def Fiscales_list(request):
+    fiscales = User.objects.filter(cargoasignado__cargo__cargo='Fiscal')
+    contexto = {'Fiscales':fiscales} 
+    return render(request, 'fiscales/fiscales_list.html', context=contexto) 
+
+@login_required
+@permission_required('Operarios.view_operario', raise_exception=True)
+def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None): 
 
     try:
         user_jefe = User.objects.get(pk=id_user_jefe)   
@@ -304,17 +331,16 @@ def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
 
     ''' El if siguiente es utilizado en la version anterior de asignacion de fiscales'''   
-    if id_user_fiscal != None:
-        print("Hola, aca obtengo los fiscales")
-        user_fiscal = User.objects.get(pk=id_user_fiscal)
-        asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
-        asignacion.save()
+    # if id_user_fiscal != None:
+    #     print("Hola, aca obtengo los fiscales")
+    #     user_fiscal = User.objects.get(pk=id_user_fiscal)
+    #     asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
+    #     asignacion.save()
     
     #se trae los fiscales disponibles
     fiscales_disp = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal')
     consulta2 = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal').query
     logging.getLogger("error_logger").error('La consulta de fiscales disponibles ejecutada es: {0}'.format(consulta2))
-    print("HOOOOOOLA", fiscales_disp)
     #cargamos el contexto
     contexto = {'Fiscales': fiscales_asig,
                 'Jefe': user_jefe,
@@ -360,7 +386,7 @@ def Jefes_delete(request, id_user_jefe=None, id_user_fiscal=None):
         asignacion = AsigJefeFiscal.objects.get(userJefe=user_jefe, userFiscal=user_fiscal)
         asignacion.delete()
         messages.warning(request, 'Asignación eliminada correctamente')
-        return redirect('Operarios:jefes_asig', id_user_jefe=id_user_jefe)
+        return redirect('Operarios:jefes_asigFiscales', id_user_jefe=id_user_jefe)
     
     #cargamos el contexto
     contexto = {'Jefe': user_jefe,

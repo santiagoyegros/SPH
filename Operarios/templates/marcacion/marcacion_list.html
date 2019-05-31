@@ -1,16 +1,96 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}Marcaciones{% endblock %}
+
+{% block head %}
+    <link href="http://js-grid.com/css/jsgrid.min.css" rel="stylesheet" />
+    <link href="http://js-grid.com/css/jsgrid-theme.min.css" rel="stylesheet" />
+{% endblock %}
 
 {% block content %}
-    {% load render_table from django_tables2 %}
-    {% load bootstrap3 %}
-    {% if filter%}
-    <form action="" method="GET" class="form form-inline">
-        {% bootstrap_form filter.form layout='inline' %}
-        {% bootstrap_button 'Filtrar' %}
-        
-    </form>
-    {% endif %}
-    {% render_table table%}
+    <div id="jsGrid"></div>
+{% endblock %}
 
+{% block scripts %}
+
+    <script>
+        $(function() {
+
+            $("#jsGrid").jsGrid({
+                
+                height: "90%",
+                width: "100%",
+
+                filtering: true,
+                inserting: true,
+                editing: true,
+                sorting: true,
+                paging: true,
+                autoload: true,
+
+                pageSize: 10,
+                pageButtonCount: 1,
+                pagePrevText: "Anterior",
+                pageNextText: "Siguiente",
+                pageFirstText: "Primera",
+                pageLastText: "Ultima",
+
+                deleteConfirm: "Desea eliminar el registro?",
+
+                controller: {
+                    loadData: function(filter) {
+                        var d = $.Deferred();
+
+                        $.ajax({
+                            type: "GET",
+                            url: "/reingenieria/marcacion/listar",
+                            data: filter
+                        }).done(function(result) {
+                            console.log(result);
+                            d.resolve($.map(result, function(item) {
+                                return $.extend(item.fields, { id: item.pk });
+                            }));
+                        });
+
+                        return d.promise();
+                    },
+
+                    insertItem: function(item) {
+                        return $.ajax({
+                            type: "POST",
+                            url: "/marcacion/api",
+                            data: item
+                        });
+                    },
+
+                    updateItem: function(item) {
+                        return $.ajax({
+                            type: "PUT",
+                            url: "/marcacion/api/" + item.id,
+                            data: item
+                        });
+                    },
+
+                    deleteItem: function(item) {
+                        return $.ajax({
+                            type: "DELETE",
+                            url: "/marcacion/api/" + item.id
+                        });
+                    }
+                },
+
+                fields: [
+                    { name: "codoperacion",type:"text", width: 150 },
+                    { name: "codpersona",type:"text", width: 150 },
+                    { name: "codcategoria",type:"text", width: 150 },
+                    { name: "numlinea",type:"text", width: 150 },
+                    { name: "codubicacion",type:"text", width: 150 },
+                    { name: "fecha",type:"date", width: 150 },
+                    { name: "estado",type:"text", width: 150 },
+                    { type: "control" }
+                ]
+            });
+
+        });
+    </script>
 {% endblock %}

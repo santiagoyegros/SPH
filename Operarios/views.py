@@ -1,5 +1,7 @@
 import logging
 from django.shortcuts import render, redirect, render_to_response
+from django.core import serializers
+from datetime import datetime
 from django.http import HttpResponse, Http404
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -176,12 +178,14 @@ def Relevamiento(request, id_puntoServicio=None):
     #return render_to_response('puntoServicio/puntoServicio_relevamiento.html', locals())
     return render(request, 'puntoServicio/puntoServicio_relevamiento.html', context=contexto)
 
+'''
 class MarcacionListView(ExportMixin,SingleTableMixin,FilterView):
     table_class= MarcacionTable
     model= EsmeEmMarcaciones
     template_name='marcacion/marcacion_list.html'
     filterset_class= MarcacionFilter
     table_pagination={"per_page":10}
+'''
 
 
 @login_required
@@ -445,3 +449,64 @@ def Fiscales_delete(request, id_user_fiscal=None, id_puntoServicio=None):
                 }
     return render(request, 'fiscales/fiscales_delete.html', context=contexto)
 
+def obtenerMarcacion(request):
+    return render(request, 'marcacion/marcacion_list.html');
+
+def getMarcaciones(request):
+        marcacion = EsmeEmMarcaciones.objects.all();
+        #if request.GET.get('codoperacion')  is not None:
+            #marcacion=marcacion.filter(codoperacion__contains = request.GET.get('codoperacion'));
+        #if request.GET.get('codpersona')  is not None:
+            #marcacion=marcacion.filter(codpersona=request.GET.get('codpersona'));
+        #if request.GET.get('codcategoria')  is not None:
+            #marcacion=marcacion.filter(codcategoria=request.GET.get('codcategoria'));
+        #if request.GET.get('numlinea')  is not None:
+            #marcacion=marcacion.filter(numlinea__contains = request.GET.get('numlinea'));
+        #if request.GET.get('codubicacion')  is not None:
+            #marcacion=marcacion.filter(codubicacion__contains = request.GET.get('codubicacion'));
+        #if request.GET.get('fecha')  is not None:
+            #marcacion=marcacion.filter(fecha= datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ%'));
+        #if request.GET.get('estado') is not None:
+            #marcacion=marcacion.filter(estado__contains = request.GET.get('estado'));
+        return HttpResponse(serializers.serialize('json', marcacion), content_type = 'application/json', status = 200);
+
+
+class EsmeEmMarcacionesClass(ListView):
+
+    def index(request):
+        return render(request, 'marcacion/marcacion_list.html');
+
+    
+
+    def post(self, request):
+        EsmeEmMarcaciones.objects.create(
+            codoperacion= request.POST.get("codoperacion"),
+            codpersona= request.POST.get("codpersona"),
+            codcategoria= request.POST.get("codcategoria"),
+            numlinea= request.POST.get("numlinea"),
+            codubicacion= request.POST.get("codubicacion"),
+            fecha= request.POST.get("fecha"),
+            estado= request.POST.get("estado")
+
+        )
+        return HttpResponse(status = 201)
+
+    def put(self, request, marcacion_id):
+        marcacion = EsmeEmMarcaciones.objects.get(idpersonaevento = marcacion_id)
+        marcacion.codoperacion= request.PUT.get("codoperacion"),
+        marcacion.codpersona= request.PUT.get("codpersona"),
+        marcacion.codcategoria= request.PUT.get("codcategoria"),
+        marcacion.numlinea= request.PUT.get("numlinea"),
+        marcacion.codubicacion= request.PUT.get("codubicacion"),
+        marcacion.fecha= request.PUT.get("fecha"),
+        marcacion.estado= request.PUT.get("estado")
+        marcacion.save()
+        return HttpResponse(status = 200)
+
+    def delete(self, request, marcacion_id):
+        marcacion = EsmeEmMarcaciones.objects.get(idpersonaevento = marcacion_id)
+        marcacion.delete()
+        return HttpResponse(status = 200)
+
+    def to_json(self, objects):
+        return serializers.serialize('json', objects)

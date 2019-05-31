@@ -537,20 +537,19 @@ class EsmeEmMarcaciones(models.Model):
     class Meta:
         managed = False
         db_table = 'ESME_EM_Marcaciones'
+
 class OperariosAsignacionDet (models.Model):
-    id_opeario= models.IntegerField()
-    nombres=models.CharField(max_length=200)
-    nroLegajo=models.CharField(max_length=6)
-    nombres_puntoServicio=models.CharField(max_length=200)
-    ids_puntoServicio=models.CharField(max_length=100)
-    totalHoras=models.FloatField()
-    perfil=models.CharField(max_length=400)
-    antiguedad=models.IntegerField()
+    id_operario= models.IntegerField(db_column='id_opeario', primary_key=True,verbose_name=' ')
+    nombres=models.CharField(db_column='nombres',verbose_name='Nombres',max_length=200)
+    nroLegajo=models.CharField(db_column='nroLegajo',verbose_name='Numero de legajo',max_length=6)
+    nombres_puntoServicio=models.CharField(db_column='nombres_puntoServicio',verbose_name='Nombres Puntos de Servicio',max_length=200)
+    ids_puntoServicio=models.CharField(db_column='ids_puntoServicio',verbose_name=' ',max_length=100)
+    totalHoras=models.FloatField(db_column='totalHoras',verbose_name='Total Horas')
+    perfil=models.CharField(db_column='perfil',verbose_name='Perfil',max_length=400)
+    antiguedad=models.IntegerField(db_column='antiguedad',verbose_name='Antiguedad')
     class Meta:
         verbose_name = _("Operario disponible")
         verbose_name_plural = _("Operarios disponibles")
-        managed = False
-        db_table = 'operariosasignaciondet'
     
 
 class AsignacionesProcesadas(models.Model):

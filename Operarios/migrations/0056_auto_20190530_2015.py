@@ -24,6 +24,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='operario',
             name='lugarNacimiento',
-            field=models.ForeignKey(default='NULL', on_delete=django.db.models.deletion.CASCADE, related_name='operario_requests_created', to='Operarios.Ciudad'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='operario_requests_created', to='Operarios.Ciudad'),
         ),
     ]

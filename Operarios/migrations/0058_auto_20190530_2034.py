@@ -15,9 +15,15 @@ class Migration(migrations.Migration):
             name='latitud',
             field=models.CharField(blank=True, max_length=20, verbose_name='Latitud'),
         ),
-        migrations.AlterField(
+         migrations.AddField(
             model_name='operario',
             name='longitud',
-            field=models.CharField(blank=True, max_length=20, verbose_name='Longitud'),
+            field=models.CharField(blank=True, max_length=20),
         ),
+         migrations.AddField(
+            model_name='operario',
+            name='latitud',
+            field=models.CharField(blank=True, max_length=20),
+        ),
+        
     ]

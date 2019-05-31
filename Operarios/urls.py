@@ -47,6 +47,5 @@ urlpatterns = [
     url(r'^asignacion/asignar/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_create, name='asignacion_create'),
     url(r'^marcacion/vista', obtenerMarcacion , name='marcaciones_url'),
     url(r'^marcacion/listar/', getMarcaciones , name='marcaciones_get'),
-    url(r'^asignacion/operarios', AsignacionListView.as_view() , name='asignacion_url') 
-
+    url(r'^asignacion/operarios/(?P<totalHoras>\d+)/$', AsignacionListView.as_view() , name='asignacion_url') 
 ]   

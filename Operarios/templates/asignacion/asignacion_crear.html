@@ -119,7 +119,7 @@
                             <div class="col-md-4 text-center p-0">
                                     <a class="btn btn-info btn-block" style="    height: 39px;
                                         border-top-right-radius: 0px;
-                                        border-bottom-right-radius: 0px;" href={% url 'Operarios:asignacion_url' %}><i
+                                        border-bottom-right-radius: 0px;" href={% url 'Operarios:asignacion_url' 5 %}><i
                                             class="fa fa-search"></i></a>
                                 </div>
                                 <input type="hidden" name="asignaciondet_set-0-id" id="id_asignaciondet_set-0-id">
@@ -354,38 +354,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <!--Table-->
-
-                <div>
-                    <span>Filtros</span>
-                </div>
-            
-                <table id="tablePreview" class="table table-hover table-sm">
-                    <!--Table head-->
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nombre</th>
-                            <th>Legajo</td>
-                            <th>Antiguedad</td>
-                            <th>Otros contratos</td>
-                            <th>Total de horas asignado</td>
-                        </tr>
-                    </thead>
-                    <!--Table head-->
-                    <!--Table body-->
-                    <tbody>
-
-                        <tr>
-                            <th scope="row"></th>
-                            <td></td>
-                            <td>Asignar</td>
-                        </tr>
-
-                    </tbody>
-                    <!--Table body-->
-                </table>
-                <!--Table-->
+              
             </div>
             <div class="modal-footer">
                 <a class="btn btn-info" style="height: 39px;">Asignar</a>

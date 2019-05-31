@@ -1,6 +1,6 @@
 import django_filters
 from django.forms.widgets import TextInput
-from Operarios.models import EsmeEmMarcaciones, OperariosDisponibles
+from Operarios.models import EsmeEmMarcaciones, OperariosAsignacionDet
 
 class MarcacionFilter(django_filters.FilterSet):
     codoperacion=django_filters.CharFilter(lookup_expr='icontains',widget=TextInput(attrs={'placeholder':'codoperacion'}))
@@ -20,14 +20,20 @@ class MarcacionFilter(django_filters.FilterSet):
         }
 
 class OperariosFilter(django_filters.FilterSet):
+    nombres = django_filters.CharFilter(lookup_expr='icontains',widget=TextInput(attrs={'placeholder':'nombre'}))
+    antiguedad = django_filters.CharFilter(lookup_expr='icontains',widget=TextInput(attrs={'placeholder':'antiguedad'}))
+    nombreLegajo = django_filters.CharFilter(lookup_expr='icontains',widget=TextInput(attrs={'placeholder':'nro legajo'}))
+    id_PuntoServicio = django_filters.CharFilter(lookup_expr='icontains',widget=TextInput(attrs={'placeholder':'puntos de servicio'}))
+    totalHoras = django_filters.CharFilter(lookup_expr='icontains',widget=TextInput(attrs={'placeholder':'total horas'}))
+    perfil = django_filters.CharFilter(lookup_expr='icontains',widget=TextInput(attrs={'placeholder':'perfil'}))
 
     class Meta:
-        model= OperariosDisponibles
+        model= OperariosAsignacionDet
         fields={
             'nombres',
             'antiguedad',
-            'nroLegajo',
-            'ids_puntoServicio',
+            'nombreLegajo',
+            'id_PuntoServicio',
             'totalHoras',
             'perfil'
         }

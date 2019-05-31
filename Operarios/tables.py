@@ -1,5 +1,5 @@
 import django_tables2 as tables
-from Operarios.models import EsmeEmMarcaciones, OperariosDisponibles
+from Operarios.models import EsmeEmMarcaciones, OperariosAsignacionDet
 from django_tables2.export.views import ExportMixin
 
 class MarcacionTable(ExportMixin,tables.Table):
@@ -12,5 +12,5 @@ class MarcacionTable(ExportMixin,tables.Table):
 class AsignacionTable(ExportMixin,tables.Table):
 
     class Meta:
-        model=OperariosDisponibles
+        model=OperariosAsignacionDet
         template_name='asignacion/asignacion_table.html'

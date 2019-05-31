@@ -25,6 +25,7 @@
             {% block table.tbody %}
                 <tbody {{ table.attrs.tbody.as_html }}>
                 {% for row in table.paginated_rows %}
+        
                     {% block table.tbody.row %}
                     <tr {{ row.attrs.as_html }}>
                         {% for column, cell in row.items %}

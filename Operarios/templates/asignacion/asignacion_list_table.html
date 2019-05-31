@@ -6,8 +6,19 @@
     {% load bootstrap3 %}
     {% if filter %}
     <form action="" method="GET" class="form form-inline">
-        {% bootstrap_form filter.form layout='inline' %}
-        {% bootstrap_button 'Filtrar' %}
+        <!-- {% bootstrap_form filter.form layout='inline' %} -->
+        <form action="" method="GET" class="form form-inline">
+            <div class="form-group"><label class="sr-only" for="id_nombres">Nombres contains</label><input type="text" name="nombres" placeholder="nombre" class="form-control" title="" id="id_nombres"></div>
+            
+            <div class="form-group"><label class="sr-only" for="id_nombreLegajo">[invalid name] contains</label><input type="text" name="nombreLegajo" placeholder="nro legajo" class="form-control" title="" id="id_nombreLegajo"></div>
+            <div class="form-group"><label class="sr-only" for="id_id_PuntoServicio">[invalid name] contains</label><input type="text" name="id_PuntoServicio" placeholder="puntos de servicio" class="form-control" title="" id="id_id_PuntoServicio"></div>
+            <div class="form-group"><label class="sr-only" for="id_totalHoras">Total Horas contains</label><input type="text" name="totalHoras" placeholder="total horas" class="form-control" title="" id="id_totalHoras"></div>
+            <div class="form-group"><label class="sr-only" for="id_perfil">Perfil contains</label><input type="text" name="perfil" placeholder="perfil" class="form-control" title="" id="id_perfil"></div>
+            <div class="form-group"><label class="sr-only" for="id_antiguedad">Antiguedad contains</label><input type="text" name="antiguedad" placeholder="antiguedad" class="form-control" title="" id="id_antiguedad"></div>          
+            <button class="btn btn-default" style="    margin: 0px 15px;">Filtrar</button>
+                
+            </form>
+        <!-- {% bootstrap_button 'Filtrar' %} -->
         
     </form>
     {% endif %}

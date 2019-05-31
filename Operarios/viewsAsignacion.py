@@ -10,25 +10,18 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
-
+import datetime
 from Operarios.models import OperariosAsignacionDet
-
+import mysql.connector
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 from Operarios.filters import OperariosFilter
 from Operarios.tables import AsignacionTable
-from Operarios.models import OperariosDisponibles
 from Operarios.filters import OperariosFilter
 from django_tables2.views import SingleTableMixin
 from django_filters.views import FilterView
 from django_tables2.export.views import ExportMixin
-
-class AsignacionListView(ExportMixin,SingleTableMixin,FilterView):
-    table_class= AsignacionTable
-    model= OperariosDisponibles
-    template_name='asignacion/asignacion_list_table.html' 
-    filterset_class= OperariosFilter
-    table_pagination={"per_page":10}
+from django.db import connection
 
 
 @login_required
@@ -138,7 +131,26 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
         """
         """conn.callproc('operarios_disponibles', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
         params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp)
-        conn.execute("{CALL operarios_disponibles (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}", params)
+        conn.execute('operarios_disponibles %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s',params)
         result = conn.fetchall()
+        print(params)
         conn.close()
-        return [OperariosDisponibOperariosAsignacionDet(*row) for row in result]
+        return [OperariosAsignacionDet(*row) for row in result]
+
+
+class AsignacionListView(ExportMixin,SingleTableMixin,FilterView):
+    table_class= AsignacionTable 
+    model= OperariosAsignacionDet 
+    template_name='asignacion/asignacion_list_table.html' 
+    filterset_class= OperariosFilter
+    table_pagination={"per_page":10}  
+
+    def get_context_data(self, **kwargs):
+        context = super(AsignacionListView, self).get_context_data(**kwargs)
+        #ACA AGARRA LOS PARAMETROS QUE LE PASAS, AHORA MISMO 
+        #LE PASO SOLO TOTALHORAS Y LUEGO ESO
+        #LE PASAS AL PROCEDIMIENTO BUSCAR_OPERARIOS
+        print(self.kwargs['totalHoras'])
+        buscar_operarios(5,8, (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),datetime.datetime.strptime('1996-08-08','%Y-%m-%d'))
+        return context
+    

@@ -42,7 +42,7 @@ class Operario(models.Model):
     telefono = models.BigIntegerField(blank=False, validators=[MaxValueValidator(9999999999)], null=True)
     email = models.CharField(max_length=30, blank=True)
     fechaNacimiento = models.DateField('Fecha Nacimiento', blank=False)
-    lugarNacimiento = models.CharField('Lugar de Nacimiento', max_length=30)
+    lugarNacimiento = models.ForeignKey(Ciudad, on_delete=models.CASCADE, related_name='%(class)s_requests_created')
     numCedula = models.CharField('N° Cedula', max_length=30, blank=False)
     numPasaporte = models.CharField('Numero de Pasaporte', max_length=10, blank=True)
     banco = models.CharField(max_length=30, blank=True)
@@ -52,8 +52,8 @@ class Operario(models.Model):
     nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE)
     fechaInicio = models.DateField('Fecha Inicio', blank=False, null=True)
     fechaFin = models.DateField('Fecha Fin', blank=True, null=True)
-    latitud=models.FloatField(blank=True, null=True)
-    longitud=models.FloatField(blank=True, null=True)
+    latitud=models.CharField('Latitud', max_length=20,blank=True)
+    longitud=models.CharField('Longitud', max_length=20,blank=True)
     escolaridad= models.CharField('Escolaridad', max_length=70, blank=True)
     profesion=models.ManyToManyField(Especializacion)
 
@@ -537,6 +537,20 @@ class EsmeEmMarcaciones(models.Model):
     class Meta:
         managed = False
         db_table = 'ESME_EM_Marcaciones'
+class OperariosAsignacionDet (models.Model):
+    id_opeario= models.IntegerField()
+    nombres=models.CharField(max_length=200)
+    nroLegajo=models.CharField(max_length=6)
+    nombres_puntoServicio=models.CharField(max_length=200)
+    ids_puntoServicio=models.CharField(max_length=100)
+    totalHoras=models.FloatField()
+    perfil=models.CharField(max_length=400)
+    antiguedad=models.IntegerField()
+    class Meta:
+        verbose_name = _("Operario disponible")
+        verbose_name_plural = _("Operarios disponibles")
+        managed=True
+    
 
 class AsignacionesProcesadas(models.Model):
     NumCedulaOperario = models.CharField('N° Cedula', max_length=30)
@@ -566,29 +580,3 @@ class Feriados(models.Model):
         verbose_name = _("Parametro de Sistema")
         verbose_name_plural = _("Parametros de Sistema")
 
-class OperariosDisponibles (models.Model):
-    id_opeario= models.IntegerField()
-    nombres=models.CharField(max_length=200)
-    nroLegajo=models.CharField(max_length=6)
-    nombres_puntoServicio=models.CharField(max_length=200)
-    ids_puntoServicio=models.CharField(max_length=100)
-    totalHoras=models.FloatField()
-    perfil=models.CharField(max_length=400)
-    antiguedad=models.IntegerField()
-    class Meta:
-        managed=False
-    
-    @staticmethod
-    def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp):
-        conn= connection.cursor()
-        sql = """\
-            DECLARE @out nvarchar(max);
-            EXEC [dbo].[operarios_disponibles] @puntoServicio=?, @totalHoras=?, @lunEntReq=?, @lunSalReq=?, @marEntReq=?, @marSalReq=?, @mierEntReq=?, @mierSalReq=?, @juevEntReq=?, @juevSalReq=?, @vieEntReq=?, @vieSlReq=?, @sabEntReq=?, @sabSalReq=?, @domEntReq=?, @domSalReq=?, @fechaInicioOperario=?, @param_out = @out OUTPUT;
-            SELECT @out AS the_output;
-        """
-        """conn.callproc('operarios_disponibles', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
-        params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp)
-        conn.execute("{CALL operarios_disponibles (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}", params)
-        result = conn.fetchall()
-        conn.close()
-        return [OperariosDisponibles(*row) for row in result]

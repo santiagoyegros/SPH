@@ -1,0 +1,1 @@
+exec operarios_disponibles @puntoServicio=7,@totalHoras= '14',@lunEntReq='08:00',@lunSalReq='10:00',@marEntReq='08:00',@marSalReq='10:00',@mierEntReq='08:00',@mierSalReq='10:00', @jueEntReq='08:00',@jueSalReq='10:00',@vieEntReq='08:00',@vieSalReq='10:00',@sabEntReq='08:00',@sabSalReq='10:00',@domEntReq='08:00',@domSalReq='10:00',@fechaInicioOperario='2019-05-27' 

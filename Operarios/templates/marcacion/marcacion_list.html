@@ -1,13 +1,18 @@
 {% extends "base.html" %}
+{% url 'Operarios:marcaciones_xls' as marcaciones_xls %}
 {% load static %}
 {% block title %}Marcaciones{% endblock %}
 
-{% block head %}
-    <link href="http://js-grid.com/css/jsgrid.min.css" rel="stylesheet" />
-    <link href="http://js-grid.com/css/jsgrid-theme.min.css" rel="stylesheet" />
+{% block base_head %}
+    <link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
 {% endblock %}
 
 {% block content %}
+    <a href="/reingenieria/marcacion/descargar">
+        <button type="button" class="desperateButton float-right borderless">
+            Descargar
+        </button>
+    </a>
     <div id="jsGrid"></div>
 {% endblock %}
 
@@ -17,7 +22,7 @@
         $(function() {
 
             $("#jsGrid").jsGrid({
-                height: "90%",
+                height: "80%",
                 width: "100%",
                 /*filtering: true,
                 inserting: true,
@@ -81,7 +86,7 @@
                 },
 
                 fields: [
-                    { name: "codoperacion",type:"text", width: 150,title: "Operacion"},
+                    { name: "codoperacion",type:"text", width: 150,title: "Operacion",headercss:"elm-table-header"},
                     { name: "codpersona",type:"text", width: 150,title: "Cédula" },
                     { name: "codcategoria",type:"text", width: 150,title: "Código Categoría" },
                     { name: "numlinea",type:"text", width: 150,title: "Nro de Linea" },

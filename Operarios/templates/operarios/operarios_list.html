@@ -24,6 +24,7 @@
            
         </div>
 </div>
+
 {% endblock %}
 {% block scripts %}
 
@@ -68,17 +69,6 @@
                         return d.promise();
                     },
                     
-                    updateItem: function(item) {
-                        console.log("Llama para editar")
-                        
-                        
-                    },
-                    deleteItem: function(item) {
-                        return $.ajax({
-                            type: "DELETE",
-                            url: "reingenieria/operaciones/operarios/" + item.id
-                        });
-                    }
                 },
                 
                 
@@ -89,7 +79,7 @@
                     { name: "nombre",type:"text", width: 50,title: "Nombre" },
                     { name: "apellido",type:"text", width: 50,title: "Apellido" },
                     { type: "control",
-                    editTemplate: function(value, item) {
+                    itemTemplate: function(value, item) {
                         var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
 
                         var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button"})
@@ -97,7 +87,16 @@
                             document.location.href="/reingenieria/operaciones/operarios/editar/"+item.id
                         });
 
-                        return $("<div>").append($customEditButton)
+                        var $customDeleteButton = $("<button>").attr({class: "customGridDeletebutton jsgrid-button jsgrid-delete-button"})
+                        .click(function(e) {
+                            if (confirm("Esta seguro que desea eliminar el registro"))
+                            {
+                                document.location.href="/reingenieria/operaciones/operarios/eliminar/"+item.id
+                               
+                            }
+                        });
+
+                        return $("<div>").append($customEditButton).append($customDeleteButton);
 
 
 

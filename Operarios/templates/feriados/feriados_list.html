@@ -2,9 +2,8 @@
 {% load static %}
 {% block title %}Marcaciones{% endblock %}
 
-{% block head %}
-    <link href="http://js-grid.com/css/jsgrid.min.css" rel="stylesheet" />
-    <link href="http://js-grid.com/css/jsgrid-theme.min.css" rel="stylesheet" />
+{% block base_head %}
+    <link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
 {% endblock %}
 
 {% block content %}

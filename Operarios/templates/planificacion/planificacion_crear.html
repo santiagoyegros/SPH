@@ -533,7 +533,7 @@ function updateFormElementIndices(formClass) {
 }
 
 function deleteLeaveRow(deleteLink, id) {
-    debugger;
+    
     //var totalFormsField = $('#id_planificacionope_set-TOTAL_FORMS');
     //var totalForms = parseInt(totalFormsField.val()) - 1;
     //totalFormsField.val(totalForms);
@@ -560,7 +560,7 @@ function deleteLeaveRow(deleteLink, id) {
 }
 
 function deleteLeaveRowEsp(deleteLink, id) {
-    debugger;
+    
 
     $(deleteLink).closest('.leaveFormEsp').hide();
 
@@ -692,7 +692,7 @@ function RecalcularHoras(){
     }
 
 function RecalcularHorasEsp(){
-    debugger;
+    
     //aqui empieza el calculo del total de horas especiales
     var total = '00:00';
     var subtotal = 0;
@@ -743,7 +743,7 @@ $(function(){
     var $totalDetalle = $('#id_planificacionope_set-TOTAL_FORMS');
 
     $('#btnDet').click(function(event) {
-        debugger;
+        
         event.preventDefault();
         var total = parseInt($totalDetalle.val(), 10);
         var clon = $('script[type="template/Detalle"]').html();
@@ -775,7 +775,7 @@ $(function(){
 });
 
 $('input[id$="corte"], input[id$="total"], input[id$="cantHoras"]').on('change', function(e){
-    debugger;
+    
     str = $(this).val();
     if ( !/:/.test( str ) ) { 
         str += ':00'; 
@@ -785,18 +785,18 @@ $('input[id$="corte"], input[id$="total"], input[id$="cantHoras"]').on('change',
 });
 
 $('input[id$="-cantHoras"], [id$="frecuencia"]').change(function() {
-    debugger;
+    
     RecalcularHorasEsp();
 });
 
 
 $('input[id^="id_planificacionope_set-"]').on('dp.change change', function(e){
-    debugger;
+    
     RecalcularHoras();
 });
 
 $('input[id$="-cantidad"]').change(function() {
-    debugger;
+    
     //aqui empieza el calculo de la cantidad total de Operarios
     var total = 0;
     var subtotal = 0;

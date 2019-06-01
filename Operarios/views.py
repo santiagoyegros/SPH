@@ -654,8 +654,16 @@ def descargarMarcaciones(request):
 
 def getFeriados(request):
         feriados = Feriados.objects.all();
-        #if request.GET.get('fecha')  is not None:
-            #feriados=feriados.filter(fecha= datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ%'));
+        if request.GET.get('anho')  is not None  and request.GET.get('anho')!='':
+            feriados=feriados.filter(anho = request.GET.get('anho'));
+        if request.GET.get('descripcion')  is not None and request.GET.get('descripcion')!='':
+            feriados=feriados.filter(descripcion__contains = request.GET.get('descripcion'));
+        if request.GET.get('fecha')  is not None and request.GET.get('fecha')!='':
+            dtd=datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ');
+            dtd=dtd.replace(hour=0,minute=0,second=0,microsecond=0);
+            feriados=feriados.filter(fecha__gte=dtd);
+            dtd=dtd.replace(hour=23,minute=59,second=59);
+            feriados=feriados.filter(fecha__lte=dtd);
         return HttpResponse(serializers.serialize('json', feriados), content_type = 'application/json', status = 200);
 def makeFeriados(request):
         Feriados.objects.create(

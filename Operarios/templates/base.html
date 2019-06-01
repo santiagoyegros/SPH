@@ -54,12 +54,12 @@
                        
                            itemTemplate: function(value) {
                                if(value!=null){
+                                    var arr=value.split('T');
+                                    var arr=arr[0].split('-');
                                     var d=new Date(value);
-                                    var dia=d.getDate();
-                                    var mes=d.getMonth()+1;
-                                    var anho=d.getFullYear();
-                                    if(dia<10){dia='0'+dia;}
-                                    if(mes<10){mes='0'+mes;}
+                                    var dia=arr[2];
+                                    var mes=arr[1];
+                                    var anho=arr[0];
                                     return dia+'/'+mes+'/'+anho;
                                 }
                                 return null;

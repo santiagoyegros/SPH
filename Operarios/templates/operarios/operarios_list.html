@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% block head %}
+    <link href="http://js-grid.com/css/jsgrid.min.css" rel="stylesheet" />
+    <link href="http://js-grid.com/css/jsgrid-theme.min.css" rel="stylesheet" />
+{% endblock %}
 {% block content %}
 <div class="container-fluid">
         <div class="row">
@@ -9,50 +12,121 @@
             </div>
         </div>
     
-            <div class="row">
+           
                     <div class="col-lg-12 col-md-12" style="text-align: right">
                             <a class='btn btn-primary' href='{% url 'Operarios:operarios_create' %}' > <i class="fa fa-plus">
 
                             </i>Agregar </a>
                     </div>
-            </div>
+                    
+            
+            <div  class="col-lg-12 col-md-12" id="jsGrid"></div>
+           
+        </div>
+</div>
+{% endblock %}
+{% block scripts %}
+
+    <script>
+        $(function() {
+
+            $("#jsGrid").jsGrid({
+                height: "100%",
+                width: "100%",
+                filtering: true,
+                inserting: false,
+                editing: false,
+                sorting: true,
+                paging: true,
+                autoload: true,
+                pageSize: 10,
+                pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+                pageButtonCount: 1,
+                pagePrevText: "Anterior",
+                pageNextText: "Siguiente",
+                pageFirstText: "Primera",
+                pageLastText: "Ultima",
+                noDataContent: "No se han encontrado registros",
+                confirmDeleting:true,
+                deleteConfirm: "Esta seguro, que desea eliminar el registro??",
+                loadMessage: "Por favor, espere...",
+                invalidMessage: "Datos no válidos",
+                controller: {
+                    loadData: function(filter) {
+                        var d = $.Deferred();
+                        $.ajax({
+                            type: "GET",
+                            url: "/reingenieria/operaciones/operarios/listar",
+                            data: filter
+                        }).done(function(result) {
+                            console.log(result);
+                            d.resolve($.map(result, function(item) {
+                                return $.extend(item.fields, { id: item.pk });
+                            }));
+                        });
+
+                        return d.promise();
+                    },
+                    
+                    updateItem: function(item) {
+                        console.log("Llama para editar")
+                        
+                        
+                    },
+                    deleteItem: function(item) {
+                        return $.ajax({
+                            type: "DELETE",
+                            url: "reingenieria/operaciones/operarios/" + item.id
+                        });
+                    }
+                },
                 
-    
-    <!--Table-->
-    <div class="col-lg-12 col-md-12 container-main">
-    <table id="tablePreview" class="table table-hover table-sm">
-    <!--Table head-->
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Legajo</th>
-            <th>Cedula</th>
-            <th>Operario</th>
-            <th>Editar</th>
-            <th>Eliminar</th>
-        </tr>
-    </thead>
-    <!--Table head-->
-    <!--Table body-->
-    <tbody>
-        {% if Operarios %}
-        {% for operario in Operarios %}
-        <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ operario.nroLegajo }}</td>
-            <td>{{ operario.numCedula }}</td>
-            <td>{{ operario.nombre}} {{operario.apellido}}</td>
-            <td> <a class='btn btn-primary btn-sm' href={% url 'Operarios:operarios_update' operario.id %}>Editar</a> </td>
-            <td> <a class='btn btn-danger btn-sm' href={% url 'Operarios:operarios_delete' operario.id %}>Eliminar</a> </td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-    </tbody>
-    <!--Table body-->
-    </table>
-    </div>
-    <!--Table-->
-    </div>
+                
+
+                fields: [
+                    { name: "nroLegajo",type:"text", width: 50,title: "Legajo"},
+                    { name: "numCedula",type:"text", width: 50,title: "C.I" },
+                    { name: "nombre",type:"text", width: 50,title: "Nombre" },
+                    { name: "apellido",type:"text", width: 50,title: "Apellido" },
+                    { type: "control",
+                    editTemplate: function(value, item) {
+                        var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
+
+                        var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button"})
+                        .click(function(e) {
+                            document.location.href="/reingenieria/operaciones/operarios/editar/"+item.id
+                        });
+
+                        return $("<div>").append($customEditButton)
 
 
+
+                    /*var editDeleteBtn = $('<input class="jsgrid-button jsgrid-edit-button" type="button" title="Edit"><input class="jsgrid-button jsgrid-delete-button" type="button" title="Delete">')
+                .on('click', function (e) {
+                    
+                    if (e.target.title == 'Edit') { //se redirecciona
+                        
+                        document.location.href="/reingenieria/operaciones/operarios/editar/"+item.id
+                    } else {
+                        //Based on button click you can make your customization
+                        console.log('Delete')
+                    }
+                });
+
+            return editDeleteBtn; //*/
+            }
+            },
+                    
+                    
+        ]
+            });
+
+        });
+        
+        function myFormatter(cellvalue, options, rowObject)
+        {
+            return cellvalue+" "+ rowObject.nombre + " "+ rowObject.apellido;
+        }
+       
+    </script>
 {% endblock %}

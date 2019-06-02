@@ -9,7 +9,7 @@ from Operarios.views import Relevamiento, Operarios_list, Operarios_create, Oper
 from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView,EsmeEmMarcacionesClass
 from Operarios.views import Planificacion_list, Planificacion_create, Jefes_list,Fiscales_list, Jefes_asig, Jefes_delete, asignarFiscales, asignarPuntosServicio
 from Operarios.views import Fiscales_asig, Fiscales_delete
-from Operarios.views import obtenerMarcacion,getMarcaciones,obtenerFeriado,getFeriados,makeFeriados,editFeriados,deleteFeriados
+from Operarios.views import obtenerMarcacion,getMarcaciones,obtenerFeriado,getFeriados,makeFeriados,editFeriados,deleteFeriados,descargarMarcaciones
 from Operarios import viewsAsignacion 
 from Operarios import viewsOperario
 from Operarios.views import PuntosServicios_update
@@ -53,9 +53,12 @@ urlpatterns = [
    '/(?P<juevSalReq>\d+)/(?P<vieEntReq>\d+)/(?P<vieSlReq>\d+)/(?P<sabEntReq>\d+)/(?P<sabSalReq>\d+)/'+
    '(?P<domEntReq>\d+)/(?P<domSalReq>\d+)/(?P<fechaInicioOp>\d+)/$', 
     cargarOperarios , name='filter_operarios'),
+    url(r'^marcacion/descargar', descargarMarcaciones , name='marcaciones_xls'),
+
     url(r'^feriados/vista', obtenerFeriado , name='feriados_url'),
     url(r'^feriados/listar', getFeriados , name='feriados_get'),
     url(r'^feriados/crear', makeFeriados , name='feriados_post'),
     url(r'^feriados/editar/(?P<feriado_id>\d+)', editFeriados , name='feriados_put'),
     url(r'^feriados/eliminar/(?P<feriado_id>\d+)', deleteFeriados , name='feriados_delete'),
+    url(r'^operaciones/operarios/vista/', viewsOperario.getOperariosVista , name='operarios_vista'),
 ]   

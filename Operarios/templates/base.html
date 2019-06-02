@@ -12,8 +12,9 @@
 <script src="http://js-grid.com/js/jsgrid.min.js"></script>
 <link href="http://js-grid.com/css/jsgrid.min.css" rel="stylesheet" />
 <link href="http://js-grid.com/css/jsgrid-theme.min.css" rel="stylesheet" />
-
-        
+<link href="{% static 'vendor/bootstrap-select/dist/css/bootstrap-select.min.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
+<script type="text/javascript" src="{% static 'vendor/bootstrap-select/dist/js/bootstrap-select.min.js'%}"></script> 
+<script type="text/javascript" src="{% static 'vendor/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js'%}"></script>     
         <script >
                 var MyDateField = function(config) {
                            jsGrid.Field.call(this, config);
@@ -53,12 +54,12 @@
                        
                            itemTemplate: function(value) {
                                if(value!=null){
+                                    var arr=value.split('T');
+                                    var arr=arr[0].split('-');
                                     var d=new Date(value);
-                                    var dia=d.getDate();
-                                    var mes=d.getMonth()+1;
-                                    var anho=d.getFullYear();
-                                    if(dia<10){dia='0'+dia;}
-                                    if(mes<10){mes='0'+mes;}
+                                    var dia=arr[2];
+                                    var mes=arr[1];
+                                    var anho=arr[0];
                                     return dia+'/'+mes+'/'+anho;
                                 }
                                 return null;

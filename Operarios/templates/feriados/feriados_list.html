@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% url 'Operarios:marcaciones_xls' as marcaciones_xls %}
 {% load static %}
 {% block title %}Marcaciones{% endblock %}
 
@@ -8,35 +7,34 @@
 {% endblock %}
 
 {% block content %}
-
-    <h1 class='my-3'>Marcaciones</h1>
-
-    <a href="/reingenieria/marcacion/descargar">
-        <button type="button" class="desperateButton float-right borderless">
-            Descargar
-        </button>
-    </a>
-
+<h1 class='my-3'>Feriados</h1>
     <div id="jsGrid"></div>
 {% endblock %}
 
 {% block scripts %}
-
+{% csrf_token %}
+    <script type="text/javascript">
+        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    </script>
     <script>
+        function csrfSafeMethod(method) {
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
         $(function() {
 
             $("#jsGrid").jsGrid({
-                height: "80%",
+                height: "90%",
                 width: "100%",
-                /*filtering: true,
+                filtering: true,
                 inserting: true,
                 editing: true,
-                sorting: true,
-                paging: true,
-                autoload: true,*/
-                filtering: true,
-                inserting: false,
-                editing: false,
                 sorting: true,
                 paging: true,
                 autoload: true,
@@ -56,7 +54,7 @@
                         var d = $.Deferred();
                         $.ajax({
                             type: "GET",
-                            url: "/reingenieria/marcacion/listar",
+                            url: "/reingenieria/feriados/listar",
                             data: filter
                         }).done(function(result) {
                             console.log(result);
@@ -70,38 +68,33 @@
                     insertItem: function(item) {
                         return $.ajax({
                             type: "POST",
-                            url: "/marcacion/api",
+                            url: "/reingenieria/feriados/crear",
                             data: item
                         });
                     },
                     updateItem: function(item) {
                         return $.ajax({
                             type: "PUT",
-                            url: "/marcacion/api/" + item.id,
+                            url: "/reingenieria/feriados/editar/"+item.id,
                             data: item
                         });
                     },
                     deleteItem: function(item) {
                         return $.ajax({
                             type: "DELETE",
-                            url: "/marcacion/api/" + item.id
+                            url: "/reingenieria/feriados/eliminar/"+item.id,
                         });
                     }
                 },
 
                 fields: [
-                    { name: "codoperacion",type:"text", width: 150,title: "Operacion",headercss:"elm-table-header"},
-                    { name: "codpersona",type:"text", width: 150,title: "Cédula" },
-                    { name: "codcategoria",type:"text", width: 150,title: "Código Categoría" },
-                    { name: "numlinea",type:"text", width: 150,title: "Nro de Linea" },
-                    { name: "codubicacion",type:"text", width: 150,title: "Ubicacion" },
+                    { name: "anho",type:"text", width: 150,title: "Año" },
                     { name: "fecha",type:"date", width: 150,title: "Fecha" },
-                    { name: "estado",type:"text", width: 150,title: "Estado" }
+                    { name: "descripcion",type:"text", width: 150,title: "Descripcion del Feriado" },
+                    { type: "control" }
                 ]
             });
 
         });
-        /*,
-                    { type: "control" }*/
     </script>
 {% endblock %}

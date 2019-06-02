@@ -3,7 +3,7 @@
 {% url 'Operarios:planificar_list' as planificacion_url %}
 {% url 'Operarios:asignacion_list' as asignacion_url %}
 {% url 'Operarios:puntoServicio_list' as punto_servicio_url %}
-{% url 'Operarios:operarios_list' as operarios_url %}
+{% url 'Operarios:operarios_vista' as operarios_url %}
 {% url 'Operarios:jefes_list' as jefes_url %}
 {% url 'Operarios:marcaciones_url' as marcaciones_url %}
 {% url 'Operarios:feriados_url' as feriados_url %}
@@ -12,7 +12,7 @@
 {% url 'alertas' as alertas_url %}
 
 <script>
-debugger;
+
 $("#salir").on('click',"a[data-window='external']", function() {
     window.open($(this).attr('href')); 
     return false; 

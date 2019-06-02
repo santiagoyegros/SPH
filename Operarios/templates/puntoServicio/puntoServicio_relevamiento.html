@@ -383,7 +383,7 @@ function obtenerNumeroId(id){
 }
 
 function deleteLeaveRowCup(deleteLink, id) {
-    debugger;
+    
     $(deleteLink).closest('.leaveFormCup').hide();
 
     $("#id_relevamientocupohoras_set-" + id + "-DELETE").prop("checked", true);
@@ -391,14 +391,14 @@ function deleteLeaveRowCup(deleteLink, id) {
 }
 
 function deleteLeaveRowDet(deleteLink, id) {
-    debugger;
+    
     $(deleteLink).closest('.leaveFormDet').hide();
 
     $("#id_relevamientodet_set-" + id + "-DELETE").prop("checked", true);
 }
 
 function deleteLeaveRowEsp(deleteLink, id) {
-    debugger;
+    
     $(deleteLink).closest('.leaveFormEsp').hide();
 
     $("#id_relevamientoesp_set-" + id + "-DELETE").prop("checked", true);
@@ -406,7 +406,7 @@ function deleteLeaveRowEsp(deleteLink, id) {
 }
 
 function deleteLeaveRowMen(deleteLink, id) {
-    debugger;
+    
     $(deleteLink).closest('.leaveFormMen').hide();
 
     $("#id_relevamientomensualeros_set-" + id + "-DELETE").prop("checked", true);
@@ -417,7 +417,7 @@ function RecalcularHorasCup(){
     var total = '00:00';
     var subtotal = 0;
     $('input[id$="cantCHoras"]').each(function() {
-        debugger;
+        
         if ($(this).val() !== '') {
 
             var n = obtenerNumeroId(this.id);
@@ -448,7 +448,7 @@ function RecalcularHorasEsp(){
     var total = '00:00';
     var subtotal = 0;
     $('input[id$="cantHoras"]').each(function() {
-        debugger;
+        
         if ($(this).val() !== '') {
 
             var n = obtenerNumeroId(this.id);
@@ -551,7 +551,7 @@ $(function(){
 });
 
 $('input[id$="cantCHoras"], input[id$="cantHoras"]').on('change', function(e){
-    debugger;
+    
     str = $(this).val();
     if ( !/:/.test( str ) ) { 
         str += ':00'; 

@@ -15,7 +15,7 @@ from django_tables2.export.views import ExportMixin
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
-
+from openpyxl import Workbook
 from Operarios.models import Ciudad, Cliente, Nacionalidad
 from django_tables2.paginators import Paginator
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet,EsmeEmMarcaciones, Feriados
@@ -559,26 +559,111 @@ def obtenerFeriado(request):
 
 def getMarcaciones(request):
         marcacion = EsmeEmMarcaciones.objects.all();
-        #if request.GET.get('codoperacion')  is not None:
-            #marcacion=marcacion.filter(codoperacion__contains = request.GET.get('codoperacion'));
-        #if request.GET.get('codpersona')  is not None:
-            #marcacion=marcacion.filter(codpersona=request.GET.get('codpersona'));
-        #if request.GET.get('codcategoria')  is not None:
-            #marcacion=marcacion.filter(codcategoria=request.GET.get('codcategoria'));
-        #if request.GET.get('numlinea')  is not None:
-            #marcacion=marcacion.filter(numlinea__contains = request.GET.get('numlinea'));
-        #if request.GET.get('codubicacion')  is not None:
-            #marcacion=marcacion.filter(codubicacion__contains = request.GET.get('codubicacion'));
-        #if request.GET.get('fecha')  is not None:
-            #marcacion=marcacion.filter(fecha= datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ%'));
-        #if request.GET.get('estado') is not None:
-            #marcacion=marcacion.filter(estado__contains = request.GET.get('estado'));
+        if request.GET.get('codoperacion')  is not None and request.GET.get('codoperacion')!='':
+            marcacion=marcacion.filter(codoperacion__contains = request.GET.get('codoperacion'));
+        if request.GET.get('codpersona')  is not None and request.GET.get('codpersona')!='':
+            marcacion=marcacion.filter(codpersona=request.GET.get('codpersona'));
+        if request.GET.get('codcategoria')  is not None  and request.GET.get('codcategoria')!='':
+            marcacion=marcacion.filter(codcategoria=request.GET.get('codcategoria'));
+        if request.GET.get('numlinea')  is not None  and request.GET.get('numlinea')!='':
+            marcacion=marcacion.filter(numlinea__contains = request.GET.get('numlinea'));
+        if request.GET.get('codubicacion')  is not None and request.GET.get('codubicacion')!='':
+            marcacion=marcacion.filter(codubicacion__contains = request.GET.get('codubicacion'));
+        if request.GET.get('fecha')  is not None and request.GET.get('fecha')!='':
+            dtd=datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ');
+            dtd=dtd.replace(hour=0,minute=0,second=0,microsecond=0);
+            marcacion=marcacion.filter(fecha__gte=dtd);
+            dtd=dtd.replace(hour=23,minute=59,second=59);
+            marcacion=marcacion.filter(fecha__lte=dtd);
+        if request.GET.get('estado') is not None and request.GET.get('estado')!='':
+            marcacion=marcacion.filter(estado__contains = request.GET.get('estado'));
         return HttpResponse(serializers.serialize('json', marcacion), content_type = 'application/json', status = 200);
+
+
+def descargarMarcaciones(request):
+        marcacion = EsmeEmMarcaciones.objects.all();
+        if request.GET.get('codoperacion')  is not None and request.GET.get('codoperacion')!='':
+            marcacion=marcacion.filter(codoperacion__contains = request.GET.get('codoperacion'));
+        if request.GET.get('codpersona')  is not None and request.GET.get('codpersona')!='':
+            marcacion=marcacion.filter(codpersona=request.GET.get('codpersona'));
+        if request.GET.get('codcategoria')  is not None  and request.GET.get('codcategoria')!='':
+            marcacion=marcacion.filter(codcategoria=request.GET.get('codcategoria'));
+        if request.GET.get('numlinea')  is not None  and request.GET.get('numlinea')!='':
+            marcacion=marcacion.filter(numlinea__contains = request.GET.get('numlinea'));
+        if request.GET.get('codubicacion')  is not None and request.GET.get('codubicacion')!='':
+            marcacion=marcacion.filter(codubicacion__contains = request.GET.get('codubicacion'));
+        if request.GET.get('fecha')  is not None and request.GET.get('fecha')!='':
+            dtd=datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ');
+            dtd=dtd.replace(hour=0,minute=0,second=0,microsecond=0);
+            marcacion=marcacion.filter(fecha__gte=dtd);
+            dtd=dtd.replace(hour=23,minute=59,second=59);
+            marcacion=marcacion.filter(fecha__lte=dtd);
+        if request.GET.get('estado') is not None and request.GET.get('estado')!='':
+            marcacion=marcacion.filter(estado__contains = request.GET.get('estado'));
+
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = 'attachment; filename={date}-marcaciones.xlsx'.format(
+            date=datetime.now().strftime('%Y-%m-%d'),
+        )
+        workbook = Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Marcaciones'
+        # Define the titles for columns
+        columns = [
+            'Operacion',
+            'Cedula',
+            'Codigo Categoria',
+            'Numero de Linea',
+            'Ubicacion',
+            'Fecha',
+            'Estado',
+        ]
+        row_num = 1
+
+        # Assign the titles for each cell of the header
+        for col_num, column_title in enumerate(columns, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = column_title
+
+        # Iterate through all movies
+        for marc in marcacion:
+            row_num += 1
+            
+            # Define the data for each cell in the row 
+            row = [
+                marc.codoperacion,
+                marc.codpersona,
+                marc.codcategoria,
+                marc.numlinea,
+                marc.codubicacion,
+                marc.fecha,
+                marc.estado
+            ]
+            
+            # Assign the data for each cell of the row 
+            for col_num, cell_value in enumerate(row, 1):
+                cell = worksheet.cell(row=row_num, column=col_num)
+                cell.value = cell_value
+
+        workbook.save(response)
+        return response;
+
+
 
 def getFeriados(request):
         feriados = Feriados.objects.all();
-        #if request.GET.get('fecha')  is not None:
-            #feriados=feriados.filter(fecha= datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ%'));
+        if request.GET.get('anho')  is not None  and request.GET.get('anho')!='':
+            feriados=feriados.filter(anho = request.GET.get('anho'));
+        if request.GET.get('descripcion')  is not None and request.GET.get('descripcion')!='':
+            feriados=feriados.filter(descripcion__contains = request.GET.get('descripcion'));
+        if request.GET.get('fecha')  is not None and request.GET.get('fecha')!='':
+            dtd=datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ');
+            dtd=dtd.replace(hour=0,minute=0,second=0,microsecond=0);
+            feriados=feriados.filter(fecha__gte=dtd);
+            dtd=dtd.replace(hour=23,minute=59,second=59);
+            feriados=feriados.filter(fecha__lte=dtd);
         return HttpResponse(serializers.serialize('json', feriados), content_type = 'application/json', status = 200);
 def makeFeriados(request):
         Feriados.objects.create(

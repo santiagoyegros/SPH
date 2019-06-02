@@ -14,6 +14,8 @@ from Operarios.forms import  OperarioForm
 from Operarios.models import Operario, Nacionalidad, Ciudad, Especializacion
 from django.contrib import messages
 from datetime import datetime
+import json
+from django.core import serializers
 @login_required
 @permission_required('Operarios.add_operario', raise_exception=True)
 def Operarios_create(request):
@@ -23,7 +25,7 @@ def Operarios_create(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Operario creado correctamente.')
-            return redirect('Operarios:operarios_list')
+            return redirect('Operarios:operarios_vista')
         else:
             messages.warning(request, 'No se pudo cargar el Operario, verifique los campos')
             nacionalidadList=Nacionalidad.objects.all()
@@ -59,9 +61,22 @@ def Operarios_create(request):
 @login_required
 @permission_required('Operarios.view_operario', raise_exception=True)
 def Operarios_list(request):
+
     operarios = Operario.objects.all()
-    contexto = {'Operarios': operarios}
-    return render(request, 'operarios/operarios_list.html', context=contexto)
+    
+    if request.GET.get('nroLegajo'):
+        operarios=operarios.filter(nroLegajo=request.GET.get('nroLegajo'))
+    
+    if request.GET.get('nombre'):
+        operarios=operarios.filter(nombre=request.GET.get('nombre'))
+
+    if request.GET.get('apellido'):
+        operarios=operarios.filter(apellido=request.GET.get('apellido'))
+        
+    if request.GET.get('nroCedula') :
+        operarios=operarios.filter(nroCedula=request.GET.get('nroCedula'))
+
+    return HttpResponse(serializers.serialize('json', operarios), content_type = 'application/json', status = 200)
 
 @login_required
 @permission_required('Operarios.change_operario', raise_exception=True)
@@ -107,7 +122,7 @@ def Operarios_update(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Operario modificado correctamente.')
-            return redirect('Operarios:operarios_list')
+            return redirect('Operarios:operarios_vista')
         else:
             messages.warning(request, 'No se pudo modificar el Operario, verifique los campos')
             ciudadSelect=operarios.ciudad
@@ -140,8 +155,12 @@ def Operarios_update(request, pk):
 @permission_required('Operarios.delete_operario', raise_exception=True)
 def Operarios_delete(request, pk):
     operarios = Operario.objects.get(id=pk)
-    if request.method == 'POST':
-        operarios.delete()
-        messages.warning(request, 'Operario eliminado correctamente')
-        return redirect('Operarios:operarios_list')
-    return render(request, 'operarios/operarios_delete.html', {'operarios': operarios})
+    operarios.delete()
+    messages.success(request, 'Operario eliminado correctamente')
+    return render(request, 'operarios/operarios_list.html')
+
+@login_required
+@permission_required('Operarios.view_operario', raise_exception=True)
+def getOperariosVista(request):
+   return render(request, 'operarios/operarios_list.html')
+

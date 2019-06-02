@@ -115,219 +115,217 @@
             {% for form in asigDetFormSet %}
             <div class="row mt-2 leaveForm" id="leaveForm-{{ forloop.counter0 }}" style="    margin-bottom: 30px;">
                 <div class="col-md-4">
-                    <div class="row" style="margin: 0px 0px 10px 0px;"> 
-                            <div class="col-md-4 text-center p-0">
-                                    <a class="btn btn-info btn-block" style="    height: 39px;
+                    <div class="row" style="margin: 0px 0px 10px 0px;">
+                        <div class="col-md-4 text-center p-0">
+                            <a  type="submit" class="btn btn-info btn-block" id="filter_operario" name='filter_operario' style="    height: 39px;
                                         border-top-right-radius: 0px;
-                                        border-bottom-right-radius: 0px;" href={% url 'Operarios:asignacion_url' 5 %}><i
-                                            class="fa fa-search"></i></a>
-                                </div>
-                                <input type="hidden" name="asignaciondet_set-0-id" id="id_asignaciondet_set-0-id">
-                                <!-- {{ form.id }} -->
-                                <div class="col-md-8 p-0">
-                                    <input type="text" name="asignaciondet_set-0-operario" class="form-control form-control-sm"
-                                        readonly="readonly" style="height:39px !important;border-top-left-radius: 0px;border-bottom-left-radius: 0px;" id="id_asignaciondet_set-0-operario">
-                                </div>
+                                        border-bottom-right-radius: 0px;" ><i class="fa fa-search"></i></a>
+                        </div>
+                        <input type="hidden" name="asignaciondet_set-0-id" id="id_asignaciondet_set-0-id">
+                        <!-- {{ form.id }} -->
+                        <div class="col-md-8 p-0">
+                            <input type="text" name="asignaciondet_set-0-operario" class="form-control form-control-sm"
+                                readonly="readonly"
+                                style="height:39px !important;border-top-left-radius: 0px;border-bottom-left-radius: 0px;"
+                                id="id_asignaciondet_set-0-operario">
+                        </div>
                     </div>
                     <div class="row">
-                            <div class="col-md-6">
-                                    <div class="input-group date">
-                                        <input type="text" name="asignaciondet_set-0-fechaInicio" placeholder="Fecha Inicio" class="form-control"
-                                            id="id_asignaciondet_set-0-fechaInicio"
-                                            dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
-                                        </div>
-                                    </div>
+                        <div class="col-md-6">
+                            <div class="input-group date">
+                                <input type="text" name="asignaciondet_set-0-fechaInicio" placeholder="Fecha Inicio"
+                                    class="form-control" id="id_asignaciondet_set-0-fechaInicio"
+                                    dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
                                 </div>
-                                <div class="col-md-6">
-                                        <div class="input-group date">
-                                            <input type="text" name="asignaciondet_set-0-fechaFin" placeholder="Fecha Fin" class="form-control"
-                                                id="id_asignaciondet_set-0-fechaFin"
-                                                dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
-                                            <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                                data-toggle="datetimepickerv">
-                                                <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group date">
+                                <input type="text" name="asignaciondet_set-0-fechaFin" placeholder="Fecha Fin"
+                                    class="form-control" id="id_asignaciondet_set-0-fechaFin"
+                                    dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
+
                 </div>
                 <div class="col-md-8">
                     <div class="row">
-                            <div class="col pl-0">
-                                    <div class="input-group date" style="    margin: 0px 0px 10px 0px;
+                        <div class="col pl-0">
+                            <div class="input-group date" style="    margin: 0px 0px 10px 0px;
                                     height: 39px;">
-                                        <input type="text" name="asignaciondet_set-0-totalHoras" class="form-control form-control-sm"
-                                            readonly="readonly" maxlength="8" id="id_asignaciondet_set-0-totalHoras">
-                                    </div>
-                                    <div class="input-group date" style=" 
-                                    height: 39px;">
-                                        <input type="text"
-                                        name="asignaciondet_set-0-totalHoras" class="form-control form-control-sm" readonly="readonly"
-                                        maxlength="8" id="id_asignaciondet_set-0-totalHoras">
-                                    </div>
+                                <input type="text" name="asignaciondet_set-0-totalHoras"
+                                    class="form-control form-control-sm" readonly="readonly" maxlength="8"
+                                    id="id_asignaciondet_set-0-totalHoras">
+                            </div>
+                           
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" name="asignaciondet_set-0-lunEnt"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-lunEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_20&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
-                            <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" name="asignaciondet_set-0-lunEnt" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-lunEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_20&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" name="asignaciondet_set-0-lunSal" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-lunSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" name="asignaciondet_set-0-lunSal"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-lunSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" name="asignaciondet_set-0-marEnt" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-marEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_22&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date" >
-                                        <input type="text" name="asignaciondet_set-0-marSal" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-marSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_23&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_22&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" name="asignaciondet_set-0-marEnt"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-marEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_22&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" name="asignaciondet_set-0-mieEnt" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-mieEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_24&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" name="asignaciondet_set-0-mieSal" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-mieSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_25&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_24&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" name="asignaciondet_set-0-marSal"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-marSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_23&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_22&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" name="asignaciondet_set-0-jueEnt" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-jueEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_26&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" name="asignaciondet_set-0-jueSal" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-jueSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_27&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_26&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" name="asignaciondet_set-0-mieEnt"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-mieEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_24&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" name="asignaciondet_set-0-vieEnt" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-vieEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_28&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" name="asignaciondet_set-0-vieSal" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-vieSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_29&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_28&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" name="asignaciondet_set-0-mieSal"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-mieSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_25&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_24&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" name="asignaciondet_set-0-sabEnt" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-sabEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_30&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" name="asignaciondet_set-0-sabSal" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-sabSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_31&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_30&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" name="asignaciondet_set-0-jueEnt"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-jueEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_26&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" name="asignaciondet_set-0-domEnt" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-domEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_32&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" name="asignaciondet_set-0-domSal" class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-0-domSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_33&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_32&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" name="asignaciondet_set-0-jueSal"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-jueSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_27&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_26&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
-                
-                                <div class="col-1 pl-0" style="display: flex;
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" name="asignaciondet_set-0-vieEnt"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-vieEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_28&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" name="asignaciondet_set-0-vieSal"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-vieSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_29&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_28&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" name="asignaciondet_set-0-sabEnt"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-sabEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_30&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" name="asignaciondet_set-0-sabSal"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-sabSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_31&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_30&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" name="asignaciondet_set-0-domEnt"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-domEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_32&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" name="asignaciondet_set-0-domSal"
+                                    class="form-control form-control-sm" id="id_asignaciondet_set-0-domSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_33&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_32&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-1 pl-0" style="display: flex;
                                 justify-content: center;
                                 align-items: center;
                                 color: red !important;
                                 font-size: 25px;">
-                                    <input type="checkbox" style="display:none"
-                                        name="asignaciondet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
-                                        id="{{ form.DELETE.id_for_label }}" />
-                                    <a  href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});"
-                                        class="remove muted pull-right">
-                                        <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span class="visible-xs"></span>
-                                    </a>
-                                </div>
+                            <input type="checkbox" style="display:none"
+                                name="asignaciondet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
+                                id="{{ form.DELETE.id_for_label }}" />
+                            <a href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});"
+                                class="remove muted pull-right">
+                                <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span
+                                    class="visible-xs"></span>
+                            </a>
+                        </div>
                     </div>
-                       
+
                 </div>
-                
+
             </div>
             {% endfor %}
 
@@ -354,7 +352,53 @@
                 </button>
             </div>
             <div class="modal-body">
-              
+                <table id="table" class="table table-hover table-sm mt-3">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>
+                                <span style="display:block !important;margin-bottom:10px !important;">Nombre</span>
+                                <p><input class="form-control" type="text" id="filter1"></p>
+
+                            </th>
+                            <th>
+                                <span style="display:block !important;margin-bottom:10px !important;">Legajo</span>
+                                <p><input class="form-control" type="text" id="filter2"></p>
+
+                            </th>
+                            <th>
+                                <span style="display:block !important;margin-bottom:10px !important;">Antiguedad</span>
+                                <p><input class="form-control" type="text" id="filter3"></p>
+
+                            </th>
+                            <th>
+                                <span style="display:block !important;margin-bottom:10px !important;">Otros contratos</span>
+                                <p><input class="form-control" type="text" id="filter4"></p>
+
+                            </th>
+                            <th>
+                                <span style="display:block !important;margin-bottom:10px !important;">Total Horas</span>
+                                <p><input class="form-control" type="text" id="filter5"></p>
+
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       {% if operarios %}
+                       {% for op in operarios %}
+                        <tr class="data">
+                            <td>{{ forloop.counter }}</td>
+                            <td class="col1">{{op.nombre}}</td>
+                            <td class="col2">ti</td>
+                            <td class="col3">as</td>
+                            <td class="col4">ro</td>
+                            <td class="col5">pe</td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <a class="btn btn-info" style="height: 39px;">Asignar</a>
@@ -401,6 +445,42 @@
 
 
 </div>
+<script>
+    $(document).ready(function(){
+        $("#filter1").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table tr td.col1").filter(function() {
+                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        $("#filter2").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table tr td.col2").filter(function() {
+                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        $("#filter3").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table tr td.col3").filter(function() {
+                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        $("#filter4").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table tr td.col4").filter(function() {
+                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        $("#filter5").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table tr td.col5").filter(function() {
+                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+ 
+
+</script>
 
 <script>
     /**
@@ -745,6 +825,16 @@
 
             //Seteamos action
             document.getElementById('action').value = 'add_det';
+            //hacemos submit
+            document.getElementById('formulario').submit();
+        });
+
+        $('#filter_operario').click(function (event) {
+            debugger;
+            event.preventDefault();
+
+            //Seteamos action
+            document.getElementById('action').value = 'filter_operario';
             //hacemos submit
             document.getElementById('formulario').submit();
         });

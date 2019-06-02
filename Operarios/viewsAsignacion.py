@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 import datetime
+from datetime import date
 from Operarios.models import OperariosAsignacionDet
 
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet
@@ -42,6 +43,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     sem_nocturno = '0'
     dom_diurno = '0'
     dom_nocturno = '0'
+    operarios = Operario.objects.all()
     filterset_class= OperariosFilter
     logging.getLogger("error_logger").error('Se ingreso en el metodo asignacion_create')
     ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
@@ -80,12 +82,74 @@ def Asignacion_create(request, id_puntoServicio=None):
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
 
     if request.method == 'POST':
-
         if  (request.POST.get('action') == 'add_det'): 
             """Se le dio click a agregar detalle"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion) 
             """se prepara para agregar otro"""
+        if  (request.POST.get('action') == 'filter_operario'): 
+            """Se le dio click a buscar operario"""
+            form = AsignacionCabForm(request.POST, instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
+            totalHoras=idPunto=""
+            lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal="08:00:00"
+            today = date.today()
+            fechaIni = today.strftime("%Y-%m-%d")
+            
+            if request.POST.get('asignaciondet_set-0-totalHoras'):
+                totalHoras = request.POST.get('asignaciondet_set-0-totalHoras')
+            if  id_puntoServicio:
+                idPunto = id_puntoServicio
+            if request.POST.get('id_asignaciondet_set-0-fechaInicio'):
+                fechaIni = request.POST.get('id_asignaciondet_set-0-fechaInicio')
+            if request.POST.get('asignaciondet_set-0-lunEnt'):
+                lunEn = request.POST.get('asignaciondet_set-0-lunEnt')
+            if request.POST.get('asignaciondet_set-0-lunSal'):
+                lunSal = request.POST.get('asignaciondet_set-0-lunSal')
+            if request.POST.get('asignaciondet_set-0-marEnt'):
+                marEnt = request.POST.get('asignaciondet_set-0-marEnt')
+            if request.POST.get('asignaciondet_set-0-marSal'):
+                marSal = request.POST.get('asignaciondet_set-0-marSal')
+            if request.POST.get('asignaciondet_set-0-mieEnt'):
+                mieEnt = request.POST.get('asignaciondet_set-0-mieEnt')
+            if request.POST.get('asignaciondet_set-0-mieSal'):
+                mieSal = request.POST.get('asignaciondet_set-0-mieSal')
+            if request.POST.get('asignaciondet_set-0-jueEnt'):
+                jueEnt = request.POST.get('asignaciondet_set-0-jueEnt')
+            if request.POST.get('asignaciondet_set-0-jueSal'):
+                jueSal = request.POST.get('asignaciondet_set-0-jueSal')
+            if request.POST.get('asignaciondet_set-0-vieEnt'):
+                vieEnt = request.POST.get('asignaciondet_set-0-vieEnt')
+            if request.POST.get('asignaciondet_set-0-vieSal'):
+                vieSal = request.POST.get('asignaciondet_set-0-vieSal')
+            if request.POST.get('asignaciondet_set-0-sabEnt'):
+                sabEnt = request.POST.get('asignaciondet_set-0-sabEnt')
+            if request.POST.get('asignaciondet_set-0-sabSal'):
+                sabSal = request.POST.get('asignaciondet_set-0-sabSal')
+            if request.POST.get('asignaciondet_set-0-domEnt'):
+                domEnt = request.POST.get('asignaciondet_set-0-domEnt')
+            if request.POST.get('asignaciondet_set-0-domSal'):
+                domSal = request.POST.get('asignaciondet_set-0-domSal')
+            
+            buscar_operarios(
+                idPunto,
+                totalHoras, 
+                (datetime.datetime.strptime(lunEnt,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(lunSal,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(marEnt,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(marSal,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(mieEnt,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(mieSal,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(jueEnt,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(jueSal,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(vieEnt,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(vieSal,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(sabEnt,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(sabSal,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(domEnt,'%H:%M:%S')).time(),  
+                (datetime.datetime.strptime(domSal,'%H:%M:%S')).time(),
+                datetime.datetime.strptime(fechaIni,'%Y-%m-%d')
+                )
         else: 
             """Se le dio click al boton guardar"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
@@ -118,6 +182,7 @@ def Asignacion_create(request, id_puntoServicio=None):
             'sem_nocturno' : sem_nocturno,
             'dom_diurno' : dom_diurno,
             'dom_nocturno' : dom_nocturno,
+            'operarios':operarios
         }
 
     return render(request, 'asignacion/asignacion_crear.html', context=contexto)
@@ -137,6 +202,15 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
         conn.close()
         return [OperariosAsignacionDet(*row) for row in result]
 
+
+def cargarOperarios(request, id_puntoServicio:None):
+    try:
+        buscar_operarios(5,8, (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),datetime.datetime.strptime('1996-08-08','%Y-%m-%d'))
+    except Operario.DoesNotExist as err:
+        logging.getLogger("error_logger").error('No se encontraron operarios: {0}'.format(err))
+        raise Http404("No existen coincidencias de operarios")
+    
+    return redirect('Operarios:asignacion_create', id_puntoServicio=pk_puntoServSeleccionado)
 
 class AsignacionListView(ExportMixin,SingleTableMixin,FilterView):
     table_class= AsignacionTable 

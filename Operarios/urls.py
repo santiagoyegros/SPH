@@ -13,7 +13,7 @@ from Operarios.views import obtenerMarcacion,getMarcaciones,obtenerFeriado,getFe
 from Operarios import viewsAsignacion 
 from Operarios import viewsOperario
 from Operarios.views import PuntosServicios_update
-from Operarios.viewsAsignacion import AsignacionListView
+from Operarios.viewsAsignacion import AsignacionListView,cargarOperarios
 app_name = 'Operarios'
 
 urlpatterns = [
@@ -47,7 +47,12 @@ urlpatterns = [
     url(r'^asignacion/asignar/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_create, name='asignacion_create'),
     url(r'^marcacion/vista', obtenerMarcacion , name='marcaciones_url'),
     url(r'^marcacion/listar/', getMarcaciones , name='marcaciones_get'),
-    url(r'^asignacion/operarios/(?P<totalHoras>\d+)/$', AsignacionListView.as_view() , name='asignacion_url'),
+    url(r'^asignacion/operarios'+
+   '/(?P<totalHoras>\d+)/(?P<puntoServicio>\d+)/(?P<lunEntReq>\d+)/(?P<lunSalReq>\d+)/'+
+   '(?P<marEntReq>\d+)/(?P<marSalReq>\d+)/(?P<mierEntReq>\d+)/(?P<mierSalReq>\d+)/(?P<juevEntReq>\d+)'+
+   '/(?P<juevSalReq>\d+)/(?P<vieEntReq>\d+)/(?P<vieSlReq>\d+)/(?P<sabEntReq>\d+)/(?P<sabSalReq>\d+)/'+
+   '(?P<domEntReq>\d+)/(?P<domSalReq>\d+)/(?P<fechaInicioOp>\d+)/$', 
+    cargarOperarios , name='filter_operarios'),
     url(r'^feriados/vista', obtenerFeriado , name='feriados_url'),
     url(r'^feriados/listar', getFeriados , name='feriados_get'),
     url(r'^feriados/crear', makeFeriados , name='feriados_post'),

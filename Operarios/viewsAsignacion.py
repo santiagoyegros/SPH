@@ -168,8 +168,8 @@ def Asignacion_create(request, id_puntoServicio=None):
                             obtenemos los datos del operario asignado anteriormente
                         """
                         if i>0:
-                            index=0
-                            while (index < len (i)): 
+                            index=1
+                            while (index < i): 
                                 if request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaInicio'):
                                     fechaIniAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaInicio')
                                 if request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaFin'):

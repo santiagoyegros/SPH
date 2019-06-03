@@ -79,7 +79,7 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     ''' Obtenemos la asignacion en caso de que exista una '''
     asignacion = AsignacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
-
+    print("ASIGNACION", asignacion)
     if asignacion == None:
         asignacion = AsignacionCab()
 
@@ -95,8 +95,8 @@ def Asignacion_create(request, id_puntoServicio=None):
             """Se le dio click a buscar operario"""
             form = AsignacionCabForm(request.POST,instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
+
             i=0
-            print(request.POST.get('action').rfind('-')+1)
             formOperarioID = int(request.POST.get('action')[request.POST.get('action').rfind('-')+1:None],10)
             for form in AsigDetFormSet:
                 totalHoras=idPunto="" 
@@ -328,11 +328,19 @@ def Asignacion_create(request, id_puntoServicio=None):
         else: 
             """Se le dio click al boton guardar"""
             
+<<<<<<< HEAD
             form = AsignacionCabForm(request.POST, instance=asignacion)
             
             AsigDetFormSet = asignacionDetFormSet(request.POST,instance=asignacion)
             print (form.errors)
             print (AsigDetFormSet.errors)
+=======
+            form = AsignacionCabForm(request.POST,instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(request.POST,instance=asignacion)
+            print("FORM",AsigDetFormSet)
+            print("ERROR",AsigDetFormSet.errors)
+  
+>>>>>>> 9ba036168dd75f81ce1c69a7e98ff13c087222a3
             if form.is_valid() and AsigDetFormSet.is_valid():
                 """Se guarda completo"""
                 form.save()
@@ -342,6 +350,7 @@ def Asignacion_create(request, id_puntoServicio=None):
             else:
                 messages.warning(request, 'No se pudo guardar los cambios')
     else:
+        print("NO ES POST")
         """
         Seteamos el punto de servicio
         """
@@ -349,7 +358,11 @@ def Asignacion_create(request, id_puntoServicio=None):
         form = AsignacionCabForm(instance=asignacion)
         AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
 
+<<<<<<< HEAD
     # print("asignacion",AsigDetFormSet)
+=======
+
+>>>>>>> 9ba036168dd75f81ce1c69a7e98ff13c087222a3
     contexto = {
             'title': 'Nueva Asignación',
             'pservicio': puntoSer,

@@ -748,10 +748,11 @@
     }
     function RecalcularHoras() {
         //aqui empieza el calculo del total de horas normales
-        var total_horas_detalle = '00:00';
+       
         var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
         var totalDet = parseInt($totalDetalle.val(), 10);
         for (i = 0; i < totalDet; i++) {
+            var total_horas_detalle = '00:00';
             if (!($('#leaveForm-' + i).css('display') == 'none')) {
                 habilitarBusqueda(i);
 

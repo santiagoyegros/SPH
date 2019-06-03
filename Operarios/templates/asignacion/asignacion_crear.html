@@ -350,11 +350,12 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <table id="table" class="table table-hover table-sm mt-3">
+                                <table id="operarioTable" class="table table-bordered table-hover table-sm mt-3">
                 
                                     <thead>
                                         <tr class="head">
                                            
+
                                             <th>
                                                 <span style="display:block !important;margin-bottom:10px !important;">Nombre</span>
                                        
@@ -415,6 +416,7 @@
                                     {% for op in operarios %}
                                         <tr class="data" onclick="seleccionarOpe({{op.id_operario}},{{forloop.parentloop.counter0}},encodeURIComponent('{{op.nombres}}'))">
                                            
+
                                             <td class="col1">{{op.nombres}}</td>
                                             <td class="col2">{{op.nroLegajo}}</td>
                                             <td class="col3">{{op.antiguedad}}</td>
@@ -512,7 +514,27 @@
 <script>
         function seleccionarOpe(ope,id,nombres){
               console.log(ope);
+              console.log("Deshabilitamos inputs")
+              $( '#id_asignaciondet_set-'+id+'-domEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-domSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-fecha' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-fechaInicio' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-fechaFin' ).prop( "disabled", true );
+              $( '#filter_operario-'+id).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-lunEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-lunSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-marEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-marSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-mieEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-mieSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-jueEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-jueSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-vieEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-vieSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-sabEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-sabSal' ).prop( "disabled", true );
               var select = $('#operario-'+id)[0];
+              
               $('#id_asignaciondet_set-'+id+'-operario').val(ope);
               console.log(select);
               for(var i=0;i<select.length;i++){
@@ -779,10 +801,11 @@
     }
     function RecalcularHoras() {
         //aqui empieza el calculo del total de horas normales
-        var total_horas_detalle = '00:00';
+       
         var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
         var totalDet = parseInt($totalDetalle.val(), 10);
         for (i = 0; i < totalDet; i++) {
+            var total_horas_detalle = '00:00';
             if (!($('#leaveForm-' + i).css('display') == 'none')) {
                 habilitarBusqueda(i);
 
@@ -1035,7 +1058,7 @@
     $('input[id^="id_asignaciondet_set-"]').on('dp.change', function (e) {
         RecalcularTipoHoras();
     });
-
+   
 
 </script>
 <style>
@@ -1043,6 +1066,7 @@
     background-color: #7b9da2 !important;
     border-color: #6e7b7d !important;
 }
+
 .modal-dialog{
     max-width: 1050px !important;
     width: 1105px !important;
@@ -1060,5 +1084,6 @@ table tr{
 .data:hover{
     background-color: #86273e1f !important;
 }
+
 </style>
 {% endblock %}

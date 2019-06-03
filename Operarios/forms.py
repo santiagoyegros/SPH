@@ -486,6 +486,7 @@ class AsignacionDetForm(forms.ModelForm):
         fields = [
             'operario',
             'fechaInicio',
+            'fechaFin',
             'lunEnt',
             'lunSal',
             'marEnt',
@@ -506,6 +507,7 @@ class AsignacionDetForm(forms.ModelForm):
         labels = {
             'operario' : 'Operario',
             'fechaInicio':"Fecha Inicio",
+            'fechaFin':"Fecha Fin",
             'lunEnt': 'Lunes Entrada',
             'lunSal': 'Lunes Salida',
             'marEnt': 'Martes Entrada',
@@ -520,12 +522,13 @@ class AsignacionDetForm(forms.ModelForm):
             'sabSal': 'Sabado Salida',
             'domEnt': 'Domingo Entrada',
             'domSal': 'Domingo Salida',
-            'totalHoras':'Total Horas' 
+            'totalHoras':'Total Horas'  
         }
 
         widgets = {
-            'operario': forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly','style':'height:39px !important' }),
-            'fechaInicio': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"}),
+            'operario': forms.TextInput(attrs={'class':'form-control form-control-sm d-none', 'readonly':'readonly','style':'height:39px !important'}),
+            'fechaInicio': DatePickerInput(format='%Y-%m-%d', options={"locale": "es"}),
+            'fechaFin': DatePickerInput(format='%Y-%m-%d', options={"locale": "es"}),
             'lunEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Lunes'),
             'lunSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Lunes'),
             'marEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Martes'),

@@ -484,7 +484,27 @@
 <script>
         function seleccionarOpe(ope,id,nombres){
               console.log(ope);
+              console.log("Deshabilitamos inputs")
+              $( '#id_asignaciondet_set-'+id+'-domEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-domSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-fecha' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-fechaInicio' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-fechaFin' ).prop( "disabled", true );
+              $( '#filter_operario-'+id).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-lunEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-lunSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-marEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-marSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-mieEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-mieSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-jueEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-jueSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-vieEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-vieSal' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-sabEnt' ).prop( "disabled", true );
+              $( '#id_asignaciondet_set-'+id+'-sabSal' ).prop( "disabled", true );
               var select = $('#operario-'+id)[0];
+              
               $('#id_asignaciondet_set-'+id+'-operario').val(ope);
               console.log(select);
               for(var i=0;i<select.length;i++){

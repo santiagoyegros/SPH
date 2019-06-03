@@ -44,6 +44,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     dom_diurno = '0'
     dom_nocturno = '0'
     operarios = []
+    allOperarios = Operario.objects.all()
     openModal=False
     idModal = None
   
@@ -86,6 +87,7 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     if request.method == 'POST':
         print("ACTION",request.POST.get('action'))
+        print(request.POST.get('asignaciondet_set-0-fechaFin'))
         if  request.POST.get('action') == 'add_det': 
             """Se le dio click a agregar detalle"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
@@ -96,14 +98,15 @@ def Asignacion_create(request, id_puntoServicio=None):
             form = AsignacionCabForm(request.POST, instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
             i=0
-            formOperarioID = int(request.POST.get('action')[request.POST.get('action').rfind('-'):None],10)
-            
+            print(request.POST.get('action').rfind('-')+1)
+            formOperarioID = int(request.POST.get('action')[request.POST.get('action').rfind('-')+1:None],10)
+            print("ID",formOperarioID)
             for form in AsigDetFormSet:
                 totalHoras=idPunto="" 
                 lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal=""
                 fechaIni = ""
                 if i == formOperarioID:
-                
+                    print("LLAMA AL PROCEDIMIENTO")
                     if request.POST.get('asignaciondet_set-' + str(i) + '-totalHoras') != 'None':
                         totalHoras = request.POST.get('asignaciondet_set-' + str(i) +'-totalHoras')
                     if  id_puntoServicio:
@@ -158,11 +161,11 @@ def Asignacion_create(request, id_puntoServicio=None):
                         domSal,
                         fechaIni,
                         )
+                    if len(operarios)>0:
+                        openModal=True
+                        idModal = formOperarioID
                 i=i+1
             
-            if len(operarios)>0:
-                openModal=True
-                idModal = formOperarioID
         else: 
             """Se le dio click al boton guardar"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
@@ -170,6 +173,7 @@ def Asignacion_create(request, id_puntoServicio=None):
             if form.is_valid() and AsigDetFormSet.is_valid():
                 """Se guarda completo"""
                 form.save()
+                print(request.POST)
                 AsigDetFormSet.save()
                 messages.success(request, 'Se guardo correctamente la asignacion')
                 return redirect('Operarios:asignacion_list')
@@ -194,6 +198,7 @@ def Asignacion_create(request, id_puntoServicio=None):
             'dom_diurno' : dom_diurno,
             'dom_nocturno' : dom_nocturno,
             'operarios':operarios,
+            'allOperarios':allOperarios,
             'openModal':openModal,
             'idModal':idModal
         }

@@ -130,7 +130,13 @@
                         <!-- {{ form.id }} -->
                         <div class="col-md-8 p-0">
                                 {{form.operario}}
-                                <input type="text" id="nombres-{{ forloop.counter0 }}-operario" class="form-control form-control-sm" style="height:39px !important" disabled>
+                                <select name="operario-{{forloop.counter0}}" class="form-control form-control-sm " readonly="readonly" style="height:39px !important" disabled="disabled" id="operario-{{forloop.counter0}}">
+                                        <option value=""></option>
+                                    {% for ope in allOperarios %}   
+                                        <option value="{{ope.id}}">{{ope.nroLegajo}}-{{ope.nombre}}</option>
+                                    {% endfor %}
+                                </select>
+                                <!-- <input type="text" id="nombres-{{ forloop.counter0 }}-operario" class="form-control form-control-sm" style="height:39px !important" disabled> -->
                         </div>
                     </div>
                     <div class="row">
@@ -446,7 +452,23 @@
             </div>
         </div>
 </script>
+<script>
+        $(document).ready(function(){
+            var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
+            for(var i=1;i<cantForm;i++){
+                var idOpe = $('#id_asignaciondet_set-'+ (i-1) +'-operario').val();
+                var select = $('#operario-'+(i-1))[0];
+                for(var j=0;j<select.length;j++){
+                    if($(select[j]).val()==idOpe){
+                        $(select[j]).attr("selected","selected");
+                    }else{
+                        $(select[j]).removeAttr('selected');
+                    }
+                }
+            }
+        });
 
+</script>
 <script>
     function buscarOperario(id){
             debugger;
@@ -459,7 +481,19 @@
 <script>
         function seleccionarOpe(ope,id,nombres){
               console.log(ope);
+              var select = $('#operario-'+id)[0];
               $('#id_asignaciondet_set-'+id+'-operario').val(ope);
+              console.log(select);
+              for(var i=0;i<select.length;i++){
+                console.log(select[i]);
+                
+                if($(select[i]).val()==ope){
+                    $(select[i]).attr("selected","selected");
+                }else{
+                    $(select[i]).removeAttr('selected');
+                }
+              }
+              $('#id_asignaciondet_set-'+id+'-operario')
               $('#nombres-'+id+'-operario').val(decodeURIComponent(nombres));
               $('#modalFiltro'+id).modal('hide');
         }

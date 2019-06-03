@@ -347,9 +347,9 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <table id="table" class="table table-hover table-sm mt-3">
+                                <table id="operarioTable" class="table table-bordered table-hover table-sm mt-3">
                 
-                                    <thead>
+                                    <thead id="table-head">
                                         <tr>
                                             <th>#</th>
                                             <th>
@@ -382,7 +382,7 @@
                                     <tbody>
                                     {% if operarios %}
                                     {% for op in operarios %}
-                                        <tr class="data" onclick="seleccionarOpe({{op.id_operario}},{{forloop.parentloop.counter0}},encodeURIComponent('{{op.nombres}}'))">
+                                        <tr class="data" onclick="seleccionarOpe({{op.id_operario}},{{forloop.parentloop.counter0}},encodeURIComponent('{{op.nombres}}'))" style="cursor: pointer">
                                             <td>{{ forloop.counter }}</td>
                                             <td class="col1">{{op.nombres}}</td>
                                             <td class="col2">{{op.nroLegajo}}</td>
@@ -1004,13 +1004,17 @@
     $('input[id^="id_asignaciondet_set-"]').on('dp.change', function (e) {
         RecalcularTipoHoras();
     });
-
+   
 
 </script>
 <style>
 .btn-info.disabled, .btn-info:disabled {
     background-color: #7b9da2 !important;
     border-color: #6e7b7d !important;
+}
+#table-head {
+    background: #86273E !important;
+    color: white !important;
 }
 </style>
 {% endblock %}

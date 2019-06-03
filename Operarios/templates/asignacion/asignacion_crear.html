@@ -11,8 +11,11 @@
             <div class="row mt-3">
                 <div class="col h4"><u><strong> Punto de Servicio:</strong></u>
                     ({{ pservicio.CodPuntoServicio }}) - {{ pservicio.NombrePServicio }}
-                    {{ form.puntoServicio.as_hidden  }} </div>
+                    <!-- {{ form.puntoServicio.as_hidden }}  --></div>
             </div>
+            <label for="id_puntoServicio">
+                </label>
+            <input type="text" name="puntoServicio" class="form-control form-control-sm d-none" value="{{pservicio.id}}" id="id_puntoServicio">
             <div class="row mt-3">
                 <div class="col-3">
                     <p class="font-weight-bold"> Totales </p>

@@ -168,8 +168,15 @@ def Asignacion_create(request, id_puntoServicio=None):
             
         else: 
             """Se le dio click al boton guardar"""
+            
             form = AsignacionCabForm(request.POST, instance=asignacion)
+          
+            print(form.errors)
+            
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
+            print(AsigDetFormSet.errors) 
+            print(form)
+            print(AsigDetFormSet)
             if form.is_valid() and AsigDetFormSet.is_valid():
                 """Se guarda completo"""
                 form.save()

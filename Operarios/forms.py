@@ -474,7 +474,7 @@ class AsignacionCabForm(forms.ModelForm):
         }
 
         widgets = {
-            'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
+            'puntoServicio': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'totalasignado': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
         }
 

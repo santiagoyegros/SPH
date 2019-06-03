@@ -527,8 +527,8 @@ class AsignacionDetForm(forms.ModelForm):
 
         widgets = {
             'operario': forms.TextInput(attrs={'class':'form-control form-control-sm d-none', 'readonly':'readonly','style':'height:39px !important'}),
-            'fechaInicio': DatePickerInput(format='%d-%m-%Y', options={"locale": "es"}),
-            'fechaFin': DatePickerInput(format='%d-%m-%Y', options={"locale": "es"}),
+            'fechaInicio': DatePickerInput(format='%Y-%m-%d', options={"locale": "es"}),
+            'fechaFin': DatePickerInput(format='%Y-%m-%d', options={"locale": "es"}),
             'lunEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Lunes'),
             'lunSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Lunes'),
             'marEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Martes'),

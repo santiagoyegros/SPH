@@ -98,7 +98,7 @@
 
             <div class="row container-main">
                 <div class="col-lg-12 col-md-12" style="text-align: right;margin-bottom: 15px;">
-                    <button type='button' id='btnDet' class="btn btn-info" name='add_det'>
+                    <button type='button' id='btnDet' class="btn btn-info" name='add_det' >
                         <i class="fa fa-plus"></i>Agregar Detalle</button>
                 </div>
             </div>
@@ -127,7 +127,8 @@
                                         border-bottom-right-radius: 0px;" disabled ><i class="fa fa-search"></i></button>
                         </div>
                         
-                       <input type="hidden" name="asignaciondet_set-{{ forloop.counter0 }}-id" id="id_asignaciondet_set-{{ forloop.counter0 }}-id" value="{{ pservicio.id }}">
+                       <!-- <input type="text" name="asignaciondet_set-{{ forloop.counter0 }}-id" id="id_asignaciondet_set-{{ forloop.counter0 }}-id" value="{{ forloop.counter0 }}" class="d-none"> -->
+                       {{form.id}}
                        <input type="hidden" id="openModal" value="{{openModal}}">
                        <input type="hidden" id="idModal" value="{{idModal}}">
                         <!-- {{ form.id }} -->
@@ -145,9 +146,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="input-group date">
-                                <input type="text" value="{{ form.fechaInicio.value|date:'d-m-Y' }}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio" placeholder="Fecha Inicio"
+                                <input type="text" value="{{ form.fechaInicio.data }}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio" placeholder="Fecha Inicio"
                                     class="form-control" id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaInicio"
-                                    dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD-MM-YYYY&quot;}}">
+                                    dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;YYYY-MM-DD&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
@@ -156,9 +157,9 @@
                         </div>
                         <div class="col-md-6">
                             <div class="input-group date">
-                                <input type="text" value="{{form.fechaFin.value|date:'d-m-Y'}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaFin" placeholder="Fecha Fin"
+                                <input type="text" value="{{form.fechaFin.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaFin" placeholder="Fecha Fin"
                                     class="form-control" id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaFin"
-                                    dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD-MM-YYYY&quot;}}">
+                                    dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;YYYY-MM-DD&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
@@ -173,7 +174,7 @@
                         <div class="col pl-0">
                             <div class="input-group date" style="    margin: 0px 0px 10px 0px;
                                     height: 39px;">
-                                <input type="text" value="{{form.totalHoras.value |default_if_none:''}}" name="asignaciondet_set-{{ forloop.counter0 }}-totalHoras"
+                                <input type="text" value="{{form.totalHoras.data |default_if_none:''}}" name="asignaciondet_set-{{ forloop.counter0 }}-totalHoras"
                                     class="form-control form-control-sm" readonly="readonly" maxlength="8"
                                     id="id_asignaciondet_set-{{ forloop.counter0 }}-totalHoras">
                             </div>
@@ -181,7 +182,7 @@
                         </div>
                         <div class="col pl-0">
                             <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                <input type="text" value="{{form.lunEnt.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-lunEnt"
+                                <input type="text" value="{{form.lunEnt.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-lunEnt"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-lunEnt"
                                     dp_config="{&quot;id&quot;: &quot;dp_20&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -190,7 +191,7 @@
                                 </div>
                             </div>
                             <div class="input-group date">
-                                <input type="text" value="{{form.lunSal.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-lunSal"
+                                <input type="text" value="{{form.lunSal.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-lunSal"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-lunSal"
                                     dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -201,7 +202,7 @@
                         </div>
                         <div class="col pl-0">
                             <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                <input type="text" value="{{form.marEnt.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-marEnt"
+                                <input type="text" value="{{form.marEnt.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-marEnt"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-marEnt"
                                     dp_config="{&quot;id&quot;: &quot;dp_22&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -210,7 +211,7 @@
                                 </div>
                             </div>
                             <div class="input-group date">
-                                <input type="text" value="{{form.marSal.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-marSal"
+                                <input type="text" value="{{form.marSal.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-marSal"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-marSal"
                                     dp_config="{&quot;id&quot;: &quot;dp_23&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_22&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -221,7 +222,7 @@
                         </div>
                         <div class="col pl-0">
                             <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                <input type="text" value="{{form.mieEnt.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-mieEnt"
+                                <input type="text" value="{{form.mieEnt.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-mieEnt"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-mieEnt"
                                     dp_config="{&quot;id&quot;: &quot;dp_24&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -230,7 +231,7 @@
                                 </div>
                             </div>
                             <div class="input-group date">
-                                <input type="text" value="{{form.mieSal.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-mieSal"
+                                <input type="text" value="{{form.mieSal.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-mieSal"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-mieSal"
                                     dp_config="{&quot;id&quot;: &quot;dp_25&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_24&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -241,7 +242,7 @@
                         </div>
                         <div class="col pl-0">
                             <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                <input type="text" value="{{form.jueEnt.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-jueEnt"
+                                <input type="text" value="{{form.jueEnt.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-jueEnt"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-jueEnt"
                                     dp_config="{&quot;id&quot;: &quot;dp_26&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -250,7 +251,7 @@
                                 </div>
                             </div>
                             <div class="input-group date">
-                                <input type="text" value="{{form.jueSal.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-jueSal"
+                                <input type="text" value="{{form.jueSal.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-jueSal"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-jueSal"
                                     dp_config="{&quot;id&quot;: &quot;dp_27&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_26&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -261,7 +262,7 @@
                         </div>
                         <div class="col pl-0">
                             <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                <input type="text" value="{{form.vieEnt.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-vieEnt"
+                                <input type="text" value="{{form.vieEnt.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-vieEnt"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-vieEnt"
                                     dp_config="{&quot;id&quot;: &quot;dp_28&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -270,7 +271,7 @@
                                 </div>
                             </div>
                             <div class="input-group date">
-                                <input type="text" value="{{form.vieSal.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-vieSal"
+                                <input type="text" value="{{form.vieSal.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-vieSal"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-vieSal"
                                     dp_config="{&quot;id&quot;: &quot;dp_29&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_28&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -281,7 +282,7 @@
                         </div>
                         <div class="col pl-0">
                             <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                <input type="text" value="{{form.sabEnt.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-sabEnt"
+                                <input type="text" value="{{form.sabEnt.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-sabEnt"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-sabEnt"
                                     dp_config="{&quot;id&quot;: &quot;dp_30&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -290,7 +291,7 @@
                                 </div>
                             </div>
                             <div class="input-group date">
-                                <input type="text" value="{{form.sabSal.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-sabSal"
+                                <input type="text" value="{{form.sabSal.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-sabSal"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-sabSal"
                                     dp_config="{&quot;id&quot;: &quot;dp_31&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_30&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -301,7 +302,7 @@
                         </div>
                         <div class="col pl-0">
                             <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                <input type="text" value="{{form.domEnt.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-domEnt"
+                                <input type="text" value="{{form.domEnt.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-domEnt"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-domEnt"
                                     dp_config="{&quot;id&quot;: &quot;dp_32&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -310,7 +311,7 @@
                                 </div>
                             </div>
                             <div class="input-group date">
-                                <input type="text" value="{{form.domSal.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-domSal"
+                                <input type="text" value="{{form.domSal.data}}" name="asignaciondet_set-{{ forloop.counter0 }}-domSal"
                                     class="form-control form-control-sm" id="id_asignaciondet_set-{{ forloop.counter0 }}-domSal"
                                     dp_config="{&quot;id&quot;: &quot;dp_33&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_32&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
@@ -515,6 +516,23 @@
         function seleccionarOpe(ope,id,nombres){
               console.log(ope);
               console.log("Deshabilitamos inputs")
+
+              var select = $('#operario-'+id)[0];
+              
+              $('#id_asignaciondet_set-'+id+'-operario').val(ope);
+              console.log(select);
+              for(var i=0;i<select.length;i++){
+                console.log(select[i]);
+                
+                if($(select[i]).val()==ope){
+                    $(select[i]).attr("selected","selected");
+                }else{
+                    $(select[i]).removeAttr('selected');
+                }
+              }
+              $('#id_asignaciondet_set-'+id+'-operario')
+              $('#nombres-'+id+'-operario').val(decodeURIComponent(nombres));
+              $('#modalFiltro'+id).modal('hide');
               $( '#id_asignaciondet_set-'+id+'-domEnt' ).prop( "disabled", true );
               $( '#id_asignaciondet_set-'+id+'-domSal' ).prop( "disabled", true );
               $( '#id_asignaciondet_set-'+id+'-fecha' ).prop( "disabled", true );
@@ -533,22 +551,8 @@
               $( '#id_asignaciondet_set-'+id+'-vieSal' ).prop( "disabled", true );
               $( '#id_asignaciondet_set-'+id+'-sabEnt' ).prop( "disabled", true );
               $( '#id_asignaciondet_set-'+id+'-sabSal' ).prop( "disabled", true );
-              var select = $('#operario-'+id)[0];
               
-              $('#id_asignaciondet_set-'+id+'-operario').val(ope);
-              console.log(select);
-              for(var i=0;i<select.length;i++){
-                console.log(select[i]);
-                
-                if($(select[i]).val()==ope){
-                    $(select[i]).attr("selected","selected");
-                }else{
-                    $(select[i]).removeAttr('selected');
-                }
-              }
-              $('#id_asignaciondet_set-'+id+'-operario')
-              $('#nombres-'+id+'-operario').val(decodeURIComponent(nombres));
-              $('#modalFiltro'+id).modal('hide');
+              
         }
        </script>
 </div>
@@ -874,6 +878,7 @@
         $('#id_totalasignado').val(total_horas_detalle);
         $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(total_horas_detalle)));
     }
+   
 
     function RecalcularTipoHoras() {
         //aqui empieza el calculo de los distintos tipos de horas

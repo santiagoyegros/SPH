@@ -86,21 +86,18 @@ def Asignacion_create(request, id_puntoServicio=None):
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
 
     if request.method == 'POST':
-        print("ACTION",request.POST.get('action'))
-        print(request.POST.get('asignaciondet_set-0-fechaFin'))
         if  request.POST.get('action') == 'add_det': 
             """Se le dio click a agregar detalle"""
-            form = AsignacionCabForm(request.POST, instance=asignacion)
-            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion) 
+            form = AsignacionCabForm( instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet( instance=asignacion) 
             """se prepara para agregar otro"""
         elif  'filter_operario' in request.POST.get('action'): 
             """Se le dio click a buscar operario"""
-            form = AsignacionCabForm(request.POST, instance=asignacion)
-            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
+            form = AsignacionCabForm(instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
             i=0
             print(request.POST.get('action').rfind('-')+1)
             formOperarioID = int(request.POST.get('action')[request.POST.get('action').rfind('-')+1:None],10)
-            print("ID",formOperarioID)
             for form in AsigDetFormSet:
                 totalHoras=idPunto="" 
                 lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal=""
@@ -141,7 +138,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                         domEnt = request.POST.get('asignaciondet_set-' + str(i) + '-domEnt')
                     if request.POST.get('asignaciondet_set-' + str(i) + '-domSal'):
                         domSal = request.POST.get('asignaciondet_set-' + str(i) + '-domSal')
-                    
+                
                     operarios = buscar_operarios(
                         idPunto,
                         totalHoras, 
@@ -164,23 +161,20 @@ def Asignacion_create(request, id_puntoServicio=None):
                     if len(operarios)>0:
                         openModal=True
                         idModal = formOperarioID
+                    else:
+                        messages.info(request, 'No se encontraron operarios con esos parametros')
                 i=i+1
             
         else: 
             """Se le dio click al boton guardar"""
             
-            form = AsignacionCabForm(request.POST, instance=asignacion)
-          
-            print(form.errors)
+            form = AsignacionCabForm(instance=asignacion)
             
-            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
-            print(AsigDetFormSet.errors) 
-            print(form)
-            print(AsigDetFormSet)
+            AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
+  
             if form.is_valid() and AsigDetFormSet.is_valid():
                 """Se guarda completo"""
                 form.save()
-                print(request.POST)
                 AsigDetFormSet.save()
                 messages.success(request, 'Se guardo correctamente la asignacion')
                 return redirect('Operarios:asignacion_list')
@@ -194,6 +188,7 @@ def Asignacion_create(request, id_puntoServicio=None):
         form = AsignacionCabForm(instance=asignacion)
         AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
 
+    print("asignacion",AsigDetFormSet)
     contexto = {
             'title': 'Nueva Asignación',
             'pservicio': puntoSer,
@@ -221,9 +216,10 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
         """
         """conn.callproc('operarios_disponibles', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
         params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp)
+        print(params)
         conn.execute('operarios_disponibles %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s',params)
         result = conn.fetchall()
-        print(params)
+       
         print("RESULTADO",result)
         conn.close()
         return [OperariosAsignacionDet(*row) for row in result]

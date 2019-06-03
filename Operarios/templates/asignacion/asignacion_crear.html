@@ -117,7 +117,7 @@
             <!-- data-toggle="modal" data-target="#modalFiltro" -->
            
             {% for form in asigDetFormSet %}
-            
+           
             <div class="row mt-2 leaveForm" id="leaveForm-{{ forloop.counter0 }}" style="    margin-bottom: 30px;">
                 <div class="col-md-4">
                     <div class="row" style="margin: 0px 0px 10px 0px;">
@@ -142,27 +142,31 @@
                                 <!-- <input type="text" id="nombres-{{ forloop.counter0 }}-operario" class="form-control form-control-sm" style="height:39px !important" disabled> -->
                         </div>
                     </div>
+               
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6"> 
+                            
                             <div class="input-group date">
-                                <input type="text" value="{{ form.fechaInicio.value|date:'d-m-Y' }}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio" placeholder="Fecha Inicio"
+                                 <input type="text" value="{{ form.fechaInicio.value |date:'d-m-Y'}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio" placeholder="Fecha Inicio"
                                     class="form-control" id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaInicio"
                                     dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD-MM-YYYY&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
-                                </div>
+                                </div> 
+                                
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="input-group date">
-                                <input type="text" value="{{form.fechaFin.value|date:'d-m-Y'}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaFin" placeholder="Fecha Fin"
+                                 <input type="text" value="{{form.fechaFin.value |date:'d-m-Y'}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaFin" placeholder="Fecha Fin"
                                     class="form-control" id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaFin"
                                     dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD-MM-YYYY&quot;}}">
                                 <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
-                                </div>
+                                </div> 
+                                <!-- {{form.fechaFin}} -->
                             </div>
                         </div>
                     </div>
@@ -353,37 +357,42 @@
                                 <table id="operarioTable" class="table table-bordered table-hover table-sm mt-3">
                 
                                     <thead>
-                                        <tr class="head">
+                                        
+                                        <tr>
+                                                <tr class="head">
                                            
 
-                                            <th>
-                                                <span style="display:block !important;margin-bottom:10px !important;">Nombre</span>
-                                       
-                
-                                            </th>
-                                            <th>
-                                                <span style="display:block !important;margin-bottom:10px !important;">Legajo</span>
-                                    
-                
-                                            </th>
-                                            <th>
-                                                <span style="display:block !important;margin-bottom:10px !important;">Antiguedad (años)</span>
-                                              
-                
-                                            </th>
-                                            <th>
-                                                <span style="display:block !important;margin-bottom:10px !important;">Otros contratos</span>
-                                         
-                
-                                            </th>
-                                            <th>
-                                                <span style="display:block !important;margin-bottom:10px !important;">Total Horas</span>
-                                             
-                
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                              
+                                                        <th>
+                                                            <span style="display:block !important;margin-bottom:10px !important;">Nombre</span>
+                                                   
+                            
+                                                        </th>
+                                                        <th>
+                                                            <span style="display:block !important;margin-bottom:10px !important;">Legajo</span>
+                                                
+                            
+                                                        </th>
+                                                        <th>
+                                                            <span style="display:block !important;margin-bottom:10px !important;">Antiguedad (años)</span>
+                                                          
+                            
+                                                        </th>
+                                                        <th>
+                                                            <span style="display:block !important;margin-bottom:10px !important;">Otros contratos</span>
+                                                     
+                            
+                                                        </th>
+                                                        <th>
+                                                            <span style="display:block !important;margin-bottom:10px !important;">Total Horas</span>
+                                                         
+                            
+                                                        </th>
+                                                        <th>
+                                                                <span style="display:block !important;margin-bottom:10px !important;">Perfil</span>
+                                                             
+                                
+                                                            </th>
+                                                    </tr>
                                                 <th>
                                                     
                                                     <p><input class="form-control" type="text" id="filter1"></p>
@@ -409,19 +418,23 @@
                                                     <p><input class="form-control" type="text" id="filter5"></p>
                     
                                                 </th>
+                                                <th>
+                                                    
+                                                        <p><input class="form-control" type="text" id="filter6"></p>
+                        
+                                                    </th>
                                             </tr>
                                     </thead>
                                     <tbody>
                                     {% if operarios %}
                                     {% for op in operarios %}
                                         <tr class="data" onclick="seleccionarOpe({{op.id_operario}},{{forloop.parentloop.counter0}},encodeURIComponent('{{op.nombres}}'))">
-                                           
-
                                             <td class="col1">{{op.nombres}}</td>
                                             <td class="col2">{{op.nroLegajo}}</td>
                                             <td class="col3">{{op.antiguedad}}</td>
                                             <td class="col4">{{op.nombres_puntoServicio |default_if_none:'Sin Contratos'}}</td>
                                             <td class="col5">{{op.totalHoras}}</td>
+                                            <td class="col6">{{op.perfil |default_if_none:'Sin Perfil'}}</td>
                                         </tr>
                                         {% endfor %}
                                     {% endif %}
@@ -485,6 +498,49 @@
             </div>
         </div>
 </script>
+<script>
+        $(document).ready(function(){
+            $("#filter1").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                console.log(value);
+                $("#table tr td.col1").filter(function() {
+                    $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            $("#filter2").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#table tr td.col2").filter(function() {
+                    $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            $("#filter3").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#table tr td.col3").filter(function() {
+                    $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            $("#filter4").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#table tr td.col4").filter(function() {
+                    $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            $("#filter5").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#table tr td.col5").filter(function() {
+                    $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            $("#filter6").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#table tr td.col6").filter(function() {
+                    $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+     
+    
+    </script>
 <script>
         $(document).ready(function(){
             var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
@@ -577,42 +633,7 @@
 
 </script>
 
-<script>
-    $(document).ready(function(){
-        $("#filter1").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col1").filter(function() {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-        $("#filter2").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col2").filter(function() {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-        $("#filter3").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col3").filter(function() {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-        $("#filter4").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col4").filter(function() {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-        $("#filter5").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col5").filter(function() {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-    });
- 
 
-</script>
 
 <script>
     /**

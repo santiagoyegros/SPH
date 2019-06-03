@@ -79,7 +79,7 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     ''' Obtenemos la asignacion en caso de que exista una '''
     asignacion = AsignacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
-
+    print("ASIGNACION", asignacion)
     if asignacion == None:
         asignacion = AsignacionCab()
 
@@ -88,15 +88,15 @@ def Asignacion_create(request, id_puntoServicio=None):
     if request.method == 'POST':
         if  request.POST.get('action') == 'add_det': 
             """Se le dio click a agregar detalle"""
-            form = AsignacionCabForm( instance=asignacion)
-            AsigDetFormSet = asignacionDetFormSet( instance=asignacion) 
+            form = AsignacionCabForm(request.POST, instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion) 
             """se prepara para agregar otro"""
         elif  'filter_operario' in request.POST.get('action'): 
             """Se le dio click a buscar operario"""
-            form = AsignacionCabForm(instance=asignacion)
-            AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
+            form = AsignacionCabForm(request.POST,instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(request.POST,instance=asignacion)
+
             i=0
-            print(request.POST.get('action').rfind('-')+1)
             formOperarioID = int(request.POST.get('action')[request.POST.get('action').rfind('-')+1:None],10)
             for form in AsigDetFormSet:
                 totalHoras=idPunto="" 
@@ -168,9 +168,10 @@ def Asignacion_create(request, id_puntoServicio=None):
         else: 
             """Se le dio click al boton guardar"""
             
-            form = AsignacionCabForm(instance=asignacion)
-            
-            AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
+            form = AsignacionCabForm(request.POST,instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(request.POST,instance=asignacion)
+            print("FORM",AsigDetFormSet)
+            print("ERROR",AsigDetFormSet.errors)
   
             if form.is_valid() and AsigDetFormSet.is_valid():
                 """Se guarda completo"""
@@ -181,6 +182,7 @@ def Asignacion_create(request, id_puntoServicio=None):
             else:
                 messages.warning(request, 'No se pudo guardar los cambios')
     else:
+        print("NO ES POST")
         """
         Seteamos el punto de servicio
         """
@@ -188,7 +190,7 @@ def Asignacion_create(request, id_puntoServicio=None):
         form = AsignacionCabForm(instance=asignacion)
         AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
 
-    print("asignacion",AsigDetFormSet)
+
     contexto = {
             'title': 'Nueva Asignación',
             'pservicio': puntoSer,

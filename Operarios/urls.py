@@ -55,7 +55,7 @@ urlpatterns = [
     cargarOperarios , name='filter_operarios'),
     url(r'^marcacion/descargar', descargarMarcaciones , name='marcaciones_xls'),
 
-    url(r'^feriados/vista', obtenerFeriado , name='feriados_url'),
+    url(r'^operaciones/feriados/vista', obtenerFeriado , name='feriados_url'),
     url(r'^feriados/listar', getFeriados , name='feriados_get'),
     url(r'^feriados/crear', makeFeriados , name='feriados_post'),
     url(r'^feriados/editar/(?P<feriado_id>\d+)', editFeriados , name='feriados_put'),

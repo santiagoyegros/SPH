@@ -170,6 +170,20 @@ def Asignacion_create(request, id_puntoServicio=None):
                         if i>0:
                             index=1
                             while (index < i): 
+                                lunEntAnt=None
+                                lunSalAnt=None
+                                marEntAnt=None
+                                marSalAnt=None
+                                mieSalAnt=None
+                                mieEntAnt=None
+                                jueEntAnt=None
+                                jueSalAnt=None
+                                vieSalAnt=None
+                                vieEntAnt=None
+                                sabEntAnt=None
+                                sabSalAnt=None
+                                domEntAnt=None
+                                domSalAnt=None
                                 if request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaInicio'):
                                     fechaIniAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaInicio')
                                 if request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaFin'):
@@ -210,7 +224,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                 """
                                 si se cumple algunas de estas condiciones entonces se pregunta por la fecha de inicio
                                 """
-                                if lunEnt> lunEntAnt and lunEnt <lunSalAnt :
+                                if lunEnt and lunEntAnt and lunSalAnt and lunEnt> lunEntAnt and lunEnt <lunSalAnt :
                                     # anterior = dt.strptime(fechaFinAnt, "%D-%M-%Y")
                                     # actual = dt.strptime(fechaIni, "%D-%M/%Y")
                                     """
@@ -233,7 +247,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                 print ("Encuentra")
                                                 operarios.remove(op)
                                                 break
-                                elif marEnt > marEntAnt and marEnt < marEntAnt:
+                                elif marEnt and marEntAnt and marSalAnt and marEnt > marEntAnt and marEnt < marEntAnt:
                                         print (fechaFinAnt)
                                         print (fechaIni)
                                         if fechaIni < fechaFinAnt:
@@ -249,7 +263,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                     print ("Encuentra")
                                                     operarios.remove(op)
                                                     break
-                                elif mieEnt > mieEntAnt and mieEnt <mieEntAnt:
+                                elif mieEnt and mieEntAnt and mieSalAnt and mieEnt > mieEntAnt and mieEnt <mieEntAnt:
                                         if fechaIni < fechaFinAnt:
                                             """
                                             Ahora obtenemos el operario para borrar de la lista
@@ -263,7 +277,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                     print ("Encuentra")
                                                     operarios.remove(op)
                                                     break
-                                elif jueEnt > jueEntAnt and jueEnt <jueEntAnt:
+                                elif jueEnt and jueEntAnt and jueSalAnt and jueEnt > jueEntAnt and jueEnt <jueEntAnt:
                                         if fechaIni < fechaFinAnt:
                                             """
                                             Ahora obtenemos el operario para borrar de la lista
@@ -277,7 +291,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                     print ("Encuentra")
                                                     operarios.remove(op)
                                                     break
-                                elif vieEnt > vieEntAnt and vieEnt < vieEntAnt:
+                                elif vieEnt and vieEntAnt and vieSalAnt and vieEnt > vieEntAnt and vieEnt < vieEntAnt:
                                         if fechaIni < fechaFinAnt:
                                             """
                                             Ahora obtenemos el operario para borrar de la lista
@@ -291,7 +305,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                     print ("Encuentra")
                                                     operarios.remove(op)
                                                     break
-                                elif sabEnt > sabEntAnt and sabEnt < sabEntAnt:
+                                elif sabEnt and sabEntAnt and sabSalAnt and sabEnt > sabEntAnt and sabEnt < sabEntAnt:
                                         if fechaIni < fechaFinAnt:
                                             """
                                             Ahora obtenemos el operario para borrar de la lista
@@ -305,7 +319,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                     print ("Encuentra")
                                                     operarios.remove(op)
                                                     break
-                                elif domEnt > domEntAnt and domEnt < domEntAnt:
+                                elif domEnt and domEntAnt and domSalAnt and domEnt > domEntAnt and domEnt < domEntAnt:
                                         if fechaIni < fechaFinAnt:
                                             """
                                             Ahora obtenemos el operario para borrar de la lista

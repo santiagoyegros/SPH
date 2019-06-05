@@ -118,7 +118,10 @@
            
             {% for form in asigDetFormSet %}
            
+         
+               
             <div class="row mt-2 leaveForm" id="leaveForm-{{ forloop.counter0 }}" style="    margin-bottom: 30px;">
+                   
                 <div class="col-md-4">
                     <div class="row" style="margin: 0px 0px 10px 0px;">
                         <div class="col-md-4 text-center p-0">
@@ -326,26 +329,27 @@
                                 </div>
                             </div>
                         </div>
-
+                        
                         <div class="col-1 pl-0" style="display: flex;
                                 justify-content: center;
                                 align-items: center;
                                 color: red !important;
                                 font-size: 25px;">
-                            <input type="checkbox" style="display:none"
-                                name="asignaciondet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
-                                id="{{ form.DELETE.id_for_label }}" />
+                                {{form.DELETE}}
+                            
                             <a href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});"
                                 class="remove muted pull-right">
                                 <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span
                                     class="visible-xs"></span>
                             </a>
                         </div>
+                        
                     </div>
 
                 </div>
-
+                    
             </div>
+            
                         <!-- Modal -->
             <div class="modal fade" id="modalFiltro{{forloop.counter0}}" tabindex="-1" role="dialog" aria-labelledby="modalFiltro" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -500,6 +504,29 @@
                 {{ asigDetFormSet.empty_form.DELETE }}
             </div>
         </div>
+</script>
+<script>
+     $(document).ready(function(){
+        $('input[type=checkbox]').hide()
+        var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
+            for(var i=0;i<cantForm;i++){
+                console.log("Entra aca")
+                
+                $('#id_asignaciondet_set-'+(i)+'-DELETE').css('display', 'none !important')
+                
+                var select = $('#id_asignaciondet_set-'+(i)+'-DELETE')[0].checked;
+
+                console.log("Valor selec ", select)
+                if ($('#id_asignaciondet_set-'+(i)+'-DELETE').is(":checked"))
+                {
+                    console.log("Marcado como eliminado")
+                    
+                    //$('td.delete input[type=checkbox]').hide()
+                    $('#leaveForm-'+i).hide()
+                   
+                }
+            }
+     });
 </script>
 <script>
         $(document).ready(function(){
@@ -758,6 +785,12 @@
             $(deleteLink).closest('.leaveForm').hide();
 
             $("#id_asignaciondet_set-" + id + "-DELETE").prop("checked", true);
+
+            //document.getElementById('action').value = 'btn_eliminar';
+            //hacemos submit
+            //document.getElementById('formulario').submit();
+            //$("#leaveForm-" + id).hide();
+            $('#leaveForm-' + id).css('display:none !important')
             RecalcularHoras();
             RecalcularTipoHoras();
 
@@ -1090,7 +1123,7 @@
     $('input[id^="id_asignaciondet_set-"]').on('dp.change', function (e) {
         RecalcularTipoHoras();
     });
-    
+   
    
 
 </script>

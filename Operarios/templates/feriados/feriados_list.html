@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Marcaciones{% endblock %}
+
+{% block base_head %}
+    <link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
+{% endblock %}
+
+{% block content %}
+<h1 class='my-3'>Feriados</h1>
+    <div id="jsGrid"></div>
+{% endblock %}
+
+{% block scripts %}
+{% csrf_token %}
+    <script type="text/javascript">
+        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    </script>
+    <script>
+        function csrfSafeMethod(method) {
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $(function() {
+
+            $("#jsGrid").jsGrid({
+                height: "90%",
+                width: "100%",
+                filtering: true,
+                inserting: true,
+                editing: true,
+                sorting: true,
+                paging: true,
+                autoload: true,
+                pageSize: 10,
+                pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+                pageButtonCount: 1,
+                pagePrevText: "Anterior",
+                pageNextText: "Siguiente",
+                pageFirstText: "Primera",
+                pageLastText: "Ultima",
+                noDataContent: "No se han encontrado registros",
+                deleteConfirm: "Desea eliminar el registro?",
+                loadMessage: "Por favor, espere...",
+                invalidMessage: "Datos no válidos",
+                controller: {
+                    loadData: function(filter) {
+                        var d = $.Deferred();
+                        $.ajax({
+                            type: "GET",
+                            url: "/reingenieria/feriados/listar",
+                            data: filter
+                        }).done(function(result) {
+                            console.log(result);
+                            d.resolve($.map(result, function(item) {
+                                return $.extend(item.fields, { id: item.pk });
+                            }));
+                        });
+
+                        return d.promise();
+                    },
+                    insertItem: function(item) {
+                        return $.ajax({
+                            type: "POST",
+                            url: "/reingenieria/feriados/crear",
+                            data: item
+                        });
+                    },
+                    updateItem: function(item) {
+                        return $.ajax({
+                            type: "PUT",
+                            url: "/reingenieria/feriados/editar/"+item.id,
+                            data: item
+                        });
+                    },
+                    deleteItem: function(item) {
+                        return $.ajax({
+                            type: "DELETE",
+                            url: "/reingenieria/feriados/eliminar/"+item.id,
+                        });
+                    }
+                },
+
+                fields: [
+                    { name: "anho",type:"text", width: 150,title: "Año" },
+                    { name: "fecha",type:"date", width: 150,title: "Fecha" },
+                    { name: "descripcion",type:"text", width: 150,title: "Descripcion del Feriado" },
+                    { type: "control" }
+                ]
+            });
+
+        });
+    </script>
+{% endblock %}

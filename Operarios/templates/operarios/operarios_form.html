@@ -2,16 +2,302 @@
 
 
 {% block content %}
-<div class='col-12 col-md-6 mx-auto'>
-{% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
-<form method='POST' action='{% if action_url %}{{ action_url }}{% endif %}'> 
-    {% csrf_token %}
-    {% if next_url %}
-    <input type='hidden' name='next' value='{{ next_url }}' />
-    {% endif %}
-  {{ form.as_p }}
-  <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
-  <a class='btn btn-primary btn-sm' href={% url 'Operarios:operarios_list' %}>Cancelar</a>
-</form>
+<div class="container-fluid">
+  {% if next_url %}
+  <input type='hidden' name='next' value='{{ next_url }}' />
+  {% endif %}
+  {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
+  <div class="panel-body">
+      
+  <div class="col-lg-12 col-md-12 container-main">
+    
+    <form method='POST' role="form"> 
+        {% csrf_token %}
+        <div class="row form-group col-lg-12 col-md-12 justify-content-end">
+            <button type='submit' class='btn btn-success'>Guardar</button>
+            <a class='btn btn-default' href={% url 'Operarios:operarios_vista' %}>Cancelar</a>
+        </div>
+      <div class="col-lg-12 col-md-12">
+          <div class="row">
+          <div class="col-lg-6 col-md-6">
+              <div class="form-group">
+                  
+                  <label>Nombre</label>
+                  
+                  <input id="nombre" name="{{form.nombre.name}}" value="{{form.nombre.value}}" type="text" class="form-control" required autofocus>
+                  {{ form.nombre.errors }}
+                </div>
+              <div class="form-group">
+                 
+                  <label>Apellido</label>
+                  <input id="apellido" name="{{form.apellido.name}}" value="{{form.apellido.value}}" type="text" class="form-control" required>
+                  {{ form.apellido.erorrs }}
+                </div>
+              <div class="form-group">
+                  
+                  <label>C.I</label>
+                  <input id="numCedula" name="{{form.numCedula.name}}" value="{{form.numCedula.value}}" type="text" class="form-control" required>
+                  {{ form.numCedula.errors }}
+                </div>
+              <div class="form-group">
+                <label>Pasaporte</label>
+                <input id="numPasaporte" name="{{form.numPasaporte.name}}" value="{{form.numPasaporte.value}}" type="text" class="form-control" >
+              </div>
+              <div class="form-group">
+                  
+                  <label>Legajo</label>
+                  <input id="numPasaporte" name="{{form.nroLegajo.name}}" value="{{form.nroLegajo.value}}" type="text" class="form-control" required>
+                  {{ form.nroLegajo.errors }}
+                </div>
+              <div class="form-group">
+                  <label>Escolaridad</label>
+                  
+                  <select id="escolaridad" name="{{form.escolaridad.name}}" value="{{form.escolaridad.value}}"  class="selectpicker form-control" data-live-search="true">
+                      
+                      {% if form.escolaridad.value %}
+                       {% if form.escolaridad.value == 'Primaria Concluida' %}
+                       <option data-tokens="Primaria Concluida" selected="selected"
+                        value="Primaria Concluida"> Primaria Concluida</option>
+                       {% endif %}
+                       {% if form.escolaridad.value == 'Secundaria Concluida' %}
+                       <option data-tokens="Secundaria Concluida" selected="selected"
+                        value="Secundaria Concluida"> Secundaria Concluida</option>
+                       {% endif %}
+                       {% if form.escolaridad.value == 'Estudiante Terciario' %}
+                       <option data-tokens="Estudiante Terciario" selected="selected"
+                        value="Estudiante Terciario"> Estudiante Terciario</option>
+                       {% endif %}
+                       {% if form.escolaridad.value == 'Estudiante Universitario' %}
+                       <option data-tokens="Estudiante Universitario" selected="selected"
+                        value="Estudiante Universitario"> Estudiante Universitario</option>
+                       {% endif %}
+                       {% if form.escolaridad.value == 'Universidad Concluida' %}
+                       <option data-tokens="Universidad Concluida" selected="selected"
+                        value="Universidad Concluida"> Universidad Concluida</option>
+                       {% endif %}
+                      {% else %}
+                      <option data-tokens="Primaria Concluida"
+                      value="Primaria Concluida"> Primaria Concluida</option>
+                      <option data-tokens="Secundaria Concluida"
+                      value="Secundaria Concluida"> Secundaria Concluida</option>
+                      <option data-tokens="Estudiante Terciario"
+                      value="Estudiante Terciario"> Estudiante Terciario</option>
+                      <option data-tokens="Estudiante Universitario"
+                      value="Estudiante Universitario"> Estudiante Universitario</option>
+                      <option data-tokens="Universidad Concluida"
+                      value="Universidad Concluida">Universidad Concluida</option>
+                    
+                    {%endif%}
+                  </select>   
+                   
+                  {{ form.escolaridad.errors }}
+              </div>
+                <div class="form-group">
+                    <label>Profesion</label>
+                    <select id="profesion" name="{{form.profesion.name}}" value="{{form.profesion.value}}"  class="selectpicker form-control" data-live-search="true" multiple data-size="5"> 
+                         
+                        {% for especialidad in especialidadesList %}
+                        {% if especialidad in especialidadSelect %}
+                        <option data-tokens="{{especialidad.especializacion}}" selected="selected"
+                      value="{{especialidad.id}}"> {{especialidad.especializacion}}</option>
+                        {% else %}
+                      <option data-tokens="{{especialidad.especializacion}}"
+                      value="{{especialidad.id}}"> {{especialidad.especializacion}}</option>
+                      {% endif %}
+                      {% endfor %}
+                    </select>
+                    {{ form.profesion.errors }}
+                </div>
+          </div>
+          <div class="col-lg-6 col-md-6">
+              <div class="form-group">
+                  <label>Nacionalidad</label>
+                  
+                  <select id="nacionalidad" data-size="5" name="{{form.nacionalidad.name}}" value="{{form.nacionalidad.value}}"  class="selectpicker form-control" data-live-search="true" title="Seleccionar...." required>
+                    
+                    {% for nacionalidad in nacionalidadList %}
+                    {% if nacionalidad.id == nacionalidadSelect.id %}
+                      <option data-tokens="{{nacionalidad.Pais}}" selected="selected"
+                      value="{{nacionalidad.id}}"> {{nacionalidad.Pais}}</option>
+                    {% else %}
+                      <option data-tokens="{{nacionalidad.Pais}}" value="{{nacionalidad.id}}"> {{nacionalidad.Pais}}</option>
+
+                    {% endif %}
+                   {% endfor %}
+                </select>
+                {{ form.nacionalidad.errors }}
+                </div>
+              <div class="form-group">
+                  <label>Fecha Nacimiento</label>
+                  <div class="form-group">
+                      <div class='input-group date' id='datetimepickerNacimiento'>
+                          <input type='text' class="form-control" name="{{form.fechaNacimiento.name}}" value="{{form.fechaNacimiento.value}}" required />
+                          <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-calendar"></span>
+                          </span>
+                      </div>
+                  </div>
+                  {{ form.fechaNacimiento.errors }}
+                  
+              </div>
+              <div class="form-group">
+                  <label>Lugar Nacimiento</label>
+                  <select id="lugarNacimiento" name="{{form.lugarNacimiento.name}}" value="{{form.lugarNacimiento.value}}"  class="selectpicker form-control" data-live-search="true" data-size="5" title="Seleccionar...."> 
+                    {% for ciudad in ciudadesList %}
+                    {% if ciudad.id == lugarSelect.id %}
+                    <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected"
+                      value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                    {% else %}
+                      <option data-tokens="{{ciudad.NombreCiudad}}"
+                      value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                  
+                  {{ form.lugarNacimiento.errors }}
+                </div>
+              <div class="form-group">
+                  <label>Email</label>
+                  <input id="email" name="{{form.email.name}}" value="{{form.email.value}}"  class="form-control" type="email">
+                  {{ form.email.errors }}
+                </div>
+              <div class="form-group">
+                  <label>Teléfono Particular</label>
+                  <input id="telefono" name="{{form.telefono.name}}" value="{{form.telefono.value}}" type="number" class="form-control" required>
+                  {{ form.telefono.errors }}
+                </div>
+              <div class="form-group">
+                  <label>Banco</label>
+                  <input id="banco" type="text" name="{{form.banco.name}}" value="{{form.banco.value}}"  class="form-control" required>
+                  {{ form.banco.errors }}
+              </div>
+              <div class="form-group">
+                  <label>Cuenta Bancaria</label>
+                  <input id="ctaBanco" name="{{form.ctaBanco.name}}" value="{{form.ctaBanco.value}}"  class="form-control" required type="text">
+                  {{ form.ctaBanco.errors }}
+                </div>
+          </div>
+          </div>
+          
+          
+          
+          
+        </div>
+        <div class="col-lg-12 col-md-12">
+            <div class="row">
+          <div class="col-lg-6 col-md-6">
+              
+                
+              <div class="form-group">
+                  <label>Fecha de Ingreso </label>
+                  <div class="form-group">
+                      <div class='input-group date' id='datetimepickerInicio'>
+                          <input type='text' class="form-control" name="{{form.fechaInicio.name}}" value="{{form.fechaInicio.value}}" required/>
+                          <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-calendar"></span>
+                          </span>
+                      </div>
+                  </div>
+                  {{ form.fechaInicio.errors }}
+              </div>
+              <div class="form-group">
+                  <label>Fecha de Finalización</label>
+                  <div class="form-group">
+                      <div class='input-group date' id='datetimepickerFin'>
+                          <input type='text' class="form-control" name="{{form.fechaFin.name}}" value="{{form.fechaFin.value}}" />
+                          <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-calendar"></span>
+                          </span>
+                      </div>
+                  </div>
+                  {{ form.fechaFin.errors }}
+             </div>
+             <div class="form-group">
+                <label>Ciudad</label>
+                <select id="ciudad" name="{{form.ciudad.name}}" value="{{form.ciudad.value}}"  class="selectpicker form-control" data-live-search="true" data-size="5" required title="Seleccionar...."> 
+                    {% for ciudad in ciudadesList %}
+                    {% if ciudad.id == ciudadSelect.id %}
+                    <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected"
+                      value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                    {% else %}
+                      <option data-tokens="{{ciudad.NombreCiudad}}"
+                      value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                {{ form.ciudad.errors }}
+            </div>
+            <div class="form-group">
+                <label>Barrio</label>
+                <input id="barrios" name="{{form.barrios.name}}" value="{{form.barrios.value}}" type="text" class="form-control" required>
+            </div>
+            {{ form.barrios.errors }}
+          </div>
+          <div class="col-lg-6 col-md-6">
+              
+              <div class="form-group">
+                  <label>Direccion</label>
+                  <input id="direccion" name="{{form.direccion.name}}" value="{{form.direccion.value}}"  type="text" class="form-control" required>
+                  {{ form.direccion.errors }}
+                </div>
+              <div class="form-group">
+                  <div class="row">
+                  <div class="col-lg-6 col-md-6">
+                    <label>Coordenadas de Latitud</label>
+                    <input id="latitud" name="{{form.latitud.name}}" value="{{form.latitud.value}}"  type="text" class="form-control" >
+                    {{ form.latitud.errors }}
+                  </div>
+                  <div class="col-lg-6 col-md-6">
+                      <label> Coordenadas de Longitud</label>
+                      <input id="longitud" name="{{form.longitud.name}}" value="{{form.longitud.value}}"  type="text" class="form-control" >
+                      {{ form.longitud.errors }}
+                  </div>
+              </div>
+            </div>
+            <div class="form-group">
+                <label>Nombre Contacto</label>
+                <input id="contacto" name="{{form.nombreContacto.name}}" value="{{form.nombreContacto.value}}"  type="text" class="form-control" required>
+                {{ form.nombreContacto.errors }}
+              </div>
+            <div class="form-group">
+                <label>Teléfono Contacto</label>
+                <input id="telefonoContacto" name="{{form.telefonoContacto.name}}" value="{{form.telefonoContacto.value}}"  type="number" class="form-control" required>
+                {{ form.telefonoContacto.errors }}
+              </div>
+           
+          </div>
+        </div>
+        </div>
+           
+  
+      </div>
+  </div>
+          
+        
+        
+      
+    </form>
+  </div>
+  <script type="text/javascript">
+    $(function () {
+        $('#datetimepickerNacimiento').datetimepicker({
+          locale:'es', 
+          format: 'DD/MM/YYYY' //This is the default date format Django will accept, it also disables the time in the datepicker.
+        })
+    });
+    $(function () {
+        $('#datetimepickerInicio').datetimepicker({
+          locale:'es', 
+          format: 'DD/MM/YYYY' //This is the default date format Django will accept, it also disables the time in the datepicker.
+        })
+    });
+    $(function () {
+        $('#datetimepickerFin').datetimepicker({
+          locale:'es', 
+          format: 'DD/MM/YYYY' //This is the default date format Django will accept, it also disables the time in the datepicker.
+        })
+    });
+    </script>
 </div>
+
 {% endblock %}

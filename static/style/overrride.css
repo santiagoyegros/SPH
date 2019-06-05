@@ -1,0 +1,16 @@
+.elm-table-header {
+    background-color: #86273E;
+    color: white;
+}
+
+.jsgrid-header-row>.jsgrid-header-cell {
+     background: #86273E;
+     color: white;
+}
+
+.desperateButton{
+    background: #86273E;
+    color: white;
+    margin-right: 1.5%;
+    margin-bottom: 1%;
+}

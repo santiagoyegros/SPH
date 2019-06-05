@@ -3,21 +3,24 @@
 {% url 'Operarios:planificar_list' as planificacion_url %}
 {% url 'Operarios:asignacion_list' as asignacion_url %}
 {% url 'Operarios:puntoServicio_list' as punto_servicio_url %}
-{% url 'Operarios:operarios_list' as operarios_url %}
+{% url 'Operarios:operarios_vista' as operarios_url %}
 {% url 'Operarios:jefes_list' as jefes_url %}
-{% url 'marcaciones' as marcaciones_url %}
+{% url 'Operarios:marcaciones_url' as marcaciones_url %}
+{% url 'Operarios:feriados_url' as feriados_url %}
+{% url 'Operarios:fiscales_list' as fiscales_url %} 
 {% url 'remplazos' as remplazos_url %}
 {% url 'alertas' as alertas_url %}
 
 <script>
-debugger;
+
 $("#salir").on('click',"a[data-window='external']", function() {
     window.open($(this).attr('href')); 
     return false; 
 });
 </script>
 <nav class="navbar navbar-expand-md navbar-dark mb-4" style="background-color: #7A0C25;">
-    <div class='container'>
+    <div class='container' style="width: 100% !important;
+    max-width: 100%;">
         <a class="navbar-brand" href="{{ home_url }}">
             <img src="{% static 'logo-blanco.png' %}" height="30" class="d-inline-block align-top" alt="El mejor">
         </a>
@@ -40,11 +43,14 @@ $("#salir").on('click',"a[data-window='external']", function() {
                     <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="{{ punto_servicio_url }}">Puntos de Servicio</a>
                     <a class="dropdown-item" href="{{ operarios_url }}">Operarios</a>
-                    <a class="dropdown-item" href="{{ jefes_url }}">Estructura de Jefes/Fiscales</a>
-                    </div>
+                    <a class="dropdown-item" href="/reingenieria/operaciones/jefes/listar">Jefes</a> 
+                    <a class="dropdown-item" href="/reingenieria/operaciones/fiscales/listar">Fiscales</a>
+                    <a class="dropdown-item" href="{{ feriados_url}}">Feriados</a>
+                    
+                </div> 
                 </li>
                 <li class="nav-item {% if request.path == marcaciones_url %}active{% endif %}">
-                    <a class="nav-link" href="{{ marcaciones_url }}">Marcaciones</a>
+                    <a class="nav-link" href="{{marcaciones_url}}">Marcaciones</a>
                 </li>
                 <li class="nav-item {% if request.path == remplazos_url %}active{% endif %}">
                     <a class="nav-link" href="{{ remplazos_url }}">Reemplazos</a>

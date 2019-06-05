@@ -16,12 +16,9 @@ from Operarios.models import OperariosAsignacionDet
 
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
-from Operarios.filters import OperariosFilter
-from Operarios.tables import AsignacionTable
-from Operarios.filters import OperariosFilter
-from django_tables2.views import SingleTableMixin
-from django_filters.views import FilterView
-from django_tables2.export.views import ExportMixin
+
+
+
 from django.db import connection
 
 from datetime import datetime as dt
@@ -48,7 +45,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     openModal=False
     idModal = None
   
-    filterset_class= OperariosFilter
+    
     logging.getLogger("error_logger").error('Se ingreso en el metodo asignacion_create')
     ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
     try:
@@ -428,19 +425,5 @@ def cargarOperarios(request, id_puntoServicio:None):
     
     return redirect('Operarios:asignacion_create', id_puntoServicio=pk_puntoServSeleccionado)
 
-class AsignacionListView(ExportMixin,SingleTableMixin,FilterView):
-    table_class= AsignacionTable 
-    model= OperariosAsignacionDet 
-    template_name='asignacion/asignacion_list_table.html' 
-    filterset_class= OperariosFilter
-    table_pagination={"per_page":10}  
 
-    def get_context_data(self, **kwargs):
-        context = super(AsignacionListView, self).get_context_data(**kwargs)
-        #ACA AGARRA LOS PARAMETROS QUE LE PASAS, AHORA MISMO 
-        #LE PASO SOLO TOTALHORAS Y LUEGO ESO
-        #LE PASAS AL PROCEDIMIENTO BUSCAR_OPERARIOS
-        print(self.kwargs['totalHoras'])
-        buscar_operarios(5,8, (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),datetime.datetime.strptime('1996-08-08','%Y-%m-%d'))
-        return context
     

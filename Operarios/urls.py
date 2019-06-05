@@ -13,7 +13,7 @@ from Operarios.views import obtenerMarcacion,getMarcaciones,obtenerFeriado,getFe
 from Operarios import viewsAsignacion 
 from Operarios import viewsOperario
 from Operarios.views import PuntosServicios_update
-from Operarios.viewsAsignacion import AsignacionListView,cargarOperarios
+from Operarios.viewsAsignacion import cargarOperarios
 app_name = 'Operarios'
 
 urlpatterns = [

@@ -242,7 +242,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                         """
                                         
                                         
-                                        if fechaIni <= fechaFinAnt:
+                                        if fechaFinAnt==None or fechaIni <= fechaFinAnt:
                                             """
                                             Ahora obtenemos el operario para borrar de la lista
                                             """
@@ -257,9 +257,8 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                         operarios.remove(op)
                                                         break
                                     elif marEnt and marEntAnt and marSalAnt and ((marEnt >= marEntAnt and marEnt <= marEntAnt) or (marSal>= marEntAnt and marSal <=marSalAnt)):
-                                            print (fechaFinAnt)
-                                            print (fechaIni)
-                                            if fechaIni <= fechaFinAnt:
+                                            
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
                                                 """
                                                 Ahora obtenemos el operario para borrar de la lista
                                                 """
@@ -274,7 +273,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                             operarios.remove(op)
                                                             break
                                     elif mieEnt and mieEntAnt and mieSalAnt and ((mieEnt >= mieEntAnt and mieEnt <= mieEntAnt) or (mieSal>= mieEntAnt and mieSal <=mieSalAnt)):
-                                            if fechaIni <= fechaFinAnt:
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
                                                 """
                                                 Ahora obtenemos el operario para borrar de la lista
                                                 """
@@ -289,7 +288,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                             operarios.remove(op)
                                                             break
                                     elif jueEnt and jueEntAnt and jueSalAnt and ((jueEnt >= jueEntAnt and jueEnt <=jueEntAnt) or (jueSal>= jueEntAnt and jueSal <=jueSalAnt)):
-                                            if fechaIni <= fechaFinAnt:
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
                                                 """
                                                 Ahora obtenemos el operario para borrar de la lista
                                                 """
@@ -304,7 +303,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                             operarios.remove(op)
                                                             break
                                     elif vieEnt and vieEntAnt and vieSalAnt and ((vieEnt >= vieEntAnt and vieEnt <= vieEntAnt) or (vieSal>= vieEntAnt and vieSal <=vieSalAnt)):
-                                            if fechaIni <= fechaFinAnt:
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
                                                 """
                                                 Ahora obtenemos el operario para borrar de la lista
                                                 """
@@ -319,7 +318,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                             operarios.remove(op)
                                                             break
                                     elif sabEnt and sabEntAnt and sabSalAnt and ((sabEnt >= sabEntAnt and sabEnt <= sabEntAnt) or (sabSal>= sabEntAnt and sabSal <=sabSalAnt)):
-                                            if fechaIni <= fechaFinAnt:
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
                                                 """
                                                 Ahora obtenemos el operario para borrar de la lista
                                                 """
@@ -333,7 +332,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                                                             operarios.remove(op)
                                                             break
                                     elif domEnt and domEntAnt and domSalAnt and ((domEnt >= domEntAnt and domEnt <= domEntAnt) or (domSal>= domEntAnt and domSal <=domSalAnt)):
-                                            if fechaIni <= fechaFinAnt:
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
                                                 """
                                                 Ahora obtenemos el operario para borrar de la lista
                                                 """

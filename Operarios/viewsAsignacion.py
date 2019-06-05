@@ -84,7 +84,7 @@ def Asignacion_create(request, id_puntoServicio=None):
         asignacion = AsignacionCab()
 
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
-
+    print("#1")
     if request.method == 'POST':
         if  request.POST.get('action') == 'add_det': 
             """Se le dio click a agregar detalle"""

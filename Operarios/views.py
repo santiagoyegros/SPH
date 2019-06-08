@@ -450,7 +450,7 @@ def asignarFiscales(request,id_user_jefe=None ):
                 asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
                 asignacion.save() 
 
-    return redirect('Operarios:jefes_asigFiscales', id_user_jefe=id_user_jefe)
+    return redirect('Operarios:jefes_list')
 
 @login_required
 @permission_required('Operarios.delete_operario', raise_exception=True)
@@ -531,7 +531,7 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
                 asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=nuevoPunto)
                 asignacion.save() 
 
-    return redirect('Operarios:fiscales_asig', id_user_fiscal=id_user_fiscal)
+    return redirect('Operarios:fiscales_list')
 
 @login_required
 @permission_required('Operarios.delete_operario', raise_exception=True)

@@ -110,6 +110,8 @@ def Asignacion_create(request, id_puntoServicio=None):
                         idPunto = id_puntoServicio
                     if request.POST.get('asignaciondet_set-' + str(i) + '-fechaInicio'):
                         fechaIni = request.POST.get('asignaciondet_set-' + str(i) + '-fechaInicio')
+                        date_time_obj = datetime.datetime.strptime(fechaIni,'%d/%m/%Y')
+                        fechaIni=date_time_obj.strftime('%Y-%m-%d')
                     if request.POST.get('asignaciondet_set-' + str(i) + '-lunEnt'):
                         lunEnt = request.POST.get('asignaciondet_set-' + str(i) + '-lunEnt')
                     if request.POST.get('asignaciondet_set-' + str(i) + '-lunSal'):

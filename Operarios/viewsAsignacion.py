@@ -16,12 +16,9 @@ from Operarios.models import OperariosAsignacionDet
 
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
-from Operarios.filters import OperariosFilter
-from Operarios.tables import AsignacionTable
-from Operarios.filters import OperariosFilter
-from django_tables2.views import SingleTableMixin
-from django_filters.views import FilterView
-from django_tables2.export.views import ExportMixin
+
+
+
 from django.db import connection
 
 from datetime import datetime as dt
@@ -48,7 +45,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     openModal=False
     idModal = None
   
-    filterset_class= OperariosFilter
+    
     logging.getLogger("error_logger").error('Se ingreso en el metodo asignacion_create')
     ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
     try:
@@ -84,17 +81,20 @@ def Asignacion_create(request, id_puntoServicio=None):
         asignacion = AsignacionCab()
 
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
-
+    print("#1")
     if request.method == 'POST':
         if  request.POST.get('action') == 'add_det': 
             """Se le dio click a agregar detalle"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
-            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion) 
+            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
+            
             """se prepara para agregar otro"""
         elif  'filter_operario' in request.POST.get('action'): 
             """Se le dio click a buscar operario"""
             form = AsignacionCabForm(request.POST,instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
+            
+
 
             i=0
             formOperarioID = int(request.POST.get('action')[request.POST.get('action').rfind('-')+1:None],10)
@@ -138,7 +138,8 @@ def Asignacion_create(request, id_puntoServicio=None):
                         domEnt = request.POST.get('asignaciondet_set-' + str(i) + '-domEnt')
                     if request.POST.get('asignaciondet_set-' + str(i) + '-domSal'):
                         domSal = request.POST.get('asignaciondet_set-' + str(i) + '-domSal')
-                
+                    if request.POST.get('asignaciondet_set-' + str(i) + '-totalHoras'):
+                        totalHoras = request.POST.get('asignaciondet_set-' + str(i) + '-totalHoras')
                     operarios = buscar_operarios(
                         idPunto,
                         totalHoras, 
@@ -165,11 +166,13 @@ def Asignacion_create(request, id_puntoServicio=None):
                             verificar que este contenido el operario en la lista, para evitar solapamiento, datos detalle anterior y actual
                         """
                         """
-                            obtenemos los datos del operario asignado anteriormente
+                            obtenemos los datos del operario asignados anteriormente
                         """
                         if i>0:
                             index=1
-                            while (index < i): 
+                           
+                            while (index <= i): 
+                                print ("Para verificar horario")     
                                 lunEntAnt=None
                                 lunSalAnt=None
                                 marEntAnt=None
@@ -184,161 +187,172 @@ def Asignacion_create(request, id_puntoServicio=None):
                                 sabSalAnt=None
                                 domEntAnt=None
                                 domSalAnt=None
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaInicio'):
-                                    fechaIniAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaInicio')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaFin'):
-                                    fechaFinAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaFin')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-lunEnt'):
-                                    lunEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-lunEnt')
+                                print (request.POST.get("id_asignaciondet_set-" + str(index-1) + "-DELETE"))
+                                if request.POST.get("id_asignaciondet_set-" + str(index-1) + "-DELETE")==None:
                                     
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-lunSal'):
-                                    lunSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-lunSal')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-marEnt'):
-                                    marEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-marEnt')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-marSal'):
-                                    marSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-marSal')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-mieEnt'):
-                                    mieEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-mieEnt')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-mieSal'):
-                                    mieSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-mieSal')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-jueEnt'):
-                                    jueEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-jueEnt')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-jueSal'):
-                                    jueSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-jueSal')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-vieEnt'):
-                                    vieEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-vieEnt')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-vieSal'):
-                                    vieSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-vieSal')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-sabEnt'):
-                                    sabEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-sabEnt')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-sabSal'):
-                                    sabSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-sabSal')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-domEnt'):
-                                    domEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-domEnt')
-                                if request.POST.get('asignaciondet_set-' + str(index-1) + '-domSal'):
-                                    domSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-domSal')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaInicio'):
+                                        fechaIniAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaInicio')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaFin'):
+                                        fechaFinAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaFin')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-lunEnt'):
+                                        lunEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-lunEnt')
+                                        
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-lunSal'):
+                                        lunSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-lunSal')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-marEnt'):
+                                        marEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-marEnt')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-marSal'):
+                                        marSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-marSal')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-mieEnt'):
+                                        mieEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-mieEnt')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-mieSal'):
+                                        mieSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-mieSal')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-jueEnt'):
+                                        jueEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-jueEnt')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-jueSal'):
+                                        jueSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-jueSal')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-vieEnt'):
+                                        vieEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-vieEnt')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-vieSal'):
+                                        vieSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-vieSal')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-sabEnt'):
+                                        sabEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-sabEnt')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-sabSal'):
+                                        sabSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-sabSal')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-domEnt'):
+                                        domEntAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-domEnt')
+                                    if request.POST.get('asignaciondet_set-' + str(index-1) + '-domSal'):
+                                        domSalAnt = request.POST.get('asignaciondet_set-' + str(index-1) + '-domSal')
+                                    
+                                    """ 
+                                        se comienzan las comparaciones
+                                    """
+                                    """
+                                    si se cumple algunas de estas condiciones entonces se pregunta por la fecha de inicio
+                                    """
+                                    if lunEnt and lunEntAnt and lunSalAnt and ((lunEnt>= lunEntAnt and lunEnt <=lunSalAnt) or (lunSal>= lunEntAnt and lunSal <=lunSalAnt)):
+                                        # anterior = dt.strptime(fechaFinAnt, "%D-%M-%Y")
+                                        # actual = dt.strptime(fechaIni, "%D-%M/%Y")
+                                        """
+                                        Si la fecha de inicio actual del operario es menor a la de la fecha de finalizacion de la 
+                                        asignacion anterior 
+                                        """
+                                        
+                                        
+                                        if fechaFinAnt==None or fechaIni <= fechaFinAnt:
+                                            """
+                                            Ahora obtenemos el operario para borrar de la lista
+                                            """
+                                            
+                                            id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
+                                            
+                                            if id_operario!='':
+                                                for op in operarios:
+                                                    
+                                                    if int(op.id_operario) == int(id_operario):
+                                                        print ("Encuentra")
+                                                        operarios.remove(op)
+                                                        break
+                                    elif marEnt and marEntAnt and marSalAnt and ((marEnt >= marEntAnt and marEnt <= marEntAnt) or (marSal>= marEntAnt and marSal <=marSalAnt)):
+                                            
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
+                                                """
+                                                Ahora obtenemos el operario para borrar de la lista
+                                                """
+                                                
+                                                id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
+                                                
+                                                if id_operario!='':
+                                                    for op in operarios:
+                                                        print (op.id_operario)
+                                                        if int(op.id_operario) == int(id_operario):
+                                                            
+                                                            operarios.remove(op)
+                                                            break
+                                    elif mieEnt and mieEntAnt and mieSalAnt and ((mieEnt >= mieEntAnt and mieEnt <= mieEntAnt) or (mieSal>= mieEntAnt and mieSal <=mieSalAnt)):
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
+                                                """
+                                                Ahora obtenemos el operario para borrar de la lista
+                                                """
+                                                
+                                                id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
+                                                
+                                                if id_operario!='':
+                                                    for op in operarios:
+                                                        print (op.id_operario)
+                                                        if int(op.id_operario) == int(id_operario):
+                                                            
+                                                            operarios.remove(op)
+                                                            break
+                                    elif jueEnt and jueEntAnt and jueSalAnt and ((jueEnt >= jueEntAnt and jueEnt <=jueEntAnt) or (jueSal>= jueEntAnt and jueSal <=jueSalAnt)):
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
+                                                """
+                                                Ahora obtenemos el operario para borrar de la lista
+                                                """
+                                               
+                                                id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
+                                                
+                                                if id_operario!='':
+                                                    for op in operarios:
+                                                        
+                                                        if int(op.id_operario) == int(id_operario):
+                                                            
+                                                            operarios.remove(op)
+                                                            break
+                                    elif vieEnt and vieEntAnt and vieSalAnt and ((vieEnt >= vieEntAnt and vieEnt <= vieEntAnt) or (vieSal>= vieEntAnt and vieSal <=vieSalAnt)):
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
+                                                """
+                                                Ahora obtenemos el operario para borrar de la lista
+                                                """
+                                                
+                                                id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
+                                                
+                                                if id_operario!='':
+                                                    for op in operarios:
+                                                        
+                                                        if int(op.id_operario) == int(id_operario):
+                                                           
+                                                            operarios.remove(op)
+                                                            break
+                                    elif sabEnt and sabEntAnt and sabSalAnt and ((sabEnt >= sabEntAnt and sabEnt <= sabEntAnt) or (sabSal>= sabEntAnt and sabSal <=sabSalAnt)):
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
+                                                """
+                                                Ahora obtenemos el operario para borrar de la lista
+                                                """
+                                                print ("Holaaaa")
+                                                id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
+                                                if id_operario!='':
+                                                    for op in operarios:
+                                                        
+                                                        if int(op.id_operario) == int(id_operario):
+                                                            
+                                                            operarios.remove(op)
+                                                            break
+                                    elif domEnt and domEntAnt and domSalAnt and ((domEnt >= domEntAnt and domEnt <= domEntAnt) or (domSal>= domEntAnt and domSal <=domSalAnt)):
+                                            if fechaFinAnt==None or fechaIni <= fechaFinAnt:
+                                                """
+                                                Ahora obtenemos el operario para borrar de la lista
+                                                """
+                                                print ("Holaaaa")
+                                                id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
+                                                if id_operario!='':
+                                                    for op in operarios:
+                                                        print (op.id_operario)
+                                                        if int(op.id_operario) == int(id_operario):
+                                                            
+                                                            operarios.remove(op)
+                                                            break
                                 
-                                """ 
-                                    se comienzan las comparaciones
-                                """
-                                """
-                                si se cumple algunas de estas condiciones entonces se pregunta por la fecha de inicio
-                                """
-                                if lunEnt and lunEntAnt and lunSalAnt and lunEnt> lunEntAnt and lunEnt <lunSalAnt :
-                                    # anterior = dt.strptime(fechaFinAnt, "%D-%M-%Y")
-                                    # actual = dt.strptime(fechaIni, "%D-%M/%Y")
-                                    """
-                                    Si la fecha de inicio actual del operario es menor a la de la fecha de finalizacion de la 
-                                    asignacion anterior 
-                                    """
-                                    
-                                    print (fechaFinAnt)
-                                    print (fechaIni)
-                                    if fechaIni < fechaFinAnt:
-                                        """
-                                        Ahora obtenemos el operario para borrar de la lista
-                                        """
-                                        print ("Holaaaa")
-                                        id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
-                                        print (id_operario)
-                                        for op in operarios:
-                                            print (op.id_operario)
-                                            if int(op.id_operario) == int(id_operario):
-                                                print ("Encuentra")
-                                                operarios.remove(op)
-                                                break
-                                elif marEnt and marEntAnt and marSalAnt and marEnt > marEntAnt and marEnt < marEntAnt:
-                                        print (fechaFinAnt)
-                                        print (fechaIni)
-                                        if fechaIni < fechaFinAnt:
-                                            """
-                                            Ahora obtenemos el operario para borrar de la lista
-                                            """
-                                            print ("Holaaaa")
-                                            id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
-                                            print (id_operario)
-                                            for op in operarios:
-                                                print (op.id_operario)
-                                                if int(op.id_operario) == int(id_operario):
-                                                    print ("Encuentra")
-                                                    operarios.remove(op)
-                                                    break
-                                elif mieEnt and mieEntAnt and mieSalAnt and mieEnt > mieEntAnt and mieEnt <mieEntAnt:
-                                        if fechaIni < fechaFinAnt:
-                                            """
-                                            Ahora obtenemos el operario para borrar de la lista
-                                            """
-                                            print ("Holaaaa")
-                                            id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
-                                            print (id_operario)
-                                            for op in operarios:
-                                                print (op.id_operario)
-                                                if int(op.id_operario) == int(id_operario):
-                                                    print ("Encuentra")
-                                                    operarios.remove(op)
-                                                    break
-                                elif jueEnt and jueEntAnt and jueSalAnt and jueEnt > jueEntAnt and jueEnt <jueEntAnt:
-                                        if fechaIni < fechaFinAnt:
-                                            """
-                                            Ahora obtenemos el operario para borrar de la lista
-                                            """
-                                            print ("Holaaaa")
-                                            id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
-                                            print (id_operario)
-                                            for op in operarios:
-                                                print (op.id_operario)
-                                                if int(op.id_operario) == int(id_operario):
-                                                    print ("Encuentra")
-                                                    operarios.remove(op)
-                                                    break
-                                elif vieEnt and vieEntAnt and vieSalAnt and vieEnt > vieEntAnt and vieEnt < vieEntAnt:
-                                        if fechaIni < fechaFinAnt:
-                                            """
-                                            Ahora obtenemos el operario para borrar de la lista
-                                            """
-                                            print ("Holaaaa")
-                                            id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
-                                            print (id_operario)
-                                            for op in operarios:
-                                                print (op.id_operario)
-                                                if int(op.id_operario) == int(id_operario):
-                                                    print ("Encuentra")
-                                                    operarios.remove(op)
-                                                    break
-                                elif sabEnt and sabEntAnt and sabSalAnt and sabEnt > sabEntAnt and sabEnt < sabEntAnt:
-                                        if fechaIni < fechaFinAnt:
-                                            """
-                                            Ahora obtenemos el operario para borrar de la lista
-                                            """
-                                            print ("Holaaaa")
-                                            id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
-                                            print (id_operario)
-                                            for op in operarios:
-                                                print (op.id_operario)
-                                                if int(op.id_operario) == int(id_operario):
-                                                    print ("Encuentra")
-                                                    operarios.remove(op)
-                                                    break
-                                elif domEnt and domEntAnt and domSalAnt and domEnt > domEntAnt and domEnt < domEntAnt:
-                                        if fechaIni < fechaFinAnt:
-                                            """
-                                            Ahora obtenemos el operario para borrar de la lista
-                                            """
-                                            print ("Holaaaa")
-                                            id_operario=request.POST.get('asignaciondet_set-' + str(index-1) +'-operario')
-                                            print (id_operario)
-                                            for op in operarios:
-                                                print (op.id_operario)
-                                                if int(op.id_operario) == int(id_operario):
-                                                    print ("Encuentra")
-                                                    operarios.remove(op)
-                                                    break
                                 index+=1
 
                     else:
                         messages.info(request, 'No se encontraron operarios con esos parametros')
                 i=i+1
-            
+        elif request.POST.get('action') == 'btn_eliminar': 
+            """Se le dio click a buscar operario"""
+            form = AsignacionCabForm(request.POST,instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)    
+            print (request.POST)
         else: 
             """Se le dio click al boton guardar"""
             
@@ -356,6 +370,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                 return redirect('Operarios:asignacion_list')
             else:
                 messages.warning(request, 'No se pudo guardar los cambios')
+
     else:
         print("NO ES POST")
         """
@@ -410,19 +425,5 @@ def cargarOperarios(request, id_puntoServicio:None):
     
     return redirect('Operarios:asignacion_create', id_puntoServicio=pk_puntoServSeleccionado)
 
-class AsignacionListView(ExportMixin,SingleTableMixin,FilterView):
-    table_class= AsignacionTable 
-    model= OperariosAsignacionDet 
-    template_name='asignacion/asignacion_list_table.html' 
-    filterset_class= OperariosFilter
-    table_pagination={"per_page":10}  
 
-    def get_context_data(self, **kwargs):
-        context = super(AsignacionListView, self).get_context_data(**kwargs)
-        #ACA AGARRA LOS PARAMETROS QUE LE PASAS, AHORA MISMO 
-        #LE PASO SOLO TOTALHORAS Y LUEGO ESO
-        #LE PASAS AL PROCEDIMIENTO BUSCAR_OPERARIOS
-        print(self.kwargs['totalHoras'])
-        buscar_operarios(5,8, (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),  (datetime.datetime.strptime('08:00:00','%H:%M:%S')).time(),datetime.datetime.strptime('1996-08-08','%Y-%m-%d'))
-        return context
     

@@ -579,11 +579,3 @@ class Feriados(models.Model):
     class Meta:
         verbose_name = _("Parametro de Sistema")
         verbose_name_plural = _("Parametros de Sistema")
-
-class Alertas(models.Model):
-    FechaHora = models.DateTimeField('Fecha hora del Alerta')
-    Operario = models.ForeignKey(Operario, on_delete=models.CASCADE)
-    Asignacion = models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
-    PuntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
-    Estado = models.CharField(_("Estado"), max_length=10)
-    Tipo = models.CharField(_('Tipo de Alerta'), max_length=10)

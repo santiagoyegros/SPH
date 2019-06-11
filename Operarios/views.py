@@ -7,22 +7,18 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django_filters.views import FilterView
 from django.forms.models import inlineformset_factory
 from django.template import RequestContext
-from django_tables2.views import SingleTableMixin
-from django_tables2.export.views import ExportMixin
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from openpyxl import Workbook
 from Operarios.models import Ciudad, Cliente, Nacionalidad
-from django_tables2.paginators import Paginator
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet,EsmeEmMarcaciones, Feriados
-from Operarios.tables import MarcacionTable
+
 
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
-from Operarios.filters import MarcacionFilter
+
 import json
 
 def index(request):
@@ -276,12 +272,7 @@ def Operarios_delete(request, pk):
         return redirect('Operarios:operarios_list')
     return render(request, 'operarios/operarios_delete.html', {'operarios': operarios})
 
-class MarcacionListView(ExportMixin,SingleTableMixin,FilterView):
-    table_class= MarcacionTable
-    model= EsmeEmMarcaciones
-    template_name='marcacion/marcacion_list.html'
-    filterset_class= MarcacionFilter
-    table_pagination={"per_page":10}
+
 
 
 
@@ -450,7 +441,7 @@ def asignarFiscales(request,id_user_jefe=None ):
                 asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
                 asignacion.save() 
 
-    return redirect('Operarios:jefes_asigFiscales', id_user_jefe=id_user_jefe)
+    return redirect('Operarios:jefes_list')
 
 @login_required
 @permission_required('Operarios.delete_operario', raise_exception=True)
@@ -531,7 +522,7 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
                 asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=nuevoPunto)
                 asignacion.save() 
 
-    return redirect('Operarios:fiscales_asig', id_user_fiscal=id_user_fiscal)
+    return redirect('Operarios:fiscales_list')
 
 @login_required
 @permission_required('Operarios.delete_operario', raise_exception=True)

@@ -14,60 +14,71 @@
   <div class="col-md-6">
       <p>
           <label for="id_Cliente">Cliente:</label> 
-          <select name="Cliente" class="form-control" required="" id="id_Cliente">
+          <!-- <select name="Cliente" class="form-control" required="" id="id_Cliente">
           <option value="" selected="">---------</option>
             {% for cliente in clientes %}
               <option value="{{cliente.pk}}">{{cliente.Cliente}}</option>
             {% endfor %}
-          </select>
+          </select>  -->
+          {{form.Cliente}}
         </p>
         <p>
           <label for="id_CodPuntoServicio">Punto de Servicio:</label> 
-          <input type="text" name="CodPuntoServicio" class="form-control" maxlength="50" required="" id="id_CodPuntoServicio">
+          <!-- <input type="text" name="CodPuntoServicio" class="form-control" maxlength="50" required="" id="id_CodPuntoServicio"> -->
+          {{form.CodPuntoServicio}}
         </p>
         <p>
           <label for="id_NombrePServicio">Nombre de Punto de Servicio:</label> 
-          <input type="text" name="NombrePServicio" class="form-control" maxlength="100" required="" id="id_NombrePServicio">
+          <!-- <input type="text" name="NombrePServicio" class="form-control" maxlength="100" required="" id="id_NombrePServicio"> -->
+          {{form.NombrePServicio}}
         </p>
         <p>
           <label for="id_DireccionContrato">Direccion del Punto de Servicio:</label> 
-          <input type="text" name="DireccionContrato" class="form-control" maxlength="150" required="" id="id_DireccionContrato">
+          <!-- <input type="text" name="DireccionContrato" class="form-control" maxlength="150" required="" id="id_DireccionContrato"> -->
+          {{form.DireccionContrato}}
         </p>
         <p>
           <label for="id_Ciudad">Ciudad:</label> 
-          <select name="Ciudad" class="form-control" required="" id="id_Ciudad">
+          <!-- <select name="Ciudad" class="form-control" required="" id="id_Ciudad">
             <option value="" selected="">---------</option>
             {% for ciudad in ciudades %}
               <option value="{{ciudad.pk}}">{{ciudad.NombreCiudad}}</option>
             {% endfor %}
-          </select>
+          </select> -->
+          {{form.Ciudad}}
         </p>
         <p>
           <label for="id_Barrios">Barrio:</label> 
-          <input type="text" name="Barrios" class="form-control" maxlength="70" required="" id="id_Barrios">
+          <!-- <input type="text" name="Barrios" class="form-control" maxlength="70" required="" id="id_Barrios"> -->
+          {{form.Barrios}}
         </p>
        
   </div>
   <div class="col-md-6">
       <p>
           <label for="id_Contacto">Contacto:</label> 
-          <input type="text" name="Contacto" class="form-control" maxlength="100" required="" id="id_Contacto">
+          <!-- <input type="text" name="Contacto" class="form-control" maxlength="100" required="" id="id_Contacto"> -->
+          {{form.Contacto}}
         </p>
       <p>
           <label for="id_MailContacto">Mail del Contacto:</label> 
-          <input type="text" name="MailContacto" class="form-control" maxlength="70" id="id_MailContacto">
+          <!-- <input type="text" name="MailContacto" class="form-control" maxlength="70" id="id_MailContacto"> -->
+          {{form.MailContacto}}
         </p>
         <p>
           <label for="id_TelefonoContacto">Telefono del Contacto:</label> 
-          <input type="text" name="TelefonoContacto" class="form-control" maxlength="100" required="" id="id_TelefonoContacto">
+          <!-- <input type="text" name="TelefonoContacto" class="form-control" maxlength="100" required="" id="id_TelefonoContacto"> -->
+          {{form.TelefonoContacto}}
         </p>
         <p>
           <label for="id_Coordenadas">Coordenadas:</label> 
-          <input type="text" name="Coordenadas" class="form-control" maxlength="100" required="" id="id_Coordenadas">
+          <!-- <input type="text" name="Coordenadas" class="form-control" maxlength="100" required="" id="id_Coordenadas"> -->
+          {{form.Coordenadas}}
         </p>
         <p>
           <label for="id_NumeroMarcador">Numero del Marcador:</label> 
-          <input type="text" name="NumeroMarcador" class="form-control" maxlength="15" id="id_NumeroMarcador">
+          <!-- <input type="text" name="NumeroMarcador" class="form-control" maxlength="15" id="id_NumeroMarcador"> -->
+          {{form.NumeroMarcador}}
         </p>
       
   </div>

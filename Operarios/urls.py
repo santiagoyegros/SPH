@@ -11,7 +11,7 @@ from Operarios.views import Planificacion_list, Planificacion_create, Jefes_list
 from Operarios.views import Fiscales_asig, Fiscales_delete
 from Operarios.views import obtenerMarcacion,getMarcaciones,obtenerFeriado,getFeriados,makeFeriados,editFeriados,deleteFeriados,descargarMarcaciones
 from Operarios import viewsAsignacion 
-from Operarios import viewsOperario
+from Operarios import viewsOperario, viewsAlerta
 from Operarios.views import PuntosServicios_update
 from Operarios.viewsAsignacion import cargarOperarios
 app_name = 'Operarios'
@@ -61,4 +61,7 @@ urlpatterns = [
     url(r'^feriados/editar/(?P<feriado_id>\d+)', editFeriados , name='feriados_put'),
     url(r'^feriados/eliminar/(?P<feriado_id>\d+)', deleteFeriados , name='feriados_delete'),
     url(r'^operaciones/operarios/vista/', viewsOperario.getOperariosVista , name='operarios_vista'),
+    url(r'^alertas/listar/', viewsAlerta.alertasList , name='alertas_list'),
+    url(r'^alertas/filtrar/', viewsAlerta.filtrarAlertas , name='alertas_list'),
+    url(r'^alertas/limpiar/', viewsAlerta.limpiarAlertas , name='alertas_list'),
 ]   

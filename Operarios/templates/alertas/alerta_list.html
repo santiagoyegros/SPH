@@ -2,5 +2,50 @@
 
 {% block content %}
 <div class="container-fluid">
+        <form method='POST' role="form"> 
+                {% csrf_token %}
+        <div class="form-group">
+                <label>Fecha Desde</label>
+                <div class="form-group">
+                    <div class='input-group date' id='datetimepickerfechaDesde'>
+                        <input type='text' class="form-control" name="{{fechaDesde}}" value="{{fechaDesde}}" required />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                {{ form.fechaNacimiento.errors }}
+                
+            </div>
+            <div class="form-group">
+                    <label>Fecha Hasta</label>
+                    <div class="form-group">
+                        <div class='input-group date' id='datetimepickerfechaHasta'>
+                            <input type='text' class="form-control" name="{{fechaHasta}}" value="{{fechaHasta}}" required />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    {{ form.fechaNacimiento.errors }}
+                    
+                </div>
+     </form>       
 </div>
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepickerfechaDesde').datetimepicker({
+          locale:'es', 
+          format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
+          defaultDate: new Date()
+        })
+    });
+    $(function () {
+        $('#datetimepickerfechaHasta').datetimepicker({
+          locale:'es', 
+          format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
+          defaultDate: new Date()
+        })
+    });
+</script>
 {% endblock %}

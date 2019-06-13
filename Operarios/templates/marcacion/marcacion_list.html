@@ -51,6 +51,7 @@
                 deleteConfirm: "Desea eliminar el registro?",
                 loadMessage: "Por favor, espere...",
                 invalidMessage: "Datos no válidos",
+                pageLoading:true,
                 controller: {
                     loadData: function(filter) {
                         var d = $.Deferred();
@@ -60,9 +61,14 @@
                             data: filter
                         }).done(function(result) {
                             console.log(result);
-                            d.resolve($.map(result, function(item) {
+                            var data= {
+                                 data:result.data[0],
+                                 itemCount:result.itemsCount
+                             }
+                             d.resolve(data)
+                            /*d.resolve($.map(result.data, function(item) {
                                 return $.extend(item.fields, { id: item.pk });
-                            }));
+                            }));*/
                         });
 
                         return d.promise();

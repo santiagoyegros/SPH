@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render, redirect, render_to_response
 from django.core import serializers
 from datetime import datetime
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -20,6 +20,8 @@ from Operarios.models import PuntoServicio, Operario, RelevamientoCab, Relevamie
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 
 import json
+from django.core.paginator import Paginator
+from django.forms.models import model_to_dict
 
 def index(request):
     return HttpResponse("Vista de Operarios")
@@ -568,7 +570,25 @@ def getMarcaciones(request):
             marcacion=marcacion.filter(fecha__lte=dtd);
         if request.GET.get('estado') is not None and request.GET.get('estado')!='':
             marcacion=marcacion.filter(estado__contains = request.GET.get('estado'));
-        return HttpResponse(serializers.serialize('json', marcacion), content_type = 'application/json', status = 200);
+        paginado=Paginator(marcacion.order_by('fecha'),  request.GET.get('pageSize'))
+        listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
+        dataMarcacion=list(listaPaginada)
+        
+        """lista=serializers.serialize("json",dataMarcacion )"""
+       
+        response_data={}
+        response_data["data"]=json.loads(serializers.serialize("json",dataMarcacion )),
+        response_data["itemsCount"]=len(marcacion)
+        
+        print (response_data)
+        print ("Serializado")
+        
+        """response_data["data"]=serializers.serialize("json",dataMarcacion )
+        response_data["itemsCount"]=len(marcacion)"""
+        
+        """print (response_data)"""
+        
+        return HttpResponse(json.dumps(response_data), content_type = 'application/json', status = 200);
 
 
 def descargarMarcaciones(request):

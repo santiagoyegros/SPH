@@ -551,3 +551,14 @@ def timeInHours(str):
     tokens = str.split(':')
 
     return int(tokens[0]) + float(tokens[1])/60.0
+
+class FiltroAlertaForm (forms.Form):
+    fechaDesde= forms.DateField(input_formats='%d/%m/%Y', initial=datetime.date.today, required=True)
+    fechaHasta= forms.DateField(input_formats='%d/%m/%Y', initial=datetime.date.today, required=True)
+    puntoServicio=forms.IntegerField()
+    fiscal=forms.IntegerField()
+    estado=forms.CharField()
+    tipoAlerta=forms.CharField()
+    operario=forms.IntegerField()
+
+

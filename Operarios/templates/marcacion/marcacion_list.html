@@ -4,110 +4,166 @@
 {% block title %}Marcaciones{% endblock %}
 
 {% block base_head %}
-    <link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
+<link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet">
+</link>
 {% endblock %}
 
 {% block content %}
 
-    <h1 class='my-3'>Marcaciones</h1>
+<h1 class='my-3'>Marcaciones</h1>
 
-    <a href="/reingenieria/marcacion/descargar">
-        <button type="button" class="desperateButton float-right borderless">
-            Descargar
-        </button>
-    </a>
+<a href="/reingenieria/marcacion/descargar">
+    <button type="button" class="desperateButton float-right borderless">
+        Descargar
+    </button>
+</a>
 
-    <div id="jsGrid"></div>
+<div id="jsGrid"></div>
 {% endblock %}
 
 {% block scripts %}
 
-    <script>
-        $(function() {
-
-            $("#jsGrid").jsGrid({
-                height: "80%",
-                width: "100%",
-                /*filtering: true,
-                inserting: true,
-                editing: true,
-                sorting: true,
-                paging: true,
-                autoload: true,*/
-                filtering: true,
-                inserting: false,
-                editing: false,
-                sorting: true,
-                paging: true,
-                autoload: true,
-                pageSize: 10,
-                pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
-                pageButtonCount: 1,
-                pagePrevText: "Anterior",
-                pageNextText: "Siguiente",
-                pageFirstText: "Primera",
-                pageLastText: "Ultima",
-                noDataContent: "No se han encontrado registros",
-                deleteConfirm: "Desea eliminar el registro?",
-                loadMessage: "Por favor, espere...",
-                invalidMessage: "Datos no válidos",
-                pageLoading:true,
-                controller: {
-                    loadData: function(filter) {
-                        var d = $.Deferred();
-                        $.ajax({
-                            type: "GET",
-                            url: "/reingenieria/marcacion/listar",
-                            data: filter
-                        }).done(function(result) {
-                            console.log(result);
-                            var data= {
-                                 data:result.data[0],
-                                 itemCount:result.itemsCount
-                             }
-                             d.resolve(data)
-                            /*d.resolve($.map(result.data, function(item) {
-                                return $.extend(item.fields, { id: item.pk });
-                            }));*/
-                        });
-
-                        return d.promise();
-                    },
-                    insertItem: function(item) {
-                        return $.ajax({
-                            type: "POST",
-                            url: "/marcacion/api",
-                            data: item
-                        });
-                    },
-                    updateItem: function(item) {
-                        return $.ajax({
-                            type: "PUT",
-                            url: "/marcacion/api/" + item.id,
-                            data: item
-                        });
-                    },
-                    deleteItem: function(item) {
-                        return $.ajax({
-                            type: "DELETE",
-                            url: "/marcacion/api/" + item.id
-                        });
-                    }
-                },
-
-                fields: [
-                    { name: "codoperacion",type:"text", width: 150,title: "Operacion",headercss:"elm-table-header"},
-                    { name: "codpersona",type:"text", width: 150,title: "Cédula" },
-                    { name: "codcategoria",type:"text", width: 150,title: "Código Categoría" },
-                    { name: "numlinea",type:"text", width: 150,title: "Nro de Linea" },
-                    { name: "codubicacion",type:"text", width: 150,title: "Ubicacion" },
-                    { name: "fecha",type:"date", width: 150,title: "Fecha" },
-                    { name: "estado",type:"text", width: 150,title: "Estado" }
-                ]
-            });
-
+<script>
+    $(document).ready(function () {
+        $('.filter-fecha').on('change', function (e) {
+            console.log("FECHA");
         });
+    });
+    $(function () {
+        var DateField = function (config) {
+            jsGrid.Field.call(this, config)
+        }
+
+        DateField.prototype = new jsGrid.Field({
+            itemTemplate: function (value) {
+                var date = new Date(value);
+                var string = ("0" + (date.getDate()+1)).slice(-2) + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear();
+                return string;
+            },
+            filterTemplate: function () {
+                this._fromPicker = $("<input>").datepicker({ dateFormat: 'dd/mm/yy' });
+                var grid = this._grid,
+                $result = this._filterControl = $("<div class='filter-input'>").append(this._fromPicker);
+                $result.on("change", function (e) {
+                    console.log("cambia");
+                    grid.search();
+                    e.preventDefault();
+                });
+                return $result;
+            },
+
+            insertTemplate: function (value) {
+                console.log("inser");
+                return this._insertPicker = $("<input>").datetimepicker({ format: 'DD/MM/YYYY' });
+            },
+            editTemplate: function (value) {
+
+                return this._editPicker = $("<input>").datetimepicker({ format: 'DD/MM/YYYY' });
+            },
+            insertValue: function () {
+
+                return this._insertPicker.datetimepicker({ format: 'DD/MM/YYYY' });
+            },
+            editValue: function () {
+
+                return this._editPicker.datetimepicker({ format: 'DD/MM/YYYY' });
+            },
+            filterValue: function () {
+
+                var date = this._fromPicker.datepicker("getDate");
+                if (date) {
+                    var string = ("0" + (date.getDate())).slice(-2) + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear();
+                    return string;
+                }
+
+            }
+        });
+        console.log("jsgrid", jsGrid.fields.date)
+        jsGrid.fields.date = DateField;
+
+        $("#jsGrid").jsGrid({
+            height: "80%",
+            width: "100%",
+            /*filtering: true,
+            inserting: true,
+            editing: true,
+            sorting: true,
+            paging: true,
+            autoload: true,*/
+            filtering: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            pageSize: 10,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "No se han encontrado registros",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    console.log("FILTER", filter);
+                    $.ajax({
+                        type: "GET",
+                        url: "/reingenieria/marcacion/listar",
+                        data: filter
+                    }).done(function (result) {
+                        console.log(result);
+                        d.resolve($.map(result, function (item) {
+                            return $.extend(item.fields, { id: item.pk });
+                        }));
+                    });
+
+                    return d.promise();
+                },
+                insertItem: function (item) {
+                    return $.ajax({
+                        type: "POST",
+                        url: "/marcacion/api",
+                        data: item
+                    });
+                },
+                updateItem: function (item) {
+                    return $.ajax({
+                        type: "PUT",
+                        url: "/marcacion/api/" + item.id,
+                        data: item
+                    });
+                },
+                deleteItem: function (item) {
+                    return $.ajax({
+                        type: "DELETE",
+                        url: "/marcacion/api/" + item.id
+                    });
+                }
+            },
+
+            fields: [
+                { name: "codoperacion", type: "text", width: 150, title: "Operacion", headercss: "elm-table-header" },
+                { name: "codpersona", type: "text", width: 150, title: "Cédula" },
+                { name: "codcategoria", type: "text", width: 150, title: "Código Categoría" },
+                { name: "numlinea", type: "text", width: 150, title: "Nro de Linea" },
+                { name: "codubicacion", type: "text", width: 150, title: "Ubicacion" },
+                { name: "fecha", type: "date", width: 150, title: "Fecha" },
+                { name: "estado", type: "text", width: 150, title: "Estado" }
+            ]
+        });
+
+    });
         /*,
-                    { type: "control" }*/
-    </script>
+            { type: "control" }*/
+</script>
+<style>
+    .filter-fecha .bootstrap-datetimepicker-widget {
+        display: none !important;
+    }
+</style>
 {% endblock %}

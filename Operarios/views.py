@@ -114,7 +114,7 @@ def PuntosServicios_update(request, pk):
             messages.success(request, 'Punto de Servicio modificado correctamente.')
         return redirect('Operarios:puntoServicio_list')
 
-    return render(request, 'operarios/puntoServicio_list.html', context=contexto)
+    return render(request, 'puntoServicio/puntoServicio_form.html', context=contexto) 
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.delete_puntoservicio', raise_exception=True), name='dispatch')
@@ -563,19 +563,25 @@ def getMarcaciones(request):
         if request.GET.get('codubicacion')  is not None and request.GET.get('codubicacion')!='':
             marcacion=marcacion.filter(codubicacion__contains = request.GET.get('codubicacion'));
         if request.GET.get('fecha')  is not None and request.GET.get('fecha')!='':
-            dtd=datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ');
+            dtd=datetime.strptime(request.GET.get('fecha'),'%d/%m/%Y');
             dtd=dtd.replace(hour=0,minute=0,second=0,microsecond=0);
             marcacion=marcacion.filter(fecha__gte=dtd);
             dtd=dtd.replace(hour=23,minute=59,second=59);
             marcacion=marcacion.filter(fecha__lte=dtd);
+            print(dtd)
         if request.GET.get('estado') is not None and request.GET.get('estado')!='':
             marcacion=marcacion.filter(estado__contains = request.GET.get('estado'));
-        paginado=Paginator(marcacion.order_by('fecha'),  request.GET.get('pageSize'))
+        """paginado=Paginator(marcacion.order_by('fecha'),  request.GET.get('pageSize'))
         listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
-        dataMarcacion=list(listaPaginada)
+        dataMarcacion=list(listaPaginada)"""
         
         """lista=serializers.serialize("json",dataMarcacion )"""
        
+
+        """
+        Filtro nuevo
+        """
+        """
         response_data={}
         response_data["data"]=json.loads(serializers.serialize("json",dataMarcacion )),
         response_data["itemsCount"]=len(marcacion)
@@ -583,14 +589,11 @@ def getMarcaciones(request):
         print (response_data)
         print ("Serializado")
         
-        """response_data["data"]=serializers.serialize("json",dataMarcacion )
-        response_data["itemsCount"]=len(marcacion)"""
-        
-        """print (response_data)"""
+       
         
         return HttpResponse(json.dumps(response_data), content_type = 'application/json', status = 200);
-
-
+        """
+        return HttpResponse(serializers.serialize("json",marcacion ), content_type = 'application/json', status = 200);
 def descargarMarcaciones(request):
         marcacion = EsmeEmMarcaciones.objects.all();
         if request.GET.get('codoperacion')  is not None and request.GET.get('codoperacion')!='':
@@ -670,10 +673,11 @@ def getFeriados(request):
         if request.GET.get('descripcion')  is not None and request.GET.get('descripcion')!='':
             feriados=feriados.filter(descripcion__contains = request.GET.get('descripcion'));
         if request.GET.get('fecha')  is not None and request.GET.get('fecha')!='':
-            dtd=datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ');
+            dtd=datetime.strptime(request.GET.get('fecha'),'%d/%m/%Y');
             dtd=dtd.replace(hour=0,minute=0,second=0,microsecond=0);
             feriados=feriados.filter(fecha__gte=dtd);
             dtd=dtd.replace(hour=23,minute=59,second=59);
+            print(dtd)
             feriados=feriados.filter(fecha__lte=dtd);
         return HttpResponse(serializers.serialize('json', feriados), content_type = 'application/json', status = 200);
 def makeFeriados(request):

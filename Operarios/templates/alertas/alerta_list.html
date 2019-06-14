@@ -1,51 +1,144 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h1 class='my-3'>Alertas</h1>
 <div class="container-fluid">
-        <form method='POST' role="form"> 
-                {% csrf_token %}
-        <div class="form-group">
-                <label>Fecha Desde</label>
-                <div class="form-group">
-                    <div class='input-group date' id='datetimepickerfechaDesde'>
-                        <input type='text' class="form-control" name="{{fechaDesde}}" value="{{fechaDesde}}" required />
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                    </div>
-                </div>
-                {{ form.fechaNacimiento.errors }}
-                
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Filtros de Alertas
             </div>
-            <div class="form-group">
-                    <label>Fecha Hasta</label>
-                    <div class="form-group">
-                        <div class='input-group date' id='datetimepickerfechaHasta'>
-                            <input type='text' class="form-control" name="{{fechaHasta}}" value="{{fechaHasta}}" required />
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
+            <div class="card-body">
+                <div class="cuerpo-filtro row">
+                    <div class="row filter-row">
+                        <div class="col-md-4">
+                            <p style="margin:0px !important">
+
+                                <label for="">Fecha inicio:</label>
+                                <div class='input-group date' id='datetimepickerfechaDesde'>
+                                    <input type='text' class="form-control" name="fechaDesde" value="{{fechaDesde}}"
+                                        required />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p style="margin:0px !important">
+
+                                <label for="">Fecha fin:</label>
+                                <div class='input-group date' id='datetimepickerfechaHasta'>
+                                    <input type='text' class="form-control" name="fechaHasta" value="{{fechaHasta}}"
+                                        required />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>
+
+                                <label for="">Punto de servicio:</label>
+                                <select class="form-control" id="exampleFormControlSelect1" name="asig_puntoServ">
+                                    {% if PuntosServicio %}
+                                    <option value="''">--- Seleccione un Punto de Servicio ---</option>
+                                    {% for puntosSer in PuntosServicio %}
+                                    <option value={{ puntosSer.id }}>{{ puntosSer.NombrePServicio }}</option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </p>
                         </div>
                     </div>
-                    {{ form.fechaNacimiento.errors }}
-                    
+                    <div class="row filter-row">
+                        <div class="col-md-4">
+                            <p>
+
+                                <label for="">Estado:</label>
+                                <select class="form-control" id="exampleFormControlSelect1" name="asig_puntoServ">
+                                    <option value="'Activo'">Activo </option>
+                                    <option value="'Pendiente'">Pendiente</option>
+                                    <option value="'Cerrado'">Cerrado </option>
+                                </select>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>
+
+                                <label for="tipoAlerta">Tipo de alerta:</label>
+                                <select name="tipoAlerta" id="tipoAlerta" class="form-control"
+                                    id="exampleFormControlSelect1" name="asig_puntoServ">
+                                    <option value="'No marcacion'">No marcacion</option>
+                                    <option value="'Sin asignacion'">Sin asignacion</option>
+                                </select>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>
+
+                                <label for="">Operario:</label>
+                                <select class="form-control" id="exampleFormControlSelect1" name="asig_puntoServ">
+                                    {% if operarios %}
+                                    <option value="''">--- Seleccione un Operario ---</option>
+                                    {% for operario in operarios %}
+                                    <option value={{ operario.id }}>{{ operario.nombre }} - {{operario.nroLegajo}}
+                                    </option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-     </form>       
+                <div style="    float: right;">
+                    <a href="#" class="btn btn-primary">Filtrar</a>
+                    <a href="#" class="btn btn-primary">Limpiar</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 </div>
 <script type="text/javascript">
     $(function () {
         $('#datetimepickerfechaDesde').datetimepicker({
-          locale:'es', 
-          format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
-          defaultDate: new Date()
+            locale: 'es',
+            format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
+            defaultDate: new Date()
         })
     });
     $(function () {
         $('#datetimepickerfechaHasta').datetimepicker({
-          locale:'es', 
-          format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
-          defaultDate: new Date()
+            locale: 'es',
+            format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
+            defaultDate: new Date()
         })
     });
 </script>
+
+<style>
+    .card-header {
+        background-color: #a52441 !important;
+        color: white !important;
+        font-size: 20px !important;
+        border-radius: 0px !important;
+        border-bottom: 1px solid gray !important;
+    }
+
+    .cuerpo-filtro .row div p {
+        width: 100% !important;
+        padding: 0px 10px;
+    }
+
+    .filter-row {
+        width: 100%;
+    }
+    .input-group{
+        padding: 0px 10px;
+
+    }
+</style>
 {% endblock %}

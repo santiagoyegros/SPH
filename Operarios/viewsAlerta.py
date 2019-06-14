@@ -15,6 +15,7 @@ from datetime import datetime
 from Operarios.models import Alertas
 from Operarios.forms import FiltroAlertaForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from Operarios.models import PuntoServicio, Operario
 def alertasList (request):
 
         
@@ -22,7 +23,8 @@ def alertasList (request):
     print ("Filtrar las alertas del dia")    
     hoy= date.today()
     print (hoy)
-    
+    operarios = Operario.objects.all()
+    PuntosServicio = PuntoServicio.objects.all()
     alertasList=Alertas.objects.filter(FechaHora__gte=hoy,FechaHora__lte=hoy)
     alertasList=alertasList.filter(Estado="Abierto")
     print (alertasList)
@@ -37,7 +39,9 @@ def alertasList (request):
         'title': 'Filtrado de Alertas',
         'alertasList':alertasList,
         'paginator':paginator,
-        'base_url':base_url
+        'base_url':base_url,
+        'operarios':operarios,
+        'PuntosServicio':PuntosServicio
     
         
     }
@@ -66,7 +70,8 @@ def filtrarAlertas (request):
         'alertasList':alertasList,
         'paginator':paginator,
         'base_url':base_url,
-        "fechaDesde":"xxxx" #aca ls datos que se pasaron desde el filtro, cada uno fechaDesde, hasta, estado, etc
+        "fechaDesde":"xxxx",
+        "fechaHasta":"xxxx" #aca ls datos que se pasaron desde el filtro, cada uno fechaDesde, hasta, estado, etc
     
     }
     return render(request, 'alertas/alerta_list.html', context=contexto)
@@ -74,9 +79,9 @@ def limpiarAlertas (request):
     print ("Es post y limpiar, debe quedar inicialmente")
     alertasList=Alertas.objects.filter(FechaHora__gte=request.POST.get('fechaDesde').strftime("%d-%m-%Y"),FechaHora__lte=request.POST.get('fechaHasta').strftime("%d-%m-%Y")).orderBy("desc")
     alertasList=alertasList.filter(Estado="Abierto")
-    print (alertasList)
+    alertasList=Alertas.objects.all()
     paginar=do_paginate(alertasList, 1)
-    return render(request, 'alertas/alerta_list.html', context=contexto)
+    return render(request, 'alertas/alerta_list.html')
     
 def do_paginate(data_list, page_number):
     ret_data_list=data_list

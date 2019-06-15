@@ -13,7 +13,6 @@ from django.contrib.auth.models import User
 from datetime import date
 from datetime import datetime
 from Operarios.models import Alertas
-from Operarios.forms import FiltroAlertaForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Operarios.models import PuntoServicio, Operario
 def alertasList (request):

@@ -17,72 +17,101 @@ from Operarios.forms import FiltroAlertaForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Operarios.models import PuntoServicio, Operario
 def alertasList (request):
-
-        
-    """devolver el listado inicial con la fecha por defecto"""
-    print ("Filtrar las alertas del dia")    
+    estado="Abierto"
+    fechaDesde=request.GET.get('fechaDesde')
+    fechaHasta=request.GET.get('fechaHasta')
+    puntoServicio=None
+    operario=None
+    """query por defecto con fecha del dia"""
     hoy= date.today()
-    print (hoy)
+    alertasList=Alertas.objects.filter(FechaHora__gte=hoy,FechaHora__lte=hoy)
     operarios = Operario.objects.all()
     PuntosServicio = PuntoServicio.objects.all()
-    alertasList=Alertas.objects.filter(FechaHora__gte=hoy,FechaHora__lte=hoy)
     alertasList=alertasList.filter(Estado="Abierto")
-    print (alertasList)
     alertasList=alertasList.order_by("-FechaHora")
+    """query por filtro segun el usuario"""
+    print (request.GET.get('puntoServicio'))
+    print (request.GET.get('fechaDesde'))
+    print (request.GET.get('fechaHasta'))
+    print (request.GET.get('estado'))
+    print (request.GET.get('tipoAlerta'))
+    print (request.GET.get('operario'))
+    if request.GET.get("fechaDesde") and request.GET.get("fechaHasta"):
+        alertasList=Alertas.objects.filter(FechaHora__gte=datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").strftime("%Y-%m-%d"),FechaHora__lte=datetime.strptime(request.GET.get('fechaHasta'), "%d/%m/%Y").strftime("%Y-%m-%d"))
+    if request.GET.get('estado'):
+        alertasList=alertasList.filter(Estado=request.GET.get('estado'))
+        estado=request.GET.get('estado')
+    if request.GET.get('tipoAlerta'):
+        alertasList=alertasList.filter(Tipo=request.GET.get('tipoAlerta'))
+    if request.GET.get('operario') :
+        alertasList=alertasList.filter(Operario_id=request.GET.get('operario'))
+        operario=int(request.GET.get('operario'))
+    if request.GET.get('puntoServicio') :
+        alertasList=alertasList.filter(PuntoServicio_id=request.GET.get('puntoServicio'))
+        puntoServicio=int(request.GET.get('puntoServicio'))
+    """se procede a obtener la paginacion"""
     pageNumber=request.GET.get("page",1)
     paginar=do_paginate(alertasList, pageNumber)
     alertasList=paginar[0]
     paginator=paginar[1]
-    base_url="/alertas/listar/?"
+    print (alertasList)
 
     contexto = {
         'title': 'Filtrado de Alertas',
         'alertasList':alertasList,
         'paginator':paginator,
-        'base_url':base_url,
         'operarios':operarios,
-        'PuntosServicio':PuntosServicio
+        'PuntosServicio':PuntosServicio,
+        "fechaDesde":fechaDesde,
+        "fechaHasta":fechaHasta, 
+        "estado":estado,
+        "puntoServicio":puntoServicio,
+        "operario":operario,
     
         
     }
 
     return render(request, 'alertas/alerta_list.html', context=contexto)
 def filtrarAlertas (request):
-    alertasList=Alertas.objects.filter(FechaHora__gte=request.POST.get('fechaDesde').strftime("%d-%m-%Y"),FechaHora__lte=request.POST.get('fechaHasta').strftime("%d-%m-%Y"))
-    alertasList=alertasList.filter(Estado=request.POST.get('estado'))
+    if request.method == 'POST':
+        print ("Es POST")
+    print ("Intenta filtrar")
+    print (request.POST.get('puntoServicio'))
+    print (request.POST.get('fechaDesde'))
+    print (request.POST.get('fechaHasta'))
+    print (request.POST.get('estado'))
+    print (request.POST.get('tipoAlerta'))
+    print (request.POST.get('operario'))
+    fechaDesde=request.POST.get('fechaDesde')
+    fechaHasta=request.POST.get('fechaHasta')
+    alertasList=Alertas.objects.filter(FechaHora__gte=datetime.strptime(request.POST.get('fechaDesde'), "%d/%m/%Y").strftime("%Y-%m-%d"),FechaHora__lte=datetime.strptime(request.POST.get('fechaHasta'), "%d/%m/%Y").strftime("%Y-%m-%d"))
+    print (fechaDesde)
+    estado=""
+   
     if request.POST.get('estado'):
         alertasList=alertasList.filter(Estado=request.POST.get('estado'))
+        estado=request.POST.get('estado')
     if request.POST.get('tipoAlerta'):
-        alertasList=alertasList.filter(TipoAlerta=request.POST.get('tipoAlerta'))
-    if request.POST.get('tipoAlerta'):
-        alertasList=alertasList.filter(TipoAlerta=request.POST.get('tipoAlerta'))
-    if request.POST.get('operario'):
+        alertasList=alertasList.filter(Tipo=request.POST.get('tipoAlerta'))
+    if request.POST.get('operario') :
         alertasList=alertasList.filter(Operario_id=request.POST.get('operario'))
-    if request.POST.get('puntoServicio'):
+    if request.POST.get('puntoServicio') :
         alertasList=alertasList.filter(PuntoServicio_id=request.POST.get('puntoServicio'))
     pageNumber=request.GET.get("page",1)
     paginar=do_paginate(alertasList, pageNumber)
     alertasList=paginar[0]
     paginator=paginar[1]
-    base_url="/alertas/filtrar/?fechaDesde=" #aca tiene que ir todos los parametros armados
+    base_url="/alertas/filtrar/?fechaDesde="+request.POST.get('fechaDesde')+"&fechaHasta="+fechaHasta+"&estado="+estado #aca tiene que ir todos los parametros armados
     contexto = {
         'title': 'Filtrado de Alertas',
         'alertasList':alertasList,
         'paginator':paginator,
         'base_url':base_url,
-        "fechaDesde":"xxxx",
-        "fechaHasta":"xxxx" #aca ls datos que se pasaron desde el filtro, cada uno fechaDesde, hasta, estado, etc
+        "fechaDesde":fechaDesde,
+        "fechaHasta":fechaHasta #aca ls datos que se pasaron desde el filtro, cada uno fechaDesde, hasta, estado, etc
     
     }
     return render(request, 'alertas/alerta_list.html', context=contexto)
-def limpiarAlertas (request):
-    print ("Es post y limpiar, debe quedar inicialmente")
-    alertasList=Alertas.objects.filter(FechaHora__gte=request.POST.get('fechaDesde').strftime("%d-%m-%Y"),FechaHora__lte=request.POST.get('fechaHasta').strftime("%d-%m-%Y")).orderBy("desc")
-    alertasList=alertasList.filter(Estado="Abierto")
-    alertasList=Alertas.objects.all()
-    paginar=do_paginate(alertasList, 1)
-    return render(request, 'alertas/alerta_list.html')
-    
 def do_paginate(data_list, page_number):
     ret_data_list=data_list
     result_per_page=10
@@ -90,7 +119,7 @@ def do_paginate(data_list, page_number):
     try:
         ret_data_list=paginator.page(page_number)
     except EmptyPage:
-        red_data_list=paginator.page(paginator.num_pages)
+        ret_data_list=paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         ret_data_list=paginator.page(1)
     return [ret_data_list, paginator]

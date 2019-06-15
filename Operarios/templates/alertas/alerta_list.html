@@ -3,6 +3,9 @@
 {% block content %}
 <h1 class='my-3'>Alertas</h1>
 <div class="container-fluid">
+    <form method="GET" role="form" id="formulario">
+            
+   
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
@@ -38,17 +41,21 @@
                             </p>
                         </div>
                         <div class="col-md-4">
-                            <p>
-
+                            <p> 
                                 <label for="">Punto de servicio:</label>
-                                <select class="form-control" id="exampleFormControlSelect1" name="asig_puntoServ">
-                                    {% if PuntosServicio %}
-                                    <option value="''">--- Seleccione un Punto de Servicio ---</option>
-                                    {% for puntosSer in PuntosServicio %}
-                                    <option value={{ puntosSer.id }}>{{ puntosSer.NombrePServicio }}</option>
-                                    {% endfor %}
-                                    {% endif %}
-                                </select>
+                                <select id="puntoServicio" data-size="5" name="puntoServicio" value="{{puntoServicio}}"  class="selectpicker form-control" data-live-search="true" title="Seleccionar...." >
+                    
+                                        {% for puntosSer in PuntosServicio %}
+                                        {% if puntosSer.id == puntoServicio  %}
+                                          <option data-tokens="{{puntosSer.NombrePServicio}}" selected="selected"
+                                          value="{{puntosSer.id}}"> {{puntosSer.NombrePServicio}}</option>
+                                        {% else %}
+                                          <option data-tokens="{{puntosSer.NombrePServicio}}" value="{{puntosSer.id}}"> {{puntosSer.NombrePServicio}}</option>
+                    
+                                        {% endif %}
+                                       {% endfor %}
+                                    </select>
+                                
                             </p>
                         </div>
                     </div>
@@ -57,8 +64,8 @@
                             <p>
 
                                 <label for="">Estado:</label>
-                                <select class="form-control" id="exampleFormControlSelect1" name="asig_puntoServ">
-                                    <option value="'Activo'">Activo </option>
+                                <select class="form-control" id="exampleFormControlSelect1" name="estado" value="{{estado}}">
+                                    <option value="'Abierto'" selected>Abierto </option>
                                     <option value="'Pendiente'">Pendiente</option>
                                     <option value="'Cerrado'">Cerrado </option>
                                 </select>
@@ -69,8 +76,8 @@
 
                                 <label for="tipoAlerta">Tipo de alerta:</label>
                                 <select name="tipoAlerta" id="tipoAlerta" class="form-control"
-                                    id="exampleFormControlSelect1" name="asig_puntoServ">
-                                    <option value="'No marcacion'">No marcacion</option>
+                                    id="exampleFormControlSelect1" name="tipoAlerta" value="{{tipoAlerta}}">
+                                    <option value="'No marcacion'" selected>No marcacion</option>
                                     <option value="'Sin asignacion'">Sin asignacion</option>
                                 </select>
                             </p>
@@ -79,9 +86,9 @@
                             <p>
 
                                 <label for="">Operario:</label>
-                                <select class="form-control" id="exampleFormControlSelect1" name="asig_puntoServ">
+                                <select class="form-control" id="exampleFormControlSelect1" name="operario" value="{{operario}}">
                                     {% if operarios %}
-                                    <option value="''">--- Seleccione un Operario ---</option>
+                                    <option value="">--- Seleccione un Operario ---</option>
                                     {% for operario in operarios %}
                                     <option value={{ operario.id }}>{{ operario.nombre }} - {{operario.nroLegajo}}
                                     </option>
@@ -93,13 +100,28 @@
                     </div>
                 </div>
                 <div style="    float: right;">
-                    <a href="#" class="btn btn-primary">Filtrar</a>
-                    <a href="#" class="btn btn-primary">Limpiar</a>
+                        <button type='submit' class='btn btn-success'>Filtrar</button>
+                    
+                    <a href={% url 'Operarios:alertas_list' %} class="btn btn-primary">Limpiar</a>
                 </div>
 
             </div>
         </div>
+        <table></table>
+        <div class="pagination">
+            {% if alertasList.has_previous %}
+            <a href="?page={{alertasList.previous_page_number}}">Anterior</a>
+            {% else %}
+            <span class="disabled">Anterior</span>
+            {% endif %}
+            {% if alertasList.has_next %}
+            <a href="?page={{alertasList.next_page_number}}">Anterior</a>
+            {% else %}
+            <span class="disabled">Siguiente</span>
+            {% endif %}
+        </div>
     </div>
+</form>
 
 </div>
 <script type="text/javascript">
@@ -107,17 +129,25 @@
         $('#datetimepickerfechaDesde').datetimepicker({
             locale: 'es',
             format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
-            defaultDate: new Date()
+            date: new Date()
         })
     });
     $(function () {
         $('#datetimepickerfechaHasta').datetimepicker({
             locale: 'es',
             format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
-            defaultDate: new Date()
+            date: new Date()
         })
     });
+    function llamarFiltro()
+    {
+        document.getElementById('action').value = 'filter_operario-' + id;
+        //hacemos submit
+        document.getElementById('formulario').submit();
+    }
+    
 </script>
+
 
 <style>
     .card-header {

@@ -459,6 +459,7 @@ class AsignacionDet(models.Model):
     fechaFin = models.DateField('Fecha Fin Operario', null=True,blank=True)
     totalHoras = models.CharField('Total Asignado', max_length=8, null=True)
     supervisor=models.BooleanField('Supervisor', default=False)
+    perfil = models.ForeignKey(Especializacion, on_delete=models.CASCADE, null=True)
     
 
     

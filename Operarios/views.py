@@ -20,6 +20,8 @@ from Operarios.models import PuntoServicio, Operario, RelevamientoCab, Relevamie
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 
 import json
+import datetime
+import decimal
 from django.core.paginator import Paginator
 from django.forms.models import model_to_dict
 
@@ -594,6 +596,57 @@ def getMarcaciones(request):
         return HttpResponse(json.dumps(response_data), content_type = 'application/json', status = 200);
         """
         return HttpResponse(serializers.serialize("json",marcacion ), content_type = 'application/json', status = 200);
+
+
+def default(o):
+    if isinstance(o,(datetime.date,datetime.datetime)):
+        return o.isoformat();
+    if isinstance(o,decimal.Decimal):
+        return str(o);
+
+def getMarcacionesPaginada(request):
+        marcacion = EsmeEmMarcaciones.objects.all();
+        if request.GET.get('codoperacion')  is not None and request.GET.get('codoperacion')!='':
+            marcacion=marcacion.filter(codoperacion__contains = request.GET.get('codoperacion'));
+        if request.GET.get('codpersona')  is not None and request.GET.get('codpersona')!='':
+            marcacion=marcacion.filter(codpersona=request.GET.get('codpersona'));
+        if request.GET.get('codcategoria')  is not None  and request.GET.get('codcategoria')!='':
+            marcacion=marcacion.filter(codcategoria=request.GET.get('codcategoria'));
+        if request.GET.get('numlinea')  is not None  and request.GET.get('numlinea')!='':
+            marcacion=marcacion.filter(numlinea__contains = request.GET.get('numlinea'));
+        if request.GET.get('codubicacion')  is not None and request.GET.get('codubicacion')!='':
+            marcacion=marcacion.filter(codubicacion__contains = request.GET.get('codubicacion'));
+        if request.GET.get('fecha')  is not None and request.GET.get('fecha')!='':
+            dtd=datetime.strptime(request.GET.get('fecha'),'%d/%m/%Y');
+            dtd=dtd.replace(hour=0,minute=0,second=0,microsecond=0);
+            marcacion=marcacion.filter(fecha__gte=dtd);
+            dtd=dtd.replace(hour=23,minute=59,second=59);
+            marcacion=marcacion.filter(fecha__lte=dtd);
+            print(dtd)
+        if request.GET.get('estado') is not None and request.GET.get('estado')!='':
+            marcacion=marcacion.filter(estado__contains = request.GET.get('estado'));
+        
+        pagina=1;
+        items=10;
+        cuenta=marcacion.count();
+
+        if request.GET.get('pagina') is not None and request.GET.get('pagina')!='':
+            pagina=int(request.GET.get('pagina'));
+        if request.GET.get('items') is not None and request.GET.get('items')!='':
+            items=int(request.GET.get('items'));
+        marcacion=marcacion[(pagina-1)*items:pagina*items];
+        marcacion=[model_to_dict(item) for item in marcacion];
+        respuesta={};
+        respuesta['lista']=marcacion;
+        respuesta['totalPaginas']=round(cuenta/items);
+        respuesta['paginaActual']=pagina;
+        respuesta['totalItems']=cuenta;
+        respuesta['items']=items;
+
+        return HttpResponse(json.dumps(respuesta,default=default), content_type = 'application/json', status = 200);
+        
+
+
 def descargarMarcaciones(request):
         marcacion = EsmeEmMarcaciones.objects.all();
         if request.GET.get('codoperacion')  is not None and request.GET.get('codoperacion')!='':

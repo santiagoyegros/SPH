@@ -465,30 +465,6 @@ class AsignacionDet(models.Model):
         verbose_name = _("Asignacion Detalle")
         verbose_name_plural = _("Asignacion Detalles")
 
-class AsignacionDetAux(models.Model):
-    asignacionCab =  models.ForeignKey(AsignacionCab, blank=True, null=True, on_delete=models.SET_NULL)
-    lunEnt = models.TimeField('Lunes entradas', blank=True, null=True)
-    lunSal = models.TimeField('Lunes salida', blank=True, null=True)
-    marEnt = models.TimeField('Martes entrada', blank=True, null=True)
-    marSal = models.TimeField('Martes salida', blank=True, null=True)
-    mieEnt = models.TimeField('Miercoles entrada', blank=True, null=True)
-    mieSal = models.TimeField('Miercoles salida', blank=True, null=True)
-    jueEnt = models.TimeField('Jueves entrada', blank=True, null=True)
-    jueSal = models.TimeField('Jueves salida', blank=True, null=True)
-    vieEnt = models.TimeField('Viernes entrada', blank=True, null=True)
-    vieSal = models.TimeField('Viernes salida', blank=True, null=True)
-    sabEnt = models.TimeField('Sabado entrada', blank=True, null=True)
-    sabSal = models.TimeField('Sabado salida', blank=True, null=True)
-    domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
-    domSal = models.TimeField('Domingo salida', blank=True, null=True)
-    operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
-    fechaInicio = models.DateField('Fecha Inicio Operario Aux', null=True)
-    totalHoras = models.CharField('Total de horas necesarias tabla aux', max_length=8, null=True)
-    class Meta:
-        verbose_name = _("Asignacion Detalle Auxiliar")
-        verbose_name_plural = _("Asignacion Detalles Auxiliares")
-
-
 class HorasProcesadas(models.Model):
     NumCedulaOperario = models.CharField('N° Cedula', max_length=30)
     puntoServicio = models.ForeignKey(PuntoServicio, on_delete=models.CASCADE)
@@ -538,18 +514,6 @@ class EsmeEmMarcaciones(models.Model):
         managed = False
         db_table = 'ESME_EM_Marcaciones'
 
-class OperariosAsignacionDet (models.Model):
-    id_operario= models.IntegerField(db_column='id_opeario', primary_key=True,verbose_name=' ')
-    nombres=models.CharField(db_column='nombres',verbose_name='Nombres',max_length=200)
-    nroLegajo=models.CharField(db_column='nroLegajo',verbose_name='Numero de legajo',max_length=6)
-    nombres_puntoServicio=models.CharField(db_column='nombres_puntoServicio',verbose_name='Nombres Puntos de Servicio',max_length=200)
-    ids_puntoServicio=models.CharField(db_column='ids_puntoServicio',verbose_name=' ',max_length=100)
-    totalHoras=models.FloatField(db_column='totalHoras',verbose_name='Total Horas')
-    perfil=models.CharField(db_column='perfil',verbose_name='Perfil',max_length=400)
-    antiguedad=models.IntegerField(db_column='antiguedad',verbose_name='Antiguedad')
-    class Meta:
-        verbose_name = _("Operario disponible")
-        verbose_name_plural = _("Operarios disponibles")
     
 
 class AsignacionesProcesadas(models.Model):

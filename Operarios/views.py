@@ -24,7 +24,7 @@ import datetime
 import decimal
 from django.core.paginator import Paginator
 from django.forms.models import model_to_dict
-
+from datetime import datetime
 def index(request):
     return HttpResponse("Vista de Operarios")
 

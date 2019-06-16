@@ -2,126 +2,175 @@
 
 {% block content %}
 <h1 class='my-3'>Alertas</h1>
-<div class="container-fluid">
+<div class="container-fluid pl-0 pr-1">
     <form method="GET" role="form" id="formulario">
-            
-   
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                Filtros de Alertas
-            </div>
-            <div class="card-body">
-                <div class="cuerpo-filtro row">
-                    <div class="row filter-row">
-                        <div class="col-md-4">
-                            <p style="margin:0px !important">
 
-                                <label for="">Fecha inicio:</label>
-                                <div class='input-group date' id='datetimepickerfechaDesde'>
-                                    <input type='text' class="form-control" name="fechaDesde" value="{{fechaDesde}}"
-                                        required />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            <p style="margin:0px !important">
 
-                                <label for="">Fecha fin:</label>
-                                <div class='input-group date' id='datetimepickerfechaHasta'>
-                                    <input type='text' class="form-control" name="fechaHasta" value="{{fechaHasta}}"
-                                        required />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            <p> 
-                                <label for="">Punto de servicio:</label>
-                                <select id="puntoServicio" data-size="5" name="puntoServicio" value="{{puntoServicio}}"  class="selectpicker form-control" data-live-search="true" title="Seleccionar...." >
-                    
+        <div class="col-md-12 pl-0 pr-1">
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    Filtros de Alertas
+                </div>
+                <div class="card-body">
+                    <div class="cuerpo-filtro row">
+                        <div class="row filter-row">
+                            <div class="col-md-4">
+                                <p style="margin:0px !important">
+
+                                    <label for="">Fecha inicio:</label>
+                                    <div class='input-group date' id='datetimepickerfechaDesde'>
+                                        <input type='text' class="form-control" name="fechaDesde" value="{{fechaDesde}}"
+                                            required />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p style="margin:0px !important">
+
+                                    <label for="">Fecha fin:</label>
+                                    <div class='input-group date' id='datetimepickerfechaHasta'>
+                                        <input type='text' class="form-control" name="fechaHasta" value="{{fechaHasta}}"
+                                            required />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>
+                                    <label for="">Punto de servicio:</label>
+                                    <select id="puntoServicio" data-size="5" name="puntoServicio"
+                                        value="{{puntoServicio}}" class="selectpicker form-control"
+                                        data-live-search="true" title="Seleccionar....">
+
                                         {% for puntosSer in PuntosServicio %}
                                         {% if puntosSer.id == puntoServicio  %}
-                                          <option data-tokens="{{puntosSer.NombrePServicio}}" selected="selected"
-                                          value="{{puntosSer.id}}"> {{puntosSer.NombrePServicio}}</option>
+                                        <option data-tokens="{{puntosSer.NombrePServicio}}" selected="selected"
+                                            value="{{puntosSer.id}}"> {{puntosSer.NombrePServicio}}</option>
                                         {% else %}
-                                          <option data-tokens="{{puntosSer.NombrePServicio}}" value="{{puntosSer.id}}"> {{puntosSer.NombrePServicio}}</option>
-                    
+                                        <option data-tokens="{{puntosSer.NombrePServicio}}" value="{{puntosSer.id}}">
+                                            {{puntosSer.NombrePServicio}}</option>
+
                                         {% endif %}
-                                       {% endfor %}
+                                        {% endfor %}
                                     </select>
-                                
-                            </p>
+
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row filter-row">
+                            <div class="col-md-4">
+                                <p>
+
+                                    <label for="">Estado:</label>
+                                    <select class="form-control" id="exampleFormControlSelect1" name="estado"
+                                        value="{{estado}}">
+                                        <option value="'Abierto'" selected>Abierto </option>
+                                        <option value="'Pendiente'">Pendiente</option>
+                                        <option value="'Cerrado'">Cerrado </option>
+                                    </select>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>
+
+                                    <label for="tipoAlerta">Tipo de alerta:</label>
+                                    <select name="tipoAlerta" id="tipoAlerta" class="form-control"
+                                        id="exampleFormControlSelect1" name="tipoAlerta" value="{{tipoAlerta}}">
+                                        <option value="'No marcacion'" selected>No marcacion</option>
+                                        <option value="'Sin asignacion'">Sin asignacion</option>
+                                    </select>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>
+                                    <label for="">Operario:</label>
+                                    <select id="operario" data-size="5" name="operario" value="{{operario}}"
+                                        class="selectpicker form-control" data-live-search="true"
+                                        title="Seleccionar....">
+
+                                        {% for ope in operarios %}
+                                        {% if ope.id == operario  %}
+                                        <option data-tokens="{{ope.nombre}}" selected="selected" value="{{ope.id}}">
+                                            {{ope.nombre}}</option>
+                                        {% else %}
+                                        <option data-tokens="{{ope.nombre}}" value="{{ope.id}}">
+                                            {{ope.nombre}}</option>
+
+                                        {% endif %}
+                                        {% endfor %}
+                                    </select>
+
+                                </p>
+                            </div>
                         </div>
                     </div>
-                    <div class="row filter-row">
-                        <div class="col-md-4">
-                            <p>
+                    <div style="    float: right;">
+                        <button type='submit' class='btn btn-success btn-filtrar'>Filtrar</button>
 
-                                <label for="">Estado:</label>
-                                <select class="form-control" id="exampleFormControlSelect1" name="estado" value="{{estado}}">
-                                    <option value="'Abierto'" selected>Abierto </option>
-                                    <option value="'Pendiente'">Pendiente</option>
-                                    <option value="'Cerrado'">Cerrado </option>
-                                </select>
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            <p>
-
-                                <label for="tipoAlerta">Tipo de alerta:</label>
-                                <select name="tipoAlerta" id="tipoAlerta" class="form-control"
-                                    id="exampleFormControlSelect1" name="tipoAlerta" value="{{tipoAlerta}}">
-                                    <option value="'No marcacion'" selected>No marcacion</option>
-                                    <option value="'Sin asignacion'">Sin asignacion</option>
-                                </select>
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            <p>
-
-                                <label for="">Operario:</label>
-                                <select class="form-control" id="exampleFormControlSelect1" name="operario" value="{{operario}}">
-                                    {% if operarios %}
-                                    <option value="">--- Seleccione un Operario ---</option>
-                                    {% for operario in operarios %}
-                                    <option value={{ operario.id }}>{{ operario.nombre }} - {{operario.nroLegajo}}
-                                    </option>
-                                    {% endfor %}
-                                    {% endif %}
-                                </select>
-                            </p>
-                        </div>
+                        <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar">Limpiar</a>
                     </div>
-                </div>
-                <div style="    float: right;">
-                        <button type='submit' class='btn btn-success'>Filtrar</button>
-                    
-                    <a href={% url 'Operarios:alertas_list' %} class="btn btn-primary">Limpiar</a>
-                </div>
 
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nro.</th>
+                        <th>Fin de Servicio</th>
+                        <th>Operario</th>
+                        <th>Fiscal</th>
+                        <th>Horario</th>
+                        <th>Retraso</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Tipo</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pagination">
+                Página:&nbsp;&nbsp;
+                {% if alertasList.has_previous %}
+                <a href="?page={{alertasList.previous_page_number}}">Anterior</a>
+                {% else %}
+                <span class="disabled">Anterior</span>
+                {% endif %}
+                {% for num in alertasList.paginator.page_range %}
+                {% if alertasList.number == num %}
+                <li class="active"><a href="#!">{{ num }}</a></li>
+                {% else %}
+                <li class="waves-effect"><a
+                        href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if alertasList.has_next %}
+                <a href="?page={{alertasList.next_page_number}}">Anterior</a>
+                {% else %}
+                <span class="disabled">Siguiente</span>
+                {% endif %}
             </div>
         </div>
-        <table></table>
-        <div class="pagination">
-            {% if alertasList.has_previous %}
-            <a href="?page={{alertasList.previous_page_number}}">Anterior</a>
-            {% else %}
-            <span class="disabled">Anterior</span>
-            {% endif %}
-            {% if alertasList.has_next %}
-            <a href="?page={{alertasList.next_page_number}}">Anterior</a>
-            {% else %}
-            <span class="disabled">Siguiente</span>
-            {% endif %}
-        </div>
-    </div>
-</form>
+    </form>
+
 
 </div>
 <script type="text/javascript">
@@ -139,23 +188,26 @@
             date: new Date()
         })
     });
-    function llamarFiltro()
-    {
+    function llamarFiltro() {
         document.getElementById('action').value = 'filter_operario-' + id;
         //hacemos submit
         document.getElementById('formulario').submit();
     }
-    
+
 </script>
 
 
 <style>
     .card-header {
-        background-color: #a52441 !important;
+        background-color: #86273e !important;
         color: white !important;
         font-size: 20px !important;
         border-radius: 0px !important;
         border-bottom: 1px solid gray !important;
+    }
+
+    .card {
+        border-radius: 0px !important;
     }
 
     .cuerpo-filtro .row div p {
@@ -166,9 +218,60 @@
     .filter-row {
         width: 100%;
     }
-    .input-group{
+
+    .input-group {
         padding: 0px 10px;
 
+    }
+
+    .btn-light.active,
+    .btn-light:active,
+    .show>.btn-light.dropdown-toggle {
+        background-color: #ffffff !important;
+        color: black !important;
+        background-image: none;
+        border-color: #d9d9d9 !important;
+    }
+
+    .btn-light {
+        background-color: #ffffff !important;
+        color: black !important;
+        background-image: none;
+        border-color: #d9d9d9 !important;
+    }
+
+    .bootstrap-select>.dropdown-toggle.bs-placeholder,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:active,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:focus,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:hover {
+        color: black !important;
+    }
+
+    .table th {
+        background-color: #86273e !important;
+        color: white !important;
+    }
+
+    .table th {
+        padding: .5em !important;
+        border-left: 1px solid white !important;
+        border-right: 2px solid white !important;
+    }
+
+    .table tr:hover {
+        background-color: #c4e2ff !important;
+    }
+
+    .btn-filtrar {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 30px;
+    }
+
+    .btn-limpiar {
+        background-color: gray !important;
+        border-color: gray !important;
+        padding: 7px 30px;
     }
 </style>
 {% endblock %}

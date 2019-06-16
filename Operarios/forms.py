@@ -14,7 +14,8 @@ from Operarios.models import (  PuntoServicio,
                                 PlanificacionOpe, 
                                 PlanificacionEsp,
                                 AsignacionCab,
-                                AsignacionDet )
+                                AsignacionDet,
+                                DiaLibre )
 
 class PuntoServicioForm(forms.ModelForm):
     class Meta:
@@ -561,4 +562,31 @@ def timeInHours(str):
 
 
 
+class DiaLibreForm(forms.ModelForm):
+
+    class Meta:
+        model = DiaLibre
+
+        fields = [
+            'diaInicio',
+            'horaInicio',
+            'diaFin',
+            'horaFin'
+        ]
+
+        labels = {
+            'diaInicio' : 'Fecha inicio',
+            'horaInicio' : 'Hora inicio',
+            'diaFin':'Fecha Fin',
+            'horaFin':'Hora Fin'
+        }
+
+        widgets = {
+            'diaInicio': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"},attrs={"placeholder": "Dia Inicio"}),
+            'horaInicio':TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Jueves'),
+            'diaFin': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"},attrs={"placeholder": "Dia Fin"}),
+            'horaFin': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Jueves'),
+ 
+        }
+        
 

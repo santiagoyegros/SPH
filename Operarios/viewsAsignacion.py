@@ -13,8 +13,8 @@ from django.contrib.auth.models import User
 import datetime
 from datetime import date
 
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet
-from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
+from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet, DiaLibre
+from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm,DiaLibreForm
 
 
 
@@ -75,24 +75,28 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     ''' Obtenemos la asignacion en caso de que exista una '''
     asignacion = AsignacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+    formDiaLibre = DiaLibreForm(request.POST)
     print("ASIGNACION", asignacion)
     if asignacion == None:
         asignacion = AsignacionCab()
+    
 
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
+   
     print("#1")
     if request.method == 'POST':
         if  request.POST.get('action') == 'add_det': 
             """Se le dio click a agregar detalle"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
+            formDiaLibre = DiaLibreForm(request.POST)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
             
             """se prepara para agregar otro"""
-        elif  'filter_operario' in request.POST.get('action'): 
+        elif  'filter_operario' in request.POST.get('action'):
+            print(request.POST) 
             """Se le dio click a buscar operario"""
             form = AsignacionCabForm(request.POST,instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
-            
 
 
             i=0
@@ -101,8 +105,13 @@ def Asignacion_create(request, id_puntoServicio=None):
                 totalHoras=idPunto="" 
                 lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal=""
                 fechaIni = ""
+                diaInicio=diaFin=""
+                horaInicio=horaFin=""
+                supervisor=False
+                perfil=""
                 if i == formOperarioID:
                     print("LLAMA AL PROCEDIMIENTO")
+                    
                     if request.POST.get('asignaciondet_set-' + str(i) + '-totalHoras') != 'None':
                         totalHoras = request.POST.get('asignaciondet_set-' + str(i) +'-totalHoras')
                     if  id_puntoServicio:
@@ -141,6 +150,34 @@ def Asignacion_create(request, id_puntoServicio=None):
                         domSal = request.POST.get('asignaciondet_set-' + str(i) + '-domSal')
                     if request.POST.get('asignaciondet_set-' + str(i) + '-totalHoras'):
                         totalHoras = request.POST.get('asignaciondet_set-' + str(i) + '-totalHoras')
+                    
+                    if request.POST.get('asignaciondet_set-' + str(i) + '-perfil'):
+                        perfil = request.POST.get('asignaciondet_set-' + str(i) + '-perfil')
+
+                 
+                    if request.POST.get('asignaciondet_set-' + str(i) + '-supervisor')=="on":
+                        supervisor = True
+
+                    print(request.POST.get('asignaciondet_set-' + str(i) + '-perfil'),
+                    supervisor,
+                    request.POST.get('diaInicio-' + str(i)),
+                    request.POST.get('horaInicio-' + str(i)),
+                    request.POST.get('diaFin-' + str(i) ),
+                    request.POST.get('horaFin-' + str(i)))
+                    if request.POST.get('diaInicio-' + str(i) ):
+                        diaInicio = request.POST.get('diaInicio-' + str(i))
+
+                        
+                    if request.POST.get('horaInicio-' + str(i)):
+                        horaInicio = request.POST.get('horaInicio-' + str(i))
+
+                    if request.POST.get('diaFin-' + str(i) ):
+                        diaFin = request.POST.get('diaFin-' + str(i) )
+
+                        
+                    if request.POST.get('horaFin-' + str(i)):
+                        horaFin = request.POST.get('horaFin-' + str(i))
+
                     operarios = buscar_operarios(
                         idPunto,
                         totalHoras, 
@@ -158,7 +195,13 @@ def Asignacion_create(request, id_puntoServicio=None):
                         sabSal,  
                         domEnt,  
                         domSal,
+                        perfil,
+                        supervisor,
                         fechaIni,
+                        horaInicio,
+                        horaFin,
+                        diaInicio,
+                        diaFin,
                         )
                     if len(operarios)>0:
                         
@@ -363,6 +406,7 @@ def Asignacion_create(request, id_puntoServicio=None):
             """Se le dio click a buscar operario"""
             form = AsignacionCabForm(request.POST,instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)    
+            AsigDiaLibreFormSet = asignacionDiaLibreFormSet(request.POST, instance=asignacion)
             print (request.POST)
         else: 
             """Se le dio click al boton guardar"""
@@ -371,6 +415,7 @@ def Asignacion_create(request, id_puntoServicio=None):
             form = AsignacionCabForm(request.POST, instance=asignacion)
             
             AsigDetFormSet = asignacionDetFormSet(request.POST,instance=asignacion)
+            AsigDiaLibreFormSet = asignacionDiaLibreFormSet(request.POST, instance=asignacion)
             print (form.errors)
             print (AsigDetFormSet.errors)
             if form.is_valid() and AsigDetFormSet.is_valid():
@@ -390,11 +435,11 @@ def Asignacion_create(request, id_puntoServicio=None):
         asignacion.puntoServicio = puntoSer
         form = AsignacionCabForm(instance=asignacion)
         AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
-
     contexto = {
             'title': 'Nueva Asignación',
             'pservicio': puntoSer,
             'form': form,
+            'formDiaLibre':formDiaLibre,
             'asigDetFormSet': AsigDetFormSet,
             'relevamiento' : relevamiento,
             'sem_diurno' : sem_diurno,
@@ -409,7 +454,7 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     return render(request, 'asignacion/asignacion_crear.html', context=contexto)
 
-def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp):
+def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq,perfil,supervisor, fechaInicioOp,horaInicio,horaFin,diaInicio,diaFin):
         conn= connection.cursor()
         sql = """\
             DECLARE @out nvarchar(max);

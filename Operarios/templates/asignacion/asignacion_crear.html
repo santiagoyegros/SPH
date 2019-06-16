@@ -124,42 +124,42 @@
 
 
             <div class="row mt-2 leaveForm" id="leaveForm-{{ forloop.counter0 }}" style="    margin-bottom: 30px;">
-            <div class="row">
+                <div class="row">
                     <div class="col-md-4">
-                            <div class="row" style="margin: 0px 0px 10px 0px;">
-                                <div class="col-md-4 text-center p-0">
-                                    <button type="button" class="btn btn-info btn-block btn-filter_operario"
-                                        id="filter_operario-{{forloop.counter0}}"
-                                        onclick="buscarOperario({{ forloop.counter0 }})" name='filter_operario' style="    height: 39px;
+                        <div class="row" style="margin: 0px 0px 10px 0px;">
+                            <div class="col-md-4 text-center p-0">
+                                <button type="button" class="btn btn-info btn-block btn-filter_operario"
+                                    id="filter_operario-{{forloop.counter0}}"
+                                    onclick="buscarOperario({{ forloop.counter0 }})" name='filter_operario' style="    height: 39px;
                                                 border-top-right-radius: 0px;
                                                 border-bottom-right-radius: 0px;" disabled><i
-                                            class="fa fa-search"></i></button>
-                                </div>
-        
-                                <!-- <input type="text" name="asignaciondet_set-{{ forloop.counter0 }}-id" id="id_asignaciondet_set-{{ forloop.counter0 }}-id" value="{{ forloop.counter0 }}" class="d-none"> -->
-                                {{form.id}}
-                                <input type="hidden" id="openModal" value="{{openModal}}">
-                                <input type="hidden" id="idModal" value="{{idModal}}">
-                                <!-- {{ form.id }} -->
-                                <div class="col-md-8 p-0">
-                                    {{form.operario}}
-                                    <select name="operario-{{forloop.counter0}}" class="form-control form-control-sm "
-                                        readonly="readonly" style="height:39px !important" disabled="disabled"
-                                        id="operario-{{forloop.counter0}}">
-                                        <option value=""></option>
-                                        {% for ope in allOperarios %}
-                                        <option value="{{ope.id}}">{{ope.nroLegajo}}-{{ope.nombre}}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <!-- <input type="text" id="nombres-{{ forloop.counter0 }}-operario" class="form-control form-control-sm" style="height:39px !important" disabled> -->
-                                </div>
+                                        class="fa fa-search"></i></button>
                             </div>
-        
-                            <div class="row" style="margin-bottom: 10px;">
-                                <div class="col-md-6">
-        
-                                    <div class="input-group date">
-                                        <!-- <input type="text" value="{{ form.fechaInicio.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio" placeholder="Fecha Inicio"
+
+                            <!-- <input type="text" name="asignaciondet_set-{{ forloop.counter0 }}-id" id="id_asignaciondet_set-{{ forloop.counter0 }}-id" value="{{ forloop.counter0 }}" class="d-none"> -->
+                            {{form.id}}
+                            <input type="hidden" id="openModal" value="{{openModal}}">
+                            <input type="hidden" id="idModal" value="{{idModal}}">
+                            <!-- {{ form.id }} -->
+                            <div class="col-md-8 p-0">
+                                {{form.operario}}
+                                <select name="operario-{{forloop.counter0}}" class="form-control form-control-sm "
+                                    readonly="readonly" style="height:39px !important" disabled="disabled"
+                                    id="operario-{{forloop.counter0}}">
+                                    <option value=""></option>
+                                    {% for ope in allOperarios %}
+                                    <option value="{{ope.id}}">{{ope.nroLegajo}}-{{ope.nombre}}</option>
+                                    {% endfor %}
+                                </select>
+                                <!-- <input type="text" id="nombres-{{ forloop.counter0 }}-operario" class="form-control form-control-sm" style="height:39px !important" disabled> -->
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+
+                                <div class="input-group date">
+                                    <!-- <input type="text" value="{{ form.fechaInicio.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio" placeholder="Fecha Inicio"
         
                                             class="form-control" id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaInicio"
                                             dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;YYYY-MM-DD&quot;}}">
@@ -167,12 +167,12 @@
                                             data-toggle="datetimepickerv">
                                             <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
                                         </div>  -->
-                                        {{form.fechaInicio}}
-                                    </div>
+                                    {{form.fechaInicio}}
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="input-group date">
-                                        <!--input type="text" value="{{form.fechaFin.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaFin" placeholder="Fecha Fin"
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group date">
+                                    <!--input type="text" value="{{form.fechaFin.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaFin" placeholder="Fecha Fin"
         
                                             class="form-control" id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaFin"
                                             dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;YYYY-MM-DD&quot;}}">
@@ -180,231 +180,282 @@
                                             data-toggle="datetimepickerv">
                                             <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
                                         </div!-->
-                                        {{form.fechaFin}}
+                                    {{form.fechaFin}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 50px;">
+                            <div class="col-md-6">
+
+                                <div class="input-group date">
+                                    {{form.perfil}}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group date">
+                                    <p style="display:inline-flex !important;">
+                                        <label for="">Supervisor</label>
+                                        {{form.supervisor}}
+                                    </p>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row input-horas">
+                            <div class="col pl-0">
+                                <div class="input-group date" style="    margin: 0px 0px 10px 0px;
+                                            height: 39px;">
+                                    <input type="text" value="{{form.totalHoras.value |default_if_none:''}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-totalHoras"
+                                        class="form-control form-control-sm" readonly="readonly" maxlength="8"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-totalHoras">
+                                </div>
+
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                    <input type="text" value="{{form.lunEnt.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-lunEnt"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-lunEnt"
+                                        dp_config="{&quot;id&quot;: &quot;dp_20&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                    </div>
+                                </div>
+                                <div class="input-group date">
+                                    <input type="text" value="{{form.lunSal.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-lunSal"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-lunSal"
+                                        dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                    <div class="col-md-6">
-            
-                                        <div class="input-group date">
-                                           {{form.perfil}}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-group date">
-                                            <p style="display:inline-flex !important;">
-                                                <label for="">Supervisor</label>
-                                                    {{form.supervisor}}
-                                            </p>
-                                           
-                                        </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                    <input type="text" value="{{form.marEnt.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-marEnt"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-marEnt"
+                                        dp_config="{&quot;id&quot;: &quot;dp_22&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                     </div>
                                 </div>
-        
-                        </div>
-                        <div class="col-md-8">
-                            <div class="row input-horas">
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="    margin: 0px 0px 10px 0px;
-                                            height: 39px;">
-                                        <input type="text" value="{{form.totalHoras.value |default_if_none:''}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-totalHoras"
-                                            class="form-control form-control-sm" readonly="readonly" maxlength="8"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-totalHoras">
-                                    </div>
-        
-                                </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" value="{{form.lunEnt.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-lunEnt"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-lunEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_20&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" value="{{form.lunSal.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-lunSal"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-lunSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
+                                <div class="input-group date">
+                                    <input type="text" value="{{form.marSal.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-marSal"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-marSal"
+                                        dp_config="{&quot;id&quot;: &quot;dp_23&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_22&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                     </div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" value="{{form.marEnt.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-marEnt"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-marEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_22&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" value="{{form.marSal.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-marSal"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-marSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_23&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_22&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                    <input type="text" value="{{form.mieEnt.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-mieEnt"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-mieEnt"
+                                        dp_config="{&quot;id&quot;: &quot;dp_24&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                     </div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" value="{{form.mieEnt.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-mieEnt"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-mieEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_24&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" value="{{form.mieSal.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-mieSal"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-mieSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_25&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_24&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
+                                <div class="input-group date">
+                                    <input type="text" value="{{form.mieSal.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-mieSal"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-mieSal"
+                                        dp_config="{&quot;id&quot;: &quot;dp_25&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_24&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                     </div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" value="{{form.jueEnt.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-jueEnt"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-jueEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_26&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" value="{{form.jueSal.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-jueSal"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-jueSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_27&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_26&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                    <input type="text" value="{{form.jueEnt.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-jueEnt"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-jueEnt"
+                                        dp_config="{&quot;id&quot;: &quot;dp_26&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                     </div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" value="{{form.vieEnt.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-vieEnt"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-vieEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_28&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" value="{{form.vieSal.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-vieSal"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-vieSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_29&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_28&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
+                                <div class="input-group date">
+                                    <input type="text" value="{{form.jueSal.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-jueSal"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-jueSal"
+                                        dp_config="{&quot;id&quot;: &quot;dp_27&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_26&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                     </div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" value="{{form.sabEnt.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-sabEnt"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-sabEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_30&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" value="{{form.sabSal.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-sabSal"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-sabSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_31&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_30&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                    <input type="text" value="{{form.vieEnt.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-vieEnt"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-vieEnt"
+                                        dp_config="{&quot;id&quot;: &quot;dp_28&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                     </div>
                                 </div>
-                                <div class="col pl-0">
-                                    <div class="input-group date" style="margin:0px 0px 16px 0px;">
-                                        <input type="text" value="{{form.domEnt.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-domEnt"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-domEnt"
-                                            dp_config="{&quot;id&quot;: &quot;dp_32&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="input-group date">
-                                        <input type="text" value="{{form.domSal.value}}"
-                                            name="asignaciondet_set-{{ forloop.counter0 }}-domSal"
-                                            class="form-control form-control-sm"
-                                            id="id_asignaciondet_set-{{ forloop.counter0 }}-domSal"
-                                            dp_config="{&quot;id&quot;: &quot;dp_33&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_32&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
+                                <div class="input-group date">
+                                    <input type="text" value="{{form.vieSal.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-vieSal"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-vieSal"
+                                        dp_config="{&quot;id&quot;: &quot;dp_29&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_28&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                     </div>
                                 </div>
-        
-                                <div class="col-1 pl-0" style="display: flex;
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                    <input type="text" value="{{form.sabEnt.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-sabEnt"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-sabEnt"
+                                        dp_config="{&quot;id&quot;: &quot;dp_30&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                    </div>
+                                </div>
+                                <div class="input-group date">
+                                    <input type="text" value="{{form.sabSal.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-sabSal"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-sabSal"
+                                        dp_config="{&quot;id&quot;: &quot;dp_31&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_30&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                    <input type="text" value="{{form.domEnt.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-domEnt"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-domEnt"
+                                        dp_config="{&quot;id&quot;: &quot;dp_32&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                    </div>
+                                </div>
+                                <div class="input-group date">
+                                    <input type="text" value="{{form.domSal.value}}"
+                                        name="asignaciondet_set-{{ forloop.counter0 }}-domSal"
+                                        class="form-control form-control-sm"
+                                        id="id_asignaciondet_set-{{ forloop.counter0 }}-domSal"
+                                        dp_config="{&quot;id&quot;: &quot;dp_33&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_32&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                        data-toggle="datetimepickerv">
+                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-1 pl-0" style="display: flex;
                                         justify-content: center;
                                         align-items: center;
                                         color: red !important;
                                         font-size: 25px;">
-                                    {{form.DELETE}}
-        
-                                    <a href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});"
-                                        class="remove muted pull-right">
-                                        <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span
-                                            class="visible-xs"></span>
-                                    </a>
-                                </div>
-        
+                                {{form.DELETE}}
+
+                                <a href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});"
+                                    class="remove muted pull-right">
+                                    <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span
+                                        class="visible-xs"></span>
+                                </a>
                             </div>
-        
+
                         </div>
+                        <div class="row" style="margin-top:22px !important;">
+                            <div class=" p-0" style="width:6rem !important;">
+
+                            </div>
+                            <div class="col-3 pl-0">
+                                <p style="display:inline-flex !important;margin:0px !important;">
+                                    <label for="">Dia Inicio</label>
+                                    <div class="input-group date">
+                                            <input type="text" name="diaInicio-{{ forloop.counter0 }}" placeholder="Dia Inicio" class="form-control" maxlength="10" required="" id="id_diaInicio-{{ forloop.counter0 }}" dp_config="{&quot;id&quot;: &quot;dp_35&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+                                            <div class="input-group-addon input-group-append" data-target="#datetimepicker1" data-toggle="datetimepickerv">
+                                                <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                </p>
+                            </div>
+                            <div class="col-2 pl-0">
+                                <p style="display:inline-flex !important;margin:0px !important;">
+                                    <label for="">Hora Inicio</label>
+                                    <div class="input-group date">
+                                            <input type="text" name="horaInicio-{{ forloop.counter0 }}" class="form-control form-control-sm" id="id_horaInicio-{{ forloop.counter0 }}" dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                            <div class="input-group-addon input-group-append" data-target="#datetimepicker1" data-toggle="datetimepickerv">
+                                                <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                            </div>
+                                        </div>
+                                </p>
+                            </div>
+                            <div class="col-3 pl-0">
+                                <p style="display:inline-flex !important;margin:0px !important;">
+                                    <label for="">Dia Fin</label>
+                                    <div class="input-group date">
+                                            <input type="text" name="diaFin-{{ forloop.counter0 }}" placeholder="Dia Fin" class="form-control" maxlength="10" required="" id="id_diaFin-{{ forloop.counter0 }}" dp_config="{&quot;id&quot;: &quot;dp_37&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+                                            <div class="input-group-addon input-group-append" data-target="#datetimepicker1" data-toggle="datetimepickerv">
+                                                <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                </p>
+                            </div>
+                            <div class="col-2 pl-0">
+                                <p style="display:inline-flex !important;margin:0px !important;">
+                                    <label for="">Hora Fin</label>
+                                    <div class="input-group date">
+                                            <input type="text" name="horaFin-{{ forloop.counter0 }}" class="form-control form-control-sm" id="id_horaFin-{{ forloop.counter0 }}" dp_config="{&quot;id&quot;: &quot;dp_38&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                            <div class="input-group-addon input-group-append" data-target="#datetimepicker1" data-toggle="datetimepickerv">
+                                                <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                            </div>
+                                        </div>
+                                </p>
+                            </div>
+
+                           
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
-          
-            </div>
-       
+
 
             <!-- Modal -->
             <div class="modal fade" id="modalFiltro{{forloop.counter0}}" tabindex="-1" role="dialog"
@@ -576,10 +627,10 @@
 <script>
     /**verifica los eliminados y oculta **/
     $(document).ready(function () {
-       // $('input[type=checkbox]').hide()
+        // $('input[type=checkbox]').hide()
         var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
         for (var i = 0; i < cantForm; i++) {
-            console.log("id delete",i)
+            console.log("id delete", i)
 
             $('#id_asignaciondet_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
 
@@ -1241,7 +1292,8 @@
         background-color: #86273e !important;
         color: white !important;
     }
-    .select-form{
+
+    .select-form {
         height: 40px !important;
     }
 

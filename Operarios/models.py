@@ -571,6 +571,7 @@ class OperariosAsignacionDet (models.Model):
     totalHoras=models.FloatField(db_column='totalHoras',verbose_name='Total Horas')
     perfil=models.CharField(db_column='perfil',verbose_name='Perfil',max_length=400)
     antiguedad=models.IntegerField(db_column='antiguedad',verbose_name='Antiguedad')
+    ids_perfil=models.CharField(db_column='ids_perfil',verbose_name=' ',max_length=100, default='')
     managed=False
     class Meta:
         verbose_name = _("Operario disponible")

@@ -554,3 +554,11 @@ class Alertas(models.Model):
     PuntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
     Estado = models.CharField(_("Estado"), max_length=10)
     Tipo = models.CharField(_('Tipo de Alerta'), max_length=10)
+
+class DiaLibre(models.Model):
+    asignacionDet =  models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
+    diaInicio=models.CharField(_("Dia Inicio Libre"), max_length=10)
+    horaInicio=models.TimeField('Hora Inicio Libre', blank=True, null=True)
+    diaFin=models.CharField(_("Dia Fin Libre"), max_length=10)
+    horaFin=models.TimeField('Hora Fin Libre', blank=True, null=True)
+    fechaCreacion=models.DateTimeField('Fecha Relevamiento', auto_now_add=True)

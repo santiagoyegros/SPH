@@ -187,11 +187,11 @@
                         <div class="row" style="margin-top: 20px;">
                             <div class="col-md-6">
                                 <p>
-                                        <label for="">Perfil</label>
-                                        {{form.perfil}}
+                                    <label for="">Perfil</label>
+                                    {{form.perfil}}
                                 </p>
-                                    
-                                
+
+
                             </div>
                             <div class="col-md-6" style="display:flex;align-items:center !important;">
                                 <div class="input-group date" style="display:flex;justify-content :center !important;">
@@ -406,64 +406,122 @@
 
                             </div>
                             <div class="col-3 pl-0">
-                                <p style="display:inline-flex !important;margin:0px !important;">
+                                <p style="margin:0px !important;">
                                     <label for="">Dia Libre</label>
-                                    <div class="input-group date">
-                                        <input type="text" name="diaInicio-{{ forloop.counter0 }}"
-                                            placeholder="Dia Inicio" class="form-control" maxlength="10" required=""
-                                            id="id_diaInicio-{{ forloop.counter0 }}"
-                                            dp_config="{&quot;id&quot;: &quot;dp_35&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
+                                    <select name="diaInicio-{{ forloop.counter0 }}"
+                                        class="form-control form-control-sm select-form" maxlength="10"
+                                        id="id_diaInicio-{{ forloop.counter0 }}">
+                                        <option value="''">---------</option>
+                                        {% if diaInicioSelected %}
+                                            {% for diasInicio in diaInicioSelected %}
+                                                {% if forloop.counter0 == forloop.parentloop.counter0 %}
+                                                    {% for d in dias %}
+                                                        {% if d == diasInicio %}
+                                                            <option value="{{d}}" selected>{{d}}</option>
+                                                        {% else %}
+                                                            <option value="{{d}}">{{d}}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for d in dias %}
+                                                <option value="{{d}}">{{d}}</option>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    </select>
                                 </p>
                             </div>
                             <div class="col-2 pl-0">
                                 <p style="display:inline-flex !important;margin-top:17px !important;">
-                                    
+
                                     <div class="input-group date">
-                                        <input type="text" name="horaInicio-{{ forloop.counter0 }}"
-                                            placeholder="Hora inicio" class="form-control form-control-sm"
-                                            id="id_horaInicio-{{ forloop.counter0 }}"
-                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
+                                        {% if horaInicioSelected %}
+                                            {% for horasInicio in horaInicioSelected %}
+                                                {% if forloop.counter0 == forloop.parentloop.counter0 %}
+                                                    <input type="text" name="horaInicio-{{ forloop.counter0 }}" value="{{horasInicio}}"
+                                                        placeholder="Hora inicio" class="form-control form-control-sm"
+                                                        id="id_horaInicio-{{ forloop.counter0 }}"
+                                                        dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                                        data-toggle="datetimepickerv">
+                                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div></div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                                <input type="text" name="horaInicio-{{ forloop.counter0 }}"
+                                                    placeholder="Hora inicio" class="form-control form-control-sm"
+                                                    id="id_horaInicio-{{ forloop.counter0 }}"
+                                                    dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                                    data-toggle="datetimepickerv">
+                                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                                    </div>
+                                            
+                                        {% endif %}
                                     </div>
+
                                 </p>
                             </div>
                             <div class="col-3 pl-0">
-                                <p style="display:inline-flex !important;margin-top:17px !important;">
+                                <p style="margin-top:30px !important;">
 
-                                    <div class="input-group date">
-                                        <input type="text" name="diaFin-{{ forloop.counter0 }}" placeholder="Dia Fin"
-                                            class="form-control" maxlength="10" required=""
-                                            id="id_diaFin-{{ forloop.counter0 }}"
-                                            dp_config="{&quot;id&quot;: &quot;dp_37&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <select name="diaFin-{{ forloop.counter0 }}"
+                                        class="form-control form-control-sm select-form" maxlength="10"
+                                        id="id_diaFin-{{ forloop.counter0 }}">
+                                        <option value="''">---------</option>
+
+                                        {% if diaFinSelected %}
+                                            {% for diasFin in diaFinSelected %}
+                                                {% if forloop.counter0 == forloop.parentloop.counter0 %}
+                                                    {% for d in dias %}
+                                                        {% if d == diasFin %}
+                                                            <option value="{{d}}" selected>{{d}}</option>
+                                                        {% else %}
+                                                            <option value="{{d}}">{{d}}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for d in dias %}
+                                                <option value="{{d}}">{{d}}</option>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    </select>
                                 </p>
                             </div>
                             <div class="col-2 pl-0">
                                 <p style="display:inline-flex !important;margin-top:17px !important;">
 
-                                    <div class="input-group date">
-                                        <input type="text" name="horaFin-{{ forloop.counter0 }}" placeholder="Hora Fin"
-                                            class="form-control form-control-sm" id="id_horaFin-{{ forloop.counter0 }}"
-                                            dp_config="{&quot;id&quot;: &quot;dp_38&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                    </div>
+                                        <div class="input-group date">
+                                                {% if horaFinSelected %}
+                                                    {% for horasFin in horaFinSelected %}
+                                                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
+                                                            <input type="text" name="horaFin-{{ forloop.counter0 }}" value="{{horasFin}}"
+                                                                placeholder="Hora Fin" class="form-control form-control-sm"
+                                                                id="id_horaFin-{{ forloop.counter0 }}"
+                                                                dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                                            <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                                                data-toggle="datetimepickerv">
+                                                                <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div></div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                        <input type="text" name="horaFin-{{ forloop.counter0 }}"
+                                                            placeholder="Hora Fin" class="form-control form-control-sm"
+                                                            id="id_horaFin-{{ forloop.counter0 }}"
+                                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                                            data-toggle="datetimepickerv">
+                                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                                            </div>
+                                                    
+                                                {% endif %}
+                                            </div>
                                 </p>
                             </div>
 
@@ -683,6 +741,12 @@
                 $('#id_asignaciondet_set-' + i + '-vieSal').prop("readonly", true);
                 $('#id_asignaciondet_set-' + i + '-sabEnt').prop("readonly", true);
                 $('#id_asignaciondet_set-' + i + '-sabSal').prop("readonly", true);
+                $('#id_asignaciondet_set-' + i + '-perfil').attr("readonly", "readonly");
+                $('#id_asignaciondet_set-' + i + '-supervisor').attr("disabled", "disabled");
+                $('#id_diaInicio-' + i).attr("readonly", "readonly");
+                $('#id_horaInicio-' + i).prop("readonly", true);
+                $('#id_diaFin-' + i).attr("readonly", "readonly");
+                $('#id_horaFin-' + i).prop("readonly", true);
 
             }
         }
@@ -797,6 +861,12 @@
         $('#id_asignaciondet_set-' + id + '-vieSal').prop("readonly", true);
         $('#id_asignaciondet_set-' + id + '-sabEnt').prop("readonly", true);
         $('#id_asignaciondet_set-' + id + '-sabSal').prop("readonly", true);
+        $('#id_asignaciondet_set-' + id + '-perfil').attr("readonly", "readonly");
+        $('#id_asignaciondet_set-' + id + '-supervisor').attr("disabled", "disabled");
+        $('#id_diaInicio-' + id).attr("readonly", "readonly");
+        $('#id_horaInicio-' + id).prop("readonly", true);
+        $('#id_diaFin-' + id).attr("readonly", "readonly");
+        $('#id_horaFin-' + id).prop("readonly", true);
 
 
     }

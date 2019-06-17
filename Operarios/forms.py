@@ -580,11 +580,11 @@ class DiaLibreForm(forms.ModelForm):
             'diaFin':'Fecha Fin',
             'horaFin':'Hora Fin'
         }
-
+        choices = (('Lunes','Lunes'),('Martes','Martes'),('Miercoles','Miercoles'),('Jueves','Jueves'),('Viernes','Viernes'),('Sabado','Sabado'),('Domingo','Domingo'))
         widgets = {
-            'diaInicio': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"},attrs={"placeholder": "Dia Inicio"}),
+            'diaInicio': forms.Select(attrs={'class':'form-control form-control-sm select-form'},choices=choices),
             'horaInicio':TimePickerInput(attrs={'class':'form-control form-control-sm',"placeholder": "Hora Inicio"}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Jueves'),
-            'diaFin': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"},attrs={"placeholder": "Dia Fin"}),
+            'diaFin': forms.Select(attrs={'class':'form-control form-control-sm select-form'},choices=choices),
             'horaFin': TimePickerInput(attrs={'class':'form-control form-control-sm',"placeholder": "Hora Fin"}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Jueves'),
  
         }

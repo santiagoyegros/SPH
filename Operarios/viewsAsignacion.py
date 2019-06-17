@@ -17,7 +17,6 @@ from Operarios.models import PuntoServicio, Operario, RelevamientoCab, Relevamie
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm,DiaLibreForm
 
 
-
 from django.db import connection
 
 from datetime import datetime as dt
@@ -40,6 +39,11 @@ def Asignacion_create(request, id_puntoServicio=None):
     dom_diurno = '0'
     dom_nocturno = '0'
     operarios = []
+    diaInicioSelected = []
+    diaFinSelected = []
+    horaInicioSelected=[]
+    horaFinSelected=[]
+    dias = ["Lunes","Martes",'Miercoles',"Jueves","Viernes","Sabado","Domingo"]
     allOperarios = Operario.objects.all()
     openModal=False
     idModal = None
@@ -82,25 +86,50 @@ def Asignacion_create(request, id_puntoServicio=None):
     
 
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
-   
     print("#1")
     if request.method == 'POST':
         if  request.POST.get('action') == 'add_det': 
             """Se le dio click a agregar detalle"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
-            formDiaLibre = DiaLibreForm(request.POST)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
-            
+            i=0
+            for form in AsigDetFormSet:
+                if i < len(AsigDetFormSet)-1:
+                    if request.session['diaInicio-' + str(i)]:
+                        diaInicioSelected.append(request.session['diaInicio-' + str(i)])
+                    else:
+                        diaInicioSelected.append(None)
+                    
+                    if request.session['diaFin-' + str(i)]:
+                        diaFinSelected.append(request.session['diaFin-' + str(i)])
+                    else:
+                        diaFinSelected.append(None)
+
+                    if request.session['horaInicio-' + str(i)]:
+                        horaInicioSelected.append(request.session['horaInicio-' + str(i)])
+                    else:
+                        horaInicioSelected.append(None)
+
+                    if request.session['horaFin-' + str(i)]:
+                        horaFinSelected.append(request.session['horaFin-' + str(i)])
+                    else:
+                        horaFinSelected.append(None)
+                i=i+1
+            print("ARRAYS EN SESION AGREGAR DETALLE")
+            print(diaInicioSelected)
+            print(horaInicioSelected)
+            print(diaFinSelected)
+            print(horaFinSelected)
             """se prepara para agregar otro"""
         elif  'filter_operario' in request.POST.get('action'):
-            print(request.POST) 
+                
             """Se le dio click a buscar operario"""
             form = AsignacionCabForm(request.POST,instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
 
-
             i=0
             formOperarioID = int(request.POST.get('action')[request.POST.get('action').rfind('-')+1:None],10)
+            
             for form in AsigDetFormSet:
                 totalHoras=idPunto="" 
                 lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal=""
@@ -109,8 +138,24 @@ def Asignacion_create(request, id_puntoServicio=None):
                 horaInicio=horaFin=""
                 supervisor=False
                 perfil=""
+                request.session['diaInicio-' + str(i)]=request.POST.get('diaInicio-' + str(i))
+                diaInicioSelected.append(request.session['diaInicio-' + str(i)])
+
+                request.session['diaFin-' + str(i)]=request.POST.get('diaFin-' + str(i))
+                diaFinSelected.append(request.session['diaFin-' + str(i)])
+
+                request.session['horaInicio-' + str(i)]=request.POST.get('horaInicio-' + str(i))
+                horaInicioSelected.append(request.session['horaInicio-' + str(i)])
+
+                request.session['horaFin-' + str(i)]=request.POST.get('horaFin-' + str(i))
+                horaFinSelected.append(request.session['horaFin-' + str(i)])
+                
+                print("ARRAYS EN SESION FILTRAR OPERARIO")
+                print(diaInicioSelected)
+                print(horaInicioSelected)
+                print(diaFinSelected)
+                print(horaFinSelected)
                 if i == formOperarioID:
-                    print("LLAMA AL PROCEDIMIENTO")
                     
                     if request.POST.get('asignaciondet_set-' + str(i) + '-totalHoras') != 'None':
                         totalHoras = request.POST.get('asignaciondet_set-' + str(i) +'-totalHoras')
@@ -158,23 +203,17 @@ def Asignacion_create(request, id_puntoServicio=None):
                     if request.POST.get('asignaciondet_set-' + str(i) + '-supervisor')=="on":
                         supervisor = True
 
-                    print(request.POST.get('asignaciondet_set-' + str(i) + '-perfil'),
-                    supervisor,
-                    request.POST.get('diaInicio-' + str(i)),
-                    request.POST.get('horaInicio-' + str(i)),
-                    request.POST.get('diaFin-' + str(i) ),
-                    request.POST.get('horaFin-' + str(i)))
+                 
                     if request.POST.get('diaInicio-' + str(i) ):
                         diaInicio = request.POST.get('diaInicio-' + str(i))
 
-                        
                     if request.POST.get('horaInicio-' + str(i)):
                         horaInicio = request.POST.get('horaInicio-' + str(i))
+                        
 
                     if request.POST.get('diaFin-' + str(i) ):
                         diaFin = request.POST.get('diaFin-' + str(i) )
 
-                        
                     if request.POST.get('horaFin-' + str(i)):
                         horaFin = request.POST.get('horaFin-' + str(i))
 
@@ -406,7 +445,6 @@ def Asignacion_create(request, id_puntoServicio=None):
             """Se le dio click a buscar operario"""
             form = AsignacionCabForm(request.POST,instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)    
-            AsigDiaLibreFormSet = asignacionDiaLibreFormSet(request.POST, instance=asignacion)
             print (request.POST)
         else: 
             """Se le dio click al boton guardar"""
@@ -415,7 +453,6 @@ def Asignacion_create(request, id_puntoServicio=None):
             form = AsignacionCabForm(request.POST, instance=asignacion)
             
             AsigDetFormSet = asignacionDetFormSet(request.POST,instance=asignacion)
-            AsigDiaLibreFormSet = asignacionDiaLibreFormSet(request.POST, instance=asignacion)
             print (form.errors)
             print (AsigDetFormSet.errors)
             if form.is_valid() and AsigDetFormSet.is_valid():
@@ -435,6 +472,8 @@ def Asignacion_create(request, id_puntoServicio=None):
         asignacion.puntoServicio = puntoSer
         form = AsignacionCabForm(instance=asignacion)
         AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
+    
+    print("ARRAYS",diaFinSelected,diaInicioSelected)
     contexto = {
             'title': 'Nueva Asignación',
             'pservicio': puntoSer,
@@ -445,6 +484,11 @@ def Asignacion_create(request, id_puntoServicio=None):
             'sem_diurno' : sem_diurno,
             'sem_nocturno' : sem_nocturno,
             'dom_diurno' : dom_diurno,
+            'dias':dias,
+            'diaInicioSelected':diaInicioSelected,
+            'diaFinSelected':diaFinSelected,
+            'horaInicioSelected':horaInicioSelected,
+            'horaFinSelected':horaFinSelected,
             'dom_nocturno' : dom_nocturno,
             'operarios':operarios,
             'allOperarios':allOperarios,

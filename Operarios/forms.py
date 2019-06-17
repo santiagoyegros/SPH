@@ -583,9 +583,9 @@ class DiaLibreForm(forms.ModelForm):
 
         widgets = {
             'diaInicio': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"},attrs={"placeholder": "Dia Inicio"}),
-            'horaInicio':TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Jueves'),
+            'horaInicio':TimePickerInput(attrs={'class':'form-control form-control-sm',"placeholder": "Hora Inicio"}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Jueves'),
             'diaFin': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"},attrs={"placeholder": "Dia Fin"}),
-            'horaFin': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Jueves'),
+            'horaFin': TimePickerInput(attrs={'class':'form-control form-control-sm',"placeholder": "Hora Fin"}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Jueves'),
  
         }
         

@@ -69,9 +69,9 @@
                                     <label for="">Estado:</label>
                                     <select class="form-control" id="exampleFormControlSelect1" name="estado"
                                         value="{{estado}}">
-                                        <option value="'Abierto'" selected>Abierto </option>
-                                        <option value="'Pendiente'">Pendiente</option>
-                                        <option value="'Cerrado'">Cerrado </option>
+                                        <option value="'ABIERTA'" selected>Abierta </option>
+                                        <option value="'PENDIENTE'">Pendiente</option>
+                                        <option value="'CERRRADO'">Cerrado </option>
                                     </select>
                                 </p>
                             </div>
@@ -81,8 +81,8 @@
                                     <label for="tipoAlerta">Tipo de alerta:</label>
                                     <select name="tipoAlerta" id="tipoAlerta" class="form-control"
                                         id="exampleFormControlSelect1" name="tipoAlerta" value="{{tipoAlerta}}">
-                                        <option value="'No marcacion'" selected>No marcacion</option>
-                                        <option value="'Sin asignacion'">Sin asignacion</option>
+                                        <option value="'NO-MARC'" selected>No marcacion</option>
+                                        <option value="'SIN-ASIG'">Sin asignacion</option>
                                     </select>
                                 </p>
                             </div>
@@ -121,7 +121,7 @@
                 <thead>
                     <tr>
                         <th>Nro.</th>
-                        <th>Fin de Servicio</th>
+                        <th>Punto de Servicio</th>
                         <th>Operario</th>
                         <th>Fiscal</th>
                         <th>Horario</th>
@@ -133,8 +133,9 @@
                     </tr>
                 </thead>
                 <tbody>
+                        {% for alerta in alertasList %}
                     <tr>
-                        <td></td>
+                        <td>{{forloop.counter}}</td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -145,6 +146,7 @@
                         <td></td>
                         <td style="display:flex;justify-content:center"><button type='submit' class='btn btn-success btn-filtrar'>Gestionar</button></td>
                     </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <div class="pagination">

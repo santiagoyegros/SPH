@@ -78,14 +78,14 @@ def Operarios_list(request):
         
     if request.GET.get('nroCedula') :
         operarios=operarios.filter(nroCedula__contains=request.GET.get('nroCedula'))
-    paginado=Paginator(operarios.order_by('apellido'),  request.GET.get('pageSize'))
+    paginado=Paginator(operarios.order_by('apellido').values("pk", "nombre", "apellido", "nroLegajo", "numCedula", "id"),  request.GET.get('pageSize'))
     listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
     dataOperarios=list(listaPaginada)
 
     """
     Filtro nuevo
     """
-    lista=[model_to_dict(item) for item in dataOperarios]
+    lista=dataOperarios
     response_data={}
     response_data["data"]=lista;
     response_data["itemsCount"]=len(operarios)

@@ -188,6 +188,13 @@
                             <div class="col-md-6">
                                 <p>
                                     <label for="">Perfil</label>
+                                    <select class="form-control form-control-sm select-form" id="perfil-{{ forloop.counter0}}" style="display:none;">
+                                          
+                                          {% for perfil in perfiles %}
+                                            <option value="{{perfil.id}}">{{perfil.especializacion}}</option>
+                                           {% endfor %}
+                                          
+                                    </select>
                                     {{form.perfil}}
                                 </p>
 
@@ -197,6 +204,7 @@
                                 <div class="input-group date" style="display:flex;justify-content :center !important;">
                                     <p style="display:inline-flex !important;margin:0px !important;">
                                         <label for="">Supervisor</label>
+                                        <input type="checkbox"class="checkbox-supervisor" style="display:none" id="supervisor-{{ forloop.counter0}}">
                                         {{form.supervisor}}
                                     </p>
 
@@ -721,6 +729,7 @@
                 $('#leaveForm-' + i).hide()
 
             }
+            console.log('#id_asignaciondet_set-' + i + '-operario',$('#id_asignaciondet_set-' + i + '-operario').val())
             if ($('#id_asignaciondet_set-' + i + '-operario').val()) {
 
                 $('#id_asignaciondet_set-' + i + '-domEnt').prop("readonly", true);
@@ -741,11 +750,16 @@
                 $('#id_asignaciondet_set-' + i + '-vieSal').prop("readonly", true);
                 $('#id_asignaciondet_set-' + i + '-sabEnt').prop("readonly", true);
                 $('#id_asignaciondet_set-' + i + '-sabSal').prop("readonly", true);
-                $('#id_asignaciondet_set-' + i + '-perfil').attr("readonly", "readonly");
-                $('#id_asignaciondet_set-' + i + '-supervisor').attr("disabled", "disabled");
-                $('#id_diaInicio-' + i).attr("readonly", "readonly");
+                $('#id_asignaciondet_set-' + i + '-perfil').attr("style", "display:none");
+                console.log('#id_asignaciondet_set-' + i + '-perfil');
+                $('#id_asignaciondet_set-' + i + '-supervisor').attr("style", "display:none");
+                $('#perfil-' + i ).attr("style", "display:block");
+                $('#perfil-' + i ).attr("disabled", "disabled");
+                $('#supervisor-' + i ).attr("style", "display:block;margin: 8px 25px;");
+                $('#supervisor-' + i ).attr("disabled", "disabled");
+                $('#id_diaInicio-' + i).attr("disabled", "disabled");
                 $('#id_horaInicio-' + i).prop("readonly", true);
-                $('#id_diaFin-' + i).attr("readonly", "readonly");
+                $('#id_diaFin-' + i).attr("disabled", "disabled");
                 $('#id_horaFin-' + i).prop("readonly", true);
 
             }
@@ -798,14 +812,30 @@
 <script>
     $(document).ready(function () {
         var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
-        for (var i = 1; i < cantForm; i++) {
-            var idOpe = $('#id_asignaciondet_set-' + (i - 1) + '-operario').val();
-            var select = $('#operario-' + (i - 1))[0];
+        for (var i = 0; i < cantForm; i++) {
+            var idOpe = $('#id_asignaciondet_set-' + (i ) + '-operario').val();
+            var idPerfil = $('#id_asignaciondet_set-' + (i ) + '-perfil').val();
+            var supervisor = $('#id_asignaciondet_set-' + (i ) + '-supervisor');
+            console.log(supervisor[0].checked,i)
+            if(supervisor[0].checked){
+                var selectSupervisor = $('#supervisor-' + (i ))[0];
+                console.log(selectSupervisor)
+                selectSupervisor.checked=true;
+            }
+            var select = $('#operario-' + (i ))[0];
+            var selectPerfil = $('#perfil-' + (i))[0];
             for (var j = 0; j < select.length; j++) {
                 if ($(select[j]).val() == idOpe) {
                     $(select[j]).attr("selected", "selected");
                 } else {
                     $(select[j]).removeAttr('selected');
+                }
+            }
+            for (var j = 0; j < selectPerfil.length; j++) {
+                if ($(selectPerfil[j]).val() == idPerfil) {
+                    $(selectPerfil[j]).attr("selected", "selected");
+                } else {
+                    $(selectPerfil[j]).removeAttr('selected');
                 }
             }
         }
@@ -861,11 +891,15 @@
         $('#id_asignaciondet_set-' + id + '-vieSal').prop("readonly", true);
         $('#id_asignaciondet_set-' + id + '-sabEnt').prop("readonly", true);
         $('#id_asignaciondet_set-' + id + '-sabSal').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-perfil').attr("readonly", "readonly");
-        $('#id_asignaciondet_set-' + id + '-supervisor').attr("disabled", "disabled");
-        $('#id_diaInicio-' + id).attr("readonly", "readonly");
+        $('#id_asignaciondet_set-' + id + '-perfil').attr("style", "display:none");
+        $('#id_asignaciondet_set-' + id + '-supervisor').attr("style", "display:none");
+        $('#perfil-' + id ).attr("style", "display:block");
+        $('#perfil-' + id ).attr("disabled", "disabled");
+        $('#supervisor-' + id ).attr("style", "display:block;margin: 8px 25px;");
+        $('#supervisor-' + id ).attr("disabled", "disabled");
+        $('#id_diaInicio-' + id).attr("disabled", "disabled");
         $('#id_horaInicio-' + id).prop("readonly", true);
-        $('#id_diaFin-' + id).attr("readonly", "readonly");
+        $('#id_diaFin-' + id).attr("disabled", "disabled");
         $('#id_horaFin-' + id).prop("readonly", true);
 
 

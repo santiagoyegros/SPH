@@ -60,6 +60,12 @@ def alertasList (request):
     paginator=paginar[1]
     print (len(alertasList))
 
+    for a in alertasList:
+        if a.FechaHora:
+            fecha = (a.FechaHora).strftime("%d/%m/%Y")
+            a.Fecha = fecha
+            hora = (a.FechaHora).strftime("HH:mm:ss")
+    print(fechaDesde,fechaHasta)
     contexto = {
         'title': 'Filtrado de Alertas',
         'alertasList':alertasList,

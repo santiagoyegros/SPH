@@ -19,7 +19,7 @@
 
                                     <label for="">Fecha inicio:</label>
                                     <div class='input-group date' id='datetimepickerfechaDesde'>
-                                        <input type='text' class="form-control" name="fechaDesde" value="{{fechaDesde}}"
+                                        <input type='text' class="form-control" name="fechaDesde" value="{{fechaDesde}}" id="fechaDesde"
                                             required />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
@@ -32,7 +32,7 @@
 
                                     <label for="">Fecha fin:</label>
                                     <div class='input-group date' id='datetimepickerfechaHasta'>
-                                        <input type='text' class="form-control" name="fechaHasta" value="{{fechaHasta}}"
+                                        <input type='text' class="form-control" name="fechaHasta" value="{{fechaHasta}}" id="fechaHasta"
                                             required />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
@@ -134,18 +134,18 @@
                 </thead>
                 <tbody>
                         {% for alerta in alertasList %}
-                    <tr>
-                        <td>{{forloop.counter}}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td style="display:flex;justify-content:center"><button type='submit' class='btn btn-success btn-filtrar'>Gestionar</button></td>
-                    </tr>
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{alerta.PuntosServicio_id}}</td>
+                                <td>{{alerta.Operario_id}}</td>
+                                <td>{{alerta.Operario_id}}</td>
+                                <td>{{alerta.Operario_id}}</td>
+                                <td>{{alerta.Operario_id}}</td>
+                                <td>{{alerta.Fecha}}</td>
+                                <td>{{alerta.Estado}}</td>
+                                <td>{{alerta.Tipo}}</td>
+                                <td style="display:flex;justify-content:center"><button type='submit' class='btn btn-success btn-filtrar'>Gestionar</button></td>
+                            </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -177,17 +177,34 @@
 </div>
 <script type="text/javascript">
     $(function () {
+        var fechaDesde=$('#fechaDesde')[0].value;
+        var datos = fechaDesde.split('/');     
+        var date;
+        if(datos.length>1){
+            date = new Date(datos[2],datos[1]-1,datos[0])
+        }else{
+            date = new Date()
+        }
+        console.log(datos);
         $('#datetimepickerfechaDesde').datetimepicker({
             locale: 'es',
             format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
-            date: new Date()
+            date: date
         })
     });
     $(function () {
+        var fechaHasta=$('#fechaHasta')[0].value;
+        var datos = fechaHasta.split('/');
+        var date;
+        if(datos.length>1){
+            date = new Date(datos[2],datos[1]-1,datos[0])
+        }else{
+            date = new Date()
+        }
         $('#datetimepickerfechaHasta').datetimepicker({
             locale: 'es',
             format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
-            date: new Date()
+            date: date
         })
     });
     function llamarFiltro() {

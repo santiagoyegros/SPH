@@ -61,5 +61,5 @@ urlpatterns = [
     url(r'^feriados/editar/(?P<feriado_id>\d+)', editFeriados , name='feriados_put'),
     url(r'^feriados/eliminar/(?P<feriado_id>\d+)', deleteFeriados , name='feriados_delete'),
     url(r'^operaciones/operarios/vista/', viewsOperario.getOperariosVista , name='operarios_vista'),
-    url(r'^alertas/listar/', viewsAlerta.alertasList , name='alertas_list'),
+    url(r'^alertas/listar/', viewsAlerta.alertasList , name='alertas_list')
 ]   

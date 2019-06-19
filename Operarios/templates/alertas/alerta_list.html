@@ -69,8 +69,15 @@
                                     <label for="">Estado:</label>
                                     <select class="form-control" id="exampleFormControlSelect1" name="estado"
                                         value="{{estado}}">
-                                        <option value="'ABIERTA'" selected>Abierta </option>
-                                        <option value="'EN GESTION'">En Gestión</option>
+                                        {%if estado %}
+                                        <option value="ABIERTA" {% if estado == "ABIERTA" %} selected {% endif %}>Abierta</option>
+                                       
+                                        <option value="EN GESTION" {% if estado == "EN GESTION" %} selected {% endif %} >En Gestión</option>
+                                        {%else%}
+                                        <option value="ABIERTA" selected>Abierta </option>
+                                        <option value="EN GESTION">En Gestión</option>
+                                        {% endif %}
+                                        
 
                                     </select>
                                 </p>
@@ -81,8 +88,16 @@
                                     <label for="tipoAlerta">Tipo de alerta:</label>
                                     <select name="tipoAlerta" id="tipoAlerta" class="form-control"
                                         id="exampleFormControlSelect1" name="tipoAlerta" value="{{tipoAlerta}}">
-                                        <option value="'NO-MARC'" selected>No marcacion</option>
-                                        <option value="'SIN-ASIG'">Sin asignacion</option>
+                                        {% if tipoAlerta %}
+                                       
+                                        <option value="NO-MARC" {% if tipoAlerta == "NO-MARC" %} selected {% endif %}>No marcacion</option>
+                                       
+                                        <option value="SIN-ASIG" {% if tipoAlerta == "SIN-ASIG" %} selected {% endif %} >Sin asignacion</option>
+                                       
+                                        {% else %}
+                                        <option value="NO-MARC" selected>No marcacion</option>
+                                        <option value="SIN-ASIG">Sin asignacion</option>
+                                        {% endif %}
                                     </select>
                                 </p>
                             </div>

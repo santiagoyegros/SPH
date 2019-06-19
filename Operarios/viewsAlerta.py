@@ -21,6 +21,7 @@ def alertasList (request):
     fechaHasta=request.GET.get('fechaHasta')
     puntoServicio=None
     operario=None
+    tipoAlerta=None
     """query por defecto con fecha del dia"""
     hoy= datetime.now()
     hoyIni=hoy.replace(hour=0,minute=0,second=0, microsecond=0)
@@ -42,11 +43,13 @@ def alertasList (request):
         fechaDesdeAux=datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").replace(hour=0,minute=0,second=0, microsecond=0)
         fechaHastaAux=datetime.strptime(request.GET.get('fechaHasta'), "%d/%m/%Y").replace(hour=23,minute=59,second=59, microsecond=0)     
         alertasList=Alertas.objects.filter(FechaHora__gte=fechaDesdeAux,FechaHora__lte=fechaHastaAux)
+        
     if request.GET.get('estado'):
-        alertasList=alertasList.filter(Estado=request.GET.get('estado'))
+        alertasList=alertasList.filter(Estado__contains=request.GET.get('estado'))
         estado=request.GET.get('estado')
     if request.GET.get('tipoAlerta'):
-        alertasList=alertasList.filter(Tipo=request.GET.get('tipoAlerta'))
+        alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))
+        tipoAlerta=request.GET.get('tipoAlerta')
     if request.GET.get('operario') :
         alertasList=alertasList.filter(Operario_id=request.GET.get('operario'))
         operario=int(request.GET.get('operario'))
@@ -55,7 +58,7 @@ def alertasList (request):
         puntoServicio=int(request.GET.get('puntoServicio'))
     """se procede a obtener la paginacion"""
     pageNumber=request.GET.get("page",1)
-    paginar=do_paginate(alertasList, pageNumber)
+    paginar=do_paginate(alertasList.order_by("-FechaHora"), pageNumber)
     alertasList=paginar[0]
     paginator=paginar[1]
     print (len(alertasList))
@@ -77,6 +80,7 @@ def alertasList (request):
         "estado":estado,
         "puntoServicio":puntoServicio,
         "operario":operario,
+        "tipoAlerta":tipoAlerta
     
         
     }

@@ -189,7 +189,7 @@
                                 <p>
                                     <label for="">Perfil</label>
                                     <select class="form-control form-control-sm select-form" id="perfil-{{ forloop.counter0}}" style="display:none;">
-                                          
+                                            <option value="">---------</option>
                                           {% for perfil in perfiles %}
                                             <option value="{{perfil.id}}">{{perfil.especializacion}}</option>
                                            {% endfor %}
@@ -816,7 +816,7 @@
             var idOpe = $('#id_asignaciondet_set-' + (i ) + '-operario').val();
             var idPerfil = $('#id_asignaciondet_set-' + (i ) + '-perfil').val();
             var supervisor = $('#id_asignaciondet_set-' + (i ) + '-supervisor');
-            console.log(supervisor[0].checked,i)
+            console.log(idPerfil)
             if(supervisor[0].checked){
                 var selectSupervisor = $('#supervisor-' + (i ))[0];
                 console.log(selectSupervisor)
@@ -831,6 +831,7 @@
                     $(select[j]).removeAttr('selected');
                 }
             }
+            console.log("Al seleccionar operario el id perfil es "+ idPerfil + ".");
             for (var j = 0; j < selectPerfil.length; j++) {
                 if ($(selectPerfil[j]).val() == idPerfil) {
                     $(selectPerfil[j]).attr("selected", "selected");
@@ -853,15 +854,12 @@
 </script>
 <script>
     function seleccionarOpe(ope, id, nombres) {
-        console.log(ope);
-        console.log("Deshabilitamos inputs")
 
         var select = $('#operario-' + id)[0];
-
+        var perfilSelect = $('#perfil-' + id)[0];
+        console.log("perfil",perfilSelect);
         $('#id_asignaciondet_set-' + id + '-operario').val(ope);
-        console.log(select);
         for (var i = 0; i < select.length; i++) {
-            console.log(select[i]);
 
             if ($(select[i]).val() == ope) {
                 $(select[i]).attr("selected", "selected");

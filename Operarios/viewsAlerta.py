@@ -67,7 +67,23 @@ def alertasList (request):
         if a.FechaHora:
             fecha = (a.FechaHora).strftime("%d/%m/%Y")
             a.Fecha = fecha
-            hora = (a.FechaHora).strftime("HH:mm:ss")
+            hora = (a.FechaHora).strftime("%H:%M:%S")
+            a.Hora = hora
+
+        if a.Operario_id:
+            try:
+                operario = Operario.objects.get(id=a.Operario_id)
+                a.Operario_nombre = operario.nombre
+            except Operario.DoesNotExist:
+                raise Http404("Operario relacionado a una Alerta no existe")  
+
+        if a.PuntoServicio_id:
+            try:
+                punto = PuntoServicio.objects.get(id=a.PuntoServicio_id)
+                a.Punto_nombre = punto.NombrePServicio
+            except PuntoServicio.DoesNotExist:
+                raise Http404("Punto de Servicio relacionado a una Alerta no existe")  
+
     print(fechaDesde,fechaHasta)
     contexto = {
         'title': 'Filtrado de Alertas',

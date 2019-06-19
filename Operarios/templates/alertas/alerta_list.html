@@ -151,15 +151,15 @@
                         {% for alerta in alertasList %}
                             <tr>
                                 <td>{{forloop.counter}}</td>
-                                <td>{{alerta.PuntosServicio_id}}</td>
-                                <td>{{alerta.Operario_id}}</td>
-                                <td>{{alerta.Operario_id}}</td>
-                                <td>{{alerta.Operario_id}}</td>
-                                <td>{{alerta.Operario_id}}</td>
+                                <td>{{alerta.Punto_nombre}}</td>
+                                <td>{{alerta.Operario_nombre}}</td>
+                                <td></td>
+                                <td>{{alerta.Hora}}</td>
+                                <td></td>
                                 <td>{{alerta.Fecha}}</td>
                                 <td>{{alerta.Estado}}</td>
                                 <td>{{alerta.Tipo}}</td>
-                                <td style="display:flex;justify-content:center"><button type='submit' class='btn btn-success btn-filtrar'>Gestionar</button></td>
+                                <td style="display:flex;justify-content:center"><button type='button' class='btn btn-success btn-filtrar'>Gestionar</button></td>
                             </tr>
                     {% endfor %}
                 </tbody>
@@ -300,6 +300,7 @@
         background-color: #86273e !important;
         border-color: #86273e !important;
         padding: 7px 30px;
+        cursor: pointer;
     }
 
     .btn-limpiar {

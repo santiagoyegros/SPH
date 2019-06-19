@@ -137,6 +137,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                 horaInicio=horaFin=""
                 supervisor=False
                 perfil=""
+                fechaFin=""
                 request.session['diaInicio-' + str(i)]=request.POST.get('diaInicio-' + str(i))
                 diaInicioSelected.append(request.session['diaInicio-' + str(i)])
 
@@ -159,6 +160,10 @@ def Asignacion_create(request, id_puntoServicio=None):
                         fechaIni = request.POST.get('asignaciondet_set-' + str(i) + '-fechaInicio')
                         date_time_obj = datetime.datetime.strptime(fechaIni,'%d/%m/%Y')
                         fechaIni=date_time_obj.strftime('%Y-%m-%d')
+                    if request.POST.get('asignaciondet_set-' + str(i) + '-fechaFin'):
+                        fechaFin = request.POST.get('asignaciondet_set-' + str(i) + '-fechaFin')
+                        date_time_obj = datetime.datetime.strptime(fechaFin,'%d/%m/%Y')
+                        fechaFin=date_time_obj.strftime('%Y-%m-%d')
                     if request.POST.get('asignaciondet_set-' + str(i) + '-lunEnt'):
                         lunEnt = request.POST.get('asignaciondet_set-' + str(i) + '-lunEnt')
                     if request.POST.get('asignaciondet_set-' + str(i) + '-lunSal'):
@@ -231,6 +236,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                         perfil,
                         supervisor,
                         fechaIni,
+                        fechaFin,
                         horaInicio,
                         horaFin,
                         diaInicio,
@@ -495,17 +501,17 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     return render(request, 'asignacion/asignacion_crear.html', context=contexto)
 
-def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq,perfil,supervisor, fechaInicioOp,horaInicio,horaFin,diaInicio,diaFin):
+def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq,perfil,supervisor, fechaInicioOp,fechaFinOp,horaInicio,horaFin,diaInicio,diaFin):
         conn= connection.cursor()
         sql = """\
             DECLARE @out nvarchar(max);
-            EXEC [dbo].[operarios_disponibles] @puntoServicio=?, @totalHoras=?, @lunEntReq=?, @lunSalReq=?, @marEntReq=?, @marSalReq=?, @mierEntReq=?, @mierSalReq=?, @juevEntReq=?, @juevSalReq=?, @vieEntReq=?, @vieSlReq=?, @sabEntReq=?, @sabSalReq=?, @domEntReq=?, @domSalReq=?, @fechaInicioOperario=?, @perfil=?, @param_out = @out OUTPUT;
+            EXEC [dbo].[operarios_disponibles] @puntoServicio=?, @totalHoras=?, @lunEntReq=?, @lunSalReq=?, @marEntReq=?, @marSalReq=?, @mierEntReq=?, @mierSalReq=?, @juevEntReq=?, @juevSalReq=?, @vieEntReq=?, @vieSlReq=?, @sabEntReq=?, @sabSalReq=?, @domEntReq=?, @domSalReq=?, @fechaInicioOperario=?, @fechaFinOperario=?,@perfil=?, @param_out = @out OUTPUT;
             SELECT @out AS the_output;
         """
         """conn.callproc('operarios_disponibles', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
-        params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp, perfil)
+        params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp, fechaFinOp,perfil)
         print(params)
-        conn.execute('operarios_disponibles %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s',params)
+        conn.execute('operarios_disponibles %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
         result = conn.fetchall()
        
         print("RESULTADO",result)

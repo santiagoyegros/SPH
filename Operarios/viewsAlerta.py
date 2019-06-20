@@ -12,6 +12,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from datetime import date
 from datetime import datetime
+from django.core import serializers
 from Operarios.models import Alertas
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones
@@ -116,6 +117,15 @@ def do_paginate(data_list, page_number):
     return [ret_data_list, paginator]
 
 
+def getMarcaciones(request):
+    print(request.GET.get('alerta_id'))
+    alerta_id= request.GET.get('alerta_id')
+    alerta=Alertas.objects.get(id=alerta_id)
+    operario=Operario.objects.get(id=alerta.Operario.id)
+    ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
+    
+    return HttpResponse(serializers.serialize("json",ultimasMarcaciones), content_type = 'application/json', status = 200);
+
 def gestion_alertas(request,alerta_id=None):
     
 
@@ -130,18 +140,21 @@ def gestion_alertas(request,alerta_id=None):
     supervisor=AsignacionDet.objects.filter(asignacionCab=asignacionCab, supervisor=True)[0]
     alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)
     ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
-    print (ultimasMarcaciones)
+    print ("ultimas 10 marcaciones",ultimasMarcaciones)
+    print(request.POST)
     """CAMBIAMOS EL ESTADO DE LA ALERTA"""
     if request.method == 'GET':
         setattr(alerta,"Estado", "EN GESTION")
     else: 
         print ("Es POST")
+        print(request.POST)
     
     contexto = {
         'title': 'Gestion de Alertas',
         'operario':operario,
         'puntoServicio':puntoServicio ,
         'alerta':alerta,
+        'alerta_id':alerta_id,
         'asignacion':asignacionOperario,
         'fiscal':fiscal,
         'supervisor':supervisor,

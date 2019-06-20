@@ -1,5 +1,9 @@
 {% extends "base.html" %}
-
+{% load static %}
+{% block base_head %}
+<link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet">
+</link>
+{% endblock %}
 {% block content %}
 <div class="container-fluid">
     {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
@@ -554,7 +558,8 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <table id="table" class="table table-bordered table-hover table-sm mt-3">
+                                <div id="jsGrid"></div>
+                            <!-- <table id="table" class="table table-bordered table-hover table-sm mt-3">
 
                                 <thead>
 
@@ -634,8 +639,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% if operarios %}
-                                    {% for op in operarios %}
+                                    {% if operariosList %}
+                                    {% for op in operariosList %}
                                     <tr class="data"
                                         onclick="seleccionarOpe({{op.id_operario}},{{forloop.parentloop.counter0}},encodeURIComponent('{{op.nombres}}'))">
                                         <td class="col1">{{op.nombres}}</td>
@@ -651,6 +656,27 @@
 
                                 </tbody>
                             </table>
+                            <div class="pagination">
+                                    Página:&nbsp;&nbsp;
+                                    {% if alertasList.has_previous %}
+                                    <a href="?page={{operariosList.previous_page_number}}">Anterior</a>
+                                    {% else %}
+                                    <span class="disabled">Anterior</span>
+                                    {% endif %}
+                                    {% for num in operariosList.paginator.page_range %}
+                                    {% if operariosList.number == num %}
+                                    <li class="active"><a href="#!">{{ num }}</a></li>
+                                    {% else %}
+                                    <li class="waves-effect"><a
+                                            href="?page={{ num }}">{{ num }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% if operariosList.has_next %}
+                                    <a href="?page={{operariosList.next_page_number}}">Anterior</a>
+                                    {% else %}
+                                    <span class="disabled">Siguiente</span>
+                                    {% endif %}
+                                </div> -->
                         </div>
                         <!-- <div class="modal-footer">
                                 <a class="btn btn-info" style="height: 39px;">Asignar</a>
@@ -675,7 +701,64 @@
 
 
 
-
+<script>
+        $("#jsGrid").jsGrid({
+                 height: "80%",
+                 width: "100%",
+                 /*filtering: true,
+                 inserting: true,
+                 editing: true,
+                 sorting: true,
+                 paging: true,
+                 autoload: true,*/
+                 filtering: true,
+                 inserting: false,
+                 editing: false,
+                 sorting: true,
+                 paging: true,
+                 autoload: true,
+                 pageSize: 5,
+                 pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+                 pageButtonCount: 1,
+                 pagePrevText: "Anterior",
+                 pageNextText: "Siguiente",
+                 pageFirstText: "Primera",
+                 pageLastText: "Ultima",
+                 noDataContent: "No se han encontrado registros",
+                 deleteConfirm: "Desea eliminar el registro?",
+                 loadMessage: "Por favor, espere...",
+                 invalidMessage: "Datos no válidos",
+                 controller: {
+                     loadData: function (filter) {
+                         var d = $.Deferred();
+                         console.log("FILTER", filter);
+                         $.ajax({
+                             type: "GET",
+                             url: "/reingenieria/asignacion/asignar/listar/5/", 
+                             data: filter
+                         }).done(function (result) {
+                             console.log(result);
+                              d.resolve($.map(result, function (item) {
+                                  return $.extend(item.fields, { id: item.pk });
+                              }));
+                         });
+     
+                         return d.promise();
+                     }
+                 
+                 },
+     
+                 fields: [
+                     { name: "nombres", type: "text", width: 150, title: "Nombre" },
+                     { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
+                     { name: "antiguedad", type: "text", width: 150, title: "Antiguedad" },
+                     { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
+                     { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
+                     { name: "perfil", type: "date", width: 150, title: "Perfil" }
+                 ]
+             });
+     
+     </script>
 
 
 <script type='template/Detalle'>
@@ -1422,4 +1505,5 @@
         background-color: #86273e1f !important;
     }
 </style>
+
 {% endblock %}

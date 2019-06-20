@@ -159,9 +159,9 @@
                                 <td>{{alerta.Fecha}}</td>
                                 <td>{{alerta.Estado}}</td>
                                 <td>{{alerta.Tipo}}</td>
-                                <td style="display:flex;justify-content:center"><button type='button' class='btn btn-success btn-filtrar'>Gestionar</button></td>
+                                <td style="display:flex;justify-content:center"><a href={% url 'Operarios:alertas_gestionar' alerta_id=alerta.id %} class="btn btn-success btn-filtrar">Gestionar</a></td>
                             </tr>
-                    {% endfor %}
+                        {% endfor %}
                 </tbody>
             </table>
             <div class="pagination">

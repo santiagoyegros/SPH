@@ -1,5 +1,6 @@
 import logging
 from django.shortcuts import render, redirect, render_to_response
+from django.template.loader import render_to_string
 from django.http import HttpResponse, Http404
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -12,14 +13,16 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 import datetime
 from datetime import date
-
+from django.core import serializers
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet, DiaLibre, OperariosAsignacionDet, Especializacion
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm,DiaLibreForm
 
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection
 
 from datetime import datetime as dt
+
+import json
 @login_required
 @permission_required('Operarios.view_asignacioncab', raise_exception=True)
 def Asignacion_list(request):
@@ -39,6 +42,8 @@ def Asignacion_create(request, id_puntoServicio=None):
     dom_diurno = '0'
     dom_nocturno = '0'
     operarios = []
+    paginator=''
+    operariosList=[]
     diaInicioSelected = []
     diaFinSelected = []
     horaInicioSelected=[]
@@ -88,6 +93,14 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
     print("#1")
+
+    print(request.GET)
+
+    if request.GET.get('page'):
+        print("Hay pagiina")
+
+
+
     if request.method == 'POST':
         print(request.POST)
         print(request.session.keys())
@@ -242,6 +255,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                         diaInicio,
                         diaFin,
                         )
+                    
                     if len(operarios)>0:
                         
                         """ 
@@ -437,7 +451,6 @@ def Asignacion_create(request, id_puntoServicio=None):
                         else:
                             openModal=True
                             idModal = formOperarioID
-
                     else:
                         messages.info(request, 'No se encontraron operarios con esos parametros')
                 i=i+1
@@ -468,6 +481,12 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     else:
         print("NO ES POST")
+        pageNumber=request.GET.get("page")
+
+        if pageNumber:
+            print("Se cambio de pagina en el modal")   
+
+        
         """
         Seteamos el punto de servicio
         """
@@ -476,13 +495,19 @@ def Asignacion_create(request, id_puntoServicio=None):
         AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
     
     print("ARRAYS",diaFinSelected,diaInicioSelected)
+    if operarios:
+        operarios=serializers.serialize("json",operarios )
+        print(operarios)
+    #operarios_json = json.dumps(operarios)
     contexto = {
             'title': 'Nueva Asignación',
             'pservicio': puntoSer,
             'form': form,
+            'operarios':operarios,
             'formDiaLibre':formDiaLibre,
             'asigDetFormSet': AsigDetFormSet,
             'relevamiento' : relevamiento,
+            'paginator':paginator,
             'sem_diurno' : sem_diurno,
             'sem_nocturno' : sem_nocturno,
             'dom_diurno' : dom_diurno,
@@ -501,17 +526,29 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     return render(request, 'asignacion/asignacion_crear.html', context=contexto)
 
+def do_paginate(data_list, page_number):
+    ret_data_list=data_list
+    result_per_page=5
+    paginator=Paginator(data_list, result_per_page)
+    try:
+        ret_data_list=paginator.page(page_number)
+    except EmptyPage:
+        ret_data_list=paginator.page(paginator.num_pages)
+    except PageNotAnInteger:
+        ret_data_list=paginator.page(1)
+    return [ret_data_list, paginator]
+
 def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq,perfil,supervisor, fechaInicioOp,fechaFinOp,horaInicio,horaFin,diaInicio,diaFin):
         conn= connection.cursor()
         sql = """\
             DECLARE @out nvarchar(max);
-            EXEC [dbo].[operarios_disponibles] @puntoServicio=?, @totalHoras=?, @lunEntReq=?, @lunSalReq=?, @marEntReq=?, @marSalReq=?, @mierEntReq=?, @mierSalReq=?, @juevEntReq=?, @juevSalReq=?, @vieEntReq=?, @vieSlReq=?, @sabEntReq=?, @sabSalReq=?, @domEntReq=?, @domSalReq=?, @fechaInicioOperario=?, @fechaFinOperario=?,@perfil=?, @param_out = @out OUTPUT;
+            EXEC [dbo].[operarios_disponibles_v2] @puntoServicio=?, @totalHoras=?, @lunEntReq=?, @lunSalReq=?, @marEntReq=?, @marSalReq=?, @mierEntReq=?, @mierSalReq=?, @juevEntReq=?, @juevSalReq=?, @vieEntReq=?, @vieSlReq=?, @sabEntReq=?, @sabSalReq=?, @domEntReq=?, @domSalReq=?, @fechaInicioOperario=?, @fechaFinOperario=?,@perfil=?, @param_out = @out OUTPUT;
             SELECT @out AS the_output;
         """
-        """conn.callproc('operarios_disponibles', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
+        """conn.callproc('operarios_disponibles_v2', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
         params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp, fechaFinOp,perfil)
         print(params)
-        conn.execute('operarios_disponibles %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
+        conn.execute('operarios_disponibles_v2 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
         result = conn.fetchall()
        
         print("RESULTADO",result)

@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'^fiscales/eliminar/(?P<id_user_fiscal>\d+)/(?P<id_puntoServicio>\d+)/$', Fiscales_delete, name='fiscales_del'),
     url(r'^asignacion/listar/', viewsAsignacion.Asignacion_list, name='asignacion_list'),
     url(r'^asignacion/asignar/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_create, name='asignacion_create'),
+    url(r'^asignacion/asignar/listar/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_create, name='asignacion_create'),
     url(r'^marcacion/vista', obtenerMarcacion , name='marcaciones_url'),
     url(r'^marcacion/listar/', getMarcaciones , name='marcaciones_get'),
     url(r'^asignacion/operarios'+
@@ -54,12 +55,12 @@ urlpatterns = [
    '(?P<domEntReq>\d+)/(?P<domSalReq>\d+)/(?P<fechaInicioOp>\d+)/$', 
     cargarOperarios , name='filter_operarios'),
     url(r'^marcacion/descargar', descargarMarcaciones , name='marcaciones_xls'),
-
     url(r'^operaciones/feriados/vista', obtenerFeriado , name='feriados_url'),
     url(r'^feriados/listar', getFeriados , name='feriados_get'),
     url(r'^feriados/crear', makeFeriados , name='feriados_post'),
     url(r'^feriados/editar/(?P<feriado_id>\d+)', editFeriados , name='feriados_put'),
     url(r'^feriados/eliminar/(?P<feriado_id>\d+)', deleteFeriados , name='feriados_delete'),
     url(r'^operaciones/operarios/vista/', viewsOperario.getOperariosVista , name='operarios_vista'),
-    url(r'^alertas/listar/', viewsAlerta.alertasList , name='alertas_list')
+    url(r'^alertas/listar/', viewsAlerta.alertasList , name='alertas_list'),
+    url(r'^alertas/gestionar/(?P<alerta_id>\d+)', viewsAlerta.gestion_alertas , name='alertas_gestionar')
 ]   

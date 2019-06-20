@@ -84,7 +84,6 @@ def alertasList (request):
             except PuntoServicio.DoesNotExist:
                 raise Http404("Punto de Servicio relacionado a una Alerta no existe")  
 
-    print(fechaDesde,fechaHasta)
     contexto = {
         'title': 'Filtrado de Alertas',
         'alertasList':alertasList,
@@ -113,3 +112,11 @@ def do_paginate(data_list, page_number):
     except PageNotAnInteger:
         ret_data_list=paginator.page(1)
     return [ret_data_list, paginator]
+
+
+def gestion_alertas(request,alerta_id=None):
+
+    contexto = {
+        'title': 'Gestion de Alertas'  
+    }
+    return render(request, 'alertas/alerta_gestionar.html', context=contexto)

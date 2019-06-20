@@ -14,7 +14,7 @@ from datetime import date
 from datetime import datetime
 from Operarios.models import Alertas
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio
+from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones
 def alertasList (request):
     estado="Abierta"
     fechaDesde=request.GET.get('fechaDesde')
@@ -127,9 +127,11 @@ def gestion_alertas(request,alerta_id=None):
     fiscal=AsigFiscalPuntoServicio.objects.get(puntoServicio=puntoServicio)
     supervisor=AsignacionDet.objects.filter(asignacionCab=asignacionCab, supervisor=True)[0]
     alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)
+    ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
+    print (ultimasMarcaciones)
     """CAMBIAMOS EL ESTADO DE LA ALERTA"""
-    if request.method == GET:
-        setattr(alerta,Estado, "EN GESTION")
+    if request.method == 'GET':
+        setattr(alerta,"Estado", "EN GESTION")
     else: 
         print ("Es POST")
     

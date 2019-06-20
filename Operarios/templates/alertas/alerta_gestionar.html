@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class='my-3'>Detalle de Alertas - No marcación</h1>
+<div class="container-fluid pl-0 pr-1">
+    <form method="GET" role="form" id="formulario">
+
+
+        <div class="col-md-12 pl-0 pr-1">
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    Operario
+                </div>
+                <div class="card-body">
+                    <div class="cuerpo-filtro row">
+                        <div class="row filter-row">
+                            <div class="col-md-4">
+                                <p style="margin:0px !important">
+
+                                    <label for="">Nombre</label>
+                                    <input type="text" class="form-control" value="" disabled>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p style="margin:0px !important">
+
+                                    <label for="">Teléfono</label>
+                                    <input type="text" class="form-control" value="" disabled>
+
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>
+                                    <label for="">Horario</label>
+                                    <input type="text" class="form-control" value="" disabled>
+
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row filter-row">
+                            <div class="col-md-4">
+                                <p>
+
+                                    <label for="">Próxima marcación</label>
+                                    <input type="text" class="form-control" value="" disabled>
+
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>
+
+                                    <label for="tipoAlerta">Fecha</label>
+                                    <input type="text" class="form-control" value="" disabled>
+
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    Punto de Servicio
+                </div>
+                <div class="card-body">
+                    <div class="cuerpo-filtro row">
+                        <div class="row filter-row">
+                            <div class="col-md-6">
+                                <p style="margin:0px !important">
+
+                                    <label for="">Nombre</label>
+                                    <input type="text" class="form-control" value="" disabled>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="margin:0px !important">
+
+                                    <label for="">Teléfono</label>
+                                    <input type="text" class="form-control" value="" disabled>
+                                </p>
+                            </div>
+
+                        </div>
+                        <div class="row filter-row">
+                            <div class="col-md-6">
+                                <p>
+
+                                    <label for="">Fiscal</label>
+                                    <input type="text" class="form-control" value="" disabled>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p>
+
+                                    <label for="tipoAlerta">Fecha</label>
+                                    <input type="text" class="form-control" value="" disabled>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:15px !important;border:none !important;">
+                <div class="card-header">
+                    Alertas sin Asignación en el Punto de Servicio
+                </div>
+                <div class="card-body" style="padding: 10px 0px !important;">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Nro.</th>
+                                <th>Operario</th>
+                                <th>Teléfono</th>
+                                <th>Hora</th>
+                                <th>Fecha</th>
+                                <th>Retraso</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in list %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="display:flex;justify-content:center"><a
+                                        href={% url 'Operarios:alertas_gestionar' alerta_id=alerta.id %}
+                                        class="btn btn-success btn-filtrar">Emparejar</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <!-- <div class="pagination">
+                                        Página:&nbsp;&nbsp;
+                                        {% if alertasList.has_previous %}
+                                        <a href="?page={{alertasList.previous_page_number}}">Anterior</a>
+                                        {% else %}
+                                        <span class="disabled">Anterior</span>
+                                        {% endif %}
+                                        {% for num in alertasList.paginator.page_range %}
+                                        {% if alertasList.number == num %}
+                                        <li class="active"><a href="#!">{{ num }}</a></li>
+                                        {% else %}
+                                        <li class="waves-effect"><a
+                                                href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% if alertasList.has_next %}
+                                        <a href="?page={{alertasList.next_page_number}}">Anterior</a>
+                                        {% else %}
+                                        <span class="disabled">Siguiente</span>
+                                        {% endif %}
+                                    </div>-->
+
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    Otras Acciones
+                </div>
+                <div class="card-body">
+
+                    <div class="cuerpo-filtro row">
+                        <div class="row filter-row">
+                            <div class="col-md-4">
+                                <p style="margin:0px 0px 17px 0px !important;display: flex;">
+
+                                    <label for="" style="margin: 0px 63px 10px 0px;">Acción</label>
+                                    <select class="form-control" id="exampleFormControlSelect1" name="estado">
+                                        <option value="1">En el lugar</option>
+                                        <option value="2">Va a asistir</option>
+                                        <option value="3">No se va a cubrir</option>
+                                        <option value="4">Reemplazo</option>
+                                    </select>
+                                </p>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-12 pl-0 d-none" id="1">
+                                <div class="row filter-row">
+                                        <div class="col-md-4">
+                                        1
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="col-md-12 pl-0 d-none" id="2">
+                                <div class="row filter-row">
+                                        <div class="col-md-4">
+                                            2
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="col-md-12 pl-0 d-none" id="3">
+                                <div class="row filter-row">
+                                        <div class="col-md-4">
+                                        3
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="col-md-12 pl-0" id="4">
+                            <div class="row filter-row">
+                                <div class="col-md-4">
+                                    <p style="display: flex;">
+
+                                        <label for="" style="margin: 0px 60px 0px 0px;">Motivo</label>
+                                        <textarea name="" class="form-control" id="" cols="30" rows="5"
+                                            placeholder="Agregue el motivo aquí"></textarea>
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="row">
+                                        <p style="display: flex;margin-bottom: 40px !important;">
+
+                                            <label for="tipoAlerta" style="width: 270px;">Fecha de retorno</label>
+                                            <input type="text" value="{{ form.fechaInicio.value}}"
+                                                name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio"
+                                                class="form-control"
+                                                id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaInicio"
+                                                dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <p style="display: flex;">
+
+                                            <label for="tipoAlerta" style="width: 270px;">Hora de retorno</label>
+                                            <input type="text" value="{{form.lunSal.value}}"
+                                                name="asignaciondet_set-{{ forloop.counter0 }}-lunSal"
+                                                class="form-control form-control-sm" style="height:38px !important;"
+                                                id="id_asignaciondet_set-{{ forloop.counter0 }}-lunSal"
+                                                dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row filter-row">
+                                <div class="col-md-4">
+
+                                    <p style="display: flex;">
+                                        <label for="" style="margin: 0px 20px 0px 0px;">Comentarios</label>
+                                        <textarea name="" class="form-control" id="" cols="30" rows="3"
+                                            placeholder="Agregue un comentario aquí"></textarea>
+                                    </p>
+                                </div>
+                                <div class="col-md-3" style="    display: flex;
+                                        justify-content: center;
+                                        align-items: center;">
+                                    <div class="row">
+                                        <div class="col-md-6">
+
+                                            <p style="display: flex;">
+                                                <input type="checkbox" style="margin: 6px 15px;">
+                                                <label for="" style="margin: 0px 20px 0px 0px;">Escalar</label>
+
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type='submit' class='btn btn-success btn-filtrar'>Asignar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div style="    float: right;">
+                        <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar">Cancelar</a>
+                        <button type='submit' class='btn btn-success btn-filtrar'>Guardar</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+
+</div>
+
+
+<style>
+    .card-header {
+        background-color: #86273e !important;
+        color: white !important;
+        font-size: 20px !important;
+        border-radius: 0px !important;
+        border-bottom: 1px solid gray !important;
+    }
+
+    .card {
+        border-radius: 0px !important;
+    }
+
+    .cuerpo-filtro .row div p {
+        width: 100% !important;
+        padding: 0px 10px;
+    }
+
+    .filter-row {
+        width: 100%;
+    }
+
+    .input-group {
+        padding: 0px 10px;
+
+    }
+
+    .btn-light.active,
+    .btn-light:active,
+    .show>.btn-light.dropdown-toggle {
+        background-color: #ffffff !important;
+        color: black !important;
+        background-image: none;
+        border-color: #d9d9d9 !important;
+    }
+
+    .btn-light {
+        background-color: #ffffff !important;
+        color: black !important;
+        background-image: none;
+        border-color: #d9d9d9 !important;
+    }
+
+    .bootstrap-select>.dropdown-toggle.bs-placeholder,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:active,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:focus,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:hover {
+        color: black !important;
+    }
+
+    .table th {
+        background-color: #636363 !important;
+        color: white !important;
+    }
+
+    .table th {
+        padding: .5em !important;
+        border-left: 0px solid white !important;
+        border-right: 0px solid white !important;
+    }
+
+    .table tr:hover {
+        background-color: #c4e2ff !important;
+    }
+
+    .btn-filtrar {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 30px;
+        cursor: pointer;
+    }
+
+    .btn-limpiar {
+        background-color: gray !important;
+        border-color: gray !important;
+        padding: 7px 30px;
+    }
+
+    .form-control:disabled {
+        background-color: transparent !important;
+        border: none !important;
+    }
+</style>
+<script>
+$('#exampleFormControlSelect1').on('change', function(e){
+ console.log($(this)[0].value);
+ var opcion = $(this)[0].value;
+    $('#'+opcion).removeClass('d-none');
+    for(var i=1;i<=4;i++){
+        if(i!=opcion){
+            $('#'+i).addClass('d-none');
+        }
+    }
+}); 
+
+</script>
+{% endblock %}

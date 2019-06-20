@@ -468,8 +468,9 @@ def Asignacion_create(request, id_puntoServicio=None):
             AsigDetFormSet = asignacionDetFormSet(request.POST,instance=asignacion)
 
                
-            print (form.errors)
-            print (AsigDetFormSet.errors)
+            print ("form error",form.errors)
+            print ("asign error",AsigDetFormSet.errors)
+            print(AsigDetFormSet)
             if form.is_valid() and AsigDetFormSet.is_valid():
                 """Se guarda completo"""
                 form.save()
@@ -480,13 +481,6 @@ def Asignacion_create(request, id_puntoServicio=None):
                 messages.warning(request, 'No se pudo guardar los cambios')
 
     else:
-        print("NO ES POST")
-        pageNumber=request.GET.get("page")
-
-        if pageNumber:
-            print("Se cambio de pagina en el modal")   
-
-        
         """
         Seteamos el punto de servicio
         """
@@ -526,6 +520,116 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     return render(request, 'asignacion/asignacion_crear.html', context=contexto)
 
+
+def getOperarios(request):
+    totalHoras=idPunto="" 
+    lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal=""
+    fechaIni = ""
+    diaInicio=diaFin=""
+    horaInicio=horaFin=""
+    supervisor=False
+    perfil=""
+    fechaFin=""
+    operarios = []
+    print(request.GET)
+    if request.GET.get('idPunto')  is not None and request.GET.get('idPunto')!='':
+        idPunto=request.GET.get('idPunto')
+    if request.GET.get('totalHorasProc')  is not None and request.GET.get('totalHorasProc')!='':
+        totalHoras=request.GET.get('totalHorasProc') 
+    if request.GET.get('lunEnt')  is not None and request.GET.get('lunEnt')!='':
+        lunEnt=request.GET.get('lunEnt') 
+    if request.GET.get('lunSal')  is not None and request.GET.get('lunSal')!='':
+        lunSal=request.GET.get('lunSal') 
+    if request.GET.get('marEnt')  is not None and request.GET.get('marEnt')!='':
+        marEnt=request.GET.get('marEnt')
+    if request.GET.get('marSal')  is not None and request.GET.get('marSal')!='':
+        marSal=request.GET.get('marSal')
+    if request.GET.get('mieEnt')  is not None and request.GET.get('mieEnt')!='':
+        mieEnt=request.GET.get('mieEnt')
+    if request.GET.get('mieSal')  is not None and request.GET.get('mieSal')!='':
+        mieSal=request.GET.get('mieSal')
+    if request.GET.get('jueEnt')  is not None and request.GET.get('jueEnt')!='':
+        jueEnt=request.GET.get('jueEnt')
+    if request.GET.get('jueSal')  is not None and request.GET.get('jueSal')!='':
+        jueSal=request.GET.get('jueSal')
+    if request.GET.get('vieEnt')  is not None and request.GET.get('vieEnt')!='':
+        vieEnt=request.GET.get('vieEnt')
+    if request.GET.get('vieSal')  is not None and request.GET.get('vieSal')!='':
+        vieSal=request.GET.get('vieSal')
+    if request.GET.get('sabEnt')  is not None and request.GET.get('sabEnt')!='':
+        sabEnt=request.GET.get('sabEnt')
+    if request.GET.get('sabSal')  is not None and request.GET.get('sabSal')!='':
+        sabSal=request.GET.get('sabSal')
+    if request.GET.get('domEnt')  is not None and request.GET.get('domEnt')!='':
+        domEnt=request.GET.get('domEnt')
+    if request.GET.get('domSal')  is not None and request.GET.get('domSal')!='':
+        domSal=request.GET.get('domSal')
+    if request.GET.get('supervisor')  is not None and request.GET.get('supervisor')!='' and request.GET.get('supervisor')=="on":
+        supervisor=True
+    if request.GET.get('diaFin')  is not None and request.GET.get('diaFin')!='':
+        diaFin=request.GET.get('diaFin')
+    if request.GET.get('diaInicio')  is not None and request.GET.get('diaInicio')!='':
+        diaInicio=request.GET.get('diaInicio')
+    if request.GET.get('horaFin')  is not None and request.GET.get('horaFin')!='':
+        horaFin=request.GET.get('horaFin')
+    if request.GET.get('horaInicio')  is not None and request.GET.get('horaInicio')!='':
+        horaInicio=request.GET.get('horaInicio')
+    if request.GET.get('perfilproc')  is not None and request.GET.get('perfilproc')!='':
+        perfil=request.GET.get('perfilproc')
+    if request.GET.get('fechaFin')  is not None and request.GET.get('fechaFin')!='':
+        fechaFin=request.GET.get('fechaFin')
+        date_time_obj = datetime.datetime.strptime(fechaFin,'%d/%m/%Y')
+        fechaFin=date_time_obj.strftime('%Y-%m-%d')
+    if request.GET.get('fechaIni')  is not None and request.GET.get('fechaIni')!='':
+        fechaIni=request.GET.get('fechaIni')
+        date_time_obj = datetime.datetime.strptime(fechaIni,'%d/%m/%Y')
+        fechaIni=date_time_obj.strftime('%Y-%m-%d')
+
+    operarios = buscar_operarios(
+        idPunto,
+        totalHoras, 
+        lunEnt,  
+        lunSal,  
+        marEnt,  
+        marSal,  
+        mieEnt,  
+        mieSal,  
+        jueEnt,  
+        jueSal,  
+        vieEnt,  
+        vieSal,  
+        sabEnt,  
+        sabSal,  
+        domEnt,  
+        domSal,
+        perfil,
+        supervisor,
+        fechaIni,
+        fechaFin,
+        horaInicio,
+        horaFin,
+        diaInicio,
+        diaFin,
+        )
+    print("OPERARIOS",operarios)
+    #Se filtra el resultado
+
+    if request.GET.get('nombres')  is not None and request.GET.get('nombres')!='':
+        operarios = [x for x in operarios if (request.GET.get('nombres')).lower() in (x.nombres).lower()]
+    if request.GET.get('nroLegajo')  is not None and request.GET.get('nroLegajo')!='':
+        operarios = [x for x in operarios if (request.GET.get('nroLegajo')).lower() in (x.nroLegajo).lower()]
+    if request.GET.get('antiguedad')  is not None and request.GET.get('antiguedad')!='':
+        operarios = [x for x in operarios if str(request.GET.get('antiguedad')) in str(x.antiguedad)]
+    if request.GET.get('nombres_puntoServicio')  is not None and request.GET.get('nombres_puntoServicio')!='':
+        operarios = [x for x in operarios if (request.GET.get('nombres_puntoServicio')).lower() in (x.nombres_puntoServicio).lower()]
+    if request.GET.get('totalHoras')  is not None and request.GET.get('totalHoras')!='':
+        operarios = [x for x in operarios if str(request.GET.get('totalHoras')) in str(x.totalHoras)]
+    if request.GET.get('perfil')  is not None and request.GET.get('perfil')!='':
+        operarios = [x for x in operarios if (request.GET.get('perfil')).lower() in (x.perfil).lower()]
+    
+    return HttpResponse(serializers.serialize("json",operarios ), content_type = 'application/json', status = 200);
+
+
 def do_paginate(data_list, page_number):
     ret_data_list=data_list
     result_per_page=5
@@ -551,7 +655,6 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
         conn.execute('operarios_disponibles_v2 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
         result = conn.fetchall()
        
-        print("RESULTADO",result)
         conn.close()
         return [OperariosAsignacionDet(*row) for row in result]
 

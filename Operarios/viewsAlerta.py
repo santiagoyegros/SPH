@@ -101,6 +101,8 @@ def alertasList (request):
     }
 
     return render(request, 'alertas/alerta_list.html', context=contexto)
+
+
 def do_paginate(data_list, page_number):
     ret_data_list=data_list
     result_per_page=10

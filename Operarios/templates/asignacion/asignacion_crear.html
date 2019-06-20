@@ -192,12 +192,13 @@
                             <div class="col-md-6">
                                 <p>
                                     <label for="">Perfil</label>
-                                    <select class="form-control form-control-sm select-form" id="perfil-{{ forloop.counter0}}" style="display:none;">
-                                            <option value="">---------</option>
-                                          {% for perfil in perfiles %}
-                                            <option value="{{perfil.id}}">{{perfil.especializacion}}</option>
-                                           {% endfor %}
-                                          
+                                    <select class="form-control form-control-sm select-form"
+                                        id="perfil-{{ forloop.counter0}}" style="display:none;">
+                                        <option value="">---------</option>
+                                        {% for perfil in perfiles %}
+                                        <option value="{{perfil.id}}">{{perfil.especializacion}}</option>
+                                        {% endfor %}
+
                                     </select>
                                     {{form.perfil}}
                                 </p>
@@ -208,7 +209,8 @@
                                 <div class="input-group date" style="display:flex;justify-content :center !important;">
                                     <p style="display:inline-flex !important;margin:0px !important;">
                                         <label for="">Supervisor</label>
-                                        <input type="checkbox"class="checkbox-supervisor" style="display:none" id="supervisor-{{ forloop.counter0}}">
+                                        <input type="checkbox" class="checkbox-supervisor" style="display:none"
+                                            id="supervisor-{{ forloop.counter0}}">
                                         {{form.supervisor}}
                                     </p>
 
@@ -420,27 +422,27 @@
                             <div class="col-3 pl-0">
                                 <p style="margin:0px !important;">
                                     <label for="">Dia Libre</label>
-                                    
+
                                     <select name="diaInicio-{{ forloop.counter0 }}"
                                         class="form-control form-control-sm select-form" maxlength="10"
                                         id="id_diaInicio-{{ forloop.counter0 }}">
                                         <option value="''">---------</option>
                                         {% if diaInicioSelected %}
-                                            {% for diasInicio in diaInicioSelected %}
-                                                {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                                                    {% for d in dias %}
-                                                        {% if d == diasInicio %}
-                                                            <option value="{{d}}" selected>{{d}}</option>
-                                                        {% else %}
-                                                            <option value="{{d}}">{{d}}</option>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endif %}
-                                            {% endfor %}
+                                        {% for diasInicio in diaInicioSelected %}
+                                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
+                                        {% for d in dias %}
+                                        {% if d == diasInicio %}
+                                        <option value="{{d}}" selected>{{d}}</option>
                                         {% else %}
-                                            {% for d in dias %}
-                                                <option value="{{d}}">{{d}}</option>
-                                            {% endfor %}
+                                        <option value="{{d}}">{{d}}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% else %}
+                                        {% for d in dias %}
+                                        <option value="{{d}}">{{d}}</option>
+                                        {% endfor %}
                                         {% endif %}
 
                                     </select>
@@ -451,27 +453,29 @@
 
                                     <div class="input-group date">
                                         {% if horaInicioSelected %}
-                                            {% for horasInicio in horaInicioSelected %}
-                                                {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                                                    <input type="text" name="horaInicio-{{ forloop.counter0 }}" value="{{horasInicio}}"
-                                                        placeholder="Hora inicio" class="form-control form-control-sm"
-                                                        id="id_horaInicio-{{ forloop.counter0 }}"
-                                                        dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                                    <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                                        data-toggle="datetimepickerv">
-                                                        <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div></div>
-                                                {% endif %}
-                                            {% endfor %}
+                                        {% for horasInicio in horaInicioSelected %}
+                                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
+                                        <input type="text" name="horaInicio-{{ forloop.counter0 }}"
+                                            value="{{horasInicio}}" placeholder="Hora inicio"
+                                            class="form-control form-control-sm"
+                                            id="id_horaInicio-{{ forloop.counter0 }}"
+                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
                                         {% else %}
-                                                <input type="text" name="horaInicio-{{ forloop.counter0 }}"
-                                                    placeholder="Hora inicio" class="form-control form-control-sm"
-                                                    id="id_horaInicio-{{ forloop.counter0 }}"
-                                                    dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                                    data-toggle="datetimepickerv">
-                                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                                    </div>
-                                            
+                                        <input type="text" name="horaInicio-{{ forloop.counter0 }}"
+                                            placeholder="Hora inicio" class="form-control form-control-sm"
+                                            id="id_horaInicio-{{ forloop.counter0 }}"
+                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+
                                         {% endif %}
                                     </div>
 
@@ -486,21 +490,21 @@
                                         <option value="''">---------</option>
 
                                         {% if diaFinSelected %}
-                                            {% for diasFin in diaFinSelected %}
-                                                {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                                                    {% for d in dias %}
-                                                        {% if d == diasFin %}
-                                                            <option value="{{d}}" selected>{{d}}</option>
-                                                        {% else %}
-                                                            <option value="{{d}}">{{d}}</option>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endif %}
-                                            {% endfor %}
+                                        {% for diasFin in diaFinSelected %}
+                                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
+                                        {% for d in dias %}
+                                        {% if d == diasFin %}
+                                        <option value="{{d}}" selected>{{d}}</option>
                                         {% else %}
-                                            {% for d in dias %}
-                                                <option value="{{d}}">{{d}}</option>
-                                            {% endfor %}
+                                        <option value="{{d}}">{{d}}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% else %}
+                                        {% for d in dias %}
+                                        <option value="{{d}}">{{d}}</option>
+                                        {% endfor %}
                                         {% endif %}
 
                                     </select>
@@ -509,31 +513,31 @@
                             <div class="col-2 pl-0">
                                 <p style="display:inline-flex !important;margin-top:17px !important;">
 
-                                        <div class="input-group date">
-                                                {% if horaFinSelected %}
-                                                    {% for horasFin in horaFinSelected %}
-                                                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                                                            <input type="text" name="horaFin-{{ forloop.counter0 }}" value="{{horasFin}}"
-                                                                placeholder="Hora Fin" class="form-control form-control-sm"
-                                                                id="id_horaFin-{{ forloop.counter0 }}"
-                                                                dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                                            <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                                                data-toggle="datetimepickerv">
-                                                                <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div></div>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% else %}
-                                                        <input type="text" name="horaFin-{{ forloop.counter0 }}"
-                                                            placeholder="Hora Fin" class="form-control form-control-sm"
-                                                            id="id_horaFin-{{ forloop.counter0 }}"
-                                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                                            data-toggle="datetimepickerv">
-                                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                                            </div>
-                                                    
-                                                {% endif %}
-                                            </div>
+                                    <div class="input-group date">
+                                        {% if horaFinSelected %}
+                                        {% for horasFin in horaFinSelected %}
+                                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
+                                        <input type="text" name="horaFin-{{ forloop.counter0 }}" value="{{horasFin}}"
+                                            placeholder="Hora Fin" class="form-control form-control-sm"
+                                            id="id_horaFin-{{ forloop.counter0 }}"
+                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% else %}
+                                        <input type="text" name="horaFin-{{ forloop.counter0 }}" placeholder="Hora Fin"
+                                            class="form-control form-control-sm" id="id_horaFin-{{ forloop.counter0 }}"
+                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+
+                                        {% endif %}
+                                    </div>
                                 </p>
                             </div>
 
@@ -558,7 +562,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                                <div id="jsGrid"></div>
+                            <div id="jsGrid{{forloop.counter0}}"></div>
                             <!-- <table id="table" class="table table-bordered table-hover table-sm mt-3">
 
                                 <thead>
@@ -697,68 +701,69 @@
 
 
     </form>
+    <!-- <div id="jsGrid"></div> -->
 </div>
 
 
 
 <script>
-        $("#jsGrid").jsGrid({
-                 height: "80%",
-                 width: "100%",
-                 /*filtering: true,
-                 inserting: true,
-                 editing: true,
-                 sorting: true,
-                 paging: true,
-                 autoload: true,*/
-                 filtering: true,
-                 inserting: false,
-                 editing: false,
-                 sorting: true,
-                 paging: true,
-                 autoload: true,
-                 pageSize: 5,
-                 pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
-                 pageButtonCount: 1,
-                 pagePrevText: "Anterior",
-                 pageNextText: "Siguiente",
-                 pageFirstText: "Primera",
-                 pageLastText: "Ultima",
-                 noDataContent: "No se han encontrado registros",
-                 deleteConfirm: "Desea eliminar el registro?",
-                 loadMessage: "Por favor, espere...",
-                 invalidMessage: "Datos no válidos",
-                 controller: {
-                     loadData: function (filter) {
-                         var d = $.Deferred();
-                         console.log("FILTER", filter);
-                         $.ajax({
-                             type: "GET",
-                             url: "/reingenieria/asignacion/asignar/listar/5/", 
-                             data: filter
-                         }).done(function (result) {
-                             console.log(result);
-                              d.resolve($.map(result, function (item) {
-                                  return $.extend(item.fields, { id: item.pk });
-                              }));
-                         });
-     
-                         return d.promise();
-                     }
-                 
-                 },
-     
-                 fields: [
-                     { name: "nombres", type: "text", width: 150, title: "Nombre" },
-                     { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
-                     { name: "antiguedad", type: "text", width: 150, title: "Antiguedad" },
-                     { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
-                     { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
-                     { name: "perfil", type: "date", width: 150, title: "Perfil" }
-                 ]
-             });
-     
-     </script>
+        // $("#jsGrid").jsGrid({
+        //          height: "80%",
+        //          width: "100%",
+        //          /*filtering: true,
+        //          inserting: true,
+        //          editing: true,
+        //          sorting: true,
+        //          paging: true,
+        //          autoload: true,*/
+        //          filtering: true,
+        //          inserting: false,
+        //          editing: false,
+        //          sorting: true,
+        //          paging: true,
+        //          autoload: true,
+        //          pageSize: 5,
+        //          pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+        //          pageButtonCount: 1,
+        //          pagePrevText: "Anterior",
+        //          pageNextText: "Siguiente",
+        //          pageFirstText: "Primera",
+        //          pageLastText: "Ultima",
+        //          noDataContent: "No se han encontrado registros",
+        //          deleteConfirm: "Desea eliminar el registro?",
+        //          loadMessage: "Por favor, espere...",
+        //          invalidMessage: "Datos no válidos",
+        //          controller: {
+        //              loadData: function (filter) {
+        //                  var d = $.Deferred();
+        //                  console.log("FILTER", filter);
+        //                  $.ajax({
+        //                      type: "GET",
+        //                      url: "/reingenieria/asignacion/asignar/operarios", 
+        //                      data: filter
+        //                  }).done(function (result) {
+        //                       console.log("Resultado",result);
+        //                       d.resolve($.map(result, function (item) {
+        //                           return $.extend(item.fields, { id: item.pk });
+        //                       }));
+        //                  });
+
+        //                  return d.promise();
+        //              }
+
+        //          },
+
+        //          fields: [
+        //              { name: "nombres", type: "text", width: 150, title: "Nombre" },
+        //              { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
+        //              { name: "antiguedad", type: "text", width: 150, title: "Antiguedad" },
+        //              { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
+        //              { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
+        //              { name: "perfil", type: "date", width: 150, title: "Perfil" }
+        //          ]
+        //      });
+
+</script>
 
 
 <script type='template/Detalle'>
@@ -812,7 +817,7 @@
                 $('#leaveForm-' + i).hide()
 
             }
-            console.log('#id_asignaciondet_set-' + i + '-operario',$('#id_asignaciondet_set-' + i + '-operario').val())
+            console.log('#id_asignaciondet_set-' + i + '-operario', $('#id_asignaciondet_set-' + i + '-operario').val())
             if ($('#id_asignaciondet_set-' + i + '-operario').val()) {
 
                 $('#id_asignaciondet_set-' + i + '-domEnt').prop("readonly", true);
@@ -836,10 +841,10 @@
                 $('#id_asignaciondet_set-' + i + '-perfil').attr("style", "display:none");
                 console.log('#id_asignaciondet_set-' + i + '-perfil');
                 $('#id_asignaciondet_set-' + i + '-supervisor').attr("style", "display:none");
-                $('#perfil-' + i ).attr("style", "display:block");
-                $('#perfil-' + i ).attr("disabled", "disabled");
-                $('#supervisor-' + i ).attr("style", "display:block;margin: 8px 25px;");
-                $('#supervisor-' + i ).attr("disabled", "disabled");
+                $('#perfil-' + i).attr("style", "display:block");
+                $('#perfil-' + i).attr("disabled", "disabled");
+                $('#supervisor-' + i).attr("style", "display:block;margin: 8px 25px;");
+                $('#supervisor-' + i).attr("disabled", "disabled");
                 $('#id_diaInicio-' + i).attr("disabled", "disabled");
                 $('#id_horaInicio-' + i).prop("readonly", true);
                 $('#id_diaFin-' + i).attr("disabled", "disabled");
@@ -896,16 +901,16 @@
     $(document).ready(function () {
         var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
         for (var i = 0; i < cantForm; i++) {
-            var idOpe = $('#id_asignaciondet_set-' + (i ) + '-operario').val();
-            var idPerfil = $('#id_asignaciondet_set-' + (i ) + '-perfil').val();
-            var supervisor = $('#id_asignaciondet_set-' + (i ) + '-supervisor');
+            var idOpe = $('#id_asignaciondet_set-' + (i) + '-operario').val();
+            var idPerfil = $('#id_asignaciondet_set-' + (i) + '-perfil').val();
+            var supervisor = $('#id_asignaciondet_set-' + (i) + '-supervisor');
             console.log(idPerfil)
-            if(supervisor[0].checked){
-                var selectSupervisor = $('#supervisor-' + (i ))[0];
+            if (supervisor[0].checked) {
+                var selectSupervisor = $('#supervisor-' + (i))[0];
                 console.log(selectSupervisor)
-                selectSupervisor.checked=true;
+                selectSupervisor.checked = true;
             }
-            var select = $('#operario-' + (i ))[0];
+            var select = $('#operario-' + (i))[0];
             var selectPerfil = $('#perfil-' + (i))[0];
             for (var j = 0; j < select.length; j++) {
                 if ($(select[j]).val() == idOpe) {
@@ -914,7 +919,7 @@
                     $(select[j]).removeAttr('selected');
                 }
             }
-            console.log("Al seleccionar operario el id perfil es "+ idPerfil + ".");
+            console.log("Al seleccionar operario el id perfil es " + idPerfil + ".");
             for (var j = 0; j < selectPerfil.length; j++) {
                 if ($(selectPerfil[j]).val() == idPerfil) {
                     $(selectPerfil[j]).attr("selected", "selected");
@@ -928,11 +933,324 @@
 </script>
 <script>
     function buscarOperario(id) {
-        debugger;
         //Seteamos action
-        document.getElementById('action').value = 'filter_operario-' + id;
+        //document.getElementById('action').value = 'filter_operario-' + id;
         //hacemos submit
-        document.getElementById('formulario').submit();
+        //document.getElementById('formulario').submit();
+        console.log("ver los datos del formulario " + id);
+        $('#modalFiltro' + id).modal('show');
+        $("#jsGrid" + id).jsGrid({
+            height: "80%",
+            width: "100%",
+            /*filtering: true,
+            inserting: true,
+            editing: true,
+            sorting: true,
+            paging: true,
+            autoload: true,*/
+            filtering: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            pageSize: 5,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "No se han encontrado registros",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    filter.idPunto = $('#id_puntoServicio').val();
+                    filter.totalHorasProc = $('#id_asignaciondet_set-' + id + '-totalHoras').val();
+                    filter.lunEnt = $('#id_asignaciondet_set-' + id + '-lunEnt').val();
+                    filter.lunSal = $('#id_asignaciondet_set-' + id + '-lunSal').val();
+                    filter.marEnt = $('#id_asignaciondet_set-' + id + '-marEnt').val();
+                    filter.marSal = $('#id_asignaciondet_set-' + id + '-marSal').val();
+                    filter.mieEnt = $('#id_asignaciondet_set-' + id + '-mieEnt').val();
+                    filter.mieSal = $('#id_asignaciondet_set-' + id + '-mieSal').val();
+                    filter.jueEnt = $('#id_asignaciondet_set-' + id + '-jueEnt').val();
+                    filter.jueSal = $('#id_asignaciondet_set-' + id + '-jueSal').val();
+                    filter.vieEnt = $('#id_asignaciondet_set-' + id + '-vieEnt').val();
+                    filter.vieSal = $('#id_asignaciondet_set-' + id + '-vieSal').val();
+                    filter.sabEnt = $('#id_asignaciondet_set-' + id + '-sabEnt').val();
+                    filter.sabSal = $('#id_asignaciondet_set-' + id + '-sabSal').val();
+                    filter.domEnt = $('#id_asignaciondet_set-' + id + '-domEnt').val();
+                    filter.domSal = $('#id_asignaciondet_set-' + id + '-domSal').val();
+                    filter.perfilproc = $('#id_asignaciondet_set-' + id + '-perfil').val();
+                    filter.supervisor = $('#id_asignaciondet_set-' + id + '-supervisor').val();
+                    filter.fechaIni = $('#id_asignaciondet_set-' + id + '-fechaInicio').val();
+                    filter.fechaFin = $('#id_asignaciondet_set-' + id + '-fechaFin').val();
+                    filter.horaInicio = $('#id_horaInicio-' + id).val();
+                    filter.horaFin = $('#id_horaFin-' + id).val();
+                    filter.diaInicio = $('#id_diaInicio-' + id).val();
+                    filter.diaFin = $('#id_diaFin-' + id).val();
+                    $.ajax({
+                        type: "GET",
+                        url: "/reingenieria/asignacion/asignar/operarios",
+                        data: filter
+                    }).done(function (result) {
+                        console.log("Resultado", result);
+                        console.log("Filter", filter);
+                        var j = id;
+
+                        if (result.length > 0) {
+                            if (j > 0) {
+                                var index = 1;
+                                while (index <= j) {
+                                    var operarios = result;
+                                    var lunEntAnt = ""
+                                    var lunSalAnt = ""
+                                    var marEntAnt = ""
+                                    var marSalAnt = ""
+                                    var mieSalAnt = ""
+                                    var mieEntAnt = ""
+                                    var jueEntAnt = ""
+                                    var jueSalAnt = ""
+                                    var vieSalAnt = ""
+                                    var vieEntAnt = ""
+                                    var sabEntAnt = ""
+                                    var sabSalAnt = ""
+                                    var domEntAnt = ""
+                                    var domSalAnt = ""
+                                    var fechaIniAnt = ""
+                                    var fechaFinAnt = ""
+                                    console.log("INDEX ES ", index-1);
+                                    console.log("i es",i);
+                                    if (!$("#id_asignaciondet_set-" + (index - 1) + "-DELETE")[0].checked) {
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-fechaInicio').val())
+                                            fechaIniAnt = $('#asignaciondet_set-' + (index - 1) + '-fechaInicio').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-fechaFin').val())
+                                            fechaFinAnt = $('#id_asignaciondet_set-' + (index - 1) + '-fechaFin').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-lunEnt').val())
+                                            lunEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-lunEnt').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-lunSal').val())
+                                            lunSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-lunSal').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-marEnt').val())
+                                            marEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-marEnt').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-marSal').val())
+                                            marSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-marSal').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-mieEnt').val())
+                                            mieEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-mieEnt').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-mieSal').val())
+                                            mieSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-mieSal').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-jueEnt').val())
+                                            jueEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-jueEnt').val()
+                                        if ($('id_asignaciondet_set-' + (index - 1) + '-jueSal').val())
+                                            jueSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-jueSal').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-vieEnt').val())
+                                            vieEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-vieEnt').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-vieSal').val())
+                                            vieSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-vieSal').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-sabEnt').val())
+                                            sabEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-sabEnt').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-sabSal').val())
+                                            sabSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-sabSal').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-domEnt').val())
+                                            domEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-domEnt').val()
+                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-domSal').val())
+                                            domSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-domSal').val()
+      
+                                        if (filter.lunEnt && lunEntAnt && lunSalAnt && ((filter.lunEnt >= lunEntAnt && filter.lunEnt <= lunSalAnt) || (filter.lunSal >= lunEntAnt && (filter.lunSal <= lunSalAnt || filter.lunSal >= lunSalAnt)))) {
+                                            console.log("lunes");
+                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+
+                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+                                                console.log("operario anterior",id_operario);
+                                                if (id_operario != '') {
+                                                    for (var i = 0; i < operarios.length; i++) {
+                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                            print("Encuentra")
+                                                            operarios.splice(i, 1);
+                                                            break
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else if (filter.marEnt && marEntAnt && marSalAnt && ((filter.marEnt >= marEntAnt && filter.marEnt <= marSalAnt) || (filter.marSal >= marEntAnt && (filter.marSal <= marSalAnt || filter.marSal >= marSalAnt)))) {
+                                            console.log("martes");
+                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+
+                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                if (id_operario != '') {
+                                                    for (var i = 0; i < operarios.length; i++) {
+                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                            print("Encuentra")
+                                                            operarios.splice(i, 1);
+                                                            break
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else if (filter.mieEnt && mieEntAnt && mieSalAnt && ((filter.mieEnt >= mieEntAnt && filter.mieEnt <= mieSalAnt) || (filter.mieSal >= mieEntAnt && (filter.mieSal <= mieSalAnt || filter.mieSal >= mieSalAnt)))) {
+                                            console.log("miercoles");
+                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+
+                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                if (id_operario != '') {
+                                                    for (var i = 0; i < operarios.length; i++) {
+                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                            print("Encuentra")
+                                                            operarios.splice(i, 1);
+                                                            break
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else if (filter.jueEnt && jueEntAnt && jueSalAnt && ((filter.jueEnt >= jueEntAnt && filter.jueEnt <= jueSalAnt) || (filter.jueSal >= jueEntAnt && (filter.jueSal <= jueSalAnt || filter.jueSal >= jueSalAnt)))) {
+                                            console.log("jueves");
+                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+
+                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                if (id_operario != '') {
+                                                    for (var i = 0; i < operarios.length; i++) {
+                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                            print("Encuentra")
+                                                            operarios.splice(i, 1);
+                                                            break
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else if (filter.vieEnt && vieEntAnt && vieSalAnt && ((filter.vieEnt >= vieEntAnt && filter.vieEnt <= vieSalAnt) || (filter.vieSal >= vieEntAnt && (filter.vieSal <= vieSalAnt || filter.vieSal >= vieSalAnt)))) {
+                                            console.log("viernes");
+                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+
+                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                if (id_operario != '') {
+                                                    for (var i = 0; i < operarios.length; i++) {
+                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                            print("Encuentra")
+                                                            operarios.splice(i, 1);
+                                                            break
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else if (filter.sabEnt && sabEntAnt && sabSalAnt && ((filter.sabEnt >= sabEntAnt && filter.sabEnt <= sabSalAnt) || (filter.sabSal >= sabEntAnt && (filter.sabSal <= sabSalAnt || filter.sabSal >= sabSalAnt)))) {
+                                            console.log("sabado");
+                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+
+                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                if (id_operario != '') {
+                                                    for (var i = 0; i < operarios.length; i++) {
+                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                            print("Encuentra")
+                                                            operarios.splice(i, 1);
+                                                            break
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else if (filter.domEnt && domEntAnt && domSalAnt && ((filter.domEnt >= domEntAnt && filter.domEnt <= domSalAnt) || (filter.domSal >= domEntAnt && (filter.domSal <= domSalAnt || filter.domSal >= domSalAnt)))) {
+                                            console.log("domingo");
+                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+
+                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                if (id_operario != '') {
+                                                    for (var i = 0; i < operarios.length; i++) {
+                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                            print("Encuentra")
+                                                            operarios.splice(i, 1);
+                                                            break
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        index++;
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                         d.resolve($.map(result, function (item) {
+                             return $.extend(item.fields, { id: item.pk });
+                         }));
+                    });
+
+                    return d.promise();
+                }
+
+            },
+            rowClick: function (e) {
+                console.log(e.item.id);
+                var ope = e.item.id;
+                var nombres = e.item.nombres;
+                var select = $('#operario-' + id)[0];
+                var perfilSelect = $('#perfil-' + id)[0];
+                console.log("perfil", perfilSelect);
+                $('#id_asignaciondet_set-' + id + '-operario').val(ope);
+                for (var i = 0; i < select.length; i++) {
+
+                    if ($(select[i]).val() == ope) {
+                        $(select[i]).attr("selected", "selected");
+                    } else {
+                        $(select[i]).removeAttr('selected');
+                    }
+                }
+                $('#id_asignaciondet_set-' + id + '-operario')
+                $('#nombres-' + id + '-operario').val(decodeURIComponent(nombres));
+                $('#modalFiltro' + id).modal('hide');
+
+                $('#id_asignaciondet_set-' + id + '-domEnt').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-domSal').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-fecha').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-fechaInicio').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-fechaFin').prop("readonly", true);
+                $('#filter_operario-' + id).prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-lunEnt').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-lunSal').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-marEnt').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-marSal').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-mieEnt').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-mieSal').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-jueEnt').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-jueSal').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-vieEnt').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-vieSal').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-sabEnt').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-sabSal').prop("readonly", true);
+                $('#id_asignaciondet_set-' + id + '-perfil').attr("style", "display:none");
+                $('#id_asignaciondet_set-' + id + '-supervisor').attr("style", "display:none");
+                $('#perfil-' + id).attr("style", "display:block");
+                $('#perfil-' + id).attr("disabled", "disabled");
+                $('#supervisor-' + id).attr("style", "display:block;margin: 8px 25px;");
+                $('#supervisor-' + id).attr("disabled", "disabled");
+                $('#id_diaInicio-' + id).attr("disabled", "disabled");
+                $('#id_horaInicio-' + id).prop("readonly", true);
+                $('#id_diaFin-' + id).attr("disabled", "disabled");
+                $('#id_horaFin-' + id).prop("readonly", true);
+                $('#modalFiltro' + id).modal('hide');
+
+            },
+
+            fields: [
+                { name: "nombres", type: "text", width: 150, title: "Nombre" },
+                { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
+                { name: "antiguedad", type: "text", width: 150, title: "Antiguedad" },
+                { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
+                { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
+                { name: "perfil", type: "date", width: 150, title: "Perfil" }
+            ]
+        });
     }
 </script>
 <script>
@@ -940,7 +1258,7 @@
 
         var select = $('#operario-' + id)[0];
         var perfilSelect = $('#perfil-' + id)[0];
-        console.log("perfil",perfilSelect);
+        console.log("perfil", perfilSelect);
         $('#id_asignaciondet_set-' + id + '-operario').val(ope);
         for (var i = 0; i < select.length; i++) {
 
@@ -974,10 +1292,10 @@
         $('#id_asignaciondet_set-' + id + '-sabSal').prop("readonly", true);
         $('#id_asignaciondet_set-' + id + '-perfil').attr("style", "display:none");
         $('#id_asignaciondet_set-' + id + '-supervisor').attr("style", "display:none");
-        $('#perfil-' + id ).attr("style", "display:block");
-        $('#perfil-' + id ).attr("disabled", "disabled");
-        $('#supervisor-' + id ).attr("style", "display:block;margin: 8px 25px;");
-        $('#supervisor-' + id ).attr("disabled", "disabled");
+        $('#perfil-' + id).attr("style", "display:block");
+        $('#perfil-' + id).attr("disabled", "disabled");
+        $('#supervisor-' + id).attr("style", "display:block;margin: 8px 25px;");
+        $('#supervisor-' + id).attr("disabled", "disabled");
         $('#id_diaInicio-' + id).attr("disabled", "disabled");
         $('#id_horaInicio-' + id).prop("readonly", true);
         $('#id_diaFin-' + id).attr("disabled", "disabled");
@@ -1486,6 +1804,10 @@
 
     table th p {
         margin: 10px 0px !important;
+    }
+
+    .jsgrid-grid-body {
+        height: 275px !important;
     }
 
     table tr {

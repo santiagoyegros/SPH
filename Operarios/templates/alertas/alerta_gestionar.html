@@ -18,21 +18,22 @@
                                 <p style="margin:0px !important">
 
                                     <label for="">Nombre</label>
-                                    <input type="text" class="form-control" value="" disabled>
+                                    <input type="text" class="form-control" value="{{operario.nombre}} {{operario.apellido}}" disabled>
                                 </p>
                             </div>
                             <div class="col-md-4">
                                 <p style="margin:0px !important">
 
                                     <label for="">Teléfono</label>
-                                    <input type="text" class="form-control" value="" disabled>
+                                    <input type="text" class="form-control" value="{{operario.telefono}}" disabled>
 
                                 </p>
                             </div>
                             <div class="col-md-4">
                                 <p>
                                     <label for="">Horario</label>
-                                    <input type="text" class="form-control" value="" disabled>
+                                    
+                                    <input type="text" class="form-control" value="{{lunEnt}}" disabled>
 
                                 </p>
                             </div>
@@ -50,7 +51,8 @@
                                 <p>
 
                                     <label for="tipoAlerta">Fecha</label>
-                                    <input type="text" class="form-control" value="" disabled>
+                                   
+                                    <input type="text" class="form-control" value=" {{alerta.FechaHora| date:"d/m/Y"}}" disabled>
 
                                 </p>
                             </div>
@@ -69,37 +71,72 @@
                 <div class="card-body">
                     <div class="cuerpo-filtro row">
                         <div class="row filter-row">
-                            <div class="col-md-6">
+                            <div class="col-md-4 col-lg-4">
                                 <p style="margin:0px !important">
 
-                                    <label for="">Nombre</label>
-                                    <input type="text" class="form-control" value="" disabled>
+                                    <label for="">Punto Servicio</label>
+                                    <input type="text" class="form-control" value="{{puntoServicio.NombrePServicio}}" disabled>
                                 </p>
                             </div>
-                            <div class="col-md-6">
+                            <!--div class="col-md-4 col-lg-4">
                                 <p style="margin:0px !important">
 
                                     <label for="">Teléfono</label>
-                                    <input type="text" class="form-control" value="" disabled>
+                                    <input type="text" class="form-control" value="{{puntoServicio.TelefonoContacto}}" disabled>
                                 </p>
-                            </div>
+                            </div!-->
+                            <div class="col-md-4 col-lg-4">
+                                    <p style="margin:0px !important">
+    
+                                        <label for="">Marcador</label>
+                                        {% if puntoServicio.NumeroMarcador %}
+                                        <input type="text" class="form-control" value="{{puntoServicio.NumeroMarcador}}" disabled>
+                                        {% else %}
+                                        <input type="text" class="form-control" value="" disabled>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            <div class="col-md-4 col-lg-4">
+                                    <p>
+    
+                                        <label for="">Perfil Requerido</label>
+                                        <input type="text" class="form-control" value="{{asignacion.perfil.especializacion}} " disabled>
+                                    </p>
+                                </div>
 
                         </div>
                         <div class="row filter-row">
-                            <div class="col-md-6">
+                            <div class="col-md-4 col-lg-4">
                                 <p>
 
                                     <label for="">Fiscal</label>
-                                    <input type="text" class="form-control" value="" disabled>
+                                    <input type="text" class="form-control" value="{{fiscal.userFiscal.first_name}} {{fiscal.userFiscal.last_name}}" disabled>
                                 </p>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4 col-lg-4">
                                 <p>
 
-                                    <label for="tipoAlerta">Fecha</label>
+                                    <label for="tipoAlerta">Telefono</label>
                                     <input type="text" class="form-control" value="" disabled>
                                 </p>
                             </div>
+                        </div>
+                        <div class="row filter-row">
+                                
+                                <div class="col-md-4 col-lg-4">
+                                    <p>
+    
+                                        <label for="tipoAlerta">Supervisor</label>
+                                        <input type="text" class="form-control" value="{{supervisor.Operario.nombre}} {{supervisor.Operario.apellido}}" disabled>
+                                    </p>
+                                </div>
+                                <div class="col-md-4 col-lg-4">
+                                        <p>
+        
+                                            <label for="tipoAlerta">Telefono</label>
+                                            <input type="text" class="form-control" value="{{supervisor.Operario.telefono}}" disabled>
+                                        </p>
+                                    </div>
                         </div>
                     </div>
 
@@ -119,19 +156,17 @@
                                 <th>Teléfono</th>
                                 <th>Hora</th>
                                 <th>Fecha</th>
-                                <th>Retraso</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for data in list %}
+                            {% for alerta in alertasSinAsig %}
                             <tr>
                                 <td>{{forloop.counter}}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{alerta.Operario.nombre}} {{alerta.Operario.apellido}}</td>
+                                <td>{{alerta.Operario.telefono}}</td>
+                                <td>{{alerta.FechaHora | date:"H:m:s"}} </td>
+                                <td>{{alerta.FechaHora | date:"d/m/Y"}}</td>
                                 <td style="display:flex;justify-content:center"><a
                                         href={% url 'Operarios:alertas_gestionar' alerta_id=alerta.id %}
                                         class="btn btn-success btn-filtrar">Emparejar</a></td>
@@ -213,7 +248,7 @@
                                     <p style="display: flex;">
 
                                         <label for="" style="margin: 0px 60px 0px 0px;">Motivo</label>
-                                        <textarea name="" class="form-control" id="" cols="30" rows="5"
+                                        <textarea name="" class="form-control" id="" cols="30" rows="5" style="resize: none"
                                             placeholder="Agregue el motivo aquí"></textarea>
                                     </p>
                                 </div>
@@ -249,7 +284,7 @@
 
                                     <p style="display: flex;">
                                         <label for="" style="margin: 0px 20px 0px 0px;">Comentarios</label>
-                                        <textarea name="" class="form-control" id="" cols="30" rows="3"
+                                        <textarea name="" class="form-control" id="" cols="30" rows="3" style="resize: none"
                                             placeholder="Agregue un comentario aquí"></textarea>
                                     </p>
                                 </div>
@@ -381,6 +416,7 @@
 $('#exampleFormControlSelect1').on('change', function(e){
  console.log($(this)[0].value);
  var opcion = $(this)[0].value;
+ console.log("Opcion seleccionada")
     $('#'+opcion).removeClass('d-none');
     for(var i=1;i<=4;i++){
         if(i!=opcion){

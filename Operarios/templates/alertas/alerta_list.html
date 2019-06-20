@@ -159,7 +159,7 @@
                                 <td>{{alerta.Fecha}}</td>
                                 <td>{{alerta.Estado}}</td>
                                 <td>{{alerta.Tipo}}</td>
-                                <td style="display:flex;justify-content:center"><a href={% url 'Operarios:alertas_gestionar' alerta_id=alerta.id %} class="btn btn-success btn-filtrar">Gestionar</a></td>
+                                <td id="gestionar-{{forloop.counter}}" style="display:flex;justify-content:center"><a href={% url 'Operarios:alertas_gestionar' alerta_id=alerta.id %} class="btn btn-success btn-filtrar">Gestionar</a></td>
                             </tr>
                         {% endfor %}
                 </tbody>

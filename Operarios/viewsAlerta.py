@@ -14,7 +14,7 @@ from datetime import date
 from datetime import datetime
 from Operarios.models import Alertas
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from Operarios.models import PuntoServicio, Operario
+from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio
 def alertasList (request):
     estado="Abierta"
     fechaDesde=request.GET.get('fechaDesde')
@@ -117,8 +117,32 @@ def do_paginate(data_list, page_number):
 
 
 def gestion_alertas(request,alerta_id=None):
+    
 
+    alerta=Alertas.objects.get(id=alerta_id)
+    """obtener operario"""
+    operario=Operario.objects.get(id=alerta.Operario.id)
+    puntoServicio=PuntoServicio.objects.get(id=alerta.PuntoServicio.id)
+    """obtener el horario de ese punto de servicio para ese personaje"""
+    asignacionCab=AsignacionCab.objects.get(puntoServicio=puntoServicio)
+    asignacionOperario=AsignacionDet.objects.get(asignacionCab=asignacionCab, operario=operario)
+    fiscal=AsigFiscalPuntoServicio.objects.get(puntoServicio=puntoServicio)
+    supervisor=AsignacionDet.objects.filter(asignacionCab=asignacionCab, supervisor=True)[0]
+    alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)
+    """CAMBIAMOS EL ESTADO DE LA ALERTA"""
+    if request.method == GET:
+        setattr(alerta,Estado, "EN GESTION")
+    else: 
+        print ("Es POST")
+    
     contexto = {
-        'title': 'Gestion de Alertas'  
+        'title': 'Gestion de Alertas',
+        'operario':operario,
+        'puntoServicio':puntoServicio ,
+        'alerta':alerta,
+        'asignacion':asignacionOperario,
+        'fiscal':fiscal,
+        'supervisor':supervisor,
+        'alertasSinAsig':alertasSinAsig
     }
     return render(request, 'alertas/alerta_gestionar.html', context=contexto)

@@ -584,7 +584,7 @@ class AlertaResp (models.Model):
         comentarios=models.CharField(max_length=1000, verbose_name='Comentarios')
         escalado=models.BooleanField(default=False, verbose_name='Escalado')
         id_alerta=models.ForeignKey(Alertas, on_delete=models.CASCADE)
-        id_reemplazo=models.ForeignKey(Operario, on_delete=models.CASCADE)
+        id_reemplazo=models.ForeignKey(Operario, blank=True, null=True,on_delete=models.CASCADE)
         usuario=models.ForeignKey(User, blank=True, null=True,on_delete=models.SET_NULL)
 
 class HorariosOperario(models.Model):

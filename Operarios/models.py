@@ -576,3 +576,23 @@ class OperariosAsignacionDet (models.Model):
     class Meta:
         verbose_name = _("Operario disponible")
         verbose_name_plural = _("Operarios disponibles")
+class AlertaResp (models.Model):
+        accion=models.CharField(max_length=30, verbose_name='Accion')
+        hora=models.TimeField(blank=True, null=True, verbose_name='Hora Aproximada')
+        motivo= models.CharField(max_length=1000, verbose_name='Motivo')
+        fechaRetorno=models.DateField(blank=True, verbose_name='Fecha de Retorno')
+        comentarios=models.CharField(max_length=1000, verbose_name='Comentarios')
+        escalado=models.BooleanField(default=False, verbose_name='Escalado')
+        id_alerta=models.ForeignKey(Alertas, on_delete=models.CASCADE)
+        id_reemplazo=models.ForeignKey(Operario, on_delete=models.CASCADE)
+        usuario=models.ForeignKey(User, blank=True, null=True,on_delete=models.SET_NULL)
+
+class HorariosOperario(models.Model):
+    diaEntrada=models.CharField(_("Dia Entrada"), max_length=30)
+    horaEntrada=models.TimeField('Hora Entrada', blank=True)
+    diaSalida=models.CharField(_("Dia Salida"), max_length=30)
+    horaSalida=models.TimeField('Hora Salida', blank=True)
+    managed=False
+    class Meta:
+        verbose_name = _("Horarios Operario")
+        verbose_name_plural = _("Horarios Operario")

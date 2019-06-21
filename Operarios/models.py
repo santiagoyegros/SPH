@@ -587,3 +587,19 @@ class Alertas(models.Model):
     PuntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
     Estado = models.CharField(_("Estado"), max_length=10)
     Tipo = models.CharField(_('Tipo de Alerta'), max_length=10)
+
+
+class RemplazosCab(models.Model):
+    fechaInicio = models.DateField('Fecha Inicio Remplazo', null=True)
+    fechaFin = models.DateField('Fecha Inicio Remplazo', null=True)
+    FechaHoraRemplazo = models.DateTimeField('Fecha hora del Remplazo')
+    tipoRemplazo = models.CharField(_('Tipo de Remplazo'), max_length=10)
+    usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+
+    
+
+class RemplazosDet(models.Model):
+    Asignacion = models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
+    fecha = models.DateField('Fecha Inicio Remplazo', null=True)
+    remplazo = models.ForeignKey(Operario, on_delete=models.CASCADE)
+

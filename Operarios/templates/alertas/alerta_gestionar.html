@@ -1,7 +1,12 @@
 {% extends "base.html" %}
-
+{% load static %}
+{% block base_head %}
+<link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet">
+</link>
+{% endblock %}
 {% block content %}
 <h1 class='my-3'>Detalle de Alertas - No marcación</h1>
+<input type="hidden" value="{{alerta_id}}" id="alerta">
 <div class="container-fluid pl-0 pr-1">
     <form method="GET" role="form" id="formulario">
 
@@ -61,7 +66,9 @@
                             </div>
                         </div>
                     </div>
-
+                    <div style="    float: right;">
+                            <button type='button' id="marcaciones" onclick="mostrarMarcaciones()" class='btn btn-success btn-filtrar' data-toggle="modal" data-target="#modalFiltro">Últimas 10 marcaciones</button>
+                    </div>
                 </div>
             </div>
             <div class="card" style="margin-bottom:15px !important;">
@@ -203,7 +210,7 @@
                     Otras Acciones
                 </div>
                 <div class="card-body">
-
+                    <form action="" method="POST">
                     <div class="cuerpo-filtro row">
                         <div class="row filter-row">
                             <div class="col-md-4">
@@ -221,34 +228,52 @@
 
 
                         </div>
-                        <div class="col-md-12 pl-0 d-none" id="1">
+                        <div class="col-md-12 pl-0" id="1">
                                 <div class="row filter-row">
                                         <div class="col-md-4">
-                                        1
+                                                <p style="display: flex;padding: 0px 5px 0px 10px !important;">
+
+                                                        <label for="tipoAlerta" style="width: 163px;">Hora de entrada</label>
+                                                        <input type="text" value="{{form.lunSal.value}}"
+                                                            name="horaEntrada"
+                                                            class="form-control form-control-sm" style="height:38px !important;"
+                                                            id="id_horaEntrada"
+                                                            dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                                    </p>
                                         </div>
                                 </div>
                         </div>
                         <div class="col-md-12 pl-0 d-none" id="2">
                                 <div class="row filter-row">
                                         <div class="col-md-4">
-                                            2
+                                                <p style="display: flex;padding: 0px 5px 0px 10px !important;">
+
+                                                        <label for="tipoAlerta" style="width: 163px;">Hora Aproximada</label>
+                                                        <input type="text" value="{{form.lunSal.value}}"
+                                                            name="horaAprox"
+                                                            class="form-control form-control-sm" style="height:38px !important;"
+                                                            id="id_horaAprox"
+                                                            dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                                    </p>
                                         </div>
                                 </div>
                         </div>
                         <div class="col-md-12 pl-0 d-none" id="3">
                                 <div class="row filter-row">
                                         <div class="col-md-4">
-                                        3
+                                                <p style="display: flex;padding: 0px 5px 0px 10px !important;">
+
+                                                </p>
                                         </div>
                                 </div>
                         </div>
-                        <div class="col-md-12 pl-0" id="4">
+                        <div class="col-md-12 pl-0 d-none" id="4">
                             <div class="row filter-row">
                                 <div class="col-md-4">
                                     <p style="display: flex;">
 
                                         <label for="" style="margin: 0px 60px 0px 0px;">Motivo</label>
-                                        <textarea name="" class="form-control" id="" cols="30" rows="5" style="resize: none"
+                                        <textarea name="motivo" class="form-control" id="id_motivo" cols="30" rows="5" style="resize: none"
                                             placeholder="Agregue el motivo aquí"></textarea>
                                     </p>
                                 </div>
@@ -258,9 +283,9 @@
 
                                             <label for="tipoAlerta" style="width: 270px;">Fecha de retorno</label>
                                             <input type="text" value="{{ form.fechaInicio.value}}"
-                                                name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio"
+                                                name="fechaRetorno"
                                                 class="form-control"
-                                                id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaInicio"
+                                                id="id_fechaRetorno"
                                                 dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
 
                                         </p>
@@ -270,9 +295,9 @@
 
                                             <label for="tipoAlerta" style="width: 270px;">Hora de retorno</label>
                                             <input type="text" value="{{form.lunSal.value}}"
-                                                name="asignaciondet_set-{{ forloop.counter0 }}-lunSal"
+                                                name="horaRetorno"
                                                 class="form-control form-control-sm" style="height:38px !important;"
-                                                id="id_asignaciondet_set-{{ forloop.counter0 }}-lunSal"
+                                                id="id_horaRetorno"
                                                 dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                         </p>
                                     </div>
@@ -284,7 +309,7 @@
 
                                     <p style="display: flex;">
                                         <label for="" style="margin: 0px 20px 0px 0px;">Comentarios</label>
-                                        <textarea name="" class="form-control" id="" cols="30" rows="3" style="resize: none"
+                                        <textarea name="comentario" class="form-control" id="id_comentario" cols="30" rows="3" style="resize: none"
                                             placeholder="Agregue un comentario aquí"></textarea>
                                     </p>
                                 </div>
@@ -295,7 +320,7 @@
                                         <div class="col-md-6">
 
                                             <p style="display: flex;">
-                                                <input type="checkbox" style="margin: 6px 15px;">
+                                                <input type="checkbox" name="escalar" id="id_escalar" style="margin: 6px 15px;">
                                                 <label for="" style="margin: 0px 20px 0px 0px;">Escalar</label>
 
                                             </p>
@@ -319,12 +344,29 @@
                         <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar">Cancelar</a>
                         <button type='submit' class='btn btn-success btn-filtrar'>Guardar</button>
                     </div>
+                </form>
                 </div>
             </div>
 
         </div>
     </form>
-
+  <!-- Modal -->
+  <div class="modal fade" id="modalFiltro" tabindex="-1" role="dialog"
+  aria-labelledby="modalFiltro" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="modalFiltro">Últimas 10 marcaciones</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div id="jsGrid"></div>
+          </div>
+      </div>
+  </div>
+</div>
 
 </div>
 
@@ -383,7 +425,9 @@
         background-color: #636363 !important;
         color: white !important;
     }
-
+    label{
+        font-weight: 600 !important;
+    }
     .table th {
         padding: .5em !important;
         border-left: 0px solid white !important;
@@ -400,18 +444,88 @@
         padding: 7px 30px;
         cursor: pointer;
     }
-
+    .jsgrid-grid-header{
+        overflow-y: auto !important;
+    }
     .btn-limpiar {
         background-color: gray !important;
         border-color: gray !important;
         padding: 7px 30px;
     }
-
+    .jsgrid-grid-body {
+        height: 275px !important;
+    }
+    .jsgrid-nodata-row{
+        height: 273px !important;
+    }
     .form-control:disabled {
         background-color: transparent !important;
         border: none !important;
     }
 </style>
+<script>
+function mostrarMarcaciones(){
+    $("#jsGrid").jsGrid({
+            height: "80%",
+            width: "100%",
+            /*filtering: true,
+            inserting: true,
+            editing: true,
+            sorting: true,
+            paging: true,
+            autoload: true,*/
+            filtering: false,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: false,
+            autoload: true,
+            pageSize: 10,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "El operario no posee marcaciones",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    var id_alerta =$('#alerta').val(); 
+                    var url = "/reingenieria/alertas/gestionar/marcaciones"
+                    filter.alerta_id = $('#alerta').val();
+                    console.log("URL", url);
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        data: filter
+                    }).done(function (result) {
+                        console.log(result);
+                        d.resolve($.map(result, function (item) {
+                            return $.extend(item.fields, { id: item.pk });
+                        }));
+                    });
+
+                    return d.promise();
+                }
+            },
+
+            fields: [
+                { name: "codoperacion", type: "text", width: 150, title: "Operación", headercss: "elm-table-header" },
+                { name: "codpersona", type: "text", width: 150, title: "Cédula" },
+                { name: "codcategoria", type: "text", width: 150, title: "Código Categoría" },
+                { name: "numlinea", type: "text", width: 150, title: "Nro de Linea" },
+                { name: "codubicacion", type: "text", width: 150, title: "Ubicacion" },
+                { name: "fecha", type: "date", width: 150, title: "Fecha" },
+                { name: "estado", type: "text", width: 150, title: "Estado" }
+            ]
+        });
+}
+
+</script>
 <script>
 $('#exampleFormControlSelect1').on('change', function(e){
  console.log($(this)[0].value);

@@ -62,5 +62,6 @@ urlpatterns = [
     url(r'^feriados/eliminar/(?P<feriado_id>\d+)', deleteFeriados , name='feriados_delete'),
     url(r'^operaciones/operarios/vista/', viewsOperario.getOperariosVista , name='operarios_vista'),
     url(r'^alertas/listar/', viewsAlerta.alertasList , name='alertas_list'),
-    url(r'^alertas/gestionar/(?P<alerta_id>\d+)', viewsAlerta.gestion_alertas , name='alertas_gestionar')
+    url(r'^alertas/gestionar/(?P<alerta_id>\d+)', viewsAlerta.gestion_alertas , name='alertas_gestionar'),
+    url(r'^alertas/gestionar/marcaciones', viewsAlerta.getMarcaciones , name='getMarcacines')
 ]   

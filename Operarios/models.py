@@ -555,6 +555,7 @@ class Alertas(models.Model):
     Estado = models.CharField(_("Estado"), max_length=10)
     Tipo = models.CharField(_('Tipo de Alerta'), max_length=10)
 
+
 class DiaLibre(models.Model):
     asignacionDet =  models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
     diaInicio=models.CharField(_("Dia Inicio Libre"), max_length=10)
@@ -576,16 +577,6 @@ class OperariosAsignacionDet (models.Model):
     class Meta:
         verbose_name = _("Operario disponible")
         verbose_name_plural = _("Operarios disponibles")
-class AlertaResp (models.Model):
-        accion=models.CharField(max_length=30, verbose_name='Accion')
-        hora=models.TimeField(blank=True, null=True, verbose_name='Hora Aproximada')
-        motivo= models.CharField(max_length=1000, verbose_name='Motivo')
-        fechaRetorno=models.DateField(blank=True, verbose_name='Fecha de Retorno')
-        comentarios=models.CharField(max_length=1000, verbose_name='Comentarios')
-        escalado=models.BooleanField(default=False, verbose_name='Escalado')
-        id_alerta=models.ForeignKey(Alertas, on_delete=models.CASCADE)
-        id_reemplazo=models.ForeignKey(Operario, blank=True, null=True,on_delete=models.CASCADE)
-        usuario=models.ForeignKey(User, blank=True, null=True,on_delete=models.SET_NULL)
 
 class HorariosOperario(models.Model):
     diaEntrada=models.CharField(_("Dia Entrada"), max_length=30)
@@ -596,3 +587,28 @@ class HorariosOperario(models.Model):
     class Meta:
         verbose_name = _("Horarios Operario")
         verbose_name_plural = _("Horarios Operario")
+
+class RemplazosCab(models.Model):
+    fechaInicio = models.DateField('Fecha Inicio Remplazo', null=True)
+    fechaFin = models.DateField('Fecha Inicio Remplazo', null=True)
+    FechaHoraRemplazo = models.DateTimeField('Fecha hora del Remplazo')
+    tipoRemplazo = models.CharField(_('Tipo de Remplazo'), max_length=10)
+    usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+
+    
+
+class RemplazosDet(models.Model):
+    Asignacion = models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
+    fecha = models.DateField('Fecha Inicio Remplazo', null=True)
+    remplazo = models.ForeignKey(Operario, on_delete=models.CASCADE)
+
+class AlertaResp (models.Model):
+        accion=models.CharField(max_length=30, verbose_name='Accion')
+        hora=models.TimeField(blank=True, null=True, verbose_name='Hora Aproximada')
+        motivo= models.CharField(max_length=1000, verbose_name='Motivo')
+        fechaRetorno=models.DateField(blank=True, verbose_name='Fecha de Retorno')
+        comentarios=models.CharField(max_length=1000, verbose_name='Comentarios')
+        escalado=models.BooleanField(default=False, verbose_name='Escalado')
+        id_alerta=models.ForeignKey(Alertas, on_delete=models.CASCADE)
+        id_reemplazo=models.ForeignKey(RemplazosCab, blank=True, null=True,on_delete=models.CASCADE)
+        usuario=models.ForeignKey(User, blank=True, null=True,on_delete=models.SET_NULL)

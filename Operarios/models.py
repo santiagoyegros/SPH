@@ -6,6 +6,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MaxValueValidator
 from django.db import connection
+from django.utils.timezone import now
 class Ciudad(models.Model):
     NombreCiudad = models.CharField("Ciudad", max_length=70)
 
@@ -579,10 +580,12 @@ class OperariosAsignacionDet (models.Model):
         verbose_name_plural = _("Operarios disponibles")
 
 class HorariosOperario(models.Model):
-    diaEntrada=models.CharField(_("Dia Entrada"), max_length=30)
-    horaEntrada=models.TimeField('Hora Entrada', blank=True)
-    diaSalida=models.CharField(_("Dia Salida"), max_length=30)
-    horaSalida=models.TimeField('Hora Salida', blank=True)
+    idOrden= models.IntegerField(db_column='idOrden',verbose_name='idOrden', primary_key=True)  
+    diaEntrada=models.CharField( db_column='diaEntrada',verbose_name='diaEntrada', max_length=30)
+    horaEntrada=models.TimeField( db_column='horaEntrada',verbose_name='horaEntrada', blank=True)
+    diaSalida=models.CharField(db_column='diaSalida',verbose_name='diaSalida',max_length=30)
+    horaSalida=models.TimeField(db_column='horaSalida',verbose_name='horaSalida', blank=True)
+    totalHoras=models.TimeField(db_column='totalHoras',verbose_name='totalHoras', blank=True, null=True)
     managed=False
     class Meta:
         verbose_name = _("Horarios Operario")
@@ -603,12 +606,13 @@ class RemplazosDet(models.Model):
     remplazo = models.ForeignKey(Operario, on_delete=models.CASCADE)
 
 class AlertaResp (models.Model):
-        accion=models.CharField(max_length=30, verbose_name='Accion')
-        hora=models.TimeField(blank=True, null=True, verbose_name='Hora Aproximada')
-        motivo= models.CharField(max_length=1000, verbose_name='Motivo')
-        fechaRetorno=models.DateField(blank=True, verbose_name='Fecha de Retorno')
-        comentarios=models.CharField(max_length=1000, verbose_name='Comentarios')
-        escalado=models.BooleanField(default=False, verbose_name='Escalado')
-        id_alerta=models.ForeignKey(Alertas, on_delete=models.CASCADE)
-        id_reemplazo=models.ForeignKey(RemplazosCab, blank=True, null=True,on_delete=models.CASCADE)
-        usuario=models.ForeignKey(User, blank=True, null=True,on_delete=models.SET_NULL)
+    accion=models.CharField(max_length=30, verbose_name='Accion')
+    hora=models.TimeField(blank=True, null=True, verbose_name='Hora Aproximada')
+    motivo= models.CharField(max_length=1000, verbose_name='Motivo')
+    fechaRetorno=models.DateField(blank=True, verbose_name='Fecha de Retorno', null=True)
+    comentarios=models.CharField(max_length=1000, verbose_name='Comentarios')
+    escalado=models.BooleanField(default=False, verbose_name='Escalado')
+    id_alerta=models.ForeignKey(Alertas, on_delete=models.CASCADE)
+    id_reemplazo=models.ForeignKey(RemplazosCab, blank=True, null=True,on_delete=models.CASCADE)
+    usuario=models.ForeignKey(User, blank=True, null=True,on_delete=models.SET_NULL)
+    fecha_creacion = models.DateTimeField('Fecha Relevamiento', auto_now_add=True, blank=True, null=True)

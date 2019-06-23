@@ -15,7 +15,11 @@ from datetime import datetime
 from django.core import serializers
 from Operarios.models import Alertas
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones
+from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones,HorasNoProcesadas, HorariosOperario, RemplazosCab, RemplazosDet, AlertaResp
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+from django.db import connection, transaction
+@login_required
 def alertasList (request):
     estado="Abierta"
     fechaDesde=request.GET.get('fechaDesde')
@@ -124,8 +128,8 @@ def getMarcaciones(request):
     operario=Operario.objects.get(id=alerta.Operario.id)
     ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
     
-    return HttpResponse(serializers.serialize("json",ultimasMarcaciones), content_type = 'application/json', status = 200);
-
+    return HttpResponse(serializers.serialize("json",ultimasMarcaciones), content_type = 'application/json', status = 200)
+@login_required
 def gestion_alertas(request,alerta_id=None):
     
 
@@ -145,6 +149,7 @@ def gestion_alertas(request,alerta_id=None):
     """CAMBIAMOS EL ESTADO DE LA ALERTA"""
     if request.method == 'GET':
         setattr(alerta,"Estado", "EN GESTION")
+        alerta.save()
     else: 
         print ("Es POST")
         print(request.POST)
@@ -161,3 +166,63 @@ def gestion_alertas(request,alerta_id=None):
         'alertasSinAsig':alertasSinAsig
     }
     return render(request, 'alertas/alerta_gestionar.html', context=contexto)
+def emparejar(request, alerta_id=None, emparejamiento_id=None):
+    print ("Hola emparejar")
+    """alerta generada"""
+    alerta=Alertas.objects.get(id=alerta_id)
+    """obtener operario que se ausento"""
+    puntoServicio=PuntoServicio.objects.get(id=alerta.PuntoServicio.id)
+    emparejamiento=Alertas.objects.get(id=emparejamiento_id)
+    try :
+        
+        """procedemos a guardar las horas no procesadas"""
+        horarios=[]
+        horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
+        print (horarios[0].idOrden)
+        print (horarios[0].diaEntrada)
+        print (horarios[0].horaEntrada)
+        print (horarios[0].diaSalida)
+        print(horarios[0].horaSalida)
+        print (horarios[0].totalHoras)
+        print (alerta.FechaHora.date())
+        print (alerta.Operario.numCedula)
+        
+        horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
+        horasNoProcesadas.save()
+        """procedemos a guardar el reemplazo"""
+        remplazoCab=RemplazosCab.objects.create(fechaInicio=alerta.FechaHora.date(),fechaFin=alerta.FechaHora.date(), tipoRemplazo='Emparejar', FechaHoraRemplazo=alerta.FechaHora, usuario=request.user)
+        remplazoCab.save()
+        remplazoDet=RemplazosDet.objects.create(Asignacion=alerta.Asignacion, remplazo=emparejamiento.Operario, fecha=alerta.FechaHora.date())
+        remplazoDet.save()
+
+        """procedemos a guardar la respuesta del alerta no-marcacion"""
+        respAlerta=AlertaResp.objects.create(accion='Emparejar',id_alerta=alerta, id_reemplazo=remplazoCab, usuario=request.user)
+        respAlerta.save()
+        """procedemos a cerrar el alerta"""
+        setattr(alerta,"Estado", "CERRADA")
+        alerta.save()
+        """procedemos a cerrar la sinasignacion"""
+        setattr(emparejamiento,"Estado", "CERRADA")
+        emparejamiento.save()
+    except Exception as err:
+        transaction.rollback()
+        logging.getLogger("error_logger").error('No se pudo guardar el emparejamiento: {0}'.format(err))
+        messages.error(request, 'No se pudo guardar el emparejamiento, favor verifique') 
+    else:
+        transaction.commit()
+        messages.success(request, 'Emparejamiento guardado con exito')
+    finally:
+        transaction.set_autocommit(True)
+    
+
+    return redirect('Operarios:alertas_list')
+
+def horasOperario(asignacion, fechaAlerta):
+    conn= connection.cursor()
+    params=(asignacion, fechaAlerta)
+    print(params)
+    conn.execute('operario_horario %s,%s',params)
+    result = conn.fetchall()
+    conn.close()
+    print ("Resultado del procedimiento ", result)
+    return [HorariosOperario(*row) for row in result]

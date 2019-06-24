@@ -21,14 +21,14 @@
                                 <p style="margin:0px !important">
 
                                     <label for="">Nombre</label>
-                                    <input type="text" class="form-control" value="{{operario.nombre}} {{operario.apellido}}" disabled>
+                                    <input type="text" class="form-control form-bordernone" value="{{operario.nombre}} {{operario.apellido}}" disabled>
                                 </p>
                             </div>
                             <div class="col-md-4">
                                 <p style="margin:0px !important">
 
                                     <label for="">Teléfono</label>
-                                    <input type="text" class="form-control" value="{{operario.telefono}}" disabled>
+                                    <input type="text" class="form-control form-bordernone" value="{{operario.telefono}}" disabled>
 
                                 </p>
                             </div>
@@ -36,7 +36,7 @@
                                 <p>
                                     <label for="">Horario</label>
                                     
-                                    <input type="text" class="form-control" id="horario" value="{{horario}}" disabled>
+                                    <input type="text" class="form-control form-bordernone" id="id_horario" value="{{horario}}" disabled>
 
                                 </p>
                             </div>
@@ -46,7 +46,7 @@
                                 <p>
 
                                     <label for="">Próxima marcación</label>
-                                    <input type="text" class="form-control" id="proxima_marcacion" value="{{prox_marcacion}}" disabled>
+                                    <input type="text" class="form-control form-bordernone" id="idproxima_marcacion" value="{{prox_marcacion}}" disabled>
 
                                 </p>
                             </div>
@@ -55,7 +55,7 @@
 
                                     <label for="tipoAlerta">Fecha</label>
                                    
-                                    <input type="text" class="form-control" value=" {{alerta.FechaHora| date:"d/m/Y"}}" disabled>
+                                    <input type="text" class="form-control form-bordernone" value=" {{alerta.FechaHora| date:"d/m/Y"}}" disabled>
 
                                 </p>
                             </div>
@@ -83,7 +83,7 @@
                                 <p style="margin:0px !important">
 
                                     <label for="">Punto Servicio</label>
-                                    <input type="text" class="form-control" value="{{puntoServicio.NombrePServicio}}" disabled>
+                                    <input type="text" class="form-control form-bordernone" value="{{puntoServicio.NombrePServicio}}" disabled>
                                 </p>
                             </div>
                             <!--div class="col-md-4 col-lg-4">
@@ -98,9 +98,9 @@
     
                                         <label for="">Marcador</label>
                                         {% if puntoServicio.NumeroMarcador %}
-                                        <input type="text" class="form-control" value="{{puntoServicio.NumeroMarcador}}" disabled>
+                                        <input type="text" class="form-control form-bordernone" value="{{puntoServicio.NumeroMarcador}}" disabled>
                                         {% else %}
-                                        <input type="text" class="form-control" value="" disabled>
+                                        <input type="text" class="form-control form-bordernone" value="" disabled>
                                         {% endif %}
                                     </p>
                                 </div>
@@ -108,7 +108,7 @@
                                     <p>
     
                                         <label for="">Perfil Requerido</label>
-                                        <input type="text" class="form-control" value="{{asignacion.perfil.especializacion}} " disabled>
+                                        <input type="text" class="form-control form-bordernone" value="{{asignacion.perfil.especializacion}} " disabled>
                                     </p>
                                 </div>
 
@@ -118,14 +118,14 @@
                                 <p>
 
                                     <label for="">Fiscal</label>
-                                    <input type="text" class="form-control" value="{{fiscal.userFiscal.first_name}} {{fiscal.userFiscal.last_name}}" disabled>
+                                    <input type="text" class="form-control form-bordernone" value="{{fiscal.userFiscal.first_name}} {{fiscal.userFiscal.last_name}}" disabled>
                                 </p>
                             </div>
                             <div class="col-md-4 col-lg-4">
                                 <p>
 
                                     <label for="tipoAlerta">Telefono</label>
-                                    <input type="text" class="form-control" value="" disabled>
+                                    <input type="text" class="form-control form-bordernone" value="" disabled>
                                 </p>
                             </div>
                         </div>
@@ -135,14 +135,14 @@
                                     <p>
     
                                         <label for="tipoAlerta">Supervisor</label>
-                                        <input type="text" class="form-control" value="{{supervisor.Operario.nombre}} {{supervisor.Operario.apellido}}" disabled>
+                                        <input type="text" class="form-control form-bordernone" value="{{supervisor.Operario.nombre}} {{supervisor.Operario.apellido}}" disabled>
                                     </p>
                                 </div>
                                 <div class="col-md-4 col-lg-4">
                                         <p>
         
                                             <label for="tipoAlerta">Telefono</label>
-                                            <input type="text" class="form-control" value="{{supervisor.Operario.telefono}}" disabled>
+                                            <input type="text" class="form-control form-bordernone" value="{{supervisor.Operario.telefono}}" disabled>
                                         </p>
                                     </div>
                         </div>
@@ -275,13 +275,13 @@
                                     <p style="display: flex;">
 
                                         <label for="" style="margin: 0px 60px 0px 0px;">Motivo</label>
-                                        <textarea name="motivo" class="form-control" id="id_motivo" cols="30" rows="5" style="resize: none"
+                                        <textarea name="motivo" class="form-control" id="id_motivo" cols="30" rows="7" style="resize: none"
                                             placeholder="Agregue el motivo aquí"></textarea>
                                     </p>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="row">
-                                        <p style="display: flex;margin-bottom: 40px !important;">
+                                        <p style="display: flex;">
 
                                             <label for="tipoAlerta" style="width: 270px;margin-right:10px;">Fecha de retorno</label>
                                             <input type="text" value="{{ form.fechaInicio.value}}"
@@ -303,6 +303,23 @@
                                                 dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
                                         </p>
                                     </div>
+                                    <div class="row">
+                                            <p style="display: flex;">
+    
+                                                <label for="tipoAlerta" style="width: 270px;">Reemplazante</label>
+                                                <input type="text"
+                                                    name="reemplazante"
+                                                    class="form-control form-control-sm" style="height:38px !important;"
+                                                    id="id_reemplazante"
+                                                     disabled>
+                                                     <input type="hidden"
+                                                    name="idreemplazante"
+                                                    id="id_idreemplazante"
+                                                     >
+                                                <input type="hidden" name="horarioOperario" value="{{horario}}">
+                                            </p>
+                                        </div>
+                                    
 
                                 </div>
                             </div>
@@ -311,7 +328,7 @@
 
                                     <p style="display: flex;">
                                         <label for="" style="margin: 0px 20px 0px 0px;">Comentarios</label>
-                                        <textarea name="comentarios" class="form-control" id="id_comentario" cols="30" rows="3" style="resize: none"
+                                        <textarea name="comentarios" class="form-control" id="id_comentario" cols="30" rows="5" style="resize: none"
                                             placeholder="Agregue un comentario aquí"></textarea>
                                     </p>
                                 </div>
@@ -332,6 +349,7 @@
                                             <button type='button' class='btn btn-success btn-filtrar' onclick="asignarReemplazo()">Asignar</button>
                                         </div>
                                     </div>
+                                   
                                 </div>
 
 
@@ -425,9 +443,11 @@
                 controller: {
                     loadData: function (filter) {
                         var d = $.Deferred();
+                        var horario = $('#id_horario').val();
+                        var iniciofin = horario.split('-');
                         filter.id_puntoServicio = $('#id_puntoServicio').val();
-                        filter.horarioInicio = $('#id_puntoServicio').val();
-                        filter.horarioFin = $('#id_puntoServicio').val();
+                        filter.horarioInicio = iniciofin[0];
+                        filter.horarioFin = iniciofin[1];
                         filter.diaRequerido=$('#diaRequerido').val();
                         filter.fechaInicio  = $('#id_fechaAlerta').val();
                         $.ajax({
@@ -447,23 +467,12 @@
     
                 },
                 rowClick: function (e) {
-                    console.log(e.item.id);
-                    // var ope = e.item.id;
-                    // var nombres = e.item.nombres;
-                    // var select = $('#operario-' + id)[0];
-                    // var perfilSelect = $('#perfil-' + id)[0];
-                    // console.log("perfil", perfilSelect);
-                    //$('#id_asignaciondet_set-' + id + '-operario').val(ope);
-                    // for (var i = 0; i < select.length; i++) {
-    
-                    //     if ($(select[i]).val() == ope) {
-                    //         $(select[i]).attr("selected", "selected");
-                    //     } else {
-                    //         $(select[i]).removeAttr('selected');
-                    //     }
-                    // }
-                   
-                    $('#modalFiltro' + id).modal('hide');
+                    console.log(e);
+                     var nombres = e.item.nombres;
+                     var id_operario = e.item.id;
+                     $('#id_reemplazante')[0].value=nombres;
+                     $('#id_idreemplazante')[0].value=id_operario;
+                    $('#modalFiltroReemplazo').modal('hide');
     
                 },
     
@@ -565,7 +574,7 @@
     .jsgrid-nodata-row{
         height: 273px !important;
     }
-    .form-control:disabled {
+    .form-bordernone:disabled {
         background-color: transparent !important;
         border: none !important;
     }

@@ -272,7 +272,6 @@ def gestion_alertas(request,alerta_id=None):
     supervisor=AsignacionDet.objects.filter(asignacionCab=asignacionCab, supervisor=True)[0]
     alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)
     ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
-    print ("ultimas 10 marcaciones",ultimasMarcaciones)
     """CAMBIAMOS EL ESTADO DE LA ALERTA"""
     if request.method == 'GET':
         setattr(alerta,"Estado", "EN GESTION")
@@ -280,7 +279,6 @@ def gestion_alertas(request,alerta_id=None):
         
     else: 
         print ("Es POST")
-        print(request.POST)
         """En el lugar"""
         if request.POST.get('accion')=='1': 
             try:
@@ -372,31 +370,55 @@ def gestion_alertas(request,alerta_id=None):
         if request.POST.get('accion')=='4': 
             escalar=False
             try:
-                """procedemos a cerrar el alerta"""
-                setattr(alerta,"Estado", "CERRADA")
-                alerta.save()
-                """guardamos las horas no procesadas"""
-                horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
-                horasNoProcesadas.save()
-                """"procedemos a guardar el remplazo"""
-                hora=datetime.datetime.strptime(request.POST.get('horaRetorno'), "%H:%M")
-               
-                
-                """guardamos la respuesta a la alerta"""
-                if request.POST.get('escalable'):
-                    escalar=request.POST.get('escalable')
-                respAlerta=AlertaResp.objects.create(accion='Remplazo',id_alerta=alerta, usuario=request.user, hora=hora, motivo=request.POST.get("motivo"),comentarios=request.POST.get("comentarios"), escalar=escalar)
-                respAlerta.save()
-               
+                if request.POST.get('idreemplazante') != None and request.POST.get('idreemplazante')!='':
+                    """procedemos a cerrar el alerta"""
+                    setattr(alerta,"Estado", "CERRADA")
+                    
+                    """guardamos las horas no procesadas"""
+                    horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
+                    horasNoProcesadas.save()
+                    """"procedemos a guardar el remplazo"""
+
+                    hora=""
+                    if request.POST.get('horaRetorno'):
+                        hora=datetime.datetime.strptime(request.POST.get('horaRetorno'), "%H:%M")
+                    
+                    """se guarda el reemplazo"""
+                    horarioOperario = request.POST.get('horarioOperario')
+                    horarioOperario = horarioOperario[0:8]
+                    fechaAlerta = alerta.FechaHora.strftime("%d/%m/%Y")
+                    date_time_obj = datetime.datetime.strptime(horarioOperario,'%H:%M:%S')
+
+                    remplazoCab=RemplazosCab.objects.create(fechaInicio=alerta.FechaHora.date(),fechaFin=alerta.FechaHora.date(), tipoRemplazo='', FechaHoraRemplazo=datetime.datetime.strptime(fechaAlerta, "%d/%m/%Y").replace(hour=date_time_obj.hour,minute=date_time_obj.minute,second=date_time_obj.second, microsecond=0), usuario=request.user)
+                    
+                    asignacion_reemp = AsignacionDet.objects.get(id=alerta.Asignacion_id) 
+                    operario_reemp  =Operario.objects.get(id=request.POST.get('idreemplazante'))
+                    remplazoDet=RemplazosDet.objects.create(Asignacion=asignacion_reemp, remplazo=operario_reemp, fecha=alerta.FechaHora.date())
+                    
+                    
+                    """guardamos la respuesta a la alerta"""
+                    if request.POST.get('escalable'):
+                        escalar=request.POST.get('escalable')
+                    
+                    respAlerta=AlertaResp.objects.create(accion='Reemplazo',id_alerta=alerta, usuario=request.user, hora=hora, motivo=request.POST.get("motivo"),comentarios=request.POST.get("comentarios"), escalado=escalar)
+                    
+                    alerta.save()
+                    remplazoCab.save()
+                    remplazoDet.save()
+                    respAlerta.save()
+                else:
+                    messages.warning(request, 'No se seleccionó un reemplazante') 
             except Exception as err:
                 transaction.rollback()
-                logging.getLogger("error_logger").error('No se pudo gestionar el alera: {0}'.format(err))
-                messages.warning(request, 'No se pudo gestionar el alerta') 
-            else:
-                transaction.commit()
-                messages.success(request, 'Alerta gestionada con exito')
+                logging.getLogger("error_logger").error('No se pudo gestionar la alerta: {0}'.format(err))
+                messages.warning(request, 'No se pudo gestionar la alerta') 
+            else: 
+                if request.POST.get('idreemplazante') != None and request.POST.get('idreemplazante')!='':
+                    transaction.commit()
+                    messages.success(request, 'Alerta gestionada con exito')
             finally:
-                transaction.set_autocommit(True)
+                if request.POST.get('idreemplazante') != None and request.POST.get('idreemplazante')!='':
+                    transaction.set_autocommit(True)
             return redirect('Operarios:alertas_list')
 
     

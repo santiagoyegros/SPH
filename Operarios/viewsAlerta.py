@@ -308,7 +308,7 @@ def gestion_alertas(request,alerta_id=None):
             except Exception as err:
                 transaction.rollback()
                 logging.getLogger("error_logger").error('No se pudo gestionar el alerta: {0}'.format(err))
-                messages.error(request, 'No se pudo gestionar el alerta') 
+                messages.warning(request, 'No se pudo gestionar el alerta') 
             else:
                 transaction.commit()
                 messages.success(request, 'Alerta gestionada con exito')
@@ -337,7 +337,7 @@ def gestion_alertas(request,alerta_id=None):
             except Exception as err:
                 transaction.rollback()
                 logging.getLogger("error_logger").error('No se pudo gestionar el alera: {0}'.format(err))
-                messages.error(request, 'No se pudo gestionar el alerta') 
+                messages.warning(request, 'No se pudo gestionar el alerta') 
             else:
                 transaction.commit()
                 messages.success(request, 'Alerta gestionada con exito')
@@ -361,7 +361,7 @@ def gestion_alertas(request,alerta_id=None):
             except Exception as err:
                 transaction.rollback()
                 logging.getLogger("error_logger").error('No se pudo gestionar el alerTa: {0}'.format(err))
-                messages.error(request, 'No se pudo gestionar el alerta') 
+                messages.warning(request, 'No se pudo gestionar el alerta') 
             else:
                 transaction.commit()
                 messages.success(request, 'Alerta gestionada con exito')
@@ -391,7 +391,7 @@ def gestion_alertas(request,alerta_id=None):
             except Exception as err:
                 transaction.rollback()
                 logging.getLogger("error_logger").error('No se pudo gestionar el alera: {0}'.format(err))
-                messages.error(request, 'No se pudo gestionar el alerta') 
+                messages.warning(request, 'No se pudo gestionar el alerta') 
             else:
                 transaction.commit()
                 messages.success(request, 'Alerta gestionada con exito')

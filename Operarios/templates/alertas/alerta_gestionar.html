@@ -8,8 +8,6 @@
 <h1 class='my-3'>Detalle de Alertas - No marcación</h1>
 <input type="hidden" value="{{alerta_id}}" id="alerta">
 <div class="container-fluid pl-0 pr-1">
-    <form method="GET" role="form" id="formulario">
-
 
         <div class="col-md-12 pl-0 pr-1">
             <div class="card" style="margin-bottom:15px !important;">
@@ -38,7 +36,7 @@
                                 <p>
                                     <label for="">Horario</label>
                                     
-                                    <input type="text" class="form-control" value="{{lunEnt}}" disabled>
+                                    <input type="text" class="form-control" id="horario" value="{{lunEnt}}" disabled>
 
                                 </p>
                             </div>
@@ -48,7 +46,7 @@
                                 <p>
 
                                     <label for="">Próxima marcación</label>
-                                    <input type="text" class="form-control" value="" disabled>
+                                    <input type="text" class="form-control" id="proxima_marcacion" value="" disabled>
 
                                 </p>
                             </div>
@@ -62,7 +60,9 @@
                                 </p>
                             </div>
                             <div class="col-md-4">
-
+                                <!-- Dia requerido para realizar reemplazo -->
+                                <input type="hidden" name="" id="diaRequerido" value="">
+                                <input type="text" name="fechaAlerta"  id="id_fechaAlerta" value="{{alerta.Fecha}}">
                             </div>
                         </div>
                     </div>
@@ -74,6 +74,7 @@
             <div class="card" style="margin-bottom:15px !important;">
                 <div class="card-header">
                     Punto de Servicio
+                    <input type="hidden" id="id_puntoServicio" value="{{puntoServicio.id}}">
                 </div>
                 <div class="card-body">
                     <div class="cuerpo-filtro row">
@@ -211,13 +212,14 @@
                 </div>
                 <div class="card-body">
                     <form action="" method="POST">
+                    {% csrf_token %}
                     <div class="cuerpo-filtro row">
                         <div class="row filter-row">
                             <div class="col-md-4">
                                 <p style="margin:0px 0px 17px 0px !important;display: flex;">
 
                                     <label for="" style="margin: 0px 63px 10px 0px;">Acción</label>
-                                    <select class="form-control" id="exampleFormControlSelect1" name="estado">
+                                    <select class="form-control" id="exampleFormControlSelect1" name="accion">
                                         <option value="1">En el lugar</option>
                                         <option value="2">Va a asistir</option>
                                         <option value="3">No se va a cubrir</option>
@@ -326,7 +328,7 @@
                                             </p>
                                         </div>
                                         <div class="col-md-6">
-                                            <button type='submit' class='btn btn-success btn-filtrar'>Asignar</button>
+                                            <button type='button' class='btn btn-success btn-filtrar' onclick="asignarReemplazo()">Asignar</button>
                                         </div>
                                     </div>
                                 </div>
@@ -349,7 +351,6 @@
             </div>
 
         </div>
-    </form>
   <!-- Modal -->
   <div class="modal fade" id="modalFiltro" tabindex="-1" role="dialog"
   aria-labelledby="modalFiltro" aria-hidden="true">
@@ -367,10 +368,115 @@
       </div>
   </div>
 </div>
+ <!-- Modal -->
+ <div class="modal fade" id="modalFiltroReemplazo" tabindex="-1" role="dialog"
+ aria-labelledby="modalFiltro" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+     <div class="modal-content">
+         <div class="modal-header">
+             <h5 class="modal-title" id="modalFiltro2">Asignar Operario</h5>
+             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+             </button>
+         </div>
+         <div class="modal-body">
+             <div id="jsGridReemplazo"></div>
+         </div>
+     </div>
+ </div>
+</div>
 
 </div>
 
-
+<script>
+        function asignarReemplazo() {
+            //Seteamos action
+            //document.getElementById('action').value = 'filter_operario-' + id;
+            //hacemos submit
+            //document.getElementById('formulario').submit();
+            $('#modalFiltroReemplazo').modal('show');
+            $("#jsGridReemplazo").jsGrid({
+                height: "80%",
+                width: "100%",
+                /*filtering: true,
+                inserting: true,
+                editing: true,
+                sorting: true,
+                paging: true,
+                autoload: true,*/
+                filtering: true,
+                inserting: false,
+                editing: false,
+                sorting: true,
+                paging: true,
+                autoload: true,
+                pageSize: 5,
+                pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+                pageButtonCount: 1,
+                pagePrevText: "Anterior",
+                pageNextText: "Siguiente",
+                pageFirstText: "Primera",
+                pageLastText: "Ultima",
+                noDataContent: "No se han encontrado registros",
+                deleteConfirm: "Desea eliminar el registro?",
+                loadMessage: "Por favor, espere...",
+                invalidMessage: "Datos no válidos",
+                controller: {
+                    loadData: function (filter) {
+                        var d = $.Deferred();
+                        filter.id_puntoServicio = $('#id_puntoServicio').val();
+                        filter.horarioInicio = $('#id_puntoServicio').val();
+                        filter.horarioFin = $('#id_puntoServicio').val();
+                        filter.diaRequerido=$('#diaRequerido').val();
+                        filter.fechaInicio  = $('#id_fechaAlerta').val();
+                        $.ajax({
+                            type: "GET",
+                            url: "/reingenieria/alertas/gestionar/reemplazo",
+                            data: filter
+                        }).done(function (result) {
+                            console.log("Resultado", result);
+    
+                             d.resolve($.map(result, function (item) {
+                                 return $.extend(item.fields, { id: item.pk });
+                             }));
+                        });
+    
+                        return d.promise();
+                    }
+    
+                },
+                rowClick: function (e) {
+                    console.log(e.item.id);
+                    // var ope = e.item.id;
+                    // var nombres = e.item.nombres;
+                    // var select = $('#operario-' + id)[0];
+                    // var perfilSelect = $('#perfil-' + id)[0];
+                    // console.log("perfil", perfilSelect);
+                    //$('#id_asignaciondet_set-' + id + '-operario').val(ope);
+                    // for (var i = 0; i < select.length; i++) {
+    
+                    //     if ($(select[i]).val() == ope) {
+                    //         $(select[i]).attr("selected", "selected");
+                    //     } else {
+                    //         $(select[i]).removeAttr('selected');
+                    //     }
+                    // }
+                   
+                    $('#modalFiltro' + id).modal('hide');
+    
+                },
+    
+                fields: [
+                    { name: "nombres", type: "text", width: 150, title: "Nombre" },
+                    { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
+                    { name: "antiguedad", type: "text", width: 150, title: "Antiguedad" },
+                    { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
+                    { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
+                    { name: "perfil", type: "date", width: 150, title: "Perfil" }
+                ]
+            });
+        }
+    </script>
 <style>
     .card-header {
         background-color: #86273e !important;

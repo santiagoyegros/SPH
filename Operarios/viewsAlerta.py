@@ -16,6 +16,9 @@ from django.core import serializers
 from Operarios.models import Alertas
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones
+from django.db import connection
+from Operarios.models import OperariosAsignacionDet
+import datetime
 def alertasList (request):
     estado="Abierta"
     fechaDesde=request.GET.get('fechaDesde')
@@ -126,10 +129,120 @@ def getMarcaciones(request):
     
     return HttpResponse(serializers.serialize("json",ultimasMarcaciones), content_type = 'application/json', status = 200);
 
+def getReemplazos(request):
+    print(request.GET.get('alerta_id'))
+    totalHoras=idPunto="" 
+    lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal=""
+    fechaIni = ""
+    diaInicio=diaFin=""
+    horaInicio=horaFin=""
+    supervisor=False
+    perfil=""
+    fechaFin=""
+    operarios = []
+    if request.GET.get('id_puntoServicio')  is not None and request.GET.get('id_puntoServicio')!='':
+        idPunto = request.GET.get('id_puntoServicio')
+    if request.GET.get('fechaInicio')  is not None and request.GET.get('fechaInicio')!='':
+        fechaIni = request.GET.get('fechaInicio')
+        date_time_obj = datetime.datetime.strptime(fechaIni,'%d/%m/%Y')
+        fechaIni=date_time_obj.strftime('%Y-%m-%d')
+    if request.GET.get('horarioInicio')  is not None and request.GET.get('horarioInicio')!='' and "lun" in request.GET.get('diaRequerido'):
+        lunEnt = request.GET.get('horarioInicio') 
+    if request.GET.get('horarioFin')  is not None and request.GET.get('horarioFin')!='' and "lun" in request.GET.get('diaRequerido'):
+        lunSal = request.GET.get('horarioFin') 
+    if request.GET.get('horarioInicio')  is not None and request.GET.get('horarioInicio')!='' and "mar" in request.GET.get('diaRequerido'):
+        marEnt = request.GET.get('horarioInicio') 
+    if request.GET.get('horarioFin')  is not None and request.GET.get('horarioFin')!='' and "mar" in request.GET.get('diaRequerido'):
+        marSal = request.GET.get('horarioFin')
+    if request.GET.get('horarioInicio')  is not None and request.GET.get('horarioInicio')!='' and "mie" in request.GET.get('diaRequerido'):
+        mieEnt = request.GET.get('horarioInicio') 
+    if request.GET.get('horarioFin')  is not None and request.GET.get('horarioFin')!='' and "mie" in request.GET.get('diaRequerido'):
+        mieSal = request.GET.get('horarioFin')
+    if request.GET.get('horarioInicio')  is not None and request.GET.get('horarioInicio')!='' and "jue" in request.GET.get('diaRequerido'):
+        jueEnt = request.GET.get('horarioInicio') 
+    if request.GET.get('horarioFin')  is not None and request.GET.get('horarioFin')!='' and "jue" in request.GET.get('diaRequerido'):
+        jueSal = request.GET.get('horarioFin')
+    if request.GET.get('horarioInicio')  is not None and request.GET.get('horarioInicio')!='' and "vie" in request.GET.get('diaRequerido'):
+        vieEnt = request.GET.get('horarioInicio') 
+    if request.GET.get('horarioFin')  is not None and request.GET.get('horarioFin')!='' and "vie" in request.GET.get('diaRequerido'):
+        vieSal = request.GET.get('horarioFin')
+    if request.GET.get('horarioInicio')  is not None and request.GET.get('horarioInicio')!='' and "sab" in request.GET.get('diaRequerido'):
+        sabEnt = request.GET.get('horarioInicio') 
+    if request.GET.get('horarioFin')  is not None and request.GET.get('horarioFin')!='' and "sab" in request.GET.get('diaRequerido'):
+        sabSal = request.GET.get('horarioFin')
+    if request.GET.get('horarioInicio')  is not None and request.GET.get('horarioInicio')!='' and "dom" in request.GET.get('diaRequerido'):
+        domEnt = request.GET.get('horarioInicio') 
+    if request.GET.get('horarioFin')  is not None and request.GET.get('horarioFin')!='' and "dom" in request.GET.get('diaRequerido'):
+        domSal = request.GET.get('horarioFin')
+
+    operarios = buscar_operarios(
+        idPunto,
+        totalHoras, 
+        lunEnt,  
+        lunSal,  
+        marEnt,  
+        marSal,  
+        mieEnt,  
+        mieSal,  
+        jueEnt,  
+        jueSal,  
+        vieEnt,  
+        vieSal,  
+        sabEnt,  
+        sabSal,  
+        domEnt,  
+        domSal,
+        perfil,
+        supervisor,
+        fechaIni,
+        fechaFin,
+        horaInicio,
+        horaFin,
+        diaInicio,
+        diaFin,
+        )
+        
+    if request.GET.get('nombres')  is not None and request.GET.get('nombres')!='':
+        operarios = [x for x in operarios if (request.GET.get('nombres')).lower() in (x.nombres).lower()]
+    if request.GET.get('nroLegajo')  is not None and request.GET.get('nroLegajo')!='':
+        operarios = [x for x in operarios if (request.GET.get('nroLegajo')).lower() in (x.nroLegajo).lower()]
+    if request.GET.get('antiguedad')  is not None and request.GET.get('antiguedad')!='':
+        operarios = [x for x in operarios if str(request.GET.get('antiguedad')) in str(x.antiguedad)]
+    if request.GET.get('nombres_puntoServicio')  is not None and request.GET.get('nombres_puntoServicio')!='':
+        operarios = [x for x in operarios if (request.GET.get('nombres_puntoServicio')).lower() in (x.nombres_puntoServicio).lower()]
+    if request.GET.get('totalHoras')  is not None and request.GET.get('totalHoras')!='':
+        operarios = [x for x in operarios if str(request.GET.get('totalHoras')) in str(x.totalHoras)]
+    if request.GET.get('perfil')  is not None and request.GET.get('perfil')!='':
+        operarios = [x for x in operarios if (request.GET.get('perfil')).lower() in (x.perfil).lower()]
+    
+    return HttpResponse(serializers.serialize("json",operarios), content_type = 'application/json', status = 200)
+
+def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq,perfil,supervisor, fechaInicioOp,fechaFinOp,horaInicio,horaFin,diaInicio,diaFin):
+        conn= connection.cursor()
+        sql = """\
+            DECLARE @out nvarchar(max);
+            EXEC [dbo].[operarios_disponibles_v2] @puntoServicio=?, @totalHoras=?, @lunEntReq=?, @lunSalReq=?, @marEntReq=?, @marSalReq=?, @mierEntReq=?, @mierSalReq=?, @juevEntReq=?, @juevSalReq=?, @vieEntReq=?, @vieSlReq=?, @sabEntReq=?, @sabSalReq=?, @domEntReq=?, @domSalReq=?, @fechaInicioOperario=?, @fechaFinOperario=?,@perfil=?, @param_out = @out OUTPUT;
+            SELECT @out AS the_output;
+        """
+        """conn.callproc('operarios_disponibles_v2', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
+        params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp, fechaFinOp,perfil)
+        print(params)
+        conn.execute('operarios_disponibles_v2 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
+        result = conn.fetchall()
+       
+        conn.close()
+        return [OperariosAsignacionDet(*row) for row in result]
+
 def gestion_alertas(request,alerta_id=None):
     
 
     alerta=Alertas.objects.get(id=alerta_id)
+    if alerta.FechaHora:
+            fecha = (alerta.FechaHora).strftime("%d/%m/%Y")
+            alerta.Fecha = fecha 
+            hora = (alerta.FechaHora).strftime("%H:%M:%S")
+            alerta.Hora = hora
+    print(alerta.Fecha)
     """obtener operario"""
     operario=Operario.objects.get(id=alerta.Operario.id)
     puntoServicio=PuntoServicio.objects.get(id=alerta.PuntoServicio.id)
@@ -141,7 +254,6 @@ def gestion_alertas(request,alerta_id=None):
     alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)
     ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
     print ("ultimas 10 marcaciones",ultimasMarcaciones)
-    print(request.POST)
     """CAMBIAMOS EL ESTADO DE LA ALERTA"""
     if request.method == 'GET':
         setattr(alerta,"Estado", "EN GESTION")

@@ -590,3 +590,15 @@ class DiaLibreForm(forms.ModelForm):
         }
         
 
+# class AccionesAlertasFrom(forms.ModelForm):
+#     accion:
+#     horaEntrada:
+#     horaAprox:
+#     motivo:forms.CharField(max_length=100, required=False)
+#     fechaRetorno:
+#     horaRetorno:
+#     comentario:forms.CharField(max_length=100, required=False)
+#     escalar:
+#     class Meta:
+#         model = Operario
+#         fields=['nombre', 'apellido', 'direccion', 'numCedula', 'numPasaporte', 'nacionalidad', 'escolaridad', 'telefono','ciudad','profesion', 'fechaNacimiento','lugarNacimiento', 'banco', 'ctaBanco', 'nombreContacto', 'telefonoContacto','email', 'nroLegajo', 'fechaFin', 'fechaInicio', 'latitud', 'longitud', 'barrios'   ]

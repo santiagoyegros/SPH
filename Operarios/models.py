@@ -553,7 +553,7 @@ class Alertas(models.Model):
     Operario = models.ForeignKey(Operario, on_delete=models.CASCADE)
     Asignacion = models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
     PuntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
-    Estado = models.CharField(_("Estado"), max_length=10)
+    Estado = models.CharField(_("Estado"), max_length=15)
     Tipo = models.CharField(_('Tipo de Alerta'), max_length=10)
 
 

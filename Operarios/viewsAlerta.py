@@ -17,7 +17,7 @@ from django.core import serializers
 from Operarios.models import Alertas
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Operarios.models import OperariosAsignacionDet
-from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones,HorasNoProcesadas, HorariosOperario, RemplazosCab, RemplazosDet, AlertaResp
+from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones,HorasNoProcesadas, HorariosOperario, RemplazosCab, RemplazosDet, AlertaResp, Parametros
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import connection, transaction
@@ -257,10 +257,10 @@ def gestion_alertas(request,alerta_id=None):
         horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
         if horarios:
             if horarios[0]:
-                horario = horarios[0].horaEntrada + " - " + horarios[0].horaSalida
+                horario = horarios[0].horaEntrada.strftime("%H:%M:%S") + " - " + horarios[0].horaSalida.strftime("%H:%M:%S")
                 diaRequerido = horarios[0].diaEntrada
             if len(horarios)>1:
-                prox_marcacion = horarios[1].horaEntrada + " - " + horarios[1].horaSalida
+                prox_marcacion = horarios[1].horaEntrada.strftime("%H:%M:%S") + " - " + horarios[1].horaSalida.strftime("%H:%M:%S")
            
     """obtener operario"""
     operario=Operario.objects.get(id=alerta.Operario.id)
@@ -277,9 +277,128 @@ def gestion_alertas(request,alerta_id=None):
     if request.method == 'GET':
         setattr(alerta,"Estado", "EN GESTION")
         alerta.save()
+        
     else: 
         print ("Es POST")
         print(request.POST)
+        """En el lugar"""
+        if request.POST.get('accion')=='1': 
+            try:
+                if request.POST.get('horaEntrada') ==None:
+                    messages.warning("Favor ingrese la hora entrada")
+
+                else:
+                    horaNueva=datetime.datetime.strptime(request.POST.get('horaEntrada'), "%H:%M")
+                    """procedemos a cerrar el alerta"""
+                    setattr(alerta,"Estado", "CERRADA")
+                    alerta.save()
+                    """obtenemos la penalizacion"""
+                    penalizacion=Parametros.objects.get(tipo__contains="ALERTAS", parametro__contains="PENALIZACION")
+                    
+                    horaEntrada=datetime.datetime.strptime(request.POST.get('horaEntrada'), "%H:%M")
+                    horaPenalizacion=horaEntrada+datetime.timedelta(minutes=int(penalizacion.valor))
+                    nuevaFecha=datetime.datetime.combine(alerta.FechaHora.date(), horaPenalizacion.time())
+                    """generamos la marcacion"""
+                    nuevaMarcacion=EsmeEmMarcaciones.objects.create(codpersona=alerta.Operario.numCedula,codoperacion="HE",fecha=nuevaFecha,codcategoria="EM",codubicacion=puntoServicio.CodPuntoServicio)
+                    nuevaMarcacion.save()
+                    """guardamos la respuesta a la alerta"""
+                    respAlerta=AlertaResp.objects.create(accion='En el lugar',id_alerta=alerta, usuario=request.user, hora=horaEntrada)
+                    respAlerta.save()
+               
+            except Exception as err:
+                transaction.rollback()
+                logging.getLogger("error_logger").error('No se pudo gestionar el alerta: {0}'.format(err))
+                messages.error(request, 'No se pudo gestionar el alerta') 
+            else:
+                transaction.commit()
+                messages.success(request, 'Alerta gestionada con exito')
+            finally:
+                transaction.set_autocommit(True)
+            return redirect('Operarios:alertas_list')
+        """Si va a asistir"""
+        if request.POST.get('accion')=='2': 
+            try:
+                """procedemos a cerrar el alerta"""
+                setattr(alerta,"Estado", "CERRADA")
+                alerta.save()
+                """procedemos a crear una nueva alerta, con estado reprogramacion"""
+                if request.POST.get('horaAprox') == None:
+                    messages.error("Favor ingrese la hora aproximada")
+
+                else:
+                    horaNueva=datetime.datetime.strptime(request.POST.get('horaAprox'), "%H:%M")
+                    nuevaFecha=datetime.datetime.combine(alerta.FechaHora.date(), horaNueva.time())
+                    newAlerta=Alertas.objects.create(Estado="RE PROGRAMACION", Asignacion=alerta.Asignacion, PuntoServicio=puntoServicio, Tipo="NO-MARC",FechaHora=nuevaFecha, Operario=alerta.Operario)
+                    newAlerta.save()
+                    """guardamos la respuesta a la alerta"""
+                    respAlerta=AlertaResp.objects.create(accion='Va a asistir',id_alerta=alerta, usuario=request.user, hora=horaNueva.time())
+                    respAlerta.save()
+               
+            except Exception as err:
+                transaction.rollback()
+                logging.getLogger("error_logger").error('No se pudo gestionar el alera: {0}'.format(err))
+                messages.error(request, 'No se pudo gestionar el alerta') 
+            else:
+                transaction.commit()
+                messages.success(request, 'Alerta gestionada con exito')
+            finally:
+                transaction.set_autocommit(True)
+            return redirect('Operarios:alertas_list')
+        """No se va a cubrir"""
+        if request.POST.get('accion')=='3':
+            try:
+                """guardamos las horas no procesadas"""
+                horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
+                horasNoProcesadas.save()
+                """procedemos a cerrar el alerta"""
+                setattr(alerta,"Estado", "CERRADA")
+                alerta.save()
+                
+                """guardamos la respuesta a la alerta"""
+                respAlerta=AlertaResp.objects.create(accion='No se va a cubrir',id_alerta=alerta, usuario=request.user)
+                respAlerta.save()
+               
+            except Exception as err:
+                transaction.rollback()
+                logging.getLogger("error_logger").error('No se pudo gestionar el alerTa: {0}'.format(err))
+                messages.error(request, 'No se pudo gestionar el alerta') 
+            else:
+                transaction.commit()
+                messages.success(request, 'Alerta gestionada con exito')
+            finally:
+                transaction.set_autocommit(True)
+                return redirect('Operarios:alertas_list')
+        """REMPLAZO"""
+        if request.POST.get('accion')=='4': 
+            escalar=False
+            try:
+                """procedemos a cerrar el alerta"""
+                setattr(alerta,"Estado", "CERRADA")
+                alerta.save()
+                """guardamos las horas no procesadas"""
+                horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
+                horasNoProcesadas.save()
+                """"procedemos a guardar el remplazo"""
+                hora=datetime.datetime.strptime(request.POST.get('horaRetorno'), "%H:%M")
+               
+                
+                """guardamos la respuesta a la alerta"""
+                if request.POST.get('escalable'):
+                    escalar=request.POST.get('escalable')
+                respAlerta=AlertaResp.objects.create(accion='Remplazo',id_alerta=alerta, usuario=request.user, hora=hora, motivo=request.POST.get("motivo"),comentarios=request.POST.get("comentarios"), escalar=escalar)
+                respAlerta.save()
+               
+            except Exception as err:
+                transaction.rollback()
+                logging.getLogger("error_logger").error('No se pudo gestionar el alera: {0}'.format(err))
+                messages.error(request, 'No se pudo gestionar el alerta') 
+            else:
+                transaction.commit()
+                messages.success(request, 'Alerta gestionada con exito')
+            finally:
+                transaction.set_autocommit(True)
+            return redirect('Operarios:alertas_list')
+
     
     contexto = {
         'title': 'Gestion de Alertas',
@@ -327,7 +446,7 @@ def emparejar(request, alerta_id=None, emparejamiento_id=None):
         remplazoDet.save()
 
         """procedemos a guardar la respuesta del alerta no-marcacion"""
-        respAlerta=AlertaResp.objects.create(accion='Emparejar',id_alerta=alerta, id_reemplazo=remplazoCab, usuario=request.user)
+        respAlerta=AlertaResp.objects.create(accion='Emparejar',id_alerta=alerta, id_reemplazo=remplazoCab, usuario=request.user, hora=alerta.FechaHora.time())
         respAlerta.save()
         """procedemos a cerrar el alerta"""
         setattr(alerta,"Estado", "CERRADA")

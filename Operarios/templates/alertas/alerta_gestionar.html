@@ -36,7 +36,7 @@
                                 <p>
                                     <label for="">Horario</label>
                                     
-                                    <input type="text" class="form-control" id="horario" value="{{horariodate}}" disabled>
+                                    <input type="text" class="form-control" id="horario" value="{{horario}}" disabled>
 
                                 </p>
                             </div>
@@ -223,7 +223,7 @@
                                         <option value="1">En el lugar</option>
                                         <option value="2">Va a asistir</option>
                                         <option value="3">No se va a cubrir</option>
-                                        <option value="4">Reemplazo</option>
+                                        <option value="4">Remplazo</option>
                                     </select>
                                 </p>
                             </div>
@@ -236,7 +236,7 @@
                                                 <p style="display: flex;padding: 0px 5px 0px 10px !important;">
 
                                                         <label for="tipoAlerta" style="width: 163px;">Hora de entrada</label>
-                                                        <input type="text" value="{{form.hora.value}}"
+                                                        <input type="text" 
                                                             name="horaEntrada"
                                                             class="form-control form-control-sm" style="height:38px !important;"
                                                             id="id_horaEntrada"
@@ -250,8 +250,8 @@
                                         <div class="col-md-4">
                                                 <p style="display: flex;padding: 0px 5px 0px 10px !important;">
 
-                                                        <label for="tipoAlerta" style="width: 163px;">Hora Aproximada</label>
-                                                        <input type="text" value="{{form.lunSal.value}}"
+                                                        <label for="id_horaAprox" style="width: 163px;">Hora Aproximada</label>
+                                                        <input type="text" 
                                                             name="horaAprox"
                                                             class="form-control form-control-sm" style="height:38px !important;"
                                                             id="id_horaAprox"
@@ -311,7 +311,7 @@
 
                                     <p style="display: flex;">
                                         <label for="" style="margin: 0px 20px 0px 0px;">Comentarios</label>
-                                        <textarea name="comentario" class="form-control" id="id_comentario" cols="30" rows="3" style="resize: none"
+                                        <textarea name="comentarios" class="form-control" id="id_comentario" cols="30" rows="3" style="resize: none"
                                             placeholder="Agregue un comentario aquí"></textarea>
                                     </p>
                                 </div>
@@ -322,8 +322,9 @@
                                         <div class="col-md-6">
 
                                             <p style="display: flex;">
+                                                    <label for="" style="margin: 0px 20px 0px 0px;">Escalar</label>
                                                 <input type="checkbox" name="escalar" id="id_escalar" style="margin: 6px 15px;">
-                                                <label for="" style="margin: 0px 20px 0px 0px;">Escalar</label>
+                                                
 
                                             </p>
                                         </div>

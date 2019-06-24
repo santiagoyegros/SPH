@@ -168,15 +168,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for alerta in alertasSinAsig %}
+                            {% for sinAsig in alertasSinAsig %}
                             <tr>
                                 <td>{{forloop.counter}}</td>
-                                <td>{{alerta.Operario.nombre}} {{alerta.Operario.apellido}}</td>
-                                <td>{{alerta.Operario.telefono}}</td>
-                                <td>{{alerta.FechaHora | date:"H:m:s"}} </td>
-                                <td>{{alerta.FechaHora | date:"d/m/Y"}}</td>
+                                <td>{{sinAsig.Operario.nombre}} {{sinAsig.Operario.apellido}}</td>
+                                <td>{{sinAsig.Operario.telefono}}</td>
+                                <td>{{sinAsig.FechaHora | date:"H:m:s"}} </td>
+                                <td>{{sinAsig.FechaHora | date:"d/m/Y"}}</td>
                                 <td style="display:flex;justify-content:center"><a
-                                        href={% url 'Operarios:alertas_gestionar' alerta_id=alerta.id %}
+                                        href={% url 'Operarios:alertas_emparejar' alerta_id=alerta.id emparejamiento_id=sinAsig.id %}
                                         class="btn btn-success btn-filtrar">Emparejar</a></td>
                             </tr>
                             {% endfor %}
@@ -236,7 +236,7 @@
                                                 <p style="display: flex;padding: 0px 5px 0px 10px !important;">
 
                                                         <label for="tipoAlerta" style="width: 163px;">Hora de entrada</label>
-                                                        <input type="text" value="{{form.lunSal.value}}"
+                                                        <input type="text" value="{{form.hora.value}}"
                                                             name="horaEntrada"
                                                             class="form-control form-control-sm" style="height:38px !important;"
                                                             id="id_horaEntrada"

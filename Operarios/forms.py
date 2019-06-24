@@ -549,9 +549,9 @@ class AsignacionDetForm(forms.ModelForm):
             'domEnt': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Domingo'),
             'domSal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Domingo'),
             'totalHoras': forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly' }),
-            'supervisor': forms.CheckboxInput(attrs={'class':'checkbox-supervisor','style':'    display: block;margin: 8px 25px;'}), 
-            'perfil': forms.Select(attrs={'class':'form-control form-control-sm select-form'}),
-            'totalHoras': forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly' }),
+            'supervisor': forms.CheckboxInput(attrs={'class':'checkbox-supervisor','checked':False,'style':'    display: block;margin: 8px 25px;'}), 
+            'perfil': forms.Select(attrs={'class':'form-control form-control-sm'}),
+        
         }
         
 

@@ -64,5 +64,7 @@ urlpatterns = [
     url(r'^alertas/listar/', viewsAlerta.alertasList , name='alertas_list'),
     url(r'^alertas/gestionar/(?P<alerta_id>\d+)', viewsAlerta.gestion_alertas , name='alertas_gestionar'),
     url(r'^alertas/gestionar/marcaciones', viewsAlerta.getMarcaciones , name='getMarcacines'),
-    url(r'^alertas/gestionar/reemplazo', viewsAlerta.getReemplazos , name='getReemplazos')
+    url(r'^alertas/gestionar/reemplazo', viewsAlerta.getReemplazos , name='getReemplazos'),
+    url(r'^alertas/gestionar/emparejar/(?P<alerta_id>\d+)/(?P<emparejamiento_id>\d+)', viewsAlerta.emparejar , name='alertas_emparejar')
+
 ]   

@@ -12,13 +12,11 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from datetime import date
 from datetime import datetime
+import datetime
 from django.core import serializers
 from Operarios.models import Alertas
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
 from Operarios.models import OperariosAsignacionDet
-import datetime
-
 from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones,HorasNoProcesadas, HorariosOperario, RemplazosCab, RemplazosDet, AlertaResp
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -33,7 +31,7 @@ def alertasList (request):
     operario=None
     tipoAlerta=None
     """query por defecto con fecha del dia"""
-    hoy= datetime.now()
+    hoy= datetime.datetime.now()
     hoyIni=hoy.replace(hour=0,minute=0,second=0, microsecond=0)
 
     hoyFin=hoyIni.replace(hour=23,minute=59,second=59)
@@ -42,6 +40,9 @@ def alertasList (request):
     PuntosServicio = PuntoServicio.objects.all()
     alertasList=alertasList.filter(Estado="ABIERTA")
     alertasList=alertasList.order_by("-FechaHora")
+   
+
+
     """query por filtro segun el usuario"""
     print (request.GET.get('puntoServicio'))
     print (request.GET.get('fechaDesde'))
@@ -50,8 +51,8 @@ def alertasList (request):
     print (request.GET.get('tipoAlerta'))
     print (request.GET.get('operario'))
     if request.GET.get("fechaDesde") and request.GET.get("fechaHasta"):
-        fechaDesdeAux=datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").replace(hour=0,minute=0,second=0, microsecond=0)
-        fechaHastaAux=datetime.strptime(request.GET.get('fechaHasta'), "%d/%m/%Y").replace(hour=23,minute=59,second=59, microsecond=0)     
+        fechaDesdeAux=datetime.datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").replace(hour=0,minute=0,second=0, microsecond=0)
+        fechaHastaAux=datetime.datetime.strptime(request.GET.get('fechaHasta'), "%d/%m/%Y").replace(hour=23,minute=59,second=59, microsecond=0)     
         alertasList=Alertas.objects.filter(FechaHora__gte=fechaDesdeAux,FechaHora__lte=fechaHastaAux)
         
     if request.GET.get('estado'):
@@ -241,15 +242,26 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
 
 @login_required
 def gestion_alertas(request,alerta_id=None):
-    
-
     alerta=Alertas.objects.get(id=alerta_id)
+    horario = ""
+    diaRequerido=""
+    prox_marcacion = ""
     if alerta.FechaHora:
             fecha = (alerta.FechaHora).strftime("%d/%m/%Y")
             alerta.Fecha = fecha 
             hora = (alerta.FechaHora).strftime("%H:%M:%S")
             alerta.Hora = hora
-    print(alerta.Fecha)
+    """Se obtiene el horario del operario"""
+    horarios=[]
+    if alerta.Asignacion:
+        horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
+        if horarios:
+            if horarios[0]:
+                horario = horarios[0].horaEntrada + " - " + horarios[0].horaSalida
+                diaRequerido = horarios[0].diaEntrada
+            if len(horarios)>1:
+                prox_marcacion = horarios[1].horaEntrada + " - " + horarios[1].horaSalida
+           
     """obtener operario"""
     operario=Operario.objects.get(id=alerta.Operario.id)
     puntoServicio=PuntoServicio.objects.get(id=alerta.PuntoServicio.id)
@@ -272,6 +284,9 @@ def gestion_alertas(request,alerta_id=None):
     contexto = {
         'title': 'Gestion de Alertas',
         'operario':operario,
+        'horario':horario,
+        'diaRequerido':diaRequerido,
+        'prox_marcacion':prox_marcacion,
         'puntoServicio':puntoServicio ,
         'alerta':alerta,
         'alerta_id':alerta_id,
@@ -281,6 +296,7 @@ def gestion_alertas(request,alerta_id=None):
         'alertasSinAsig':alertasSinAsig
     }
     return render(request, 'alertas/alerta_gestionar.html', context=contexto)
+
 def emparejar(request, alerta_id=None, emparejamiento_id=None):
     print ("Hola emparejar")
     """alerta generada"""

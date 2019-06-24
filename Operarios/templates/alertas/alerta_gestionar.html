@@ -36,7 +36,7 @@
                                 <p>
                                     <label for="">Horario</label>
                                     
-                                    <input type="text" class="form-control" id="horario" value="{{lunEnt}}" disabled>
+                                    <input type="text" class="form-control" id="horario" value="{{horario}}" disabled>
 
                                 </p>
                             </div>
@@ -46,7 +46,7 @@
                                 <p>
 
                                     <label for="">Próxima marcación</label>
-                                    <input type="text" class="form-control" id="proxima_marcacion" value="" disabled>
+                                    <input type="text" class="form-control" id="proxima_marcacion" value="{{prox_marcacion}}" disabled>
 
                                 </p>
                             </div>
@@ -61,8 +61,8 @@
                             </div>
                             <div class="col-md-4">
                                 <!-- Dia requerido para realizar reemplazo -->
-                                <input type="hidden" name="" id="diaRequerido" value="">
-                                <input type="text" name="fechaAlerta"  id="id_fechaAlerta" value="{{alerta.Fecha}}">
+                                <input type="hidden" name="" id="diaRequerido" value="{{diaRequerido}}">
+                                <input type="hidden" name="fechaAlerta"  id="id_fechaAlerta" value="{{alerta.Fecha}}">
                             </div>
                         </div>
                     </div>

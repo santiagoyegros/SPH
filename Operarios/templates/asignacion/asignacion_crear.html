@@ -803,7 +803,7 @@
         // $('input[type=checkbox]').hide()
         var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
         for (var i = 0; i < cantForm; i++) {
-            console.log("id delete", i)
+           
 
             $('#id_asignaciondet_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
 
@@ -811,14 +811,11 @@
 
 
             if ($('#id_asignaciondet_set-' + (i) + '-DELETE').is(":checked")) {
-                console.log("Marcado como eliminado")
-
-                //$('td.delete input[type=checkbox]').hide()
+                    //$('td.delete input[type=checkbox]').hide()
                 $('#leaveForm-' + i).hide()
 
             }
-            console.log('#id_asignaciondet_set-' + i + '-operario', $('#id_asignaciondet_set-' + i + '-operario').val())
-            if ($('#id_asignaciondet_set-' + i + '-operario').val()) {
+           if ($('#id_asignaciondet_set-' + i + '-operario').val()) {
 
                 $('#id_asignaciondet_set-' + i + '-domEnt').prop("readonly", true);
                 $('#id_asignaciondet_set-' + i + '-domSal').prop("readonly", true);
@@ -839,7 +836,6 @@
                 $('#id_asignaciondet_set-' + i + '-sabEnt').prop("readonly", true);
                 $('#id_asignaciondet_set-' + i + '-sabSal').prop("readonly", true);
                 $('#id_asignaciondet_set-' + i + '-perfil').attr("style", "display:none");
-                console.log('#id_asignaciondet_set-' + i + '-perfil');
                 $('#id_asignaciondet_set-' + i + '-supervisor').attr("style", "display:none");
                 $('#perfil-' + i).attr("style", "display:block");
                 $('#perfil-' + i).attr("disabled", "disabled");
@@ -858,7 +854,6 @@
     $(document).ready(function () {
         $(".filter1").on("keyup", function () {
             var value = $(this).val().toLowerCase();
-            console.log(value);
             $("#table tr td.col1").filter(function () {
                 $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
@@ -904,10 +899,9 @@
             var idOpe = $('#id_asignaciondet_set-' + (i) + '-operario').val();
             var idPerfil = $('#id_asignaciondet_set-' + (i) + '-perfil').val();
             var supervisor = $('#id_asignaciondet_set-' + (i) + '-supervisor');
-            console.log(idPerfil)
             if (supervisor[0].checked) {
                 var selectSupervisor = $('#supervisor-' + (i))[0];
-                console.log(selectSupervisor)
+              
                 selectSupervisor.checked = true;
             }
             var select = $('#operario-' + (i))[0];
@@ -919,7 +913,6 @@
                     $(select[j]).removeAttr('selected');
                 }
             }
-            console.log("Al seleccionar operario el id perfil es " + idPerfil + ".");
             for (var j = 0; j < selectPerfil.length; j++) {
                 if ($(selectPerfil[j]).val() == idPerfil) {
                     $(selectPerfil[j]).attr("selected", "selected");
@@ -937,7 +930,6 @@
         //document.getElementById('action').value = 'filter_operario-' + id;
         //hacemos submit
         //document.getElementById('formulario').submit();
-        console.log("ver los datos del formulario " + id);
         $('#modalFiltro' + id).modal('show');
         $("#jsGrid" + id).jsGrid({
             height: "80%",
@@ -961,7 +953,7 @@
             pageNextText: "Siguiente",
             pageFirstText: "Primera",
             pageLastText: "Ultima",
-            noDataContent: "No se han encontrado registros",
+            noDataContent: "No se han encontrado registros que coincidan con la busqueda",
             deleteConfirm: "Desea eliminar el registro?",
             loadMessage: "Por favor, espere...",
             invalidMessage: "Datos no válidos",
@@ -985,7 +977,7 @@
                     filter.domEnt = $('#id_asignaciondet_set-' + id + '-domEnt').val();
                     filter.domSal = $('#id_asignaciondet_set-' + id + '-domSal').val();
                     filter.perfilproc = $('#id_asignaciondet_set-' + id + '-perfil').val();
-                    filter.supervisor = $('#id_asignaciondet_set-' + id + '-supervisor').val();
+                    filter.supervisor = $('#id_asignaciondet_set-' + id + '-supervisor')[0].checked;
                     filter.fechaIni = $('#id_asignaciondet_set-' + id + '-fechaInicio').val();
                     filter.fechaFin = $('#id_asignaciondet_set-' + id + '-fechaFin').val();
                     filter.horaInicio = $('#id_horaInicio-' + id).val();
@@ -1022,8 +1014,6 @@
                                     var domSalAnt = ""
                                     var fechaIniAnt = ""
                                     var fechaFinAnt = ""
-                                    console.log("INDEX ES ", index-1);
-                                    console.log("i es",i);
                                     if (!$("#id_asignaciondet_set-" + (index - 1) + "-DELETE")[0].checked) {
                                         if ($('#id_asignaciondet_set-' + (index - 1) + '-fechaInicio').val())
                                             fechaIniAnt = $('#asignaciondet_set-' + (index - 1) + '-fechaInicio').val()
@@ -1060,15 +1050,16 @@
       
                                         if (filter.lunEnt && lunEntAnt && lunSalAnt && ((filter.lunEnt >= lunEntAnt && filter.lunEnt <= lunSalAnt) || (filter.lunSal >= lunEntAnt && (filter.lunSal <= lunSalAnt || filter.lunSal >= lunSalAnt)))) {
                                             console.log("lunes");
-                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+                                           
+                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
 
                                                 id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
-                                                console.log("operario anterior",id_operario);
                                                 if (id_operario != '') {
                                                     for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                        if ((operarios[i].pk) == (id_operario)) {
                                                             print("Encuentra")
                                                             operarios.splice(i, 1);
+
                                                             break
                                                         }
                                                     }
@@ -1076,13 +1067,13 @@
                                             }
                                         } else if (filter.marEnt && marEntAnt && marSalAnt && ((filter.marEnt >= marEntAnt && filter.marEnt <= marSalAnt) || (filter.marSal >= marEntAnt && (filter.marSal <= marSalAnt || filter.marSal >= marSalAnt)))) {
                                             console.log("martes");
-                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
 
                                                 id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
 
                                                 if (id_operario != '') {
                                                     for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                        if ((operarios[i].pk) == (id_operario)) {
                                                             print("Encuentra")
                                                             operarios.splice(i, 1);
                                                             break
@@ -1092,13 +1083,13 @@
                                             }
                                         } else if (filter.mieEnt && mieEntAnt && mieSalAnt && ((filter.mieEnt >= mieEntAnt && filter.mieEnt <= mieSalAnt) || (filter.mieSal >= mieEntAnt && (filter.mieSal <= mieSalAnt || filter.mieSal >= mieSalAnt)))) {
                                             console.log("miercoles");
-                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
 
                                                 id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
 
                                                 if (id_operario != '') {
                                                     for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                        if ((operarios[i].pk) == (id_operario)) {
                                                             print("Encuentra")
                                                             operarios.splice(i, 1);
                                                             break
@@ -1108,13 +1099,13 @@
                                             }
                                         } else if (filter.jueEnt && jueEntAnt && jueSalAnt && ((filter.jueEnt >= jueEntAnt && filter.jueEnt <= jueSalAnt) || (filter.jueSal >= jueEntAnt && (filter.jueSal <= jueSalAnt || filter.jueSal >= jueSalAnt)))) {
                                             console.log("jueves");
-                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
 
                                                 id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
 
                                                 if (id_operario != '') {
                                                     for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                        if ((operarios[i].pk) == (id_operario)) {
                                                             print("Encuentra")
                                                             operarios.splice(i, 1);
                                                             break
@@ -1124,13 +1115,13 @@
                                             }
                                         } else if (filter.vieEnt && vieEntAnt && vieSalAnt && ((filter.vieEnt >= vieEntAnt && filter.vieEnt <= vieSalAnt) || (filter.vieSal >= vieEntAnt && (filter.vieSal <= vieSalAnt || filter.vieSal >= vieSalAnt)))) {
                                             console.log("viernes");
-                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
 
                                                 id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
 
                                                 if (id_operario != '') {
                                                     for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                        if ((operarios[i].pk) == (id_operario)) {
                                                             print("Encuentra")
                                                             operarios.splice(i, 1);
                                                             break
@@ -1140,13 +1131,13 @@
                                             }
                                         } else if (filter.sabEnt && sabEntAnt && sabSalAnt && ((filter.sabEnt >= sabEntAnt && filter.sabEnt <= sabSalAnt) || (filter.sabSal >= sabEntAnt && (filter.sabSal <= sabSalAnt || filter.sabSal >= sabSalAnt)))) {
                                             console.log("sabado");
-                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
 
                                                 id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
 
                                                 if (id_operario != '') {
                                                     for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                        if ((operarios[i].pk) == (id_operario)) {
                                                             print("Encuentra")
                                                             operarios.splice(i, 1);
                                                             break
@@ -1156,13 +1147,13 @@
                                             }
                                         } else if (filter.domEnt && domEntAnt && domSalAnt && ((filter.domEnt >= domEntAnt && filter.domEnt <= domSalAnt) || (filter.domSal >= domEntAnt && (filter.domSal <= domSalAnt || filter.domSal >= domSalAnt)))) {
                                             console.log("domingo");
-                                            if (fechaFinAnt || filter.fechaIni <= fechaFinAnt) {
+                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
 
                                                 id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
 
                                                 if (id_operario != '') {
                                                     for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].id_operario) == (id_operario)) {
+                                                        if ((operarios[i].pk) == (id_operario)) {
                                                             print("Encuentra")
                                                             operarios.splice(i, 1);
                                                             break
@@ -1180,7 +1171,7 @@
                             }
 
                         }
-
+                        result = operarios;
                          d.resolve($.map(result, function (item) {
                              return $.extend(item.fields, { id: item.pk });
                          }));
@@ -1191,12 +1182,12 @@
 
             },
             rowClick: function (e) {
-                console.log(e.item.id);
                 var ope = e.item.id;
                 var nombres = e.item.nombres;
                 var select = $('#operario-' + id)[0];
                 var perfilSelect = $('#perfil-' + id)[0];
-                console.log("perfil", perfilSelect);
+                var idPerfil = $('#id_asignaciondet_set-' + (id) + '-perfil').val();
+                var selectPerfil = $('#perfil-' + (id))[0];
                 $('#id_asignaciondet_set-' + id + '-operario').val(ope);
                 for (var i = 0; i < select.length; i++) {
 
@@ -1205,6 +1196,18 @@
                     } else {
                         $(select[i]).removeAttr('selected');
                     }
+                }
+                for (var j = 0; j < selectPerfil.length; j++) {
+                    if ($(selectPerfil[j]).val() == idPerfil) {
+                        $(selectPerfil[j]).attr("selected", "selected");
+                    } else {
+                        $(selectPerfil[j]).removeAttr('selected');
+                    }
+                }
+                var supervisor = $('#id_asignaciondet_set-' + (id) + '-supervisor');
+                if (supervisor[0].checked) {
+                    var selectSupervisor = $('#supervisor-' + (id))[0];
+                    selectSupervisor.checked = true;
                 }
                 $('#id_asignaciondet_set-' + id + '-operario')
                 $('#nombres-' + id + '-operario').val(decodeURIComponent(nombres));
@@ -1258,7 +1261,6 @@
 
         var select = $('#operario-' + id)[0];
         var perfilSelect = $('#perfil-' + id)[0];
-        console.log("perfil", perfilSelect);
         $('#id_asignaciondet_set-' + id + '-operario').val(ope);
         for (var i = 0; i < select.length; i++) {
 
@@ -1594,7 +1596,6 @@
                     total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
                 }
             }
-            console.log(total_horas_detalle.split(':')[0]);
             $('#id_asignaciondet_set-' + i + '-totalHoras').val(total_horas_detalle.split(':')[0]);
         }
 
@@ -1813,7 +1814,9 @@
     table tr {
         cursor: pointer !important;
     }
-
+    .jsgrid-nodata-row{
+        height: 273px !important;
+    }
     .head {
         background-color: #86273e !important;
         color: white !important;

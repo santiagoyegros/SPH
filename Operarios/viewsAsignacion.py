@@ -564,8 +564,10 @@ def getOperarios(request):
         domEnt=request.GET.get('domEnt')
     if request.GET.get('domSal')  is not None and request.GET.get('domSal')!='':
         domSal=request.GET.get('domSal')
-    if request.GET.get('supervisor')  is not None and request.GET.get('supervisor')!='' and request.GET.get('supervisor')=="on":
+    if request.GET.get('supervisor')  is not None and request.GET.get('supervisor')!='' and request.GET.get('supervisor')=="true":
         supervisor=True
+    elif request.GET.get('supervisor')=="false":
+        supervisor=False
     if request.GET.get('diaFin')  is not None and request.GET.get('diaFin')!='':
         diaFin=request.GET.get('diaFin')
     if request.GET.get('diaInicio')  is not None and request.GET.get('diaInicio')!='':
@@ -584,7 +586,7 @@ def getOperarios(request):
         fechaIni=request.GET.get('fechaIni')
         date_time_obj = datetime.datetime.strptime(fechaIni,'%d/%m/%Y')
         fechaIni=date_time_obj.strftime('%Y-%m-%d')
-
+    print("SUPERVISOR ",supervisor)
     operarios = buscar_operarios(
         idPunto,
         totalHoras, 
@@ -611,7 +613,6 @@ def getOperarios(request):
         diaInicio,
         diaFin,
         )
-    print("OPERARIOS",operarios)
     #Se filtra el resultado
 
     if request.GET.get('nombres')  is not None and request.GET.get('nombres')!='':

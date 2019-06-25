@@ -595,7 +595,7 @@ class RemplazosCab(models.Model):
     fechaInicio = models.DateField('Fecha Inicio Remplazo', null=True)
     fechaFin = models.DateField('Fecha Inicio Remplazo', null=True)
     FechaHoraRemplazo = models.DateTimeField('Fecha hora del Remplazo')
-    tipoRemplazo = models.CharField(_('Tipo de Remplazo'), max_length=10)
+    tipoRemplazo = models.CharField(_('Tipo de Remplazo'), max_length=15)
     usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
 
     

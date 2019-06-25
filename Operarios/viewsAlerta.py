@@ -253,8 +253,10 @@ def gestion_alertas(request,alerta_id=None):
             alerta.Hora = hora
     """Se obtiene el horario del operario"""
     horarios=[]
+    print("ALERTA ASIGNACION", alerta.Asignacion)
     if alerta.Asignacion:
         horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
+        print("HORARIO OPERARIO",horarios)
         if horarios:
             if horarios[0]:
                 horario = horarios[0].horaEntrada.strftime("%H:%M:%S") + " - " + horarios[0].horaSalida.strftime("%H:%M:%S")
@@ -394,7 +396,7 @@ def gestion_alertas(request,alerta_id=None):
                     fechaAlerta = alerta.FechaHora.strftime("%d/%m/%Y")
                     date_time_obj = datetime.datetime.strptime(horarioOperario,'%H:%M:%S')
 
-                    remplazoCab=RemplazosCab.objects.create(fechaInicio=alerta.FechaHora.date(),fechaFin=alerta.FechaHora.date(), tipoRemplazo='', FechaHoraRemplazo=datetime.datetime.strptime(fechaAlerta, "%d/%m/%Y").replace(hour=date_time_obj.hour,minute=date_time_obj.minute,second=date_time_obj.second, microsecond=0), usuario=request.user)
+                    remplazoCab=RemplazosCab.objects.create(fechaInicio=alerta.FechaHora.date(),fechaFin=alerta.FechaHora.date(), tipoRemplazo='REEMPLAZO-1', FechaHoraRemplazo=datetime.datetime.strptime(fechaAlerta, "%d/%m/%Y").replace(hour=date_time_obj.hour,minute=date_time_obj.minute,second=date_time_obj.second, microsecond=0), usuario=request.user)
                     
                     asignacion_reemp = AsignacionDet.objects.get(id=alerta.Asignacion_id) 
                     operario_reemp  =Operario.objects.get(id=request.POST.get('idreemplazante'))
@@ -404,8 +406,8 @@ def gestion_alertas(request,alerta_id=None):
                     """guardamos la respuesta a la alerta"""
                     if request.POST.get('escalable'):
                         escalar=request.POST.get('escalable')
-                    
-                    respAlerta=AlertaResp.objects.create(accion='Reemplazo',id_alerta=alerta, usuario=request.user, hora=hora, motivo=request.POST.get("motivo"),comentarios=request.POST.get("comentarios"), escalado=escalar)
+                    print("REEMPLAZO ID",remplazoCab.id) 
+                    respAlerta=AlertaResp.objects.create(accion='Reemplazo',id_alerta=alerta,id_reemplazo=remplazoCab, usuario=request.user, hora=hora, motivo=request.POST.get("motivo"),comentarios=request.POST.get("comentarios"), escalado=escalar)
                     
                     alerta.save()
                     remplazoCab.save()

@@ -284,8 +284,8 @@ def gestion_alertas(request,alerta_id=None):
         """En el lugar"""
         if request.POST.get('accion')=='1': 
             try:
-                if request.POST.get('horaEntrada') ==None:
-                    messages.warning("Favor ingrese la hora entrada")
+                if request.POST.get('horaEntrada') ==None or request.POST.get('horaEntrada')=='':
+                    messages.warning(request,"Favor ingrese la hora entrada")
 
                 else:
                     horaNueva=datetime.datetime.strptime(request.POST.get('horaEntrada'), "%H:%M")
@@ -310,11 +310,13 @@ def gestion_alertas(request,alerta_id=None):
                 logging.getLogger("error_logger").error('No se pudo gestionar el alerta: {0}'.format(err))
                 messages.warning(request, 'No se pudo gestionar el alerta') 
             else:
-                transaction.commit()
-                messages.success(request, 'Alerta gestionada con exito')
+                if request.POST.get('horaEntrada') !=None and request.POST.get('horaEntrada')!='':
+                    transaction.commit()
+                    messages.success(request, 'Alerta gestionada con exito')
             finally:
-                transaction.set_autocommit(True)
-            return redirect('Operarios:alertas_list')
+                if request.POST.get('horaEntrada') !=None and request.POST.get('horaEntrada')!='':
+                    transaction.set_autocommit(True)
+                    return redirect('Operarios:alertas_list')
         """Si va a asistir"""
         if request.POST.get('accion')=='2': 
             try:
@@ -322,8 +324,9 @@ def gestion_alertas(request,alerta_id=None):
                 setattr(alerta,"Estado", "CERRADA")
                 alerta.save()
                 """procedemos a crear una nueva alerta, con estado reprogramacion"""
-                if request.POST.get('horaAprox') == None:
-                    messages.error("Favor ingrese la hora aproximada")
+                if request.POST.get('horaAprox') == None or request.POST.get('horaAprox') =='':
+                    messages.error(request,"Favor ingrese la hora aproximada")
+
 
                 else:
                     horaNueva=datetime.datetime.strptime(request.POST.get('horaAprox'), "%H:%M")
@@ -339,11 +342,13 @@ def gestion_alertas(request,alerta_id=None):
                 logging.getLogger("error_logger").error('No se pudo gestionar el alera: {0}'.format(err))
                 messages.warning(request, 'No se pudo gestionar el alerta') 
             else:
-                transaction.commit()
-                messages.success(request, 'Alerta gestionada con exito')
+                if request.POST.get('horaAprox') != None and request.POST.get('horaAprox') !='':
+                    transaction.commit()
+                    messages.success(request, 'Alerta gestionada con exito')
             finally:
-                transaction.set_autocommit(True)
-            return redirect('Operarios:alertas_list')
+                if request.POST.get('horaAprox') != None and request.POST.get('horaAprox') !='':
+                    transaction.set_autocommit(True)
+                    return redirect('Operarios:alertas_list')
         """No se va a cubrir"""
         if request.POST.get('accion')=='3':
             try:

@@ -384,6 +384,9 @@ def gestion_alertas(request,alerta_id=None):
                     hora=""
                     if request.POST.get('horaRetorno'):
                         hora=datetime.datetime.strptime(request.POST.get('horaRetorno'), "%H:%M")
+                    fechaRetorno=""
+                    if request.POST.get('fechaRetorno'):
+                        fechaRetorno=datetime.datetime.strptime(request.POST.get('fechaRetorno'), "%d/%m/%Y")
                     
                     """se guarda el reemplazo"""
                     horarioOperario = request.POST.get('horarioOperario')
@@ -402,7 +405,7 @@ def gestion_alertas(request,alerta_id=None):
                     if request.POST.get('escalable'):
                         escalar=request.POST.get('escalable')
                     print("REEMPLAZO ID",remplazoCab.id) 
-                    respAlerta=AlertaResp.objects.create(accion='Reemplazo',id_alerta=alerta,id_reemplazo=remplazoCab, usuario=request.user, hora=hora, motivo=request.POST.get("motivo"),comentarios=request.POST.get("comentarios"), escalado=escalar)
+                    respAlerta=AlertaResp.objects.create(accion='Reemplazo',id_alerta=alerta,id_reemplazo=remplazoCab, usuario=request.user, hora=hora,fechaRetorno=fechaRetorno, motivo=request.POST.get("motivo"),comentarios=request.POST.get("comentarios"), escalado=escalar)
                     
                     alerta.save()
                     remplazoCab.save()

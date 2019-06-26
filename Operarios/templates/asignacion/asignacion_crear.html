@@ -851,6 +851,14 @@
     });
 </script>
 <script>
+        $(document).ready(function () {
+            $(".perfil-combo").on("change", function () {
+                RecalcularHoras();
+            });
+        });
+</script>
+
+<script>
     $(document).ready(function () {
         $(".filter1").on("keyup", function () {
             var value = $(this).val().toLowerCase();
@@ -1333,7 +1341,6 @@
 </script>
 
 
-
 <script>
     /**
      * Number.prototype.format(n, x, s, c)
@@ -1470,7 +1477,8 @@
         if ($('#id_asignaciondet_set-' + id + '-fechaInicio').val()) {
             fechasValid = true;
         }
-
+        hasPerfil = $('#id_asignaciondet_set-' + i + '-perfil').val();
+        console.log("TIENE PERFIL?", hasPerfil);
         //Lunes
         var lunEnt = $('#id_asignaciondet_set-' + i + '-lunEnt').val();
         var lunSal = $('#id_asignaciondet_set-' + i + '-lunSal').val();
@@ -1521,7 +1529,7 @@
         if (!(totalDomingo == 'NaN:NaN')) {
             horasValid = true;
         }
-        if (fechasValid && horasValid) {
+        if (fechasValid && horasValid && hasPerfil) {
             $('#filter_operario-' + id).prop("disabled", false);
         } else {
             $('#filter_operario-' + id).prop("disabled", true);
@@ -1787,7 +1795,6 @@
     $('input[id^="id_asignaciondet_set-"]').on('dp.change', function (e) {
         RecalcularTipoHoras();
     });
-
 
 
 </script>

@@ -111,10 +111,10 @@
                                         {% for ope in operarios %}
                                         {% if ope.id == operario  %}
                                         <option data-tokens="{{ope.nombre}}" selected="selected" value="{{ope.id}}">
-                                            {{ope.nombre}}</option>
+                                            {{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
                                         {% else %}
                                         <option data-tokens="{{ope.nombre}}" value="{{ope.id}}">
-                                            {{ope.nombre}}</option>
+                                                {{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
 
                                         {% endif %}
                                         {% endfor %}

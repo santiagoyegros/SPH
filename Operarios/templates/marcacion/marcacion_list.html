@@ -37,7 +37,7 @@
         DateField.prototype = new jsGrid.Field({
             itemTemplate: function (value) {
                 var date = new Date(value);
-                var string = ("0" + (date.getDate()+1)).slice(-2) + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear();
+                var string = ("0" + (date.getDate()+1)).slice(-2) + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear() + " - " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
                 return string;
             },
             filterTemplate: function () {

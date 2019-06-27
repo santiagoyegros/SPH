@@ -430,18 +430,18 @@
                                         {% if diaInicioSelected %}
                                         {% for diasInicio in diaInicioSelected %}
                                         {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                                        {% for d in dias %}
-                                        {% if d == diasInicio %}
-                                        <option value="{{d}}" selected>{{d}}</option>
+                                        {% for d in diasEntrada %}
+                                        {% if d.id == diasInicio %}
+                                        <option value="{{d.id}}" selected>{{d.dia}}</option>
                                         {% else %}
-                                        <option value="{{d}}">{{d}}</option>
+                                        <option value="{{d.id}}">{{d.dia}}</option>
                                         {% endif %}
                                         {% endfor %}
                                         {% endif %}
                                         {% endfor %}
                                         {% else %}
-                                        {% for d in dias %}
-                                        <option value="{{d}}">{{d}}</option>
+                                        {% for d in diasEntrada %}
+                                        <option value="{{d.id}}">{{d.dia}}</option>
                                         {% endfor %}
                                         {% endif %}
 
@@ -492,18 +492,18 @@
                                         {% if diaFinSelected %}
                                         {% for diasFin in diaFinSelected %}
                                         {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                                        {% for d in dias %}
-                                        {% if d == diasFin %}
-                                        <option value="{{d}}" selected>{{d}}</option>
+                                        {% for d in diasSalida %}
+                                        {% if d.id == diasFin %}
+                                        <option value="{{d.id}}" selected>{{d.dia}}</option>
                                         {% else %}
-                                        <option value="{{d}}">{{d}}</option>
+                                        <option value="{{d.id}}">{{d.dia}}</option>
                                         {% endif %}
                                         {% endfor %}
                                         {% endif %}
                                         {% endfor %}
                                         {% else %}
-                                        {% for d in dias %}
-                                        <option value="{{d}}">{{d}}</option>
+                                        {% for d in diasSalida %}
+                                        <option value="{{d.id}}">{{d.dia}}</option>
                                         {% endfor %}
                                         {% endif %}
 

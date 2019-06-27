@@ -48,7 +48,8 @@ def Asignacion_create(request, id_puntoServicio=None):
     diaFinSelected = []
     horaInicioSelected=[]
     horaFinSelected=[]
-    dias = ["Lunes","Martes",'Miercoles',"Jueves","Viernes","Sabado","Domingo"]
+    diasEntrada = [{"id":"lunEnt","dia":"Lunes"},{"id":"marEnt","dia":"Martes"},{"id":"mieEnt", "dia":"Miercoles"},{"id":"jueEnt", "dia":"Jueves"},{"id":"vieEnt", "dia":"Viernes"},{"id":"sabEnt", "dia":"Sabado"}, {"id":"domEnt", "dia":"Domingo"}]
+    diasSalida = [{"id":"lunSal","dia":"Lunes"},{"id":"marSal","dia":"Martes"},{"id":"mieSal", "dia":"Miercoles"},{"id":"jueSal", "dia":"Jueves"},{"id":"vieSal", "dia":"Viernes"},{"id":"sabSal", "dia":"Sabado"}, {"id":"domSal", "dia":"Domingo"}]
     allOperarios = Operario.objects.all()
     perfiles = Especializacion.objects.all()
     openModal=False
@@ -114,6 +115,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                 if 'diaInicio' in key: 
                     if request.session[key]:
                         diaInicioSelected.append(request.session[key])
+                        print (diaInicioSelected)
                     else:
                         diaInicioSelected.append(None)
                 if 'diaFin' in key:            
@@ -505,7 +507,8 @@ def Asignacion_create(request, id_puntoServicio=None):
             'sem_diurno' : sem_diurno,
             'sem_nocturno' : sem_nocturno,
             'dom_diurno' : dom_diurno,
-            'dias':dias,
+            'diasEntrada':diasEntrada,
+            'diasSalida':diasSalida,
             'perfiles':perfiles,
             'diaInicioSelected':diaInicioSelected,
             'diaFinSelected':diaFinSelected,

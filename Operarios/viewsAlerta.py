@@ -21,6 +21,7 @@ from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionD
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import connection, transaction
+from Operarios.models import Motivos
 @login_required
 
 def alertasList (request):
@@ -247,6 +248,8 @@ def gestion_alertas(request,alerta_id=None):
     diaRequerido=""
     prox_marcacion = ""
     horaConPenalizacion = ""
+    motivos=[]
+    motivos = Motivos.objects.all()
     if alerta.FechaHora:
             fecha = (alerta.FechaHora).strftime("%d/%m/%Y")
             alerta.Fecha = fecha 
@@ -382,6 +385,7 @@ def gestion_alertas(request,alerta_id=None):
         if request.POST.get('accion')=='4': 
             escalar=False
             try:
+                print(request.POST)
                 if request.POST.get('idreemplazante') != None and request.POST.get('idreemplazante')!='':
                     """procedemos a cerrar el alerta"""
                     setattr(alerta,"Estado", "CERRADA")
@@ -415,7 +419,9 @@ def gestion_alertas(request,alerta_id=None):
                     if request.POST.get('escalable'):
                         escalar=request.POST.get('escalable')
                     print("REEMPLAZO ID",remplazoCab.id) 
-                    respAlerta=AlertaResp.objects.create(accion='Reemplazo',id_alerta=alerta,id_reemplazo=remplazoCab, usuario=request.user, hora=hora,fechaRetorno=fechaRetorno, motivo=request.POST.get("motivo"),comentarios=request.POST.get("comentarios"), escalado=escalar)
+                    if request.POST.get("motivo"):
+                        motivoObj =Motivos.objects.get(id=request.POST.get("motivo"))
+                    respAlerta=AlertaResp.objects.create(accion='Reemplazo',id_alerta=alerta,id_reemplazo=remplazoCab, usuario=request.user, hora=hora,fechaRetorno=fechaRetorno, motivo=motivoObj,comentarios=request.POST.get("comentarios"), escalado=escalar)
                     
                     alerta.save()
                     remplazoCab.save()
@@ -434,13 +440,14 @@ def gestion_alertas(request,alerta_id=None):
             finally:
                 if request.POST.get('idreemplazante') != None and request.POST.get('idreemplazante')!='':
                     transaction.set_autocommit(True)
-            return redirect('Operarios:alertas_list')
+                    return redirect('Operarios:alertas_list')
 
     
     contexto = {
         'title': 'Gestion de Alertas',
         'operario':operario,
         'horario':horario,
+        'motivos':motivos,
         'diaRequerido':diaRequerido,
         'prox_marcacion':prox_marcacion,
         'horaConPenalizacion':horaConPenalizacion,

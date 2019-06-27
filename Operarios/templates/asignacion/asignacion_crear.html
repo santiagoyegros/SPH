@@ -152,7 +152,7 @@
                                     id="operario-{{forloop.counter0}}">
                                     <option value=""></option>
                                     {% for ope in allOperarios %}
-                                    <option value="{{ope.id}}">{{ope.nroLegajo}}-{{ope.nombre}}</option>
+                                    <option value="{{ope.id}}">{{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
                                     {% endfor %}
                                 </select>
                                 <!-- <input type="text" id="nombres-{{ forloop.counter0 }}-operario" class="form-control form-control-sm" style="height:39px !important" disabled> -->

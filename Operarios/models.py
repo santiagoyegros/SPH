@@ -604,11 +604,17 @@ class RemplazosDet(models.Model):
     Asignacion = models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
     fecha = models.DateField('Fecha Inicio Remplazo', null=True)
     remplazo = models.ForeignKey(Operario, on_delete=models.CASCADE)
+    remplazoCab=models.ForeignKey(RemplazosCab, blank=True, null=True, on_delete=models.SET_NULL)
+
+class Motivos (models.Model):
+    descripcion=models.CharField(max_length=500)
+
+
 
 class AlertaResp (models.Model):
     accion=models.CharField(max_length=30, verbose_name='Accion')
     hora=models.TimeField(blank=True, null=True, verbose_name='Hora Aproximada')
-    motivo= models.CharField(max_length=1000, verbose_name='Motivo')
+    motivo= models.ForeignKey(Motivos, blank=True, null=True,on_delete=models.CASCADE)
     fechaRetorno=models.DateField(blank=True, verbose_name='Fecha de Retorno', null=True)
     comentarios=models.CharField(max_length=1000, verbose_name='Comentarios')
     escalado=models.BooleanField(default=False, verbose_name='Escalado')
@@ -616,3 +622,4 @@ class AlertaResp (models.Model):
     id_reemplazo=models.ForeignKey(RemplazosCab, blank=True, null=True,on_delete=models.CASCADE)
     usuario=models.ForeignKey(User, blank=True, null=True,on_delete=models.SET_NULL)
     fecha_creacion = models.DateTimeField('Fecha Relevamiento', auto_now_add=True, blank=True, null=True)
+

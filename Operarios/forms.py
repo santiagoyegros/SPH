@@ -561,7 +561,7 @@ def timeInHours(str):
 
 
 
-class DiaLibreForm(forms.ModelForm):
+"""class DiaLibreForm(forms.ModelForm):
 
     class Meta:
         model = DiaLibre
@@ -588,7 +588,7 @@ class DiaLibreForm(forms.ModelForm):
  
         }
         
-
+"""
 # class AccionesAlertasFrom(forms.ModelForm):
 #     accion:
 #     horaEntrada:

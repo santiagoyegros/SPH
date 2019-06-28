@@ -63,7 +63,14 @@ def Asignacion_create(request, id_puntoServicio=None):
     except PuntoServicio.DoesNotExist as err:
         logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         raise Http404("Punto de Servicio no existe")
-
+    try:
+        asigCab = AsignacionCab.objects.get(puntoServicio_id=id_puntoServicio)
+        asigDet = AsignacionDet.objects.filter(asignacionCab_id=asigCab.id)
+    except AsignacionCab.DoesNotExist as err:
+        logging.getLogger("error_logger").error('Asignacion cabecera no existe: {0}'.format(err))
+        raise Http404("Asignacion cabecera no existe")
+    for det in asigDet:
+        print(det.totalHoras)
     ''' Obtenemos el relevamiento para mostrar en la pantalla '''
     relevamiento = RelevamientoCab.objects.filter(puntoServicio_id = puntoSer.id).first()
     if relevamiento == None:

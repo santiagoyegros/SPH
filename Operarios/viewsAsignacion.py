@@ -128,7 +128,7 @@ def getDiasLibres(request):
                         diasLibre[i]['diasLibres']['entrada']['label']='mieEnt'
                         diasLibre[i]['diasLibres']['entrada']['hora']=mieEnt
                     if diaLibres.mieSal:
-                        mieSal=miediaLibres.mieSal.strftime('%H:%M:%S:%f')
+                        mieSal=diaLibres.mieSal.strftime('%H:%M:%S:%f')
                         diasLibre[i]['diasLibres']['salida']['label']='mieSal'
                         diasLibre[i]['diasLibres']['salida']['hora']=mieSal
                     if diaLibres.jueEnt:

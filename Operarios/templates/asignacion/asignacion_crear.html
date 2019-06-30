@@ -845,10 +845,62 @@
             }
         })
     }
+    function verificarDiaLibre(idOperario,id){
+        var body = {}
+        body.operarios="["+idOperario+"]";
+        $.ajax({
+            type: "GET",
+            url: "/reingenieria/asignacion/diasLibres",
+            data: body
+        }).done(function (result) {
+            diasLibres = result.dato;
+            if(diasLibres){
+                if(diasLibres.length>0){
+                    var entrada = diasLibres[0].diasLibres.entrada;
+                    var salida = diasLibres[0].diasLibres.salida;
+                    var tieneFechaInicio=setDiasLibres(id, entrada.label, 0);
+                    var tieneDiaFin=setDiasLibres(id, salida.label, 1);
+                    if (entrada.hora != "") {
+                        $("#id_horaInicio-" + id).val(entrada.hora.substr(0, 5));
+                        $('#id_horaInicio-' + id).prop("readonly", true);
+                    }
+                    if (salida.hora != "") {
+                        $("#id_horaFin-" + id).val(salida.hora.substr(0, 5));
+                        $('#id_horaFin-' + id).prop("readonly", true);
+                    }
+                    if(tieneFechaInicio){
+                        $('#id_diaInicio-' + id).attr("disabled", "disabled");
+                    }
+                    if(tieneDiaFin){
+                        $('#id_diaFin-' + id).attr("disabled", "disabled");
+                    }
+                }
+                
+            }
+            
+        })
+    }
+    function setDiasLibres(id, label, mode) {
+            //Mode 0 es para setear dia inicio, mode 1 es para setear dia fin
+            if (mode == 0) {
+                var select = $('#id_diaInicio-' + (id))[0];
+            } else {
+                var select = $('#id_diaFin-' + (id))[0];
+            }
+            for (var j = 0; j < select.length; j++) {
+                if ($(select[j]).val() == label) {
+                    $(select).val(label);
+                    return true;
+                } else {
+                    $(select[j]).removeAttr('selected');
+                }
+            }
+            return false;
+        }
 </script>
 
 <script>
-
+   
     $(document).ready(function () {
         var body = {}
         var diasLibres = []
@@ -914,6 +966,7 @@
             }
             return false;
         }
+       
 
     })
 </script>
@@ -1245,6 +1298,7 @@
                     var perfilSelect = $('#perfil-' + id)[0];
                     var idPerfil = $('#id_asignaciondet_set-' + (id) + '-perfil').val();
                     var selectPerfil = $('#perfil-' + (id))[0];
+                    verificarDiaLibre(ope,id);
                     $('#id_asignaciondet_set-' + id + '-operario').val(ope);
                     for (var i = 0; i < select.length; i++) {
 

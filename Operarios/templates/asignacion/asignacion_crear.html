@@ -5,7 +5,9 @@
 </link>
 {% endblock %}
 {% block content %}
+
 <div class="container-fluid">
+    
     {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
     <form method='POST' action='#' name='formulario' id='formulario'>
         <input type="hidden" id="action" name="action" value="">
@@ -133,8 +135,7 @@
                         <div class="row" style="margin: 0px 0px 10px 0px;">
                             <div class="col-md-4 text-center p-0">
                                 <button type="button" class="btn btn-info btn-block btn-filter_operario"
-                                    id="filter_operario-{{forloop.counter0}}"
-                                    onclick="buscarOperario({{ forloop.counter0 }})" name='filter_operario' style="    height: 39px;
+                                    id="filter_operario-{{forloop.counter0}}" name='filter_operario' style="    height: 39px;
                                                 border-top-right-radius: 0px;
                                                 border-bottom-right-radius: 0px;" disabled><i
                                         class="fa fa-search"></i></button>
@@ -152,7 +153,8 @@
                                     id="operario-{{forloop.counter0}}">
                                     <option value=""></option>
                                     {% for ope in allOperarios %}
-                                    <option value="{{ope.id}}">{{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
+                                    <option value="{{ope.id}}">{{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}
+                                    </option>
                                     {% endfor %}
                                 </select>
                                 <!-- <input type="text" id="nombres-{{ forloop.counter0 }}-operario" class="form-control form-control-sm" style="height:39px !important" disabled> -->
@@ -163,15 +165,15 @@
                             <div class="col-md-6">
 
                                 <div class="input-group date">
-                                    <!-- <input type="text" value="{{ form.fechaInicio.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio" placeholder="Fecha Inicio"
+                                    {{form.fechaInicio}}
+                                    <!-- <input type="text" value="{{form.fechaInicio.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio" placeholder="Fecha Inicio"
         
                                             class="form-control" id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaInicio"
                                             dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;YYYY-MM-DD&quot;}}">
                                         <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
                                             data-toggle="datetimepickerv">
                                             <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
-                                        </div>  -->
-                                    {{form.fechaInicio}}
+                                        </div>   -->
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -427,23 +429,9 @@
                                         class="form-control form-control-sm select-form" maxlength="10"
                                         id="id_diaInicio-{{ forloop.counter0 }}">
                                         <option value="''">---------</option>
-                                        {% if diaInicioSelected %}
-                                        {% for diasInicio in diaInicioSelected %}
-                                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                                        {% for d in diasEntrada %}
-                                        {% if d.id == diasInicio %}
-                                        <option value="{{d.id}}" selected>{{d.dia}}</option>
-                                        {% else %}
-                                        <option value="{{d.id}}">{{d.dia}}</option>
-                                        {% endif %}
-                                        {% endfor %}
-                                        {% endif %}
-                                        {% endfor %}
-                                        {% else %}
                                         {% for d in diasEntrada %}
                                         <option value="{{d.id}}">{{d.dia}}</option>
                                         {% endfor %}
-                                        {% endif %}
 
                                     </select>
                                 </p>
@@ -452,21 +440,6 @@
                                 <p style="display:inline-flex !important;margin-top:17px !important;">
 
                                     <div class="input-group date">
-                                        {% if horaInicioSelected %}
-                                        {% for horasInicio in horaInicioSelected %}
-                                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                                        <input type="text" name="horaInicio-{{ forloop.counter0 }}"
-                                            value="{{horasInicio}}" placeholder="Hora inicio"
-                                            class="form-control form-control-sm"
-                                            id="id_horaInicio-{{ forloop.counter0 }}"
-                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                        {% endif %}
-                                        {% endfor %}
-                                        {% else %}
                                         <input type="text" name="horaInicio-{{ forloop.counter0 }}"
                                             placeholder="Hora inicio" class="form-control form-control-sm"
                                             id="id_horaInicio-{{ forloop.counter0 }}"
@@ -475,8 +448,6 @@
                                             data-toggle="datetimepickerv">
                                             <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                         </div>
-
-                                        {% endif %}
                                     </div>
 
                                 </p>
@@ -488,24 +459,9 @@
                                         class="form-control form-control-sm select-form" maxlength="10"
                                         id="id_diaFin-{{ forloop.counter0 }}">
                                         <option value="''">---------</option>
-
-                                        {% if diaFinSelected %}
-                                        {% for diasFin in diaFinSelected %}
-                                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                                        {% for d in diasSalida %}
-                                        {% if d.id == diasFin %}
-                                        <option value="{{d.id}}" selected>{{d.dia}}</option>
-                                        {% else %}
-                                        <option value="{{d.id}}">{{d.dia}}</option>
-                                        {% endif %}
-                                        {% endfor %}
-                                        {% endif %}
-                                        {% endfor %}
-                                        {% else %}
                                         {% for d in diasSalida %}
                                         <option value="{{d.id}}">{{d.dia}}</option>
                                         {% endfor %}
-                                        {% endif %}
 
                                     </select>
                                 </p>
@@ -514,20 +470,6 @@
                                 <p style="display:inline-flex !important;margin-top:17px !important;">
 
                                     <div class="input-group date">
-                                        {% if horaFinSelected %}
-                                        {% for horasFin in horaFinSelected %}
-                                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                                        <input type="text" name="horaFin-{{ forloop.counter0 }}" value="{{horasFin}}"
-                                            placeholder="Hora Fin" class="form-control form-control-sm"
-                                            id="id_horaFin-{{ forloop.counter0 }}"
-                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
-                                        </div>
-                                        {% endif %}
-                                        {% endfor %}
-                                        {% else %}
                                         <input type="text" name="horaFin-{{ forloop.counter0 }}" placeholder="Hora Fin"
                                             class="form-control form-control-sm" id="id_horaFin-{{ forloop.counter0 }}"
                                             dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
@@ -535,8 +477,6 @@
                                             data-toggle="datetimepickerv">
                                             <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                         </div>
-
-                                        {% endif %}
                                     </div>
                                 </p>
                             </div>
@@ -563,130 +503,7 @@
                         </div>
                         <div class="modal-body">
                             <div id="jsGrid{{forloop.counter0}}"></div>
-                            <!-- <table id="table" class="table table-bordered table-hover table-sm mt-3">
-
-                                <thead>
-
-
-                                    <tr class="head">
-
-
-                                        <th>
-                                            <span
-                                                style="display:block !important;margin-bottom:10px !important;">Nombre</span>
-
-
-                                        </th>
-                                        <th>
-                                            <span
-                                                style="display:block !important;margin-bottom:10px !important;">Legajo</span>
-
-
-                                        </th>
-                                        <th>
-                                            <span
-                                                style="display:block !important;margin-bottom:10px !important;">Antiguedad
-                                                (años)</span>
-
-
-                                        </th>
-                                        <th>
-                                            <span style="display:block !important;margin-bottom:10px !important;">Otros
-                                                contratos</span>
-
-
-                                        </th>
-                                        <th>
-                                            <span style="display:block !important;margin-bottom:10px !important;">Total
-                                                Horas</span>
-
-
-                                        </th>
-                                        <th>
-                                            <span
-                                                style="display:block !important;margin-bottom:10px !important;">Perfil</span>
-
-
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th>
-
-                                            <p><input class="form-control filter1" type="text"></p>
-
-                                        </th>
-                                        <th>
-
-                                            <p><input class="form-control filter2" type="text"></p>
-
-                                        </th>
-                                        <th>
-
-                                            <p><input class="form-control filter3" type="text"></p>
-
-                                        </th>
-                                        <th>
-
-                                            <p><input class="form-control filter4" type="text"></p>
-
-                                        </th>
-                                        <th>
-
-                                            <p><input class="form-control filter5" type="text"></p>
-
-                                        </th>
-                                        <th>
-
-                                            <p><input class="form-control filter6" type="text"></p>
-
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% if operariosList %}
-                                    {% for op in operariosList %}
-                                    <tr class="data"
-                                        onclick="seleccionarOpe({{op.id_operario}},{{forloop.parentloop.counter0}},encodeURIComponent('{{op.nombres}}'))">
-                                        <td class="col1">{{op.nombres}}</td>
-                                        <td class="col2">{{op.nroLegajo}}</td>
-                                        <td class="col3">{{op.antiguedad}}</td>
-                                        <td class="col4">{{op.nombres_puntoServicio |default_if_none:'Sin Contratos'}}
-                                        </td>
-                                        <td class="col5">{{op.totalHoras}}</td>
-                                        <td class="col6">{{op.perfil |default_if_none:'Sin Perfil'}}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    {% endif %}
-
-                                </tbody>
-                            </table>
-                            <div class="pagination">
-                                    Página:&nbsp;&nbsp;
-                                    {% if alertasList.has_previous %}
-                                    <a href="?page={{operariosList.previous_page_number}}">Anterior</a>
-                                    {% else %}
-                                    <span class="disabled">Anterior</span>
-                                    {% endif %}
-                                    {% for num in operariosList.paginator.page_range %}
-                                    {% if operariosList.number == num %}
-                                    <li class="active"><a href="#!">{{ num }}</a></li>
-                                    {% else %}
-                                    <li class="waves-effect"><a
-                                            href="?page={{ num }}">{{ num }}</a></li>
-                                    {% endif %}
-                                    {% endfor %}
-                                    {% if operariosList.has_next %}
-                                    <a href="?page={{operariosList.next_page_number}}">Anterior</a>
-                                    {% else %}
-                                    <span class="disabled">Siguiente</span>
-                                    {% endif %}
-                                </div> -->
                         </div>
-                        <!-- <div class="modal-footer">
-                                <a class="btn btn-info" style="height: 39px;">Asignar</a>
-                
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            </div> -->
                     </div>
                 </div>
             </div>
@@ -694,108 +511,259 @@
 
         </div>
         <div class="col-lg-12 col-md-12" style="text-align: right;margin:15px 0px;">
-            <button type='submit' class='btn btn-success'>Guardar</button>
+            <button type='button' onclick="guardarAsignacion()" class='btn btn-success'>Guardar</button>
             <a class='btn btn-danger' href={% url 'Operarios:asignacion_list' %}>Cancelar</a>
         </div>
 
 
 
     </form>
-    <!-- <div id="jsGrid"></div> -->
 </div>
 
 
 
-<script>
-        // $("#jsGrid").jsGrid({
-        //          height: "80%",
-        //          width: "100%",
-        //          /*filtering: true,
-        //          inserting: true,
-        //          editing: true,
-        //          sorting: true,
-        //          paging: true,
-        //          autoload: true,*/
-        //          filtering: true,
-        //          inserting: false,
-        //          editing: false,
-        //          sorting: true,
-        //          paging: true,
-        //          autoload: true,
-        //          pageSize: 5,
-        //          pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
-        //          pageButtonCount: 1,
-        //          pagePrevText: "Anterior",
-        //          pageNextText: "Siguiente",
-        //          pageFirstText: "Primera",
-        //          pageLastText: "Ultima",
-        //          noDataContent: "No se han encontrado registros",
-        //          deleteConfirm: "Desea eliminar el registro?",
-        //          loadMessage: "Por favor, espere...",
-        //          invalidMessage: "Datos no válidos",
-        //          controller: {
-        //              loadData: function (filter) {
-        //                  var d = $.Deferred();
-        //                  console.log("FILTER", filter);
-        //                  $.ajax({
-        //                      type: "GET",
-        //                      url: "/reingenieria/asignacion/asignar/operarios", 
-        //                      data: filter
-        //                  }).done(function (result) {
-        //                       console.log("Resultado",result);
-        //                       d.resolve($.map(result, function (item) {
-        //                           return $.extend(item.fields, { id: item.pk });
-        //                       }));
-        //                  });
-
-        //                  return d.promise();
-        //              }
-
-        //          },
-
-        //          fields: [
-        //              { name: "nombres", type: "text", width: 150, title: "Nombre" },
-        //              { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
-        //              { name: "antiguedad", type: "text", width: 150, title: "Antiguedad" },
-        //              { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
-        //              { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
-        //              { name: "perfil", type: "date", width: 150, title: "Perfil" }
-        //          ]
-        //      });
-
-</script>
-
 
 <script type='template/Detalle'>
-    <div class="row mt-2">
-            <div class="col-2 p-0 mt-3">
-                {{ asigDetFormSet.empty_form.operario }}
+
+        <div class="row mt-2 leaveForm" id="leaveForm" style="    margin-bottom: 30px;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="row" style="margin: 0px 0px 10px 0px;">
+                            <div class="col-md-4 text-center p-0">
+                                <button type="button" class="btn btn-info btn-block btn-filter_operario" id="filter_operario-"
+                                    name='filter_operario' style="    height: 39px;
+                                                border-top-right-radius: 0px;
+                                                border-bottom-right-radius: 0px;" disabled><i
+                                        class="fa fa-search"></i></button>
+                            </div>
+
+                            {{form.id}}
+                            <input type="hidden" id="openModal" value="{{openModal}}">
+                            <input type="hidden" id="idModal" value="{{idModal}}">
+                            <div class="col-md-8 p-0">
+                                {{asigDetFormSet.empty_form.operario}}
+                                <select name="operario-" class="form-control form-control-sm "
+                                    readonly="readonly" style="height:39px !important" disabled="disabled"
+                                    id="operario-">
+                                    <option value=""></option>
+                                    {% for ope in allOperarios %}
+                                    <option value="{{ope.id}}">{{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
+                                    {% endfor %}
+                                </select>
+                                </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+
+                                <div class="input-group date">
+                                    {{asigDetFormSet.empty_form.fechaInicio}}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group date">
+                                    {{asigDetFormSet.empty_form.fechaFin}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="col-md-6">
+                                <p>
+                                    <label for="">Perfil</label>
+                                    <select class="form-control form-control-sm select-form"
+                                        id="perfil-" style="display:none;">
+                                        <option value="">---------</option>
+                                        {% for perfil in perfiles %}
+                                        <option value="{{perfil.id}}">{{perfil.especializacion}}</option>
+                                        {% endfor %}
+
+                                    </select>
+                                    {{asigDetFormSet.empty_form.perfil}}
+                                </p>
+
+
+                            </div>
+                            <div class="col-md-6" style="display:flex;align-items:center !important;">
+                                <div class="input-group date" style="display:flex;justify-content :center !important;">
+                                    <p style="display:inline-flex !important;margin:0px !important;">
+                                        <label for="">Supervisor</label>
+                                        <input type="checkbox" class="checkbox-supervisor" style="display:none"
+                                            id="supervisor-">
+                                        {{asigDetFormSet.empty_form.supervisor}}
+                                    </p>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row input-horas">
+                            <div class="col pl-0">
+                                <div class="input-group date" style="    margin: 0px 0px 10px 0px;
+                                            height: 39px;">
+                                    {{asigDetFormSet.empty_form.totalHoras}}
+                                </div>
+
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                    {{asigDetFormSet.empty_form.lunEnt}}
+                                </div>
+                                <div class="input-group date">
+                                        {{asigDetFormSet.empty_form.lunSal}}
+                                </div>
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        {{asigDetFormSet.empty_form.marEnt}}
+                                </div>
+                                <div class="input-group date">
+                                        {{asigDetFormSet.empty_form.marSal}}
+                                </div>
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        {{asigDetFormSet.empty_form.mieEnt}}
+                                </div>
+                                <div class="input-group date">
+                                        {{asigDetFormSet.empty_form.mieSal}}
+                                </div>
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        {{asigDetFormSet.empty_form.jueEnt}}
+                                </div>
+                                <div class="input-group date">
+                                        {{asigDetFormSet.empty_form.jueSal}}
+                                </div>
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        {{asigDetFormSet.empty_form.vieEnt}}
+                                </div>
+                                <div class="input-group date">
+                                        {{asigDetFormSet.empty_form.vieSal}}
+                                </div>
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        {{asigDetFormSet.empty_form.sabEnt}}
+                                </div>
+                                <div class="input-group date">
+                                        {{asigDetFormSet.empty_form.sabSal}}
+                                </div>
+                            </div>
+                            <div class="col pl-0">
+                                <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                        {{asigDetFormSet.empty_form.domEnt}}
+                                </div>
+                                <div class="input-group date">
+                                        {{asigDetFormSet.empty_form.domSal}}
+                                </div>
+                            </div>
+
+                            <div class="col-1 pl-0" style="display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        color: red !important;
+                                        font-size: 25px;">
+                                {{asigDetFormSet.empty_form.DELETE}}
+
+                                <a href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});"
+                                    class="remove muted pull-right">
+                                    <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span
+                                        class="visible-xs"></span>
+                                </a>
+                            </div>
+
+                        </div>
+                        <div class="row" style="margin-top:22px !important;">
+                            <div class=" p-0" style="width:6rem !important;">
+
+                            </div>
+                            <div class="col-3 pl-0">
+                                <p style="margin:0px !important;">
+                                    <label for="">Dia Libre</label>
+
+                                    <select name="diaInicio-{{ forloop.counter0 }}" class="form-control form-control-sm select-form" maxlength="10" id="id_diaInicio-{{ forloop.counter0 }}">
+                                    <option value="''">---------</option>
+                                    {% for d in diasEntrada %}
+                                        <option value="{{d.id}}">{{d.dia}}</option>
+                                    {% endfor %}
+
+                                </select>
+                                </p>
+                            </div>
+                            <div class="col-2 pl-0">
+                                <p style="display:inline-flex !important;margin-top:17px !important;">
+
+                                    <div class="input-group date">
+                                            <input type="text" name="horaInicio-"
+                                            placeholder="Hora inicio" class="form-control form-control-sm"
+                                            id="id_horaInicio-"
+                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+
+                                </p>
+                            </div>
+                            <div class="col-3 pl-0">
+                                <p style="margin-top:30px !important;">
+
+                                <select name="diaFin-{{ forloop.counter0 }}"
+                                        class="form-control form-control-sm select-form" maxlength="10"
+                                        id="id_diaFin-{{ forloop.counter0 }}">
+                                        <option value="''">---------</option>
+                                            {% for d in diasSalida %}
+                                            <option value="{{d.id}}">{{d.dia}}</option>
+                                            {% endfor %}
+
+                                    </select>
+                                </p>
+                            </div>
+                            <div class="col-2 pl-0">
+                                <p style="display:inline-flex !important;margin-top:17px !important;">
+
+                                    <div class="input-group date">
+                                        <input type="text" name="horaFin-{{ forloop.counter0 }}" placeholder="Hora Fin"
+                                            class="form-control form-control-sm" id="id_horaFin-{{ forloop.counter0 }}"
+                                            dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepickerv">
+                                            <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                        </div>
+                                    </div>
+                                </p>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
-            <div class="col p-0">
-                {{ asigDetFormSet.empty_form.lunEnt }}{{ asigDetFormSet.empty_form.lunSal }}
+            <!-- Modal -->
+            <div class="modal fade" id="modalFiltro" tabindex="-1" role="dialog"
+                aria-labelledby="modalFiltro" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalFiltro">Operarios Disponibles </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="jsGrid"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col p-0">
-                {{ asigDetFormSet.empty_form.marEnt }}{{ asigDetFormSet.empty_form.marSal }}
-            </div>
-            <div class="col p-0">
-                {{ asigDetFormSet.empty_form.mieEnt }}{{ asigDetFormSet.empty_form.mieSal }}
-            </div>
-            <div class="col p-0">
-                {{ asigDetFormSet.empty_form.jueEnt }}{{ asigDetFormSet.empty_form.jueSal }}
-            </div>
-            <div class="col p-0">
-                {{ asigDetFormSet.empty_form.vieEnt }}{{ asigDetFormSet.empty_form.vieSal }}
-            </div>
-            <div class="col p-0">
-                {{ asigDetFormSet.empty_form.sabEnt }}{{ asigDetFormSet.empty_form.sabSal }}
-            </div>
-            <div class="col p-0">
-                {{ asigDetFormSet.empty_form.domEnt }}{{ asigDetFormSet.empty_form.domSal }}
-            </div>
-            <div class="col-1 p-0 text-center">
-                {{ asigDetFormSet.empty_form.DELETE }}
-            </div>
-        </div>
 </script>
 <script>
     /**verifica los eliminados y oculta **/
@@ -803,7 +771,7 @@
         // $('input[type=checkbox]').hide()
         var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
         for (var i = 0; i < cantForm; i++) {
-           
+
 
             $('#id_asignaciondet_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
 
@@ -811,11 +779,11 @@
 
 
             if ($('#id_asignaciondet_set-' + (i) + '-DELETE').is(":checked")) {
-                    //$('td.delete input[type=checkbox]').hide()
+                //$('td.delete input[type=checkbox]').hide()
                 $('#leaveForm-' + i).hide()
 
             }
-           if ($('#id_asignaciondet_set-' + i + '-operario').val()) {
+            if ($('#id_asignaciondet_set-' + i + '-operario').val()) {
 
                 $('#id_asignaciondet_set-' + i + '-domEnt').prop("readonly", true);
                 $('#id_asignaciondet_set-' + i + '-domSal').prop("readonly", true);
@@ -841,75 +809,138 @@
                 $('#perfil-' + i).attr("disabled", "disabled");
                 $('#supervisor-' + i).attr("style", "display:block;margin: 8px 25px;");
                 $('#supervisor-' + i).attr("disabled", "disabled");
-                $('#id_diaInicio-' + i).attr("disabled", "disabled");
-                $('#id_horaInicio-' + i).prop("readonly", true);
-                $('#id_diaFin-' + i).attr("disabled", "disabled");
-                $('#id_horaFin-' + i).prop("readonly", true);
-
+                //Los siguientes campos seràn deshabilitados solo si tienen datos               
             }
         }
     });
 </script>
 <script>
-        $(document).ready(function () {
-            $(".perfil-combo").on("change", function () {
-                RecalcularHoras();
-            });
-        });
+    $(document).on("change", ".perfil-combo", function () {
+        RecalcularHoras();
+    });
+    $(document).on("dp.change", ".examDate", function () {
+        RecalcularHoras();
+    });
+    $(document).on("dp.change", ".examTime", function () {
+        RecalcularHoras();
+    });
 </script>
 
 <script>
-    $(document).ready(function () {
-        $(".filter1").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col1").filter(function () {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-        $(".filter2").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col2").filter(function () {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-        $(".filter3").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col3").filter(function () {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-        $(".filter4").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col4").filter(function () {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-        $(".filter5").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col5").filter(function () {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-        $(".filter6").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#table tr td.col6").filter(function () {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-    });
-
-
+    function guardarAsignacion() {
+        token = '{{csrf_token}}';
+        startLoader();
+        $.ajax({
+            type: "POST",
+            url: "/reingenieria/asignacion/guardarAsignacion",
+            data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token
+        }).done(function (result) {
+            endLoader();
+            if(result.codigo==0){
+                document.location.href="/reingenieria/asignacion/listar";
+                setMessageAlert("No se pudo guardar la Asignación");
+            }else if(result.codigo==1){
+                setMessageAlert("No se pudo guardar la Asignación");
+                $('html, body').animate({scrollTop:0},'fast');
+            }
+        })
+    }
 </script>
+
+<script>
+
+    $(document).ready(function () {
+        var body = {}
+        var diasLibres = []
+        var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
+        var identificadores=[];
+        for(var i=0;i<cantForm;i++){
+            if($('#id_asignaciondet_set-'+i+'-operario').val()){
+                identificadores.push(($('#id_asignaciondet_set-'+i+'-operario').val()));
+            }
+        }
+        body.operarios="["+identificadores+"]";
+        $.ajax({
+            type: "GET",
+            url: "/reingenieria/asignacion/diasLibres",
+            data: body
+        }).done(function (result) {
+            diasLibres = result;
+            searchDiasLibres(diasLibres.dato)
+        })
+
+        function searchDiasLibres(diasLibres) {
+            for (var i = 0; i < diasLibres.length; i++) {
+                var idOpe = diasLibres[i].operario_id;
+                for (id = 0; id < cantForm; id++) {
+                    if (idOpe == $("#id_asignaciondet_set-" + id + "-operario").val()) {
+                        //Existe operario
+                        var entrada = diasLibres[i].diasLibres.entrada;
+                        var salida = diasLibres[i].diasLibres.salida;
+                        var tieneFechaInicio=setDiasLibres(id, entrada.label, 0);
+                        var tieneDiaFin=setDiasLibres(id, salida.label, 1);
+                        if (entrada.hora != "") {
+                            $("#id_horaInicio-" + id).val(entrada.hora.substr(0, 5));
+                            $('#id_horaInicio-' + id).prop("readonly", true);
+                        }
+                        if (salida.hora != "") {
+                            $("#id_horaFin-" + id).val(salida.hora.substr(0, 5));
+                            $('#id_horaFin-' + id).prop("readonly", true);
+                        }
+                        if(tieneFechaInicio){
+                            $('#id_diaInicio-' + id).attr("disabled", "disabled");
+                        }
+                        if(tieneDiaFin){
+                            $('#id_diaFin-' + id).attr("disabled", "disabled");
+                        }
+                    }
+                }
+            }
+        }
+        function setDiasLibres(id, label, mode) {
+            //Mode 0 es para setear dia inicio, mode 1 es para setear dia fin
+            if (mode == 0) {
+                var select = $('#id_diaInicio-' + (id))[0];
+            } else {
+                var select = $('#id_diaFin-' + (id))[0];
+            }
+            for (var j = 0; j < select.length; j++) {
+                if ($(select[j]).val() == label) {
+                    $(select).val(label);
+                    return true;
+                } else {
+                    $(select[j]).removeAttr('selected');
+                }
+            }
+            return false;
+        }
+
+    })
+</script>
+
 <script>
     $(document).ready(function () {
         var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
+        setClassAll(cantForm - 1);
+        //EVENTO CHANGE PARA TIMES POR DEFECTO
+        $('.input-group.time').each(function () {
+            $(this).datetimepicker().on('dp.change', function (e) {
+                RecalcularHoras();
+            })
+        });
+        $('.input-group.time').each(function () {
+            $(this).datetimepicker().on('dp.change', function (e) {
+                RecalcularTipoHoras();
+            })
+        });
+
         for (var i = 0; i < cantForm; i++) {
             var idOpe = $('#id_asignaciondet_set-' + (i) + '-operario').val();
             var idPerfil = $('#id_asignaciondet_set-' + (i) + '-perfil').val();
             var supervisor = $('#id_asignaciondet_set-' + (i) + '-supervisor');
             if (supervisor[0].checked) {
                 var selectSupervisor = $('#supervisor-' + (i))[0];
-              
+
                 selectSupervisor.checked = true;
             }
             var select = $('#operario-' + (i))[0];
@@ -917,6 +948,7 @@
             for (var j = 0; j < select.length; j++) {
                 if ($(select[j]).val() == idOpe) {
                     $(select[j]).attr("selected", "selected");
+
                 } else {
                     $(select[j]).removeAttr('selected');
                 }
@@ -929,6 +961,23 @@
                 }
             }
         }
+
+        function setClassAll(id) {
+            $("#id_asignaciondet_set-" + (id) + "-lunEnt").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-lunSal").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-marEnt").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-marSal").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-mieEnt").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-mieSal").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-jueEnt").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-jueSal").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-vieEnt").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-vieSal").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-sabEnt").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-sabSal").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-domEnt").parent('div').addClass('time');
+            $("#id_asignaciondet_set-" + (id) + "-domSal").parent('div').addClass('time');
+        }
     });
 
 </script>
@@ -938,407 +987,352 @@
         //document.getElementById('action').value = 'filter_operario-' + id;
         //hacemos submit
         //document.getElementById('formulario').submit();
-        $('#modalFiltro' + id).modal('show');
-        $("#jsGrid" + id).jsGrid({
-            height: "80%",
-            width: "100%",
-            /*filtering: true,
-            inserting: true,
-            editing: true,
-            sorting: true,
-            paging: true,
-            autoload: true,*/
-            filtering: true,
-            inserting: false,
-            editing: false,
-            sorting: true,
-            paging: true,
-            autoload: true,
-            pageSize: 5,
-            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
-            pageButtonCount: 1,
-            pagePrevText: "Anterior",
-            pageNextText: "Siguiente",
-            pageFirstText: "Primera",
-            pageLastText: "Ultima",
-            noDataContent: "No se han encontrado registros que coincidan con la busqueda",
-            deleteConfirm: "Desea eliminar el registro?",
-            loadMessage: "Por favor, espere...",
-            invalidMessage: "Datos no válidos",
-            controller: {
-                loadData: function (filter) {
-                    var d = $.Deferred();
-                    filter.idPunto = $('#id_puntoServicio').val();
-                    filter.totalHorasProc = $('#id_asignaciondet_set-' + id + '-totalHoras').val();
-                    filter.lunEnt = $('#id_asignaciondet_set-' + id + '-lunEnt').val();
-                    filter.lunSal = $('#id_asignaciondet_set-' + id + '-lunSal').val();
-                    filter.marEnt = $('#id_asignaciondet_set-' + id + '-marEnt').val();
-                    filter.marSal = $('#id_asignaciondet_set-' + id + '-marSal').val();
-                    filter.mieEnt = $('#id_asignaciondet_set-' + id + '-mieEnt').val();
-                    filter.mieSal = $('#id_asignaciondet_set-' + id + '-mieSal').val();
-                    filter.jueEnt = $('#id_asignaciondet_set-' + id + '-jueEnt').val();
-                    filter.jueSal = $('#id_asignaciondet_set-' + id + '-jueSal').val();
-                    filter.vieEnt = $('#id_asignaciondet_set-' + id + '-vieEnt').val();
-                    filter.vieSal = $('#id_asignaciondet_set-' + id + '-vieSal').val();
-                    filter.sabEnt = $('#id_asignaciondet_set-' + id + '-sabEnt').val();
-                    filter.sabSal = $('#id_asignaciondet_set-' + id + '-sabSal').val();
-                    filter.domEnt = $('#id_asignaciondet_set-' + id + '-domEnt').val();
-                    filter.domSal = $('#id_asignaciondet_set-' + id + '-domSal').val();
-                    filter.perfilproc = $('#id_asignaciondet_set-' + id + '-perfil').val();
-                    filter.supervisor = $('#id_asignaciondet_set-' + id + '-supervisor')[0].checked;
-                    filter.fechaIni = $('#id_asignaciondet_set-' + id + '-fechaInicio').val();
-                    filter.fechaFin = $('#id_asignaciondet_set-' + id + '-fechaFin').val();
-                    filter.horaInicio = $('#id_horaInicio-' + id).val();
-                    filter.horaFin = $('#id_horaFin-' + id).val();
-                    filter.diaInicio = $('#id_diaInicio-' + id).val();
-                    filter.diaFin = $('#id_diaFin-' + id).val();
-                    $.ajax({
-                        type: "GET",
-                        url: "/reingenieria/asignacion/asignar/operarios",
-                        data: filter
-                    }).done(function (result) {
-                        /**console.log("Resultado", result);
-                        console.log("Filter", filter);**/
-                        var j = id;
 
-                        if (result.length > 0) {
-                            if (j > 0) {
-                                var index = 1;
-                                while (index <= j) {
-                                    var operarios = result;
-                                    var lunEntAnt = ""
-                                    var lunSalAnt = ""
-                                    var marEntAnt = ""
-                                    var marSalAnt = ""
-                                    var mieSalAnt = ""
-                                    var mieEntAnt = ""
-                                    var jueEntAnt = ""
-                                    var jueSalAnt = ""
-                                    var vieSalAnt = ""
-                                    var vieEntAnt = ""
-                                    var sabEntAnt = ""
-                                    var sabSalAnt = ""
-                                    var domEntAnt = ""
-                                    var domSalAnt = ""
-                                    var fechaIniAnt = ""
-                                    var fechaFinAnt = ""
-                                    if (!$("#id_asignaciondet_set-" + (index - 1) + "-DELETE")[0].checked) {
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-fechaInicio').val())
-                                            fechaIniAnt = $('#asignaciondet_set-' + (index - 1) + '-fechaInicio').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-fechaFin').val())
-                                            fechaFinAnt = $('#id_asignaciondet_set-' + (index - 1) + '-fechaFin').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-lunEnt').val())
-                                            lunEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-lunEnt').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-lunSal').val())
-                                            lunSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-lunSal').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-marEnt').val())
-                                            marEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-marEnt').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-marSal').val())
-                                            marSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-marSal').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-mieEnt').val())
-                                            mieEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-mieEnt').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-mieSal').val())
-                                            mieSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-mieSal').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-jueEnt').val())
-                                            jueEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-jueEnt').val()
-                                        if ($('id_asignaciondet_set-' + (index - 1) + '-jueSal').val())
-                                            jueSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-jueSal').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-vieEnt').val())
-                                            vieEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-vieEnt').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-vieSal').val())
-                                            vieSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-vieSal').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-sabEnt').val())
-                                            sabEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-sabEnt').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-sabSal').val())
-                                            sabSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-sabSal').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-domEnt').val())
-                                            domEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-domEnt').val()
-                                        if ($('#id_asignaciondet_set-' + (index - 1) + '-domSal').val())
-                                            domSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-domSal').val()
-      
-                                        if (filter.lunEnt && lunEntAnt && lunSalAnt && ((filter.lunEnt >= lunEntAnt && filter.lunEnt <= lunSalAnt) || (filter.lunSal >= lunEntAnt && (filter.lunSal <= lunSalAnt || filter.lunSal >= lunSalAnt)))) {
-                                            console.log("lunes");
-                                           
-                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
+        if (id) {
+            $('#modalFiltro' + id).modal('show');
+            $("#jsGrid" + id).jsGrid({
+                height: "80%",
+                width: "100%",
+                /*filtering: true,
+                inserting: true,
+                editing: true,
+                sorting: true,
+                paging: true,
+                autoload: true,*/
+                filtering: true,
+                inserting: false,
+                editing: false,
+                sorting: true,
+                paging: true,
+                autoload: true,
+                pageSize: 5,
+                pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+                pageButtonCount: 1,
+                pagePrevText: "Anterior",
+                pageNextText: "Siguiente",
+                pageFirstText: "Primera",
+                pageLastText: "Ultima",
+                noDataContent: "No se han encontrado registros que coincidan con la busqueda",
+                deleteConfirm: "Desea eliminar el registro?",
+                loadMessage: "Por favor, espere...",
+                invalidMessage: "Datos no válidos",
+                controller: {
+                    loadData: function (filter) {
+                        var d = $.Deferred();
+                        filter.idPunto = $('#id_puntoServicio').val();
+                        filter.totalHorasProc = $('#id_asignaciondet_set-' + id + '-totalHoras').val();
+                        filter.lunEnt = $('#id_asignaciondet_set-' + id + '-lunEnt').val();
+                        filter.lunSal = $('#id_asignaciondet_set-' + id + '-lunSal').val();
+                        filter.marEnt = $('#id_asignaciondet_set-' + id + '-marEnt').val();
+                        filter.marSal = $('#id_asignaciondet_set-' + id + '-marSal').val();
+                        filter.mieEnt = $('#id_asignaciondet_set-' + id + '-mieEnt').val();
+                        filter.mieSal = $('#id_asignaciondet_set-' + id + '-mieSal').val();
+                        filter.jueEnt = $('#id_asignaciondet_set-' + id + '-jueEnt').val();
+                        filter.jueSal = $('#id_asignaciondet_set-' + id + '-jueSal').val();
+                        filter.vieEnt = $('#id_asignaciondet_set-' + id + '-vieEnt').val();
+                        filter.vieSal = $('#id_asignaciondet_set-' + id + '-vieSal').val();
+                        filter.sabEnt = $('#id_asignaciondet_set-' + id + '-sabEnt').val();
+                        filter.sabSal = $('#id_asignaciondet_set-' + id + '-sabSal').val();
+                        filter.domEnt = $('#id_asignaciondet_set-' + id + '-domEnt').val();
+                        filter.domSal = $('#id_asignaciondet_set-' + id + '-domSal').val();
+                        filter.perfilproc = $('#id_asignaciondet_set-' + id + '-perfil').val();
+                        filter.supervisor = $('#id_asignaciondet_set-' + id + '-supervisor')[0].checked;
+                        filter.fechaIni = $('#id_asignaciondet_set-' + id + '-fechaInicio').val();
+                        filter.fechaFin = $('#id_asignaciondet_set-' + id + '-fechaFin').val();
+                        filter.horaInicio = $('#id_horaInicio-' + id).val();
+                        filter.horaFin = $('#id_horaFin-' + id).val();
+                        filter.diaInicio = $('#id_diaInicio-' + id).val();
+                        filter.diaFin = $('#id_diaFin-' + id).val();
+                        $.ajax({
+                            type: "GET",
+                            url: "/reingenieria/asignacion/asignar/operarios",
+                            data: filter
+                        }).done(function (result) {
 
-                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
-                                                if (id_operario != '') {
-                                                    for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].pk) == (id_operario)) {
-                                                            print("Encuentra")
-                                                            operarios.splice(i, 1);
+                            var j = id;
 
-                                                            break
+                            if (result.length > 0) {
+                                if (j > 0) {
+                                    var index = 1;
+                                    while (index <= j) {
+                                        var operarios = result;
+                                        var lunEntAnt = ""
+                                        var lunSalAnt = ""
+                                        var marEntAnt = ""
+                                        var marSalAnt = ""
+                                        var mieSalAnt = ""
+                                        var mieEntAnt = ""
+                                        var jueEntAnt = ""
+                                        var jueSalAnt = ""
+                                        var vieSalAnt = ""
+                                        var vieEntAnt = ""
+                                        var sabEntAnt = ""
+                                        var sabSalAnt = ""
+                                        var domEntAnt = ""
+                                        var domSalAnt = ""
+                                        var fechaIniAnt = ""
+                                        var fechaFinAnt = ""
+                                        if (!$("#id_asignaciondet_set-" + (index - 1) + "-DELETE")[0].checked) {
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-fechaInicio').val())
+                                                fechaIniAnt = $('#asignaciondet_set-' + (index - 1) + '-fechaInicio').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-fechaFin').val())
+                                                fechaFinAnt = $('#id_asignaciondet_set-' + (index - 1) + '-fechaFin').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-lunEnt').val())
+                                                lunEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-lunEnt').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-lunSal').val())
+                                                lunSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-lunSal').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-marEnt').val())
+                                                marEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-marEnt').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-marSal').val())
+                                                marSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-marSal').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-mieEnt').val())
+                                                mieEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-mieEnt').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-mieSal').val())
+                                                mieSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-mieSal').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-jueEnt').val())
+                                                jueEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-jueEnt').val()
+                                            if ($('id_asignaciondet_set-' + (index - 1) + '-jueSal').val())
+                                                jueSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-jueSal').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-vieEnt').val())
+                                                vieEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-vieEnt').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-vieSal').val())
+                                                vieSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-vieSal').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-sabEnt').val())
+                                                sabEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-sabEnt').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-sabSal').val())
+                                                sabSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-sabSal').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-domEnt').val())
+                                                domEntAnt = $('#id_asignaciondet_set-' + (index - 1) + '-domEnt').val()
+                                            if ($('#id_asignaciondet_set-' + (index - 1) + '-domSal').val())
+                                                domSalAnt = $('#id_asignaciondet_set-' + (index - 1) + '-domSal').val()
+
+                                            if (filter.lunEnt && lunEntAnt && lunSalAnt && ((filter.lunEnt >= lunEntAnt && filter.lunEnt <= lunSalAnt) || (filter.lunSal >= lunEntAnt && (filter.lunSal <= lunSalAnt || filter.lunSal >= lunSalAnt)))) {
+
+                                                if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
+
+                                                    id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+                                                    if (id_operario != '') {
+                                                        for (var i = 0; i < operarios.length; i++) {
+                                                            if ((operarios[i].pk) == (id_operario)) {
+                                                                print("Encuentra")
+                                                                operarios.splice(i, 1);
+
+                                                                break
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            } else if (filter.marEnt && marEntAnt && marSalAnt && ((filter.marEnt >= marEntAnt && filter.marEnt <= marSalAnt) || (filter.marSal >= marEntAnt && (filter.marSal <= marSalAnt || filter.marSal >= marSalAnt)))) {
+
+                                                if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
+
+                                                    id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                    if (id_operario != '') {
+                                                        for (var i = 0; i < operarios.length; i++) {
+                                                            if ((operarios[i].pk) == (id_operario)) {
+                                                                print("Encuentra")
+                                                                operarios.splice(i, 1);
+                                                                break
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            } else if (filter.mieEnt && mieEntAnt && mieSalAnt && ((filter.mieEnt >= mieEntAnt && filter.mieEnt <= mieSalAnt) || (filter.mieSal >= mieEntAnt && (filter.mieSal <= mieSalAnt || filter.mieSal >= mieSalAnt)))) {
+                                                console.log("miercoles");
+                                                if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
+
+                                                    id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                    if (id_operario != '') {
+                                                        for (var i = 0; i < operarios.length; i++) {
+                                                            if ((operarios[i].pk) == (id_operario)) {
+                                                                print("Encuentra")
+                                                                operarios.splice(i, 1);
+                                                                break
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            } else if (filter.jueEnt && jueEntAnt && jueSalAnt && ((filter.jueEnt >= jueEntAnt && filter.jueEnt <= jueSalAnt) || (filter.jueSal >= jueEntAnt && (filter.jueSal <= jueSalAnt || filter.jueSal >= jueSalAnt)))) {
+                                                console.log("jueves");
+                                                if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
+
+                                                    id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                    if (id_operario != '') {
+                                                        for (var i = 0; i < operarios.length; i++) {
+                                                            if ((operarios[i].pk) == (id_operario)) {
+                                                                print("Encuentra")
+                                                                operarios.splice(i, 1);
+                                                                break
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            } else if (filter.vieEnt && vieEntAnt && vieSalAnt && ((filter.vieEnt >= vieEntAnt && filter.vieEnt <= vieSalAnt) || (filter.vieSal >= vieEntAnt && (filter.vieSal <= vieSalAnt || filter.vieSal >= vieSalAnt)))) {
+                                                console.log("viernes");
+                                                if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
+
+                                                    id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                    if (id_operario != '') {
+                                                        for (var i = 0; i < operarios.length; i++) {
+                                                            if ((operarios[i].pk) == (id_operario)) {
+                                                                print("Encuentra")
+                                                                operarios.splice(i, 1);
+                                                                break
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            } else if (filter.sabEnt && sabEntAnt && sabSalAnt && ((filter.sabEnt >= sabEntAnt && filter.sabEnt <= sabSalAnt) || (filter.sabSal >= sabEntAnt && (filter.sabSal <= sabSalAnt || filter.sabSal >= sabSalAnt)))) {
+                                                console.log("sabado");
+                                                if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
+
+                                                    id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                    if (id_operario != '') {
+                                                        for (var i = 0; i < operarios.length; i++) {
+                                                            if ((operarios[i].pk) == (id_operario)) {
+                                                                print("Encuentra")
+                                                                operarios.splice(i, 1);
+                                                                break
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            } else if (filter.domEnt && domEntAnt && domSalAnt && ((filter.domEnt >= domEntAnt && filter.domEnt <= domSalAnt) || (filter.domSal >= domEntAnt && (filter.domSal <= domSalAnt || filter.domSal >= domSalAnt)))) {
+                                                console.log("domingo");
+                                                if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
+
+                                                    id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
+
+                                                    if (id_operario != '') {
+                                                        for (var i = 0; i < operarios.length; i++) {
+                                                            if ((operarios[i].pk) == (id_operario)) {
+                                                                print("Encuentra")
+                                                                operarios.splice(i, 1);
+                                                                break
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
-                                        } else if (filter.marEnt && marEntAnt && marSalAnt && ((filter.marEnt >= marEntAnt && filter.marEnt <= marSalAnt) || (filter.marSal >= marEntAnt && (filter.marSal <= marSalAnt || filter.marSal >= marSalAnt)))) {
-                                            console.log("martes");
-                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
 
-                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
-
-                                                if (id_operario != '') {
-                                                    for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].pk) == (id_operario)) {
-                                                            print("Encuentra")
-                                                            operarios.splice(i, 1);
-                                                            break
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        } else if (filter.mieEnt && mieEntAnt && mieSalAnt && ((filter.mieEnt >= mieEntAnt && filter.mieEnt <= mieSalAnt) || (filter.mieSal >= mieEntAnt && (filter.mieSal <= mieSalAnt || filter.mieSal >= mieSalAnt)))) {
-                                            console.log("miercoles");
-                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
-
-                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
-
-                                                if (id_operario != '') {
-                                                    for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].pk) == (id_operario)) {
-                                                            print("Encuentra")
-                                                            operarios.splice(i, 1);
-                                                            break
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        } else if (filter.jueEnt && jueEntAnt && jueSalAnt && ((filter.jueEnt >= jueEntAnt && filter.jueEnt <= jueSalAnt) || (filter.jueSal >= jueEntAnt && (filter.jueSal <= jueSalAnt || filter.jueSal >= jueSalAnt)))) {
-                                            console.log("jueves");
-                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
-
-                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
-
-                                                if (id_operario != '') {
-                                                    for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].pk) == (id_operario)) {
-                                                            print("Encuentra")
-                                                            operarios.splice(i, 1);
-                                                            break
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        } else if (filter.vieEnt && vieEntAnt && vieSalAnt && ((filter.vieEnt >= vieEntAnt && filter.vieEnt <= vieSalAnt) || (filter.vieSal >= vieEntAnt && (filter.vieSal <= vieSalAnt || filter.vieSal >= vieSalAnt)))) {
-                                            console.log("viernes");
-                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
-
-                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
-
-                                                if (id_operario != '') {
-                                                    for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].pk) == (id_operario)) {
-                                                            print("Encuentra")
-                                                            operarios.splice(i, 1);
-                                                            break
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        } else if (filter.sabEnt && sabEntAnt && sabSalAnt && ((filter.sabEnt >= sabEntAnt && filter.sabEnt <= sabSalAnt) || (filter.sabSal >= sabEntAnt && (filter.sabSal <= sabSalAnt || filter.sabSal >= sabSalAnt)))) {
-                                            console.log("sabado");
-                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
-
-                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
-
-                                                if (id_operario != '') {
-                                                    for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].pk) == (id_operario)) {
-                                                            print("Encuentra")
-                                                            operarios.splice(i, 1);
-                                                            break
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        } else if (filter.domEnt && domEntAnt && domSalAnt && ((filter.domEnt >= domEntAnt && filter.domEnt <= domSalAnt) || (filter.domSal >= domEntAnt && (filter.domSal <= domSalAnt || filter.domSal >= domSalAnt)))) {
-                                            console.log("domingo");
-                                            if (filter.fechaIni == fechaIniAnt || filter.fechaFin == fechaFinAnt) {
-
-                                                id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
-
-                                                if (id_operario != '') {
-                                                    for (var i = 0; i < operarios.length; i++) {
-                                                        if ((operarios[i].pk) == (id_operario)) {
-                                                            print("Encuentra")
-                                                            operarios.splice(i, 1);
-                                                            break
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                            index++;
                                         }
 
-                                        index++;
                                     }
 
                                 }
 
                             }
+                            result = operarios;
+                            d.resolve($.map(result, function (item) {
+                                return $.extend(item.fields, { id: item.pk });
+                            }));
+                        });
 
+                        return d.promise();
+                    }
+
+                },
+                rowClick: function (e) {
+                    var ope = e.item.id;
+                    var nombres = e.item.nombres;
+                    var select = $('#operario-' + id)[0];
+                    var perfilSelect = $('#perfil-' + id)[0];
+                    var idPerfil = $('#id_asignaciondet_set-' + (id) + '-perfil').val();
+                    var selectPerfil = $('#perfil-' + (id))[0];
+                    $('#id_asignaciondet_set-' + id + '-operario').val(ope);
+                    for (var i = 0; i < select.length; i++) {
+
+                        if ($(select[i]).val() == ope) {
+                            $(select[i]).attr("selected", "selected");
+                        } else {
+                            $(select[i]).removeAttr('selected');
                         }
-                        result = operarios;
-                         d.resolve($.map(result, function (item) {
-                             return $.extend(item.fields, { id: item.pk });
-                         }));
-                    });
-
-                    return d.promise();
-                }
-
-            },
-            rowClick: function (e) {
-                var ope = e.item.id;
-                var nombres = e.item.nombres;
-                var select = $('#operario-' + id)[0];
-                var perfilSelect = $('#perfil-' + id)[0];
-                var idPerfil = $('#id_asignaciondet_set-' + (id) + '-perfil').val();
-                var selectPerfil = $('#perfil-' + (id))[0];
-                $('#id_asignaciondet_set-' + id + '-operario').val(ope);
-                for (var i = 0; i < select.length; i++) {
-
-                    if ($(select[i]).val() == ope) {
-                        $(select[i]).attr("selected", "selected");
-                    } else {
-                        $(select[i]).removeAttr('selected');
                     }
-                }
-                for (var j = 0; j < selectPerfil.length; j++) {
-                    if ($(selectPerfil[j]).val() == idPerfil) {
-                        $(selectPerfil[j]).attr("selected", "selected");
-                    } else {
-                        $(selectPerfil[j]).removeAttr('selected');
+                    for (var j = 0; j < selectPerfil.length; j++) {
+                        if ($(selectPerfil[j]).val() == idPerfil) {
+                            $(selectPerfil[j]).attr("selected", "selected");
+                        } else {
+                            $(selectPerfil[j]).removeAttr('selected');
+                        }
                     }
-                }
-                var supervisor = $('#id_asignaciondet_set-' + (id) + '-supervisor');
-                if (supervisor[0].checked) {
-                    var selectSupervisor = $('#supervisor-' + (id))[0];
-                    selectSupervisor.checked = true;
-                }
-                $('#id_asignaciondet_set-' + id + '-operario')
-                $('#nombres-' + id + '-operario').val(decodeURIComponent(nombres));
-                $('#modalFiltro' + id).modal('hide');
+                    var supervisor = $('#id_asignaciondet_set-' + (id) + '-supervisor');
+                    if (supervisor[0].checked) {
+                        var selectSupervisor = $('#supervisor-' + (id))[0];
+                        selectSupervisor.checked = true;
+                    }
+                    $('#id_asignaciondet_set-' + id + '-operario')
+                    $('#nombres-' + id + '-operario').val(decodeURIComponent(nombres));
+                    $('#modalFiltro' + id).modal('hide');
 
-                $('#id_asignaciondet_set-' + id + '-domEnt').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-domSal').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-fecha').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-fechaInicio').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-fechaFin').prop("readonly", true);
-                $('#filter_operario-' + id).prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-lunEnt').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-lunSal').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-marEnt').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-marSal').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-mieEnt').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-mieSal').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-jueEnt').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-jueSal').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-vieEnt').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-vieSal').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-sabEnt').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-sabSal').prop("readonly", true);
-                $('#id_asignaciondet_set-' + id + '-perfil').attr("style", "display:none");
-                $('#id_asignaciondet_set-' + id + '-supervisor').attr("style", "display:none");
-                $('#perfil-' + id).attr("style", "display:block");
-                $('#perfil-' + id).attr("disabled", "disabled");
-                $('#supervisor-' + id).attr("style", "display:block;margin: 8px 25px;");
-                $('#supervisor-' + id).attr("disabled", "disabled");
-                $('#id_diaInicio-' + id).attr("disabled", "disabled");
-                $('#id_horaInicio-' + id).prop("readonly", true);
-                $('#id_diaFin-' + id).attr("disabled", "disabled");
-                $('#id_horaFin-' + id).prop("readonly", true);
-                $('#modalFiltro' + id).modal('hide');
+                    $('#id_asignaciondet_set-' + id + '-domEnt').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-domSal').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-fecha').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-fechaInicio').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-fechaFin').prop("readonly", true);
+                    $('#filter_operario-' + id).prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-lunEnt').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-lunSal').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-marEnt').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-marSal').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-mieEnt').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-mieSal').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-jueEnt').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-jueSal').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-vieEnt').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-vieSal').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-sabEnt').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-sabSal').prop("readonly", true);
+                    $('#id_asignaciondet_set-' + id + '-perfil').attr("style", "display:none");
+                    $('#id_asignaciondet_set-' + id + '-supervisor').attr("style", "display:none");
+                    $('#perfil-' + id).attr("style", "display:block");
+                    $('#perfil-' + id).attr("disabled", "disabled");
+                    $('#supervisor-' + id).attr("style", "display:block;margin: 8px 25px;");
+                    $('#supervisor-' + id).attr("disabled", "disabled");
+                    //Los siguientes campos seràn deshabilitados solo si tienen datos
+                    if($('#id_diaInicio-' + id).val()!="''"){
+                        $('#id_diaInicio-' + id).attr("disabled", "disabled");
+                    }
+                    if($('#id_horaInicio-' + id).val()){
+                        $('#id_horaInicio-' + id).prop("readonly", true);
+                    }
+                    if($('#id_diaFin-' + id).val()!="''"){
+                        $('#id_diaFin-' + id).attr("disabled", "disabled");
+                    }
+                    if($('#id_horaFin-' + id).val()){
+                        $('#id_horaFin-' + id).prop("readonly", true);
+                    }
+                    $('#modalFiltro' + id).modal('hide');
+                },
 
-            },
-
-            fields: [
-                { name: "nombres", type: "text", width: 150, title: "Nombre" },
-                { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
-                { name: "antiguedad", type: "text", width: 150, title: "Antiguedad (años)" },
-                { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
-                { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
-                { name: "perfil", type: "text", width: 150, title: "Perfil" }
-            ]
-        });
+                fields: [
+                    { name: "nombres", type: "text", width: 150, title: "Nombre" },
+                    { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
+                    { name: "antiguedad", type: "text", width: 150, title: "Antiguedad (años)" },
+                    { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
+                    { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
+                    { name: "perfil", type: "text", width: 150, title: "Perfil" }
+                ]
+            });
+        }
     }
 </script>
 <script>
-    function seleccionarOpe(ope, id, nombres) {
-
-        var select = $('#operario-' + id)[0];
-        var perfilSelect = $('#perfil-' + id)[0];
-        $('#id_asignaciondet_set-' + id + '-operario').val(ope);
-        for (var i = 0; i < select.length; i++) {
-
-            if ($(select[i]).val() == ope) {
-                $(select[i]).attr("selected", "selected");
-            } else {
-                $(select[i]).removeAttr('selected');
-            }
-        }
-        $('#id_asignaciondet_set-' + id + '-operario')
-        $('#nombres-' + id + '-operario').val(decodeURIComponent(nombres));
-        $('#modalFiltro' + id).modal('hide');
-
-        $('#id_asignaciondet_set-' + id + '-domEnt').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-domSal').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-fecha').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-fechaInicio').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-fechaFin').prop("readonly", true);
-        $('#filter_operario-' + id).prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-lunEnt').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-lunSal').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-marEnt').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-marSal').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-mieEnt').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-mieSal').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-jueEnt').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-jueSal').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-vieEnt').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-vieSal').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-sabEnt').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-sabSal').prop("readonly", true);
-        $('#id_asignaciondet_set-' + id + '-perfil').attr("style", "display:none");
-        $('#id_asignaciondet_set-' + id + '-supervisor').attr("style", "display:none");
-        $('#perfil-' + id).attr("style", "display:block");
-        $('#perfil-' + id).attr("disabled", "disabled");
-        $('#supervisor-' + id).attr("style", "display:block;margin: 8px 25px;");
-        $('#supervisor-' + id).attr("disabled", "disabled");
-        $('#id_diaInicio-' + id).attr("disabled", "disabled");
-        $('#id_horaInicio-' + id).prop("readonly", true);
-        $('#id_diaFin-' + id).attr("disabled", "disabled");
-        $('#id_horaFin-' + id).prop("readonly", true);
-
-
-    }
+    //BUSCA OPERARIOS Y ABRE MODAL AL APRETAR BOTON 'BUSCAR'
+    $(document).on('click', '.btn-filter_operario', function () {
+        id = $(this)[0].id;
+        buscarOperario(id[16]);
+    })
 </script>
+
 </div>
-<script>
-    $(document).ready(function () {
-        var openModal = document.getElementById('openModal');
-        var idModal = document.getElementById('idModal');
-        if ($('#openModal').val()) {
-            $('#modalFiltro' + $('#idModal').val()).modal('show')
-        }
-    });
 
-</script>
-<script>
-        // $(document).ready(function(){
-        //     var selectOperarios = $('.form-operario');
-        //     console.log(selectOperarios);
-        //     for(var i=0;i<selectOperarios.length;i++){
-        //         var select = [];
-        //         select.push(selectOperarios[i]);
-        //         var options=select[0];
-        //         $(options[0]).removeAttr("selected");
-        //     }
-        //     console.log("OPERARIOS",$('.form-operario'));
-        // });
 
-</script>
 
 
 <script>
@@ -1478,7 +1472,6 @@
             fechasValid = true;
         }
         hasPerfil = $('#id_asignaciondet_set-' + i + '-perfil').val();
-        console.log("TIENE PERFIL?", hasPerfil);
         //Lunes
         var lunEnt = $('#id_asignaciondet_set-' + i + '-lunEnt').val();
         var lunSal = $('#id_asignaciondet_set-' + i + '-lunSal').val();
@@ -1538,7 +1531,6 @@
     }
     function RecalcularHoras() {
         //aqui empieza el calculo del total de horas normales
-
         var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
         var totalDet = parseInt($totalDetalle.val(), 10);
         for (i = 0; i < totalDet; i++) {
@@ -1765,38 +1757,57 @@
             var total = parseInt($totalDetalle.val(), 10);
             var clon = $('script[type="template/Detalle"]').html();
             clon_html = replaceAll(clon, '__prefix__', (total).toString());
-            $('#formset-det').append(clon_html);
-            $totalDetalle.val(total + 1);
+            clon_html1 = replaceAll(clon_html, 'id="leaveForm-"', 'id="leaveForm-' + (total).toString() + '"');
+            clon_html2 = replaceAll(clon_html1, 'id="filter_operario-"', 'id="filter_operario-' + (total).toString() + '"');
+            clon_html3 = replaceAll(clon_html2, 'id="modalFiltro"', 'id="modalFiltro' + (total).toString() + '"');
+            clon_html4 = replaceAll(clon_html3, 'id="jsGrid"', 'id="jsGrid' + (total).toString() + '"');
+            clon_html5 = replaceAll(clon_html4, 'id="operario-"', 'id="operario-' + (total).toString() + '"');
+            clon_html6 = replaceAll(clon_html5, 'name="operario-"', 'name="operario-' + (total).toString() + '"');
+            clon_html7 = replaceAll(clon_html6, 'name="horaInicio-"', 'name="horaInicio-' + (total).toString() + '"');
+            clon_html8 = replaceAll(clon_html7, 'id="id_horaInicio-"', 'id="id_horaInicio-' + (total).toString() + '"');
+            clon_html9 = replaceAll(clon_html8, 'name="horaFin-"', 'name="horaFin-' + (total).toString() + '"');
+            clon_html10 = replaceAll(clon_html9, 'id="id_horaFin-"', 'id="id_horaFin-' + (total).toString() + '"');
+            clon_html11 = replaceAll(clon_html10, 'name="diaInicio-"', 'name="diaInicio-' + (total).toString() + '"');
+            clon_html12 = replaceAll(clon_html11, 'id="id_diaInicio-"', 'id="id_diaInicio-' + (total).toString() + '"');
+            clon_html13 = replaceAll(clon_html12, 'name="diaFin-"', 'name="diaFin-' + (total).toString() + '"');
+            clon_html14 = replaceAll(clon_html13, 'id="id_diaFin-"', 'id="id_diaFin-' + (total).toString() + '"');
+            clon_html15 = replaceAll(clon_html14, 'id="perfil-"', 'id="perfil-' + (total).toString() + '"');
+            $('#formset-det').append(clon_html15);
+            $('#id_asignaciondet_set-' + (total) + '-DELETE').attr('style', 'display:none !important')
 
-            //Seteamos action
-            document.getElementById('action').value = 'add_det';
-            //hacemos submit
-            document.getElementById('formulario').submit();
+            $totalDetalle.val(total + 1);
+            var body = {
+                "id_puntoServicio": $('#id_puntoServicio').val(),
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            }
+            $.ajax({
+                type: "POST",
+                url: "/reingenieria/asignacion/agregarDetalle",
+                data: body
+            }).done(function (result) {
+                if(result.codigo==0){
+                    $('html, body').animate({scrollTop:document.body.scrollHeight},'low');
+                }
+            });
         });
 
-
-        // $('button[id^="filter_operario-"]').click(function (event) {
-        //     console.log("CLICK EN BUSCAR",event.target.id);
-        //     event.preventDefault();
-        //     console.log(event.target.id);
-        //     debugger;
-        //     //Seteamos action
-        //     document.getElementById('action').value = event.target.id;
-        //     //hacemos submit
-        //     document.getElementById('formulario').submit();
-        // });
-
     });
-
-    $('input[id^="id_asignaciondet_set-"]').on('dp.change', function (e) {
-        RecalcularHoras();
-    });
-
-    $('input[id^="id_asignaciondet_set-"]').on('dp.change', function (e) {
-        RecalcularTipoHoras();
-    });
-
-
+    
+</script>
+<script>
+    $(document).on('focus', '.examDate', function () {
+        $(this).datetimepicker({
+            locale: 'es',
+            format: 'DD/MM/YYYY'
+        })
+    })
+</script>
+<script>
+    $(document).on('focus', '.examTime', function () {
+        $(this).datetimepicker({
+            format: 'HH:mm'
+        })
+    })
 </script>
 <style>
     .btn-info.disabled,
@@ -1821,9 +1832,11 @@
     table tr {
         cursor: pointer !important;
     }
-    .jsgrid-nodata-row{
+
+    .jsgrid-nodata-row {
         height: 273px !important;
     }
+
     .head {
         background-color: #86273e !important;
         color: white !important;
@@ -1836,6 +1849,8 @@
     .data:hover {
         background-color: #86273e1f !important;
     }
+
+ 
 </style>
 
 {% endblock %}

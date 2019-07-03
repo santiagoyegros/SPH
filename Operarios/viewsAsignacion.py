@@ -11,12 +11,13 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
+from django.db import transaction
 import datetime
 from datetime import date
 from django.core import serializers
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet, DiaLibre, OperariosAsignacionDet, Especializacion
-from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm,DiaLibreForm
-
+from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
+from ast import literal_eval
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection
 
@@ -33,6 +34,266 @@ def Asignacion_list(request):
         puntoServi = PuntoServicio.objects.all()
         contexto = {'PuntosServicio': puntoServi}
         return render(request, 'asignacion/asignacion_list.html', context=contexto)
+
+def agregar_detalle(request):
+    response = {}
+    if request.method == 'POST':
+        print(request.POST)
+        try:
+            id_puntoServicio=request.POST.get('id_puntoServicio')
+            
+            ''' Obtenemos el punto de servicio'''
+            puntoSer = PuntoServicio.objects.get(pk=id_puntoServicio)
+        
+            ''' Obtenemos la asignacion en caso de que exista una '''
+            asignacion = AsignacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+
+            if asignacion == None:
+                asignacion = AsignacionCab()
+            
+            asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
+            
+            """Se le dio click a agregar detalle"""
+            form = AsignacionCabForm(request.POST, instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
+            
+            response['codigo']=0
+            response['mensaje']="Se agregó con éxito"
+            return HttpResponse(
+            json.dumps(response),
+            content_type="application/json"
+            )
+        except Exception as err:
+                logging.getLogger("error_logger").error('No se pudo agregar un detalle: {0}'.format(err))
+                response['codigo']=1
+                response['mensaje']="No se pudo agregar un nuevo detalle"
+                return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
+    else:
+        return HttpResponse(
+            json.dumps({"nada para ver":"esto no está pasando"}),
+            content_type="application/json"
+        )
+
+def getDiasLibres(request):
+    response = {}
+    if request.method == 'GET':
+        
+        try:
+            id_operarios=[]
+            diasLibre=[]
+            lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal=""
+            id_operarios=literal_eval(request.GET.get('operarios'))
+            i=0
+            for id in id_operarios:
+                print(id,DiaLibre.objects.filter(id_operario=id))
+                if DiaLibre.objects.filter(id_operario=id).exists():
+                    print("existe operario")
+                    diasLibre.append(
+                    {
+                        'operario_id':id,
+                        'diasLibres':
+                            {
+                                'entrada':{
+                                        'label':'',
+                                        'hora':'',
+                                },
+                                'salida':{
+                                        'label':'',
+                                        'hora':'',
+                                }
+                            }
+                    })
+                    diaLibres = DiaLibre.objects.filter(id_operario=id).first()
+                    if diaLibres.lunEnt:
+                        lunEnt=diaLibres.lunEnt.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['entrada']['label']='lunEnt'
+                        diasLibre[i]['diasLibres']['entrada']['hora']=lunEnt
+                    if diaLibres.lunSal:
+                        lunSal=diaLibres.lunSal.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['salida']['label']='lunSal'
+                        diasLibre[i]['diasLibres']['salida']['hora']=lunSal
+                    if diaLibres.marEnt:
+                        marEnt=diaLibres.marEnt.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['entrada']['label']='marEnt'
+                        diasLibre[i]['diasLibres']['entrada']['hora']=marEnt
+                    if diaLibres.marSal:
+                        marSal=diaLibres.marSal.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['salida']['label']='marSal'
+                        diasLibre[i]['diasLibres']['salida']['hora']=marSal
+                    if diaLibres.mieEnt:
+                        mieEnt=diaLibres.mieEnt.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['entrada']['label']='mieEnt'
+                        diasLibre[i]['diasLibres']['entrada']['hora']=mieEnt
+                    if diaLibres.mieSal:
+                        mieSal=diaLibres.mieSal.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['salida']['label']='mieSal'
+                        diasLibre[i]['diasLibres']['salida']['hora']=mieSal
+                    if diaLibres.jueEnt:
+                        jueEnt=diaLibres.jueEnt.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['entrada']['label']='jueEnt'
+                        diasLibre[i]['diasLibres']['entrada']['hora']=jueEnt
+                    if diaLibres.jueSal:
+                        jueSal=diaLibres.jueSal.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['salida']['label']='jueSal'
+                        diasLibre[i]['diasLibres']['salida']['hora']=jueSal
+                    if diaLibres.vieEnt:
+                        vieEnt=diaLibres.vieEnt.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['entrada']['label']='vieEnt'
+                        diasLibre[i]['diasLibres']['entrada']['hora']=vieEnt
+                    if diaLibres.vieSal:
+                        vieSal=diaLibres.vieSal.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['salida']['label']='vieSal'
+                        diasLibre[i]['diasLibres']['salida']['hora']=vieSal
+                    if diaLibres.sabEnt:
+                        sabEnt=diaLibres.sabEnt.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['entrada']['label']='sabEnt'
+                        diasLibre[i]['diasLibres']['entrada']['hora']=sabEnt
+                    if diaLibres.sabSal:
+                        sabSal=diaLibres.sabSal.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['salida']['label']='sabSal'
+                        diasLibre[i]['diasLibres']['salida']['hora']=sabSal
+                    if diaLibres.domEnt:
+                        domEnt=diaLibres.domEnt.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['entrada']['label']='domEnt'
+                        diasLibre[i]['diasLibres']['entrada']['hora']=domEnt
+                    if diaLibres.domSal:
+                        domSal=diaLibres.domSal.strftime('%H:%M:%S:%f')
+                        diasLibre[i]['diasLibres']['salida']['label']='domSal'
+                        diasLibre[i]['diasLibres']['salida']['hora']=domSal
+                    i=i+1
+            response['dato']=diasLibre
+            response['codigo']=0
+            response['mensaje']="Se listaron con éxito"
+            return HttpResponse(json.dumps(response),content_type="application/json")
+        except Exception as err:
+                logging.getLogger("error_logger").error('Ocurrió un error al listar los dias libres: {0}'.format(err))
+                response['codigo']=1
+                response['dato']=[]
+                response['mensaje']="Ocurrió un error al listar los dias libres"
+                messages.warning(request, 'Ocurrió un error al listar los dias libres')
+                return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
+    else:
+        return HttpResponse(
+            json.dumps({"nada para ver":"esto no está pasando"}),
+            content_type="application/json"
+        )
+def setearEnColumna(entidad,dia,hora):
+    if dia != None and dia != "''":
+        print("en setear en columna ",dia)
+        if hora != '' and hora != None:
+            if dia == 'lunEnt':
+                entidad.lunEnt = hora
+            elif dia == 'lunSal':
+                entidad.lunSal = hora
+            elif dia == 'marEnt':
+                entidad.marEnt = hora
+            elif dia == 'marSal':
+                entidad.marSal = hora
+            elif dia == 'mieEnt':
+                entidad.mieEnt = hora
+            elif dia == 'mieSal':
+                entidad.mieSal = hora
+            elif dia == 'jueEnt':
+                entidad.jueEnt = hora
+            elif dia == 'jueSal':
+                entidad.jueSal = hora
+            elif dia == 'vieEnt':
+                entidad.vieEnt = hora
+            elif dia == 'vieSal':
+                entidad.vieSal = hora
+            elif dia == 'sabEnt':
+                entidad.sabEnt = hora
+            elif dia == 'sabSal':
+                entidad.sabSal = hora
+            elif dia == 'domEnt':
+                entidad.domEnt = hora
+            elif dia == 'domSal':
+                entidad.domSal = hora
+
+    return entidad
+def guardarAsignacion(request):
+    if request.method=="POST":
+        print("REQUEST.POST ",request.POST)
+        try:
+            response={}
+            id_puntoServicio=request.POST.get('puntoServicio')
+                    
+            ''' Obtenemos el punto de servicio'''
+            puntoSer = PuntoServicio.objects.get(pk=id_puntoServicio)
+                
+            ''' Obtenemos la asignacion en caso de que exista una '''
+            asignacion = AsignacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+
+            if asignacion == None:
+                asignacion = AsignacionCab()
+                    
+            asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
+                    
+            """Se le dio click a agregar detalle"""
+            form = AsignacionCabForm(request.POST, instance=asignacion)
+            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
+                    
+            print ("form error",form.errors)
+            print ("asign error",AsigDetFormSet.errors)
+            if form.is_valid() and AsigDetFormSet.is_valid():
+                """Se guarda completo"""
+                form.save()
+                AsigDetFormSet.save()
+                """Se guarda dia libre"""
+                i=0
+                for form in AsigDetFormSet:
+                    operario=None
+                    if request.POST.get('asignaciondet_set-' + str(i) + '-operario') != '' and request.POST.get('asignaciondet_set-' + str(i) + '-operario') != 'None':
+                        if not DiaLibre.objects.filter(id_operario=request.POST.get('asignaciondet_set-' + str(i) + '-operario')).exists():
+                            operario= Operario.objects.get(id=request.POST.get('asignaciondet_set-' + str(i) + '-operario'))
+                            diaLibre = DiaLibre(fechaCreacion=datetime.datetime.now(),id_operario=operario)
+                            diaLibre = setearEnColumna(diaLibre,request.POST.get('diaInicio-'+str(i)),request.POST.get('horaInicio-'+str(i))) 
+                            diaLibre = setearEnColumna(diaLibre,request.POST.get('diaFin-'+str(i)),request.POST.get('horaFin-'+str(i))) 
+                            
+                            if request.POST.get('diaInicio-'+str(i)) != "''" or request.POST.get('horaInicio-'+str(i))!=''  or request.POST.get('diaFin-'+str(i))!="''"  or request.POST.get('horaFin-'+str(i))!='':
+                                diaLibre.save()
+                                print("GUARDA")
+                                print("DIA LIBRE " + str(i))
+                                print(request.POST.get('diaInicio-'+str(i))!="''")
+                                print(request.POST.get('diaFin-'+str(i))!="''")
+                                print(request.POST.get('horaInicio-'+str(i))!='')
+                                print(request.POST.get('horaFin-'+str(i))!='')
+                        else:
+                            print("ya existe operario con dia ")
+                    i=i+1
+                messages.success(request, 'Se guardo correctamente la asignacion')
+                response['dato']=[]
+                response['codigo']=0
+                response['mensaje']="Asignacion guardada con éxito"
+                return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
+            else:
+                response['dato']=[]
+                response['codigo']=1
+                response['mensaje']="Ocurrió un error al guardar la asignacion"
+                return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
+        except Exception as err:
+            transaction.rollback()
+            logging.getLogger("error_logger").error('Ocurrió un error al listar los dias libres: {0}'.format(err))
+            response['codigo']=1
+            response['dato']=[]
+            response['mensaje']="Ocurrió un error al guardar la asignacion"
+            messages.warning(request, 'Ocurrió un error al guardar la asignacions')
+            return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
 
 @login_required
 @permission_required('Operarios.add_asignacioncab', raise_exception=True)
@@ -63,6 +324,12 @@ def Asignacion_create(request, id_puntoServicio=None):
     except PuntoServicio.DoesNotExist as err:
         logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         raise Http404("Punto de Servicio no existe")
+    try:
+        asigCab = AsignacionCab.objects.get(puntoServicio_id=id_puntoServicio)
+        asigDet = AsignacionDet.objects.filter(asignacionCab_id=asigCab.id)
+    except AsignacionCab.DoesNotExist as err:
+        logging.getLogger("error_logger").error('Asignacion cabecera no existe: {0}'.format(err))
+        raise Http404("Asignacion cabecera no existe")
 
     ''' Obtenemos el relevamiento para mostrar en la pantalla '''
     relevamiento = RelevamientoCab.objects.filter(puntoServicio_id = puntoSer.id).first()
@@ -86,54 +353,20 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     ''' Obtenemos la asignacion en caso de que exista una '''
     asignacion = AsignacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
-    formDiaLibre = DiaLibreForm(request.POST)
-    print("ASIGNACION", asignacion)
+    """formDiaLibre = DiaLibreForm(request.POST)"""
+
     if asignacion == None:
         asignacion = AsignacionCab()
     
 
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
-    print("#1")
-
-    print(request.GET)
-
-    if request.GET.get('page'):
-        print("Hay pagiina")
-
-
 
     if request.method == 'POST':
         print(request.POST)
-        print(request.session.keys())
         if  request.POST.get('action') == 'add_det': 
             """Se le dio click a agregar detalle"""
             form = AsignacionCabForm(request.POST, instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
-            i=0
-            #Se verifican solo los que no están eliminados
-            for key in request.session.keys():
-                if 'diaInicio' in key: 
-                    if request.session[key]:
-                        diaInicioSelected.append(request.session[key])
-                        print (diaInicioSelected)
-                    else:
-                        diaInicioSelected.append(None)
-                if 'diaFin' in key:            
-                    if request.session[key]:
-                        diaFinSelected.append(request.session[key])
-                    else:
-                        diaFinSelected.append(None)
-                if 'horaInicio' in key:
-                    if request.session[key]:
-                        horaInicioSelected.append(request.session[key])
-                    else:
-                        horaInicioSelected.append(None)
-                if 'horaFin' in key:
-                    if request.session[key]:
-                        horaFinSelected.append(request.session[key])
-                    else:
-                        horaFinSelected.append(None)
-                i=i+1
             """se prepara para agregar otro"""
         elif  'filter_operario' in request.POST.get('action'):
                 
@@ -209,18 +442,12 @@ def Asignacion_create(request, id_puntoServicio=None):
                         domSal = request.POST.get('asignaciondet_set-' + str(i) + '-domSal')
                     if request.POST.get('asignaciondet_set-' + str(i) + '-totalHoras'):
                         totalHoras = request.POST.get('asignaciondet_set-' + str(i) + '-totalHoras')
-                    
                     if request.POST.get('asignaciondet_set-' + str(i) + '-perfil'):
                         perfil = request.POST.get('asignaciondet_set-' + str(i) + '-perfil')
-
-                 
                     if request.POST.get('asignaciondet_set-' + str(i) + '-supervisor')=="on":
                         supervisor = True
-
-                 
                     if request.POST.get('diaInicio-' + str(i) ):
                         diaInicio = request.POST.get('diaInicio-' + str(i))
-
                     if request.POST.get('horaInicio-' + str(i)):
                         horaInicio = request.POST.get('horaInicio-' + str(i))
                         
@@ -269,8 +496,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                         if i>0:
                             index=1
                            
-                            while (index <= i): 
-                                print ("Para verificar horario")     
+                            while (index <= i):      
                                 lunEntAnt=None
                                 lunSalAnt=None
                                 marEntAnt=None
@@ -286,7 +512,6 @@ def Asignacion_create(request, id_puntoServicio=None):
                                 domEntAnt=None
                                 domSalAnt=None
                                 fechaFinAnt=None
-                                print (request.POST.get("id_asignaciondet_set-" + str(index-1) + "-DELETE"))
                                 if request.POST.get("id_asignaciondet_set-" + str(index-1) + "-DELETE")==None:
                                     
                                     if request.POST.get('asignaciondet_set-' + str(index-1) + '-fechaInicio'):
@@ -460,19 +685,13 @@ def Asignacion_create(request, id_puntoServicio=None):
             """Se le dio click a buscar operario"""
             form = AsignacionCabForm(request.POST,instance=asignacion)
             AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)    
-            print (request.POST)
         else: 
             """Se le dio click al boton guardar"""
-            
-
             form = AsignacionCabForm(request.POST, instance=asignacion)
-            
             AsigDetFormSet = asignacionDetFormSet(request.POST,instance=asignacion)
-
                
             print ("form error",form.errors)
             print ("asign error",AsigDetFormSet.errors)
-            print(AsigDetFormSet)
             if form.is_valid() and AsigDetFormSet.is_valid():
                 """Se guarda completo"""
                 form.save()
@@ -500,7 +719,6 @@ def Asignacion_create(request, id_puntoServicio=None):
             'pservicio': puntoSer,
             'form': form,
             'operarios':operarios,
-            'formDiaLibre':formDiaLibre,
             'asigDetFormSet': AsigDetFormSet,
             'relevamiento' : relevamiento,
             'paginator':paginator,
@@ -655,7 +873,6 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
         """
         """conn.callproc('operarios_disponibles_v2', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
         params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp, fechaFinOp,perfil)
-        print(params)
         conn.execute('operarios_disponibles_v2 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
         result = conn.fetchall()
        

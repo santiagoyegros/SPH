@@ -391,7 +391,17 @@ def gestion_alertas(request,alerta_id=None):
                     setattr(alerta,"Estado", "CERRADA")
                     
                     """guardamos las horas no procesadas"""
-                    horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
+                    entradaHora=None
+                    salidaHora=None
+                    horasTotales=None
+                    if len(horarios)>1:
+                        if horarios[0].horaEntrada:
+                            entradaHora = horarios[0].horaEntrada
+                        if horarios[0].horaSalida:
+                            salidaHora = horarios[0].horaSalida
+                        if horarios[0].totalHoras:
+                            horasTotales = horarios[0].totalHoras
+                    horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=entradaHora, Hsalida=salidaHora, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horasTotales)
                     horasNoProcesadas.save()
                     """"procedemos a guardar el remplazo"""
 
@@ -403,14 +413,19 @@ def gestion_alertas(request,alerta_id=None):
                         fechaRetorno=datetime.datetime.strptime(request.POST.get('fechaRetorno'), "%d/%m/%Y")
                     
                     """se guarda el reemplazo"""
-                    horarioOperario = request.POST.get('horarioOperario')
-                    horarioOperario = horarioOperario[0:8]
+                    horarioOperario=""
+                    date_time_obj =  datetime.datetime.now().replace(hour=0,minute=0,second=0)
                     fechaAlerta = alerta.FechaHora.strftime("%d/%m/%Y")
-                    date_time_obj = datetime.datetime.strptime(horarioOperario,'%H:%M:%S')
+                    if request.POST.get('horarioOperario'):
+                        horarioOperario = request.POST.get('horarioOperario')
+                        horarioOperario = horarioOperario[0:8]
+                        date_time_obj = datetime.datetime.strptime(horarioOperario,'%H:%M:%S')
 
                     remplazoCab=RemplazosCab.objects.create(fechaInicio=alerta.FechaHora.date(),fechaFin=alerta.FechaHora.date(), tipoRemplazo='REEMPLAZO-1', FechaHoraRemplazo=datetime.datetime.strptime(fechaAlerta, "%d/%m/%Y").replace(hour=date_time_obj.hour,minute=date_time_obj.minute,second=date_time_obj.second, microsecond=0), usuario=request.user)
                     
-                    asignacion_reemp = AsignacionDet.objects.get(id=alerta.Asignacion_id) 
+                    asignacion_reemp = None
+                    if alerta.Asignacion_id: 
+                      asignacion_reemp =  AsignacionDet.objects.get(id=alerta.Asignacion_id) 
                     operario_reemp  =Operario.objects.get(id=request.POST.get('idreemplazante'))
                     remplazoDet=RemplazosDet.objects.create(Asignacion=asignacion_reemp, remplazo=operario_reemp, fecha=alerta.FechaHora.date(), remplazoCab=remplazoCab)
                     

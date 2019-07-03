@@ -609,12 +609,22 @@ class Alertas(models.Model):
 
 
 class DiaLibre(models.Model):
-    asignacionDet =  models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
-    diaInicio=models.CharField(_("Dia Inicio Libre"), max_length=10)
-    horaInicio=models.TimeField('Hora Inicio Libre', blank=True, null=True)
-    diaFin=models.CharField(_("Dia Fin Libre"), max_length=10)
-    horaFin=models.TimeField('Hora Fin Libre', blank=True, null=True)
     fechaCreacion=models.DateTimeField('Fecha Relevamiento', auto_now_add=True)
+    lunEnt = models.TimeField('Lunes entradas', blank=True, null=True)
+    lunSal = models.TimeField('Lunes salida', blank=True, null=True)
+    marEnt = models.TimeField('Martes entrada', blank=True, null=True)
+    marSal = models.TimeField('Martes salida', blank=True, null=True)
+    mieEnt = models.TimeField('Miercoles entrada', blank=True, null=True)
+    mieSal = models.TimeField('Miercoles salida', blank=True, null=True)
+    jueEnt = models.TimeField('Jueves entrada', blank=True, null=True)
+    jueSal = models.TimeField('Jueves salida', blank=True, null=True)
+    vieEnt = models.TimeField('Viernes entrada', blank=True, null=True)
+    vieSal = models.TimeField('Viernes salida', blank=True, null=True)
+    sabEnt = models.TimeField('Sabado entrada', blank=True, null=True)
+    sabSal = models.TimeField('Sabado salida', blank=True, null=True)
+    domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
+    domSal = models.TimeField('Domingo salida', blank=True, null=True)
+    id_operario= models.ForeignKey(Operario, blank=True, null=True, on_delete=models.SET_NULL)
 class OperariosAsignacionDet (models.Model):
     id_operario= models.IntegerField(db_column='id_opeario', primary_key=True,verbose_name=' ')
     nombres=models.CharField(db_column='nombres',verbose_name='Nombres',max_length=200)

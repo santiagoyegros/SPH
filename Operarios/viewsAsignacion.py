@@ -20,10 +20,9 @@ from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, R
 from ast import literal_eval
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection
-
 from datetime import datetime as dt
-
 import json
+from django.db.models import Q
 @login_required
 @permission_required('Operarios.view_asignacioncab', raise_exception=True)
 def Asignacion_list(request):
@@ -31,7 +30,7 @@ def Asignacion_list(request):
         pk_puntoServSeleccionado = request.POST.get('asig_puntoServ')
         return redirect('Operarios:asignacion_create', id_puntoServicio=pk_puntoServSeleccionado)
     else:
-        puntoServi = PuntoServicio.objects.all()
+        puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
         contexto = {'PuntosServicio': puntoServi}
         return render(request, 'asignacion/asignacion_list.html', context=contexto)
 
@@ -43,14 +42,14 @@ def agregar_detalle(request):
             id_puntoServicio=request.POST.get('id_puntoServicio')
             
             ''' Obtenemos el punto de servicio'''
-            puntoSer = PuntoServicio.objects.get(pk=id_puntoServicio)
+            puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None))
         
             ''' Obtenemos la asignacion en caso de que exista una '''
-            asignacion = AsignacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+            asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None) ).first()
 
             if asignacion == None:
                 asignacion = AsignacionCab()
-            
+
             asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
             
             """Se le dio click a agregar detalle"""
@@ -225,10 +224,10 @@ def guardarAsignacion(request):
             id_puntoServicio=request.POST.get('puntoServicio')
                     
             ''' Obtenemos el punto de servicio'''
-            puntoSer = PuntoServicio.objects.get(pk=id_puntoServicio)
+            puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None))
                 
             ''' Obtenemos la asignacion en caso de que exista una '''
-            asignacion = AsignacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+            asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None)).first()
 
             if asignacion == None:
                 asignacion = AsignacionCab()
@@ -320,7 +319,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     logging.getLogger("error_logger").error('Se ingreso en el metodo asignacion_create')
     ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
     try:
-        puntoSer = PuntoServicio.objects.get(pk=id_puntoServicio)
+        puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None))
     except PuntoServicio.DoesNotExist as err:
         logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         raise Http404("Punto de Servicio no existe")
@@ -332,7 +331,7 @@ def Asignacion_create(request, id_puntoServicio=None):
         raise Http404("Asignacion cabecera no existe")
 
     ''' Obtenemos el relevamiento para mostrar en la pantalla '''
-    relevamiento = RelevamientoCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+    relevamiento = RelevamientoCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None)).first()
     if relevamiento == None:
         logging.getLogger("error_logger").error('El punto de servicio no tiene servicio aprobado')
         raise Http404("El punto de servicio no tiene Servicio aprobado")
@@ -340,25 +339,26 @@ def Asignacion_create(request, id_puntoServicio=None):
     if relevamiento.relevamientocupohoras_set.exists():
         logging.getLogger("error_logger").error('Estamos revisando si existe detalle de cupo de horas')
         for cupo in relevamiento.relevamientocupohoras_set.iterator():
-            if cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'SEM':
-                sem_diurno = cupo.cantCHoras
-            elif cupo.tipoHora.tipoHorario == 'Nocturno' and cupo.frecuencia == 'SEM':
-                sem_nocturno = cupo.cantCHoras
-            elif cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'DOM':
-                dom_diurno = cupo.cantCHoras
-            elif cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'DOM':
-                dom_nocturno = cupo.cantCHoras
+            """SI ES LA ULTIMA VERSION DE RELEVAMIENTO CUPOS HORAS"""
+            if cupo.vfechaFin == None:
+                if cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'SEM':
+                    sem_diurno = cupo.cantCHoras
+                elif cupo.tipoHora.tipoHorario == 'Nocturno' and cupo.frecuencia == 'SEM':
+                    sem_nocturno = cupo.cantCHoras
+                elif cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'DOM':
+                    dom_diurno = cupo.cantCHoras
+                elif cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'DOM':
+                    dom_nocturno = cupo.cantCHoras
 
         
 
     ''' Obtenemos la asignacion en caso de que exista una '''
-    asignacion = AsignacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+    asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None) ).first()
     """formDiaLibre = DiaLibreForm(request.POST)"""
 
     if asignacion == None:
         asignacion = AsignacionCab()
     
-
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
 
     if request.method == 'POST':
@@ -708,11 +708,8 @@ def Asignacion_create(request, id_puntoServicio=None):
         asignacion.puntoServicio = puntoSer
         form = AsignacionCabForm(instance=asignacion)
         AsigDetFormSet = asignacionDetFormSet(instance=asignacion)
-    
-    print("ARRAYS",diaFinSelected,diaInicioSelected)
-    if operarios:
-        operarios=serializers.serialize("json",operarios )
-        print(operarios)
+
+
     #operarios_json = json.dumps(operarios)
     contexto = {
             'title': 'Nueva Asignación',

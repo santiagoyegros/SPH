@@ -25,6 +25,7 @@ import decimal
 from django.core.paginator import Paginator
 from django.forms.models import model_to_dict
 from datetime import datetime
+from django.db.models import Q
 def index(request):
     return HttpResponse("Vista de Operarios")
 
@@ -51,21 +52,21 @@ class PuntosServicioList(ListView):
 
             if (cargoUsuario.cargo == 'Fiscal'):
                 #Si es fiscal, le trae sus puntos de servicios. 'Fiscal'
-                consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id).query
+                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)
+                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
 
             elif (cargoUsuario.cargo == 'Jefe de Operaciones'):
                 #Si es jefe de operaciones -> Trae todo los puntos de servicio de sus fiscales. 'Jefe de Operaciones'
-                consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id).query
+                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)
+                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
                 pass
             elif (cargoUsuario.cargo == 'Gerente de Operaciones'):
                 #Si es Gerente de Operaciones/SubGerente -> Todos los contratos. 'Gerente de Operaciones'
-                consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id).query
+                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
                 pass
 
             else:
@@ -100,7 +101,7 @@ class PuntoServicioUpdateView(SuccessMessageMixin, UpdateView):
 @login_required
 @permission_required('Operarios.change_puntoservicio', raise_exception=True)
 def PuntosServicios_update(request, pk):
-    puntoServicio = PuntoServicio.objects.get(id=pk)
+    puntoServicio = PuntoServicio.objects.get(Q(id=pk) & Q(vfechaFin=None))
   
     if request.method == 'GET':
         form = PuntoServicioForm(instance=puntoServicio)
@@ -139,11 +140,11 @@ def Relevamiento(request, id_puntoServicio=None):
         """
         Obtenemos el punto de servicio
         """
-        puntoSer = PuntoServicio.objects.get(pk=id_puntoServicio)
+        puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None))
     except PuntoServicio.DoesNotExist:
         raise Http404("Punto de Servicio no existe")
 
-    relevamiento = RelevamientoCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+    relevamiento = RelevamientoCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None)).first()
 
     if relevamiento == None:
         primeraVez = 1
@@ -286,24 +287,24 @@ def Planificacion_create(request, id_puntoServicio=None):
     logging.getLogger("error_logger").error('Se ingreso en el metodo planificacion_create')
     ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
     try:
-        puntoSer = PuntoServicio.objects.get(pk=id_puntoServicio)
+        puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None) )
     except PuntoServicio.DoesNotExist as err:
         logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         raise Http404("Punto de Servicio no existe")
 
     ''' Obtenemos el relevamiento para mostrar en la pantalla '''
-    relevamiento = RelevamientoCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+    relevamiento = RelevamientoCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None)).first()
 
     ''' Obtenemos la planificacion en caso de que exista una '''
-    planificacion = PlanificacionCab.objects.filter(puntoServicio_id = puntoSer.id).first()
+    planificacion = PlanificacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None)) .first()
 
     initial = []
     CantlimpiezaProf = 1
     if planificacion == None:
         planificacion = PlanificacionCab()
-
+        '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
         if relevamiento:
-            for relevesp in relevamiento.relevamientoesp_set.all():
+            for relevesp in relevamiento.relevamientoesp_set.filter(vfechaFin=None):
                 initial.append({'tipo': relevesp.tipo, 
                                 'frecuencia': relevesp.frecuencia,
                                 'cantHoras': relevesp.cantHoras})
@@ -368,7 +369,7 @@ def Planificacion_list(request):
         pk_puntoServSeleccionado = request.POST.get('plani_puntoServ')
         return redirect('Operarios:planificar_create', id_puntoServicio=pk_puntoServSeleccionado)
     else:
-        puntoServi = PuntoServicio.objects.all()
+        puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
         contexto = {'PuntosServicio': puntoServi}
         return render(request, 'planificacion/planificacion_list.html', context=contexto)
 
@@ -396,8 +397,8 @@ def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
         logging.getLogger("error_logger").error('Usuario de Jefe de Operaciones no existe: {0}'.format(err))
 
 
-    #Se traen todos los fiscales que estan asignados al jefe de operaciones en cuestion
-    fiscales_asig = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe)
+    #Se traen todos los fiscales que estan asignados al jefe de operaciones en cuestion 
+    fiscales_asig = User.objects.filter(Q(FiscalAsigJefeFiscal__userJefe=id_user_jefe) & Q(FiscalAsigJefeFiscal__vfechaFin=None))
     consulta = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
 
@@ -474,19 +475,19 @@ def Fiscales_asig(request, id_user_fiscal=None, id_puntoServicio=None):
         logging.getLogger("error_logger").error('Usuario de Fiscal no existe: {0}'.format(err))
 
     if id_puntoServicio != None:
-        puntoServicio = PuntoServicio.objects.get(pk=id_puntoServicio)
+        puntoServicio = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None))
         asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=puntoServicio)
         asignacion.save()
-        
+
     #Se traen todos los puntos de servicio que estan asignados al fiscal en cuestion
-    puntosServ_asig = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal)
-    consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal).query
+    puntosServ_asig = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) & Q(puntoServicioAsigFiscalPuntoServicio__vfechaFin=None))
+    consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) & Q(vfechaFin=None)).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
     print("Asignados",puntosServ_asig)
    
     #se trae los puntos de servicio disponibles 
-    puntosServ_disp = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True)
-    consulta2 = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True).query
+    puntosServ_disp = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True) & Q(vfechaFin=None))
+    consulta2 = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True) & Q(vfechaFin=None)).query
     logging.getLogger("error_logger").error('La consulta de puntos de servicio disponibles ejecutada es: {0}'.format(consulta2))
 
     #cargamos el contexto
@@ -506,8 +507,8 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
         logging.getLogger("error_logger").error('Usuario de Fiscal no existe: {0}'.format(err))
 
     #Se traen todos los puntos de servicio que estan asignados al fiscal en cuestion
-    puntosServ_asig = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal)
-    consulta = PuntoServicio.objects.filter(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal).query
+    puntosServ_asig = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) & Q(vfechaFin=None))
+    consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) & Q(vfechaFin=None)).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
     
     '''Se obtienen todos los ids seleccionados'''
@@ -521,7 +522,7 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
                 asignacion.delete()
 
             for PS_id in request.POST.getlist('puntos_disp'):
-                nuevoPunto = PuntoServicio.objects.get(pk=PS_id)
+                nuevoPunto = PuntoServicio.objects.get(Q(pk=PS_id) & Q(vfechaFin=None))
                 print(nuevoPunto)
                 asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=nuevoPunto)
                 asignacion.save() 
@@ -532,7 +533,7 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
 @permission_required('Operarios.delete_operario', raise_exception=True)
 def Fiscales_delete(request, id_user_fiscal=None, id_puntoServicio=None):
     user_fiscal = User.objects.get(pk=id_user_fiscal) 
-    puntoServicio = PuntoServicio.objects.get(pk=id_puntoServicio)
+    puntoServicio = PuntoServicio.objects.get( Q(pk=id_puntoServicio) & Q(vfechaFin=None))
 
     if request.method == 'POST':
         asignacion = AsigFiscalPuntoServicio.objects.get(userFiscal=user_fiscal, puntoServicio=puntoServicio)

@@ -103,6 +103,9 @@ class PuntoServicio(models.Model):
     TelefonoContacto = models.CharField('Telefono del Contacto', max_length=100)
     Coordenadas = models.CharField('Coordenadas', max_length=100)
     NumeroMarcador = models.CharField('Numero Marcador', max_length=15, blank=True, null=True)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
 
     def __str__(self):
         return self.CodPuntoServicio
@@ -159,6 +162,10 @@ class RelevamientoCab(models.Model):
     usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     tipoSalario = models.ForeignKey(TipoSalario, blank=True, null=True, on_delete=models.CASCADE)
     comentario = models.CharField('Comentarios del servicio aprobado', max_length=550, blank=True, null=True)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
     
     def __str__(self):
         return self.puntoServicio.NombrePServicio
@@ -185,6 +192,10 @@ class RelevamientoDet(models.Model):
     domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
     domSal = models.TimeField('Domingo salida', blank=True, null=True)
     tipoServPart = models.ForeignKey(TipoServicioParticular, blank=True, null=True, on_delete=models.CASCADE)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
 
     class Meta:
         verbose_name_plural = "Servicios Especificos"
@@ -227,6 +238,10 @@ class RelevamientoEsp(models.Model):
     #dia = models.CharField('Dia', max_length = 3, choices = DIA)
     #cantHoras = models.IntegerField('Cantidad de Horas', blank=True, null=True)
     cantHoras = models.CharField('Cantidad de Horas', max_length = 8, blank=True, null=True)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
 
     class Meta:
         verbose_name_plural = "Cupo de Horas Limpieza Profunda"
@@ -247,6 +262,10 @@ class RelevamientoCupoHoras(models.Model):
     #cantCHoras = models.DecimalField('Cantidad de Horas', max_digits=7, decimal_places=1, db_column='cantHoras', blank=True, null=True)
     frecuencia = models.CharField('Frecuencia', max_length = 3, choices = CUPO_FRECUENCIA, default = SEMANAL, )
     tipoHora = models.ForeignKey(TipoHorario, blank=True, null=True, on_delete=models.CASCADE)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
 
     class Meta:
         verbose_name = _("Cupo de Horas")
@@ -256,6 +275,10 @@ class RelevamientoMensualeros(models.Model):
     relevamientoCab =  models.ForeignKey(RelevamientoCab, blank=True, null=True, on_delete=models.CASCADE)
     mensuCantidad = models.IntegerField('Cantidad de Mensualeros', blank=True, null=True)
     sueldo = models.IntegerField('Sueldo', blank=True, null=True)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
     
     class Meta:
         verbose_name = _("Mensualeros")
@@ -269,6 +292,10 @@ class PlanificacionCab(models.Model):
     cantHoras = models.CharField('Cantidad de Horas Normales', max_length=8, blank=True, null=True)
     cantHorasNoc = models.CharField('Cantidad de Horas Nocturnas', max_length=8, blank=True, null=True)
     cantHorasEsp = models.CharField('Cantidad de Horas Especiales', max_length=8, blank=True, null=True)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
     
     def __str__(self):
         return self.puntoServicio.NombrePServicio
@@ -294,6 +321,10 @@ class PlanificacionOpe(models.Model):
     corte = models.CharField('Corte', max_length=8, blank=True, null=True)
     #total = models.DecimalField('total', max_digits=7, decimal_places=2, blank=True, null=True)
     total = models.CharField('Total', max_length=8, blank=True, null=True)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
 
     class Meta:
         verbose_name = _("Planificacion de Horas Operarios")
@@ -339,6 +370,10 @@ class PlanificacionEsp(models.Model):
     cantHoras = models.CharField('Cantidad de Horas', max_length = 8, blank=True, null=True)
     #cantHoras = models.IntegerField('Cantidad de Horas', blank=True, null=True)
     fechaLimpProf = models.DateField('Fecha Inicio Limpieza Prof', null=True)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
 
 class Cargo(models.Model):
     cargo = models.CharField(max_length=100)
@@ -378,6 +413,10 @@ def save_user_cargoasignado(sender, instance, **kwargs):
 class AsigJefeFiscal(models.Model):
     userJefe = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name='JefeOpAsigJefeFiscal')
     userFiscal = models.OneToOneField(User, on_delete=models.CASCADE, related_name='FiscalAsigJefeFiscal')
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
     
 
     class Meta:
@@ -390,6 +429,10 @@ class AsigJefeFiscal(models.Model):
 class AsigFiscalPuntoServicio(models.Model):
     userFiscal = models.ForeignKey(User, on_delete=models.CASCADE, related_name='FiscalAsigFiscalPuntoServicio')
     puntoServicio = models.OneToOneField(PuntoServicio, on_delete=models.CASCADE, related_name='puntoServicioAsigFiscalPuntoServicio')
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
 
     class Meta:
         verbose_name = _("Asignacion Fiscal-PuntoServicio")
@@ -431,6 +474,10 @@ class AsignacionCab(models.Model):
     fechaUltimaMod = models.DateTimeField('Fecha Relevamiento', auto_now_add=True)
     usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     totalasignado = models.CharField('Total Asignado', max_length=8, null=True)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
 
     class Meta:
         verbose_name = _("Asignacion")
@@ -461,6 +508,10 @@ class AsignacionDet(models.Model):
     totalHoras = models.CharField('Total Asignado', max_length=8, null=True)
     supervisor=models.BooleanField('Supervisor', default=False)
     perfil = models.ForeignKey(Especializacion, on_delete=models.CASCADE, null=True)
+    vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
+    vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
+    vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+
     
 
     

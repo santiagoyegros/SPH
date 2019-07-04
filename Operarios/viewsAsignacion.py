@@ -34,6 +34,57 @@ def Asignacion_list(request):
         contexto = {'PuntosServicio': puntoServi}
         return render(request, 'asignacion/asignacion_list.html', context=contexto)
 
+def restarHoras(totalHora,asigHora,totalMin,asigMin):
+    totalHorasMinutos = totalHora*60
+    totalAsigHorasMinutos = asigHora*60
+    cantidadTotalDeMinutos = (totalHorasMinutos+totalMin)-(totalAsigHorasMinutos+asigMin)
+    cantidadTotalHoras = cantidadTotalDeMinutos//60
+    cantidadTotalDeMinutos = cantidadTotalDeMinutos%60
+    return "{}:{}".format(cantidadTotalHoras,int(cantidadTotalDeMinutos))
+
+def getPuntosServicios(request):
+    puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+
+    puntos =[]
+    i=1
+    for p in puntoServi:
+        totalHora=""
+        horasAsig=""
+        horas=""
+        minutos=""
+        horasRestante=""
+        minutosRestante=""
+        cantidadMinutos=""
+        estado=""
+        if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
+            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
+            totalHora = relevamientoCab.cantidadHrTotal
+        if AsignacionCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
+            asignacionCab = AsignacionCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
+            estado = asignacionCab.reAsignar
+            horasAsig = asignacionCab.totalasignado
+        if  totalHora and horasAsig:
+            horasTotales,minutosTotales = totalHora.split(':')
+            horasAsignadas,minutosAsignadas = horasAsig.split(':')
+            cantidadMinutos = restarHoras( int(horasTotales),int(horasAsignadas),int(minutosTotales),int(minutosAsignadas))
+
+        puntos.append({
+            "id":i,
+            "idPunto":p.id,
+            "puntservnombre":p.NombrePServicio,
+            "horatotal":totalHora,
+            "horasasignada":horasAsig,
+            "horafaltante":cantidadMinutos,
+            "estado":estado
+        })
+        i=i+1
+
+    response={}
+    response['dato']=puntos
+    response['codigo']=0
+    response['mensaje']="Se listaron con éxito"
+    return HttpResponse(json.dumps(response),content_type="application/json")
+
 def agregar_detalle(request):
     response = {}
     if request.method == 'POST':

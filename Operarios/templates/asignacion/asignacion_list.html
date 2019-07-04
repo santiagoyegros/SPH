@@ -2,20 +2,100 @@
 {% load static %}
 
 {% block content %}
-    <h2>Asignación de Puntos de Servicio</h2>
-    
-    <form method='POST' action=''> 
+<h2>Asignación de Puntos de Servicio</h2>
+
+<form method='POST' action=''>
     {% csrf_token %}
-        <div class="form-group">
+    <div class="form-group">
         <label for="exampleFormControlSelect1">Punto de Servicio:</label>
-        <select class="form-control" id="exampleFormControlSelect1" name="asig_puntoServ">
+        <!-- <select class="form-control" id="exampleFormControlSelect1" name="asig_puntoServ">
             {% if PuntosServicio %}
                 {% for puntosSer in PuntosServicio %}
                         <option value={{ puntosSer.id }}>{{ puntosSer.NombrePServicio }}</option>
                 {% endfor %}
             {% endif %}
-        </select>
-        </div>
-        <input class="btn btn-primary" type="submit" value="Asignar">
-    </form>
+        </select> -->
+
+        <div id="jsGrid"></div>
+    </div>
+    <!-- <input class="btn btn-primary" type="submit" value="Asignar"> -->
+</form>
+<script>
+    $(function () {
+        $("#jsGrid").jsGrid({
+            height: "80%",
+            width: "100%",
+            filtering: false,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            pageSize: 10,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "No se han encontrado registros",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: "GET",
+                        url: "/reingenieria/asignacion/puntoServicios"
+                    }).done(function (result) {
+                        console.log(result)
+                        d.resolve($.map(result, function (item) {
+                            console.log(item)
+                            return $.extend(item, { id: item.id });
+                        }));
+                    });
+
+                    return d.promise();
+                }
+            },
+            rowClick: function (e) {
+                window.location.href="/reingenieria/asignacion/asignar/"+e.item.idPunto 
+            },
+            fields: [
+                { name: "id", type: "text", width: 150, title: "Nro", headercss: "elm-table-header" },
+                { name: "puntservnombre", type: "text", width: 150, title: "Punto de Servicio" },
+                { name: "horasasignada", type: "text", width: 150, title: "Horas Asignadas" },
+                { name: "horafaltante", type: "text", width: 150, title: "Horas Faltantes" },
+                { name: "horatotal", type: "text", width: 150, title: "Total horas" },
+                { name: "estado", type: "text", width: 150, title: "Estado",
+                itemTemplate: function(value,item){
+                    if(item.estado=="1"){
+                        return "<i class='fas fa-circle' style='color:purple' title='REASIGNAR'></i>"
+                    }
+                    if(item.horafaltante=="0:0" ){ 
+                        return "<i class='fas fa-circle' style='color:green' title='TERMINADO'></i>"
+                    }
+                    if(item.horafaltante){
+                        if(item.horafaltante.includes("-")){
+                            return "<i class='fas fa-circle' style='color:red' title='HORAS EXCEDIDAS'></i>"
+                        }
+                    }
+                    if(item.horafaltante!="0:0"){
+                        return "<i class='fas fa-circle' style='color:yellow' title='HORAS FALTANTES'></i>"
+                    }
+                }} 
+            ]
+        });
+
+    });
+                /*,
+        { type: "control" }*/
+</script>
+<style>
+    .jsgrid-header-row>.jsgrid-header-cell {
+        background: #86273E !important;
+        color: white !important;
+    }
+</style>
 {% endblock %}

@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render, redirect, render_to_response
 from django.core import serializers
 from datetime import datetime
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -20,7 +20,11 @@ from Operarios.models import PuntoServicio, Operario, RelevamientoCab, Relevamie
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 
 import json
-
+import datetime
+import decimal
+from django.core.paginator import Paginator
+from django.forms.models import model_to_dict
+from datetime import datetime
 def index(request):
     return HttpResponse("Vista de Operarios")
 
@@ -112,7 +116,7 @@ def PuntosServicios_update(request, pk):
             messages.success(request, 'Punto de Servicio modificado correctamente.')
         return redirect('Operarios:puntoServicio_list')
 
-    return render(request, 'operarios/puntoServicio_list.html', context=contexto)
+    return render(request, 'puntoServicio/puntoServicio_form.html', context=contexto) 
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.delete_puntoservicio', raise_exception=True), name='dispatch')
@@ -441,7 +445,7 @@ def asignarFiscales(request,id_user_jefe=None ):
                 asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
                 asignacion.save() 
 
-    return redirect('Operarios:jefes_asigFiscales', id_user_jefe=id_user_jefe)
+    return redirect('Operarios:jefes_list')
 
 @login_required
 @permission_required('Operarios.delete_operario', raise_exception=True)
@@ -522,7 +526,7 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
                 asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=nuevoPunto)
                 asignacion.save() 
 
-    return redirect('Operarios:fiscales_asig', id_user_fiscal=id_user_fiscal)
+    return redirect('Operarios:fiscales_list')
 
 @login_required
 @permission_required('Operarios.delete_operario', raise_exception=True)
@@ -561,14 +565,86 @@ def getMarcaciones(request):
         if request.GET.get('codubicacion')  is not None and request.GET.get('codubicacion')!='':
             marcacion=marcacion.filter(codubicacion__contains = request.GET.get('codubicacion'));
         if request.GET.get('fecha')  is not None and request.GET.get('fecha')!='':
-            dtd=datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ');
+            dtd=datetime.strptime(request.GET.get('fecha'),'%d/%m/%Y');
             dtd=dtd.replace(hour=0,minute=0,second=0,microsecond=0);
             marcacion=marcacion.filter(fecha__gte=dtd);
             dtd=dtd.replace(hour=23,minute=59,second=59);
             marcacion=marcacion.filter(fecha__lte=dtd);
+            print(dtd)
         if request.GET.get('estado') is not None and request.GET.get('estado')!='':
             marcacion=marcacion.filter(estado__contains = request.GET.get('estado'));
-        return HttpResponse(serializers.serialize('json', marcacion), content_type = 'application/json', status = 200);
+        """paginado=Paginator(marcacion.order_by('fecha'),  request.GET.get('pageSize'))
+        listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
+        dataMarcacion=list(listaPaginada)"""
+        
+        """lista=serializers.serialize("json",dataMarcacion )"""
+       
+
+        """
+        Filtro nuevo
+        """
+        """
+        response_data={}
+        response_data["data"]=json.loads(serializers.serialize("json",dataMarcacion )),
+        response_data["itemsCount"]=len(marcacion)
+        
+        print (response_data)
+        print ("Serializado")
+        
+       
+        
+        return HttpResponse(json.dumps(response_data), content_type = 'application/json', status = 200);
+        """
+        return HttpResponse(serializers.serialize("json",marcacion ), content_type = 'application/json', status = 200);
+
+
+def default(o):
+    if isinstance(o,(datetime.date,datetime.datetime)):
+        return o.isoformat();
+    if isinstance(o,decimal.Decimal):
+        return str(o);
+
+def getMarcacionesPaginada(request):
+        marcacion = EsmeEmMarcaciones.objects.all();
+        if request.GET.get('codoperacion')  is not None and request.GET.get('codoperacion')!='':
+            marcacion=marcacion.filter(codoperacion__contains = request.GET.get('codoperacion'));
+        if request.GET.get('codpersona')  is not None and request.GET.get('codpersona')!='':
+            marcacion=marcacion.filter(codpersona=request.GET.get('codpersona'));
+        if request.GET.get('codcategoria')  is not None  and request.GET.get('codcategoria')!='':
+            marcacion=marcacion.filter(codcategoria=request.GET.get('codcategoria'));
+        if request.GET.get('numlinea')  is not None  and request.GET.get('numlinea')!='':
+            marcacion=marcacion.filter(numlinea__contains = request.GET.get('numlinea'));
+        if request.GET.get('codubicacion')  is not None and request.GET.get('codubicacion')!='':
+            marcacion=marcacion.filter(codubicacion__contains = request.GET.get('codubicacion'));
+        if request.GET.get('fecha')  is not None and request.GET.get('fecha')!='':
+            dtd=datetime.strptime(request.GET.get('fecha'),'%d/%m/%Y');
+            dtd=dtd.replace(hour=0,minute=0,second=0,microsecond=0);
+            marcacion=marcacion.filter(fecha__gte=dtd);
+            dtd=dtd.replace(hour=23,minute=59,second=59);
+            marcacion=marcacion.filter(fecha__lte=dtd);
+            print(dtd)
+        if request.GET.get('estado') is not None and request.GET.get('estado')!='':
+            marcacion=marcacion.filter(estado__contains = request.GET.get('estado'));
+        
+        pagina=1;
+        items=10;
+        cuenta=marcacion.count();
+
+        if request.GET.get('pagina') is not None and request.GET.get('pagina')!='':
+            pagina=int(request.GET.get('pagina'));
+        if request.GET.get('items') is not None and request.GET.get('items')!='':
+            items=int(request.GET.get('items'));
+        marcacion=marcacion[(pagina-1)*items:pagina*items];
+        marcacion=[model_to_dict(item) for item in marcacion];
+        respuesta={};
+        respuesta['lista']=marcacion;
+        respuesta['totalPaginas']=round(cuenta/items);
+        respuesta['paginaActual']=pagina;
+        respuesta['totalItems']=cuenta;
+        respuesta['items']=items;
+
+        return HttpResponse(json.dumps(respuesta,default=default), content_type = 'application/json', status = 200);
+        
 
 
 def descargarMarcaciones(request):
@@ -650,10 +726,11 @@ def getFeriados(request):
         if request.GET.get('descripcion')  is not None and request.GET.get('descripcion')!='':
             feriados=feriados.filter(descripcion__contains = request.GET.get('descripcion'));
         if request.GET.get('fecha')  is not None and request.GET.get('fecha')!='':
-            dtd=datetime.strptime(request.GET.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ');
+            dtd=datetime.strptime(request.GET.get('fecha'),'%d/%m/%Y');
             dtd=dtd.replace(hour=0,minute=0,second=0,microsecond=0);
             feriados=feriados.filter(fecha__gte=dtd);
             dtd=dtd.replace(hour=23,minute=59,second=59);
+            print(dtd)
             feriados=feriados.filter(fecha__lte=dtd);
         return HttpResponse(serializers.serialize('json', feriados), content_type = 'application/json', status = 200);
 def makeFeriados(request):

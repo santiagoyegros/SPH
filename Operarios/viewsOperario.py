@@ -1,6 +1,6 @@
 import logging
 from django.shortcuts import render, redirect, render_to_response
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404,JsonResponse
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -16,6 +16,9 @@ from django.contrib import messages
 from datetime import datetime
 import json
 from django.core import serializers
+from django.core.paginator import Paginator
+from django.forms.models import model_to_dict
+
 @login_required
 @permission_required('Operarios.add_operario', raise_exception=True)
 def Operarios_create(request):
@@ -65,18 +68,32 @@ def Operarios_list(request):
     operarios = Operario.objects.all()
     
     if request.GET.get('nroLegajo'):
-        operarios=operarios.filter(nroLegajo=request.GET.get('nroLegajo'))
+        operarios=operarios.filter(nroLegajo__contains=request.GET.get('nroLegajo'))
     
     if request.GET.get('nombre'):
-        operarios=operarios.filter(nombre=request.GET.get('nombre'))
+        operarios=operarios.filter(nombre__contains=request.GET.get('nombre'))
 
     if request.GET.get('apellido'):
-        operarios=operarios.filter(apellido=request.GET.get('apellido'))
+        operarios=operarios.filter(apellido__contains=request.GET.get('apellido'))
         
     if request.GET.get('nroCedula') :
-        operarios=operarios.filter(nroCedula=request.GET.get('nroCedula'))
+        operarios=operarios.filter(nroCedula__contains=request.GET.get('nroCedula'))
+    paginado=Paginator(operarios.order_by('apellido').values("pk", "nombre", "apellido", "nroLegajo", "numCedula", "id"),  request.GET.get('pageSize'))
+    listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
+    dataOperarios=list(listaPaginada)
 
-    return HttpResponse(serializers.serialize('json', operarios), content_type = 'application/json', status = 200)
+    """
+    Filtro nuevo
+    """
+    lista=dataOperarios
+    response_data={}
+    response_data["data"]=lista;
+    response_data["itemsCount"]=len(operarios)
+    
+    
+    
+    return JsonResponse(response_data)
+ 
 
 @login_required
 @permission_required('Operarios.change_operario', raise_exception=True)

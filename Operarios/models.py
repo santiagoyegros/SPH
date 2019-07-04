@@ -6,6 +6,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MaxValueValidator
 from django.db import connection
+from django.utils.timezone import now
 class Ciudad(models.Model):
     NombreCiudad = models.CharField("Ciudad", max_length=70)
 
@@ -458,36 +459,15 @@ class AsignacionDet(models.Model):
     fechaInicio = models.DateField('Fecha Inicio Operario', null=True)
     fechaFin = models.DateField('Fecha Fin Operario', null=True,blank=True)
     totalHoras = models.CharField('Total Asignado', max_length=8, null=True)
+    supervisor=models.BooleanField('Supervisor', default=False)
+    perfil = models.ForeignKey(Especializacion, on_delete=models.CASCADE, null=True)
+    
 
     
 
     class Meta:
         verbose_name = _("Asignacion Detalle")
         verbose_name_plural = _("Asignacion Detalles")
-
-class AsignacionDetAux(models.Model):
-    asignacionCab =  models.ForeignKey(AsignacionCab, blank=True, null=True, on_delete=models.SET_NULL)
-    lunEnt = models.TimeField('Lunes entradas', blank=True, null=True)
-    lunSal = models.TimeField('Lunes salida', blank=True, null=True)
-    marEnt = models.TimeField('Martes entrada', blank=True, null=True)
-    marSal = models.TimeField('Martes salida', blank=True, null=True)
-    mieEnt = models.TimeField('Miercoles entrada', blank=True, null=True)
-    mieSal = models.TimeField('Miercoles salida', blank=True, null=True)
-    jueEnt = models.TimeField('Jueves entrada', blank=True, null=True)
-    jueSal = models.TimeField('Jueves salida', blank=True, null=True)
-    vieEnt = models.TimeField('Viernes entrada', blank=True, null=True)
-    vieSal = models.TimeField('Viernes salida', blank=True, null=True)
-    sabEnt = models.TimeField('Sabado entrada', blank=True, null=True)
-    sabSal = models.TimeField('Sabado salida', blank=True, null=True)
-    domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
-    domSal = models.TimeField('Domingo salida', blank=True, null=True)
-    operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
-    fechaInicio = models.DateField('Fecha Inicio Operario Aux', null=True)
-    totalHoras = models.CharField('Total de horas necesarias tabla aux', max_length=8, null=True)
-    class Meta:
-        verbose_name = _("Asignacion Detalle Auxiliar")
-        verbose_name_plural = _("Asignacion Detalles Auxiliares")
-
 
 class HorasProcesadas(models.Model):
     NumCedulaOperario = models.CharField('N° Cedula', max_length=30)
@@ -538,18 +518,6 @@ class EsmeEmMarcaciones(models.Model):
         managed = False
         db_table = 'ESME_EM_Marcaciones'
 
-class OperariosAsignacionDet (models.Model):
-    id_operario= models.IntegerField(db_column='id_opeario', primary_key=True,verbose_name=' ')
-    nombres=models.CharField(db_column='nombres',verbose_name='Nombres',max_length=200)
-    nroLegajo=models.CharField(db_column='nroLegajo',verbose_name='Numero de legajo',max_length=6)
-    nombres_puntoServicio=models.CharField(db_column='nombres_puntoServicio',verbose_name='Nombres Puntos de Servicio',max_length=200)
-    ids_puntoServicio=models.CharField(db_column='ids_puntoServicio',verbose_name=' ',max_length=100)
-    totalHoras=models.FloatField(db_column='totalHoras',verbose_name='Total Horas')
-    perfil=models.CharField(db_column='perfil',verbose_name='Perfil',max_length=400)
-    antiguedad=models.IntegerField(db_column='antiguedad',verbose_name='Antiguedad')
-    class Meta:
-        verbose_name = _("Operario disponible")
-        verbose_name_plural = _("Operarios disponibles")
     
 
 class AsignacionesProcesadas(models.Model):
@@ -585,15 +553,59 @@ class Alertas(models.Model):
     Operario = models.ForeignKey(Operario, on_delete=models.CASCADE)
     Asignacion = models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
     PuntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
-    Estado = models.CharField(_("Estado"), max_length=10)
+    Estado = models.CharField(_("Estado"), max_length=15)
     Tipo = models.CharField(_('Tipo de Alerta'), max_length=10)
 
+
+class DiaLibre(models.Model):
+    fechaCreacion=models.DateTimeField('Fecha Relevamiento', auto_now_add=True)
+    lunEnt = models.TimeField('Lunes entradas', blank=True, null=True)
+    lunSal = models.TimeField('Lunes salida', blank=True, null=True)
+    marEnt = models.TimeField('Martes entrada', blank=True, null=True)
+    marSal = models.TimeField('Martes salida', blank=True, null=True)
+    mieEnt = models.TimeField('Miercoles entrada', blank=True, null=True)
+    mieSal = models.TimeField('Miercoles salida', blank=True, null=True)
+    jueEnt = models.TimeField('Jueves entrada', blank=True, null=True)
+    jueSal = models.TimeField('Jueves salida', blank=True, null=True)
+    vieEnt = models.TimeField('Viernes entrada', blank=True, null=True)
+    vieSal = models.TimeField('Viernes salida', blank=True, null=True)
+    sabEnt = models.TimeField('Sabado entrada', blank=True, null=True)
+    sabSal = models.TimeField('Sabado salida', blank=True, null=True)
+    domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
+    domSal = models.TimeField('Domingo salida', blank=True, null=True)
+    id_operario= models.ForeignKey(Operario, blank=True, null=True, on_delete=models.SET_NULL)
+class OperariosAsignacionDet (models.Model):
+    id_operario= models.IntegerField(db_column='id_opeario', primary_key=True,verbose_name=' ')
+    nombres=models.CharField(db_column='nombres',verbose_name='Nombres',max_length=200)
+    nroLegajo=models.CharField(db_column='nroLegajo',verbose_name='Numero de legajo',max_length=6)
+    nombres_puntoServicio=models.CharField(db_column='nombres_puntoServicio',verbose_name='Nombres Puntos de Servicio',max_length=200)
+    ids_puntoServicio=models.CharField(db_column='ids_puntoServicio',verbose_name=' ',max_length=100)
+    totalHoras=models.FloatField(db_column='totalHoras',verbose_name='Total Horas')
+    perfil=models.CharField(db_column='perfil',verbose_name='Perfil',max_length=400)
+    antiguedad=models.IntegerField(db_column='antiguedad',verbose_name='Antiguedad')
+    ids_perfil=models.CharField(db_column='ids_perfil',verbose_name=' ',max_length=100, default='')
+    managed=False
+    class Meta:
+        verbose_name = _("Operario disponible")
+        verbose_name_plural = _("Operarios disponibles")
+
+class HorariosOperario(models.Model):
+    idOrden= models.IntegerField(db_column='idOrden',verbose_name='idOrden', primary_key=True)  
+    diaEntrada=models.CharField( db_column='diaEntrada',verbose_name='diaEntrada', max_length=30)
+    horaEntrada=models.TimeField( db_column='horaEntrada',verbose_name='horaEntrada', blank=True)
+    diaSalida=models.CharField(db_column='diaSalida',verbose_name='diaSalida',max_length=30)
+    horaSalida=models.TimeField(db_column='horaSalida',verbose_name='horaSalida', blank=True)
+    totalHoras=models.TimeField(db_column='totalHoras',verbose_name='totalHoras', blank=True, null=True)
+    managed=False
+    class Meta:
+        verbose_name = _("Horarios Operario")
+        verbose_name_plural = _("Horarios Operario")
 
 class RemplazosCab(models.Model):
     fechaInicio = models.DateField('Fecha Inicio Remplazo', null=True)
     fechaFin = models.DateField('Fecha Inicio Remplazo', null=True)
     FechaHoraRemplazo = models.DateTimeField('Fecha hora del Remplazo')
-    tipoRemplazo = models.CharField(_('Tipo de Remplazo'), max_length=10)
+    tipoRemplazo = models.CharField(_('Tipo de Remplazo'), max_length=15)
     usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
 
     
@@ -602,4 +614,22 @@ class RemplazosDet(models.Model):
     Asignacion = models.ForeignKey(AsignacionDet, blank=True, null=True, on_delete=models.SET_NULL)
     fecha = models.DateField('Fecha Inicio Remplazo', null=True)
     remplazo = models.ForeignKey(Operario, on_delete=models.CASCADE)
+    remplazoCab=models.ForeignKey(RemplazosCab, blank=True, null=True, on_delete=models.SET_NULL)
+
+class Motivos (models.Model):
+    descripcion=models.CharField(max_length=500)
+
+
+
+class AlertaResp (models.Model):
+    accion=models.CharField(max_length=30, verbose_name='Accion')
+    hora=models.TimeField(blank=True, null=True, verbose_name='Hora Aproximada')
+    motivo= models.ForeignKey(Motivos, blank=True, null=True,on_delete=models.CASCADE)
+    fechaRetorno=models.DateField(blank=True, verbose_name='Fecha de Retorno', null=True)
+    comentarios=models.CharField(max_length=1000, verbose_name='Comentarios')
+    escalado=models.BooleanField(default=False, verbose_name='Escalado')
+    id_alerta=models.ForeignKey(Alertas, on_delete=models.CASCADE)
+    id_reemplazo=models.ForeignKey(RemplazosCab, blank=True, null=True,on_delete=models.CASCADE)
+    usuario=models.ForeignKey(User, blank=True, null=True,on_delete=models.SET_NULL)
+    fecha_creacion = models.DateTimeField('Fecha Relevamiento', auto_now_add=True, blank=True, null=True)
 

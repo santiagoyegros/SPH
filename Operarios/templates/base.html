@@ -1,23 +1,33 @@
 {% load static %}
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="{% static 'jquery/jquery-3.3.1.js' %}"></script>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <script src="{% static 'jquery/jquery-ui.min.js' %}"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" type="text/css" media="all" rel="stylesheet">
 <link href="/static/bootstrap_datepicker_plus/css/datepicker-widget.css" type="text/css" media="all" rel="stylesheet">
 <link href="{% static 'style/main.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+<link href="{% static 'vendor/fontawesome-5.8.2/css/all.min.css' %} " type="text/css" media="all" rel="stylesheet">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="/static/bootstrap_datepicker_plus/js/datepicker-widget.js"></script> 
-<script src="http://js-grid.com/js/jsgrid.min.js"></script>
-<link href="http://js-grid.com/css/jsgrid.min.css" rel="stylesheet" />
-<link href="http://js-grid.com/css/jsgrid-theme.min.css" rel="stylesheet" />
-<link href="{% static 'vendor/bootstrap-select/dist/css/bootstrap-select.min.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
+<script type="text/javascript" src="{% static 'vendor/jsgrid-1.5.3/jsgrid.min.js' %}"></script>
+<link href="{% static 'vendor/jsgrid-1.5.3/jsgrid.min.css' %} " type="text/css" media="all" rel="stylesheet" />
+<link href="{% static 'vendor/jsgrid-1.5.3/jsgrid-theme.min.css' %} " type="text/css" media="all" rel="stylesheet" />
+<link href="{% static 'vendor/bootstrap-select-1.13.10/css/bootstrap-select.min.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
 <link href="{% static 'vendor/multi-select/css/multi-select.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
-<script type="text/javascript" src="{% static 'vendor/bootstrap-select/dist/js/bootstrap-select.min.js'%}"></script> 
-<script type="text/javascript" src="{% static 'vendor/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js'%}"></script>
+<script type="text/javascript" src="{% static 'vendor/bootstrap-select-1.13.10/js/bootstrap-select.min.js'%}"></script> 
+<script type="text/javascript" src="{% static 'vendor/bootstrap-select-1.13.10/js/i18n/defaults-es_ES.min.js'%}"></script>
 <script type="text/javascript" src="{% static 'vendor/multi-select/js/jquery.multi-select.js'%}"></script>      
         <script >
+                function startLoader(){
+                    $('.content-loader').removeClass('d-none');
+                }
+                function endLoader(){
+                    $('.content-loader').addClass('d-none');   
+                }
+                function setMessageAlert (mensaje){
+                    $('#alert').removeClass('d-none');
+                    document.getElementById('alert').innerText=mensaje;
+                }
                 var MyDateField = function(config) {
                            jsGrid.Field.call(this, config);
                        };
@@ -114,9 +124,17 @@
     </head>
     <body style="overflow-x: hidden !important; height: 100% !important;">
       {% block navbar %}{% include 'base/navbar.html' %}{% endblock %}
-    
+      <div class="content-loader d-none">
+            <div class='wrap'>
+                    <div class='loader' id='lrd1'></div>
+            </div>
+        </div>
       <div class="container" style="width: 100% !important;
       max-width: 100%;">
+      <!-- MENSAJES DE ALERTA POR DEFAULT DE DJANGO Y BOOTSTRAP -->
+      <div class="alert alert-danger d-none" id="alert">
+            <!-- Aqui se inserta le mensaje de error -->
+      </div>
         {% if messages %}
             {% for message in messages %}
                 {% if message.tags == 'warning' %}
@@ -149,6 +167,85 @@
     
     
     </body>
-    
+    <style>
+       .wrap {
+        position: fixed;
+        left: 50%;
+        width: 5em;
+        z-index: 9999999999;
+        height: 5em;
+        top: 20%;
+        transform: translate(-50%, 100%);
+    }
+
+    .loader {
+        transition: all 0.7s ease-in-out;
+        border: 10px solid #ebebeb;
+        border-bottom-color: #7a0c25;
+        width: 75%;
+        height: 75%;
+        border-radius: 50%;
+        -webkit-font-smoothing: antialiased !important;
+        margin: 30px 0px;
+    }
+    .content-loader{
+        position: fixed;
+        margin-top: calc(-56px - 1.5rem) !important;
+        width: 100%;
+        z-index: 99999;
+        height: 100%;
+        background-color: #0000002e;
+    }
+    #lrd1 {
+        -webkit-animation: spin1 0.5s linear infinite;
+    }
+
+    #lrd2 {
+        -webkit-animation: spin2 3s ease-in-out infinite;
+    }
+
+    #lrd3 {
+        -webkit-animation: spin3 15s ease-in-out infinite;
+    }
+
+    @keyframes spin1 {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes spin2 {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        50% {
+            transform: rotate(1020deg);
+        }
+
+        100% {
+            transform: rotate(720deg);
+        }
+    }
+
+    @keyframes spin3 {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        40% {
+            transform: rotate(1070deg);
+        }
+
+        100% {
+            transform: rotate(6119deg);
+            border-bottom-color: #072426 !important;
+        }
+    }
+    </style>
     {% block scripts %}{% endblock %}
   </html>

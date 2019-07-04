@@ -11,7 +11,7 @@ from Operarios.views import Planificacion_list, Planificacion_create, Jefes_list
 from Operarios.views import Fiscales_asig, Fiscales_delete
 from Operarios.views import obtenerMarcacion,getMarcaciones,obtenerFeriado,getFeriados,makeFeriados,editFeriados,deleteFeriados,descargarMarcaciones
 from Operarios import viewsAsignacion 
-from Operarios import viewsOperario
+from Operarios import viewsOperario, viewsAlerta
 from Operarios.views import PuntosServicios_update
 from Operarios.viewsAsignacion import cargarOperarios
 app_name = 'Operarios'
@@ -45,6 +45,10 @@ urlpatterns = [
     url(r'^fiscales/eliminar/(?P<id_user_fiscal>\d+)/(?P<id_puntoServicio>\d+)/$', Fiscales_delete, name='fiscales_del'),
     url(r'^asignacion/listar/', viewsAsignacion.Asignacion_list, name='asignacion_list'),
     url(r'^asignacion/asignar/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_create, name='asignacion_create'),
+    url(r'^asignacion/asignar/operarios', viewsAsignacion.getOperarios, name='getOperarios'),
+    url(r'^asignacion/agregarDetalle', viewsAsignacion.agregar_detalle, name='addDetalle'),
+    url(r'^asignacion/diasLibres', viewsAsignacion.getDiasLibres, name='getDiasLibres'),
+    url(r'^asignacion/guardarAsignacion', viewsAsignacion.guardarAsignacion, name='guardarAsignacion'),
     url(r'^marcacion/vista', obtenerMarcacion , name='marcaciones_url'),
     url(r'^marcacion/listar/', getMarcaciones , name='marcaciones_get'),
     url(r'^asignacion/operarios'+
@@ -54,11 +58,16 @@ urlpatterns = [
    '(?P<domEntReq>\d+)/(?P<domSalReq>\d+)/(?P<fechaInicioOp>\d+)/$', 
     cargarOperarios , name='filter_operarios'),
     url(r'^marcacion/descargar', descargarMarcaciones , name='marcaciones_xls'),
-
     url(r'^operaciones/feriados/vista', obtenerFeriado , name='feriados_url'),
     url(r'^feriados/listar', getFeriados , name='feriados_get'),
     url(r'^feriados/crear', makeFeriados , name='feriados_post'),
     url(r'^feriados/editar/(?P<feriado_id>\d+)', editFeriados , name='feriados_put'),
     url(r'^feriados/eliminar/(?P<feriado_id>\d+)', deleteFeriados , name='feriados_delete'),
     url(r'^operaciones/operarios/vista/', viewsOperario.getOperariosVista , name='operarios_vista'),
+    url(r'^alertas/listar/', viewsAlerta.alertasList , name='alertas_list'),
+    url(r'^alertas/gestionar/(?P<alerta_id>\d+)', viewsAlerta.gestion_alertas , name='alertas_gestionar'),
+    url(r'^alertas/gestionar/marcaciones', viewsAlerta.getMarcaciones , name='getMarcacines'),
+    url(r'^alertas/gestionar/reemplazo', viewsAlerta.getReemplazos , name='getReemplazos'),
+    url(r'^alertas/gestionar/emparejar/(?P<alerta_id>\d+)/(?P<emparejamiento_id>\d+)', viewsAlerta.emparejar , name='alertas_emparejar')
+
 ]   

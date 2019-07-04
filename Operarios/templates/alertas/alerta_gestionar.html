@@ -1,0 +1,666 @@
+{% extends "base.html" %}
+{% load static %}
+{% block base_head %}
+<link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet">
+</link>
+{% endblock %}
+{% block content %}
+<h1 class='my-3'>Detalle de Alertas - No marcación</h1>
+<input type="hidden" value="{{alerta_id}}" id="alerta">
+<div class="container-fluid pl-0 pr-1">
+
+        <div class="col-md-12 pl-0 pr-1">
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    Operario
+                </div>
+                <div class="card-body">
+                    <div class="cuerpo-filtro row">
+                        <div class="row filter-row">
+                            <div class="col-md-4">
+                                <p style="margin:0px !important">
+
+                                    <label for="">Nombre</label>
+                                    <input type="text" class="form-control form-bordernone" value="{{operario.nombre}} {{operario.apellido}}" disabled>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p style="margin:0px !important">
+
+                                    <label for="">Teléfono</label>
+                                    <input type="text" class="form-control form-bordernone" value="{{operario.telefono}}" disabled>
+
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>
+                                    <label for="">Horario</label>
+                                    
+                                    <input type="text" class="form-control form-bordernone" id="id_horario" value="{{horario}}" disabled>
+
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row filter-row">
+                            <div class="col-md-4">
+                                <p>
+
+                                    <label for="">Próxima marcación</label>
+                                    <input type="text" class="form-control form-bordernone" id="idproxima_marcacion" value="{{prox_marcacion}}" disabled>
+
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>
+
+                                    <label for="tipoAlerta">Fecha</label>
+                                   
+                                    <input type="text" class="form-control form-bordernone" value=" {{alerta.FechaHora| date:"d/m/Y"}}" disabled>
+
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <!-- Dia requerido para realizar reemplazo -->
+                                <input type="hidden" name="" id="diaRequerido" value="{{diaRequerido}}">
+                                <input type="hidden" name="fechaAlerta"  id="id_fechaAlerta" value="{{alerta.Fecha}}">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="    float: right;">
+                            <button type='button' id="marcaciones" onclick="mostrarMarcaciones()" class='btn btn-success btn-filtrar' data-toggle="modal" data-target="#modalFiltro">Últimas 10 marcaciones</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    Punto de Servicio
+                    <input type="hidden" id="id_puntoServicio" value="{{puntoServicio.id}}">
+                </div>
+                <div class="card-body">
+                    <div class="cuerpo-filtro row">
+                        <div class="row filter-row">
+                            <div class="col-md-4 col-lg-4">
+                                <p style="margin:0px !important">
+
+                                    <label for="">Punto Servicio</label>
+                                    <input type="text" class="form-control form-bordernone" value="{{puntoServicio.NombrePServicio}}" disabled>
+                                </p>
+                            </div>
+                            <!--div class="col-md-4 col-lg-4">
+                                <p style="margin:0px !important">
+
+                                    <label for="">Teléfono</label>
+                                    <input type="text" class="form-control" value="{{puntoServicio.TelefonoContacto}}" disabled>
+                                </p>
+                            </div!-->
+                            <div class="col-md-4 col-lg-4">
+                                    <p style="margin:0px !important">
+    
+                                        <label for="">Marcador</label>
+                                        {% if puntoServicio.NumeroMarcador %}
+                                        <input type="text" class="form-control form-bordernone" value="{{puntoServicio.NumeroMarcador}}" disabled>
+                                        {% else %}
+                                        <input type="text" class="form-control form-bordernone" value="" disabled>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            <div class="col-md-4 col-lg-4">
+                                    <p>
+    
+                                        <label for="">Perfil Requerido</label>
+                                        <input type="text" class="form-control form-bordernone" value="{{asignacion.perfil.especializacion}} " disabled>
+                                    </p>
+                                </div>
+
+                        </div>
+                        <div class="row filter-row">
+                            <div class="col-md-4 col-lg-4">
+                                <p>
+
+                                    <label for="">Fiscal</label>
+                                    <input type="text" class="form-control form-bordernone" value="{{fiscal.userFiscal.first_name}} {{fiscal.userFiscal.last_name}}" disabled>
+                                </p>
+                            </div>
+                            <div class="col-md-4 col-lg-4">
+                                <p>
+
+                                    <label for="tipoAlerta">Telefono</label>
+                                    <input type="text" class="form-control form-bordernone" value="" disabled>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row filter-row">
+                                
+                                <div class="col-md-4 col-lg-4">
+                                    <p>
+    
+                                        <label for="tipoAlerta">Supervisor</label>
+                                        <input type="text" class="form-control form-bordernone" value="{{supervisor.Operario.nombre}} {{supervisor.Operario.apellido}}" disabled>
+                                    </p>
+                                </div>
+                                <div class="col-md-4 col-lg-4">
+                                        <p>
+        
+                                            <label for="tipoAlerta">Telefono</label>
+                                            <input type="text" class="form-control form-bordernone" value="{{supervisor.Operario.telefono}}" disabled>
+                                        </p>
+                                    </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:15px !important;border:none !important;">
+                <div class="card-header">
+                    Alertas sin Asignación en el Punto de Servicio
+                </div>
+                <div class="card-body" style="padding: 10px 0px !important;">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Nro.</th>
+                                <th>Operario</th>
+                                <th>Teléfono</th>
+                                <th>Hora</th>
+                                <th>Fecha</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sinAsig in alertasSinAsig %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{sinAsig.Operario.nombre}} {{sinAsig.Operario.apellido}}</td>
+                                <td>{{sinAsig.Operario.telefono}}</td>
+                                <td>{{sinAsig.FechaHora | date:"H:m:s"}} </td>
+                                <td>{{sinAsig.FechaHora | date:"d/m/Y"}}</td>
+                                <td style="display:flex;justify-content:center"><a
+                                        href={% url 'Operarios:alertas_emparejar' alerta_id=alerta.id emparejamiento_id=sinAsig.id %}
+                                        class="btn btn-success btn-filtrar">Emparejar</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <!-- <div class="pagination">
+                                        Página:&nbsp;&nbsp;
+                                        {% if alertasList.has_previous %}
+                                        <a href="?page={{alertasList.previous_page_number}}">Anterior</a>
+                                        {% else %}
+                                        <span class="disabled">Anterior</span>
+                                        {% endif %}
+                                        {% for num in alertasList.paginator.page_range %}
+                                        {% if alertasList.number == num %}
+                                        <li class="active"><a href="#!">{{ num }}</a></li>
+                                        {% else %}
+                                        <li class="waves-effect"><a
+                                                href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% if alertasList.has_next %}
+                                        <a href="?page={{alertasList.next_page_number}}">Anterior</a>
+                                        {% else %}
+                                        <span class="disabled">Siguiente</span>
+                                        {% endif %}
+                                    </div>-->
+
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    Otras Acciones
+                </div>
+                <div class="card-body">
+                    <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="cuerpo-filtro row">
+                        <div class="row filter-row">
+                            <div class="col-md-4">
+                                <p style="margin:0px 0px 17px 0px !important;display: flex;">
+
+                                    <label for="" style="margin: 0px 63px 10px 0px;">Acción</label>
+                                    <select class="form-control" id="exampleFormControlSelect1" name="accion">
+                                        <option value="1">En el lugar</option>
+                                        <option value="2">Va a asistir</option>
+                                        <option value="3">No se va a cubrir</option>
+                                        <option value="4">Remplazo</option>
+                                    </select>
+                                </p>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-12 pl-0" id="1">
+                                <div class="row filter-row">
+                                        <div class="col-md-4">
+                                                <p style="display: flex;padding: 0px 5px 0px 10px !important;">
+
+                                                        <label for="tipoAlerta" style="width: 163px;">Hora de entrada</label>
+                                                        <input type="text" 
+                                                            name="horaEntrada"
+                                                            value="{{horaConPenalizacion}}"
+                                                            class="form-control form-control-sm" style="height:38px !important;"
+                                                            id="id_horaEntrada"
+                                                            dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}" disabled>
+                                                    </p>
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="col-md-12 pl-0 d-none" id="2">
+                                <div class="row filter-row">
+                                        <div class="col-md-4">
+                                                <p style="display: flex;padding: 0px 5px 0px 10px !important;">
+
+                                                        <label for="id_horaAprox" style="width: 163px;">Hora Aproximada</label>
+                                                        <input type="text" 
+                                                            name="horaAprox"
+                                                            class="form-control form-control-sm" style="height:38px !important;"
+                                                            id="id_horaAprox"
+                                                            dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                                    </p>
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="col-md-12 pl-0 d-none" id="3">
+                                <div class="row filter-row">
+                                        <div class="col-md-4">
+                                                <p style="display: flex;padding: 0px 5px 0px 10px !important;">
+
+                                                </p>
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="col-md-12 pl-0 d-none" id="4">
+                            <div class="row filter-row">
+                                <div class="col-md-4">
+                                    <p style="display: flex;">
+
+                                        <label for="" style="margin: 0px 60px 0px 0px;">Motivo</label>
+                                            <select class="form-control" name="motivo" id="id_motivo">
+                                                <option value="{{motivo.id}}">---------</option>
+                                                {% for motivo in motivos %}
+                                                    <option value="{{motivo.id}}">{{motivo.descripcion}}</option>
+                                                {% endfor %}
+                                                </select>
+                                    </p>
+                                    
+                                    <p style="display: flex;">
+                                            <label for="" style="margin: 0px 20px 0px 0px;">Comentarios</label>
+                                            <textarea name="comentarios" class="form-control" id="id_comentario" cols="30" rows="5" style="resize: none"
+                                                placeholder="Agregue un comentario aquí"></textarea>
+                                        </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <p style="display: flex;">
+
+                                            <label for="tipoAlerta" style="width: 270px;margin-right:10px;">Fecha de retorno</label>
+                                            <input type="text" value="{{ form.fechaInicio.value}}"
+                                                name="fechaRetorno"
+                                                class="form-control"
+                                                id="id_fechaRetorno"
+                                                dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <p style="display: flex;">
+
+                                            <label for="tipoAlerta" style="width: 270px;">Hora de retorno</label>
+                                            <input type="text" value="{{form.lunSal.value}}"
+                                                name="horaRetorno"
+                                                class="form-control form-control-sm" style="height:38px !important;"
+                                                id="id_horaRetorno"
+                                                dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                            <p style="display: flex;">
+    
+                                                <label for="tipoAlerta" style="width: 270px;">Reemplazante</label>
+                                                <input type="text"
+                                                    name="reemplazante"
+                                                    class="form-control form-control-sm" style="height:38px !important;"
+                                                    id="id_reemplazante"
+                                                     disabled>
+                                                     <input type="hidden"
+                                                    name="idreemplazante"
+                                                    id="id_idreemplazante"
+                                                     >
+                                                <input type="hidden" name="horarioOperario" value="{{horario}}">
+                                            </p>
+                                        </div>
+                                    
+
+                                </div>
+                            </div>
+                            <div class="row filter-row">
+                                <div class="col-md-4">
+
+                                   
+                                </div>
+                                <div class="col-md-4" style="    display: flex;
+                                        justify-content: center;
+                                        align-items: center;">
+                                    <div class="row">
+                                        <div class="col-md-6">
+
+                                            <p style="display: flex;">
+                                                    <label for="" style="margin: 0px 20px 0px 0px;">Escalar</label>
+                                                <input type="checkbox" name="escalar" id="id_escalar" style="margin: 6px 15px;">
+                                                
+
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type='button' class='btn btn-success btn-filtrar' onclick="asignarReemplazo()">Asignar</button>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div style="    float: right;">
+                        <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar">Cancelar</a>
+                        <button type='submit' class='btn btn-success btn-filtrar'>Guardar</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+
+        </div>
+  <!-- Modal -->
+  <div class="modal fade" id="modalFiltro" tabindex="-1" role="dialog"
+  aria-labelledby="modalFiltro" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="modalFiltro">Últimas 10 marcaciones</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div id="jsGrid"></div>
+          </div>
+      </div>
+  </div>
+</div>
+ <!-- Modal -->
+ <div class="modal fade" id="modalFiltroReemplazo" tabindex="-1" role="dialog"
+ aria-labelledby="modalFiltro" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+     <div class="modal-content">
+         <div class="modal-header">
+             <h5 class="modal-title" id="modalFiltro2">Asignar Operario</h5>
+             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+             </button>
+         </div>
+         <div class="modal-body">
+             <div id="jsGridReemplazo"></div>
+         </div>
+     </div>
+ </div>
+</div>
+
+</div>
+
+<script>
+        function asignarReemplazo() {
+            //Seteamos action
+            //document.getElementById('action').value = 'filter_operario-' + id;
+            //hacemos submit
+            //document.getElementById('formulario').submit();
+            $('#modalFiltroReemplazo').modal('show');
+            $("#jsGridReemplazo").jsGrid({
+                height: "80%",
+                width: "100%",
+                /*filtering: true,
+                inserting: true,
+                editing: true,
+                sorting: true,
+                paging: true,
+                autoload: true,*/
+                filtering: true,
+                inserting: false,
+                editing: false,
+                sorting: true,
+                paging: true,
+                autoload: true,
+                pageSize: 5,
+                pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+                pageButtonCount: 1,
+                pagePrevText: "Anterior",
+                pageNextText: "Siguiente",
+                pageFirstText: "Primera",
+                pageLastText: "Ultima",
+                noDataContent: "No se han encontrado registros",
+                deleteConfirm: "Desea eliminar el registro?",
+                loadMessage: "Por favor, espere...",
+                invalidMessage: "Datos no válidos",
+                controller: {
+                    loadData: function (filter) {
+                        var d = $.Deferred();
+                        var horario = $('#id_horario').val();
+                        var iniciofin = horario.split('-');
+                        filter.id_puntoServicio = $('#id_puntoServicio').val();
+                        filter.horarioInicio = iniciofin[0];
+                        filter.horarioFin = iniciofin[1];
+                        filter.diaRequerido=$('#diaRequerido').val();
+                        filter.fechaInicio  = $('#id_fechaAlerta').val();
+                        $.ajax({
+                            type: "GET",
+                            url: "/reingenieria/alertas/gestionar/reemplazo",
+                            data: filter
+                        }).done(function (result) {
+                            console.log("Resultado", result);
+    
+                             d.resolve($.map(result, function (item) {
+                                 return $.extend(item.fields, { id: item.pk });
+                             }));
+                        });
+    
+                        return d.promise();
+                    }
+    
+                },
+                rowClick: function (e) {
+                    console.log(e);
+                     var nombres = e.item.nombres;
+                     var id_operario = e.item.id;
+                     $('#id_reemplazante')[0].value=nombres;
+                     $('#id_idreemplazante')[0].value=id_operario;
+                    $('#modalFiltroReemplazo').modal('hide');
+    
+                },
+    
+                fields: [
+                    { name: "nombres", type: "text", width: 150, title: "Nombre" },
+                    { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
+                    { name: "antiguedad", type: "text", width: 150, title: "Antiguedad" },
+                    { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
+                    { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
+                    { name: "perfil", type: "date", width: 150, title: "Perfil" }
+                ]
+            });
+        }
+    </script>
+<style>
+    .card-header {
+        background-color: #86273e !important;
+        color: white !important;
+        font-size: 20px !important;
+        border-radius: 0px !important;
+        border-bottom: 1px solid gray !important;
+    }
+
+    .card {
+        border-radius: 0px !important;
+    }
+
+    .cuerpo-filtro .row div p {
+        width: 100% !important;
+        padding: 0px 10px;
+    }
+
+    .filter-row {
+        width: 100%;
+    }
+
+    .input-group {
+        padding: 0px 10px;
+
+    }
+
+    .btn-light.active,
+    .btn-light:active,
+    .show>.btn-light.dropdown-toggle {
+        background-color: #ffffff !important;
+        color: black !important;
+        background-image: none;
+        border-color: #d9d9d9 !important;
+    }
+
+    .btn-light {
+        background-color: #ffffff !important;
+        color: black !important;
+        background-image: none;
+        border-color: #d9d9d9 !important;
+    }
+
+    .bootstrap-select>.dropdown-toggle.bs-placeholder,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:active,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:focus,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:hover {
+        color: black !important;
+    }
+
+    .table th {
+        background-color: #636363 !important;
+        color: white !important;
+    }
+    label{
+        font-weight: 600 !important;
+    }
+    .table th {
+        padding: .5em !important;
+        border-left: 0px solid white !important;
+        border-right: 0px solid white !important;
+    }
+
+    .table tr:hover {
+        background-color: #c4e2ff !important;
+    }
+
+    .btn-filtrar {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 30px;
+        cursor: pointer;
+    }
+    .jsgrid-grid-header{
+        overflow-y: auto !important;
+    }
+    .btn-limpiar {
+        background-color: gray !important;
+        border-color: gray !important;
+        padding: 7px 30px;
+    }
+    .jsgrid-grid-body {
+        height: 275px !important;
+    }
+    .jsgrid-nodata-row{
+        height: 273px !important;
+    }
+    .form-bordernone:disabled {
+        background-color: transparent !important;
+        border: none !important;
+    }
+</style>
+<script>
+function mostrarMarcaciones(){
+    $("#jsGrid").jsGrid({
+            height: "80%",
+            width: "100%",
+            /*filtering: true,
+            inserting: true,
+            editing: true,
+            sorting: true,
+            paging: true,
+            autoload: true,*/
+            filtering: false,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: false,
+            autoload: true,
+            pageSize: 10,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "El operario no posee marcaciones",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    var id_alerta =$('#alerta').val(); 
+                    var url = "/reingenieria/alertas/gestionar/marcaciones"
+                    filter.alerta_id = $('#alerta').val();
+                    console.log("URL", url);
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        data: filter
+                    }).done(function (result) {
+                        console.log(result);
+                        d.resolve($.map(result, function (item) {
+                            return $.extend(item.fields, { id: item.pk });
+                        }));
+                    });
+
+                    return d.promise();
+                }
+            },
+
+            fields: [
+                { name: "codoperacion", type: "text", width: 150, title: "Operación", headercss: "elm-table-header" },
+                { name: "codpersona", type: "text", width: 150, title: "Cédula" },
+                { name: "codcategoria", type: "text", width: 150, title: "Código Categoría" },
+                { name: "numlinea", type: "text", width: 150, title: "Nro de Linea" },
+                { name: "codubicacion", type: "text", width: 150, title: "Ubicacion" },
+                { name: "fecha", type: "date", width: 150, title: "Fecha" },
+                { name: "estado", type: "text", width: 150, title: "Estado" }
+            ]
+        });
+}
+
+</script>
+<script>
+$('#exampleFormControlSelect1').on('change', function(e){
+ console.log($(this)[0].value);
+ var opcion = $(this)[0].value;
+ console.log("Opcion seleccionada")
+    $('#'+opcion).removeClass('d-none');
+    for(var i=1;i<=4;i++){
+        if(i!=opcion){
+            $('#'+i).addClass('d-none');
+        }
+    }
+}); 
+
+</script>
+{% endblock %}

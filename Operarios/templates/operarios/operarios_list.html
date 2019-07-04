@@ -39,7 +39,7 @@
                 sorting: true,
                 paging: true,
                 autoload: true,
-                pageSize: 10,
+                pageSize: 15,
                 pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
                 pageButtonCount: 1,
                 pagePrevText: "Anterior",
@@ -51,6 +51,7 @@
                 deleteConfirm: "Esta seguro, que desea eliminar el registro??",
                 loadMessage: "Por favor, espere...",
                 invalidMessage: "Datos no válidos",
+                pageLoading:true,
                 controller: {
                     loadData: function(filter) {
                         var d = $.Deferred();
@@ -60,9 +61,10 @@
                             data: filter
                         }).done(function(result) {
                             console.log(result);
-                            d.resolve($.map(result, function(item) {
-                                return $.extend(item.fields, { id: item.pk });
-                            }));
+                            var resp={}
+                            resp.data=result.data;
+                            resp.itemsCount=result.itemsCount
+                            d.resolve(resp)
                         });
 
                         return d.promise();

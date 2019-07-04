@@ -267,15 +267,18 @@ def gestion_alertas(request,alerta_id=None):
             if horarios[0]:
                 if horarios[0].horaEntrada:
                     horario = horarios[0].horaEntrada.strftime("%H:%M:%S")
+                    horaFinal=datetime.datetime.strptime(horarios[0].horaEntrada.strftime("%H:%M:%S"), "%H:%M:%S") 
+                    horaConPenalizacion=horaFinal+datetime.timedelta(minutes=int(penalizacionFinal.valor))
+                    horaConPenalizacion = horaConPenalizacion.strftime("%H:%M:%S")
                 if horarios[0].horaSalida:
                     horario = horario + " - " + horarios[0].horaSalida.strftime("%H:%M:%S")
-                horaFinal=datetime.datetime.strptime(horarios[0].horaEntrada.strftime("%H:%M:%S"), "%H:%M:%S") 
-                horaConPenalizacion=horaFinal+datetime.timedelta(minutes=int(penalizacionFinal.valor))
-                horaConPenalizacion = horaConPenalizacion.strftime("%H:%M:%S")
+            
                 diaRequerido = horarios[0].diaEntrada
             if len(horarios)>1:
-                prox_marcacion = horarios[1].horaEntrada.strftime("%H:%M:%S") + " - " + horarios[1].horaSalida.strftime("%H:%M:%S")
-           
+                if horarios[1].horaEntrada:
+                    prox_marcacion = horarios[1].horaEntrada.strftime("%H:%M:%S") 
+                if horarios[1].horaSalida:
+                    prox_marcacion = prox_marcacion + " - " + horarios[1].horaSalida.strftime("%H:%M:%S")
     """obtener operario"""
     operario=Operario.objects.get(id=alerta.Operario.id)
     puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id) & Q(vfechaFin=None))

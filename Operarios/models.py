@@ -295,6 +295,7 @@ class PlanificacionCab(models.Model):
     vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
     vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
     vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+    rePlanificar = models.BooleanField('Re planificar', default=False)
 
     
     def __str__(self):
@@ -477,6 +478,7 @@ class AsignacionCab(models.Model):
     vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
     vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
     vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
+    reAsignar = models.BooleanField('Re asignar', default=False)
 
 
     class Meta:

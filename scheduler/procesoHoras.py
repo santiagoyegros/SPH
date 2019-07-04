@@ -1,6 +1,6 @@
 import logging
 import datetime as dt
-from Operarios.models import HorasNoProcesadas, HorasProcesadas, EsmeEmMarcaciones, AsignacionDet, AsignacionCab, PuntoServicio, AsignacionesProcesadas, AsigFiscalPuntoServicio, AsigJefeFiscal, Feriados
+from Operarios.models import HorasNoProcesadas, HorasProcesadas, EsmeEmMarcaciones, AsignacionDet, AsignacionCab, PuntoServicio, AsignacionesProcesadas, AsigFiscalPuntoServicio, AsigJefeFiscal, Feriados, RemplazosCab, RemplazosDet
 
 def procesarEntradaSalida(marcacion, marcacion2):
     #Paso 1: Busco la asignacion de la persona en el contrato, en el dia. 
@@ -11,6 +11,7 @@ def procesarEntradaSalida(marcacion, marcacion2):
     DiaSemana = marcacion.fecha.weekday()
     fecha = marcacion.fecha.date()
 
+    #Paso 1.1: Buscamos la asignaciones
     Asignaciones = AsignacionDet.objects.filter(asignacionCab__puntoServicio__CodPuntoServicio=PuntoServicioCod, operario_id__NumCedula=CodPersona)
     consulta = AsignacionDet.objects.filter(asignacionCab__puntoServicio__CodPuntoServicio=PuntoServicioCod, operario_id__NumCedula=CodPersona).query
     logging.getLogger("error_logger").error('La consulta para buscar las asignaciones es: {0}'.format(consulta))
@@ -161,6 +162,13 @@ def procesarEntradaSalida(marcacion, marcacion2):
                                                 AND usu.username = %s """, [PuntoServicioObj.id, CodPersona] 
         ).query
         logging.getLogger("error_logger").error('La consulta para buscar las asignaciones ya procesadas es: {0}'.format(consulta))
+
+        #Paso 3.3: Buscamos si el operario cumple un remplazo
+        Remplazo = RemplazosCab.objects.raw("""
+                                                """)
+        consulta = RemplazosCab.objects.filter().query
+        logging.getLogger("error_logger").error('La consulta para buscar los remplazos es: {0}'.format(consulta))
+
 
         #Si es fiscal 
         if (len(Esfiscal) > 0):

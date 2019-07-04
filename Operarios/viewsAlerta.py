@@ -262,11 +262,13 @@ def gestion_alertas(request,alerta_id=None):
     print("ALERTA ASIGNACION", alerta.Asignacion)
     if alerta.Asignacion:
         horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
-        print("HORARIO OPERARIO",horarios)
         penalizacionFinal=Parametros.objects.get(tipo__contains="ALERTAS", parametro__contains="PENALIZACION")
         if horarios:
             if horarios[0]:
-                horario = horarios[0].horaEntrada.strftime("%H:%M:%S") + " - " + horarios[0].horaSalida.strftime("%H:%M:%S")
+                if horarios[0].horaEntrada:
+                    horario = horarios[0].horaEntrada.strftime("%H:%M:%S")
+                if horarios[0].horaSalida:
+                    horario = horario + " - " + horarios[0].horaSalida.strftime("%H:%M:%S")
                 horaFinal=datetime.datetime.strptime(horarios[0].horaEntrada.strftime("%H:%M:%S"), "%H:%M:%S") 
                 horaConPenalizacion=horaFinal+datetime.timedelta(minutes=int(penalizacionFinal.valor))
                 horaConPenalizacion = horaConPenalizacion.strftime("%H:%M:%S")

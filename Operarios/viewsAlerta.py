@@ -253,6 +253,7 @@ def gestion_alertas(request,alerta_id=None):
     fiscal=""
     motivos=[]
     motivos = Motivos.objects.all()
+    supervisor=None
     if alerta.FechaHora:
             fecha = (alerta.FechaHora).strftime("%d/%m/%Y")
             alerta.Fecha = fecha 
@@ -288,7 +289,9 @@ def gestion_alertas(request,alerta_id=None):
     asignacionOperario=AsignacionDet.objects.get(Q(asignacionCab=asignacionCab) & Q(operario=operario) & Q(vfechaFin=None))
     if AsigFiscalPuntoServicio.objects.filter(Q(puntoServicio=puntoServicio) & Q(vfechaFin=None)).exists():
         fiscal=AsigFiscalPuntoServicio.objects.get(Q(puntoServicio=puntoServicio) & Q(vfechaFin=None))
-    supervisor=AsignacionDet.objects.filter(Q(asignacionCab=asignacionCab) & Q(supervisor=0) & Q(vfechaFin=None))[0]
+    supervisores=AsignacionDet.objects.filter(Q(asignacionCab=asignacionCab) & Q(supervisor=1) & Q(vfechaFin=None))
+    if supervisores:
+        supervisor=supervisores[0]
     alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)
     ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
     """CAMBIAMOS EL ESTADO DE LA ALERTA"""

@@ -250,6 +250,7 @@ def gestion_alertas(request,alerta_id=None):
     diaRequerido=""
     prox_marcacion = ""
     horaConPenalizacion = ""
+    fiscal=""
     motivos=[]
     motivos = Motivos.objects.all()
     if alerta.FechaHora:
@@ -285,7 +286,8 @@ def gestion_alertas(request,alerta_id=None):
     """obtener el horario de ese punto de servicio para ese personaje"""
     asignacionCab=AsignacionCab.objects.get(Q(puntoServicio=puntoServicio) & Q(vfechaFin=None))
     asignacionOperario=AsignacionDet.objects.get(Q(asignacionCab=asignacionCab) & Q(operario=operario) & Q(vfechaFin=None))
-    fiscal=AsigFiscalPuntoServicio.objects.get(Q(puntoServicio=puntoServicio) & Q(vfechaFin=None))
+    if AsigFiscalPuntoServicio.objects.filter(Q(puntoServicio=puntoServicio) & Q(vfechaFin=None)).exists():
+        fiscal=AsigFiscalPuntoServicio.objects.get(Q(puntoServicio=puntoServicio) & Q(vfechaFin=None))
     supervisor=AsignacionDet.objects.filter(Q(asignacionCab=asignacionCab) & Q(supervisor=0) & Q(vfechaFin=None))[0]
     alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)
     ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]

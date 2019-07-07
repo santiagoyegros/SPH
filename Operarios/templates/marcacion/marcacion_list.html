@@ -82,7 +82,7 @@
         jsGrid.fields.date = DateField;
 
         $("#jsGrid").jsGrid({
-            height: "80%",
+            height: "100%",
             width: "100%",
             /*filtering: true,
             inserting: true,
@@ -164,5 +164,21 @@
     .filter-fecha .bootstrap-datetimepicker-widget {
         display: none !important;
     }
+    .jsgrid-grid-header, .jsgrid-grid-body{
+        overflow: hidden !important;
+    }
+    .jsgrid-grid-body .jsgrid-table{
+        height: 100% !important;
+    }
+    .jsgrid-header-sort-asc:before{
+        margin: 6px !important;
+        border-width: 0 5px 10px !important;
+        border-color: transparent transparent #ffffff !important;
+    }
+    .jsgrid-header-sort-desc:before {
+    border-width: 10px 5px 0;
+    margin: 5px !important;
+    border-color: #ffffff transparent transparent;
+}
 </style>
 {% endblock %}

@@ -7,7 +7,7 @@
 <form method='POST' action=''>
     {% csrf_token %}
     <div class="form-group">
-        <label for="exampleFormControlSelect1">Punto de Servicio:</label>
+        <!-- <label for="exampleFormControlSelect1">Punto de Servicio:</label> -->
         <!-- <select class="form-control" id="exampleFormControlSelect1" name="asig_puntoServ">
             {% if PuntosServicio %}
                 {% for puntosSer in PuntosServicio %}
@@ -23,7 +23,7 @@
 <script>
     $(function () {
         $("#jsGrid").jsGrid({
-            height: "80%",
+            height: "100%",
             width: "100%",
             filtering: false,
             inserting: false,
@@ -93,9 +93,31 @@
         { type: "control" }*/
 </script>
 <style>
+     #jsGrid{
+        margin-top: 15px !important;
+    }
     .jsgrid-header-row>.jsgrid-header-cell {
         background: #86273E !important;
         color: white !important;
     }
+    .jsgrid-cell:last-child{
+        text-align: center !important;
+    }
+    .jsgrid-grid-header, .jsgrid-grid-body{
+        overflow: hidden !important;
+    }
+    .jsgrid-grid-body .jsgrid-table{
+        height: 100% !important;
+    }
+    .jsgrid-header-sort-asc:before{
+        margin: 6px !important;
+        border-width: 0 5px 10px !important;
+        border-color: transparent transparent #ffffff !important;
+    }
+    .jsgrid-header-sort-desc:before {
+    border-width: 10px 5px 0;
+    margin: 5px !important;
+    border-color: #ffffff transparent transparent;
+}
 </style>
 {% endblock %}

@@ -44,7 +44,6 @@ def restarHoras(totalHora,asigHora,totalMin,asigMin):
 
 def getPuntosServicios(request):
     puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
-
     puntos =[]
     i=1
     for p in puntoServi:

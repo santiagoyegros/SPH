@@ -838,12 +838,23 @@
 
 <script>
     function guardarAsignacion() {
+        var error=true;
+        if(
+            
+            (timeInHours( $('#sumAll_resto').val())>=0) &&
+            (timeInHours($('#res_sem_diu').val())>=0 || isNaN(timeInHours($('#res_sem_diu').val()))) &&
+            (timeInHours($('#res_sem_noc').val())>=0 || isNaN(timeInHours($('#res_sem_noc').val()))) &&
+            (timeInHours($('#res_dom_diu').val())>=0 || isNaN(timeInHours($('#res_dom_diu').val()))) &&
+            (timeInHours($('#res_dom_noc').val())>=0 || isNaN(timeInHours($('#res_dom_noc').val()))) 
+        ){error=false;}
+        debugger;
+
         token = '{{csrf_token}}';
         startLoader();
         $.ajax({
             type: "POST",
             url: "/reingenieria/asignacion/guardarAsignacion",
-            data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token
+            data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token+"&error="+error
         }).done(function (result) {
             endLoader();
             if(result.codigo==0){

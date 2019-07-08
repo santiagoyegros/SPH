@@ -231,7 +231,16 @@ def guardarAsignacion(request):
 
             if asignacion == None:
                 asignacion = AsignacionCab()
-                    
+
+            if request.POST.get('error') is not None and request.POST.get('error')=='true':
+                response['codigo']=1
+                response['dato']=[]
+                response['mensaje']="Horas Inválidas"
+                messages.warning(request, 'Las horas asignadas son inválidas')
+                return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json"
+                    )
             asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
                     
             """Se le dio click a agregar detalle"""

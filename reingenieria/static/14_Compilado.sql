@@ -3983,7 +3983,7 @@ END
 
 USE [aireinegnier]
 GO
-/****** Object:  Trigger [dbo].[trg_vrs_Operarios_relevamientocab]    Script Date: 3/7/2019 10:01:29 ******/
+/****** Object:  Trigger [dbo].[trg_header_relevamientocab]    Script Date: 8/7/2019 17:03:35 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4034,15 +4034,15 @@ AS
 		FETCH NEXT FROM cursorIt INTO @dp0_id,@dp0_fecha,@dp0_cantidad,@dp0_puntoServicio_id,@dp0_cantidadHrTotal,@dp0_cantidadHrEsp,@dp0_fechaInicio,@dp0_usuario_id,@dp0_tipoSalario_id,@dp0_comentario,@dp0_cantAprendices,@dp0_estado,@dp0_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			DECLARE cursorDt CURSOR LOCAL FOR SELECT * FROM deleted where id=dp0_id
+			DECLARE cursorDt CURSOR LOCAL FOR SELECT * FROM deleted where id=@dp0_id
             OPEN cursorDt
             FETCH NEXT FROM cursorDt INTO @dp1_id,@dp1_fecha,@dp1_cantidad,@dp1_puntoServicio_id,@dp1_cantidadHrTotal,@dp1_cantidadHrEsp,@dp1_fechaInicio,@dp1_usuario_id,@dp1_tipoSalario_id,@dp1_comentario,@dp1_cantAprendices,@dp1_estado,@dp1_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
             WHILE @@FETCH_STATUS = 0
             BEGIN
-                if(dp1_cantidadHrTotal!=dp0_cantidadHrTotal)
+                if(@dp1_cantidadHrTotal!=@dp0_cantidadHrTotal)
                 BEGIN
-                    UPDATE [dbo].[Operarios_planificacioncab] set rePlanificar=True where puntoServicio_id=@dp0_puntoServicio_id and vfechaFin is NULL;
-                    UPDATE [dbo].[Operarios_asignacioncab] set reAsignar=True where puntoServicio_id=@dp0_puntoServicio_id and vfechaFin is NULL;
+                    UPDATE [dbo].[Operarios_planificacioncab] set rePlanificar='True' where puntoServicio_id=@dp0_puntoServicio_id and vfechaFin is NULL;
+                    UPDATE [dbo].[Operarios_asignacioncab] set reAsignar='True' where puntoServicio_id=@dp0_puntoServicio_id and vfechaFin is NULL;
                 END
             FETCH NEXT FROM cursorDt INTO @dp1_id,@dp1_fecha,@dp1_cantidad,@dp1_puntoServicio_id,@dp1_cantidadHrTotal,@dp1_cantidadHrEsp,@dp1_fechaInicio,@dp1_usuario_id,@dp1_tipoSalario_id,@dp1_comentario,@dp1_cantAprendices,@dp1_estado,@dp1_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
             END		
@@ -4059,6 +4059,7 @@ AS
 	CLOSE cursorIt
 	DEALLOCATE cursorIt
 END	
+
 
 USE [aireinegnier]
 GO

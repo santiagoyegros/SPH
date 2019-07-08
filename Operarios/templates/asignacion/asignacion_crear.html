@@ -230,6 +230,16 @@
                                         name="asignaciondet_set-{{ forloop.counter0 }}-totalHoras"
                                         class="form-control form-control-sm" readonly="readonly" maxlength="8"
                                         id="id_asignaciondet_set-{{ forloop.counter0 }}-totalHoras">
+                                    <script>
+                                        $(document).ready(function () {
+                                        $('input[name=asignaciondet_set-{{ forloop.counter0 }}-totalHoras]').ready(
+                                            function(){
+                                                console.log("cambio valor");
+                                                RecalcularHorasV2();
+
+                                        });
+                                        });
+                                    </script>
                                 </div>
 
                             </div>
@@ -1656,6 +1666,93 @@
         $('#id_totalasignado').val(total_horas_detalle);
         $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(total_horas_detalle)));
     }
+
+
+    function RecalcularHorasV2() {
+        //aqui empieza el calculo del total de horas normales
+        var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
+        var totalDet = parseInt($totalDetalle.val(), 10);
+        var subTotal= '00:00';
+        console.log("Detalles: "+totalDet);
+        for (i = 0; i < totalDet; i++) {
+            var total_horas_detalle = '00:00';
+            if (!($('#leaveForm-' + i).css('display') == 'none')) {
+                habilitarBusqueda(i);
+
+                //Lunes
+                var lunEnt = $('#id_asignaciondet_set-' + i + '-lunEnt').val();
+                var lunSal = $('#id_asignaciondet_set-' + i + '-lunSal').val();
+                var totalLunes = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
+                if (!(totalLunes == 'NaN:NaN')) {
+                    habilitarBusqueda(i);
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalLunes);
+                }
+                
+                //Martes
+                var marEnt = $('#id_asignaciondet_set-' + i + '-marEnt').val();
+                var marSal = $('#id_asignaciondet_set-' + i + '-marSal').val();
+                var totalMartes = hoursToString(timeInHours(marSal) - timeInHours(marEnt));
+                if (!(totalMartes == 'NaN:NaN')) {
+                    habilitarBusqueda(i);
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalMartes);
+                }
+                //Miercoles
+                var mieEnt = $('#id_asignaciondet_set-' + i + '-mieEnt').val();
+                var mieSal = $('#id_asignaciondet_set-' + i + '-mieSal').val();
+                var totalMiercoles = hoursToString(timeInHours(mieSal) - timeInHours(mieEnt));
+                if (!(totalMiercoles == 'NaN:NaN')) {
+                    habilitarBusqueda(i);
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalMiercoles);
+                }
+                //Jueves
+                var jueEnt = $('#id_asignaciondet_set-' + i + '-jueEnt').val();
+                var jueSal = $('#id_asignaciondet_set-' + i + '-jueSal').val();
+                var totalJueves = hoursToString(timeInHours(jueSal) - timeInHours(jueEnt));
+                if (!(totalJueves == 'NaN:NaN')) {
+                    habilitarBusqueda(i);
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalJueves);
+                }
+                //Viernes
+                var vieEnt = $('#id_asignaciondet_set-' + i + '-vieEnt').val();
+                var vieSal = $('#id_asignaciondet_set-' + i + '-vieSal').val();
+                var totalViernes = hoursToString(timeInHours(vieSal) - timeInHours(vieEnt));
+                if (!(totalViernes == 'NaN:NaN')) {
+                    habilitarBusqueda(i);
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalViernes);
+                }
+                //Sabado
+                var sabEnt = $('#id_asignaciondet_set-' + i + '-sabEnt').val();
+                var sabSal = $('#id_asignaciondet_set-' + i + '-sabSal').val();
+                var totalSabado = hoursToString(timeInHours(sabSal) - timeInHours(sabEnt));
+                if (!(totalSabado == 'NaN:NaN')) {
+                    habilitarBusqueda(i);
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalSabado);
+                }
+                //Domingo
+                var domEnt = $('#id_asignaciondet_set-' + i + '-domEnt').val();
+                var domSal = $('#id_asignaciondet_set-' + i + '-domSal').val();
+                var totalDomingo = hoursToString(timeInHours(domSal) - timeInHours(domEnt));
+                if (!(totalDomingo == 'NaN:NaN')) {
+                    habilitarBusqueda(i);
+                    total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
+                }
+            }
+            subTotal=SumHrMin(total_horas_detalle, subTotal);
+            $('#id_asignaciondet_set-' + i + '-totalHoras').val(total_horas_detalle.split(':')[0]);
+        }
+
+        $('#id_totalasignado').val(subTotal);
+        $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(subTotal)));
+
+
+        $('#res_sem_diu').val(hoursToString(timeInHours($('#tot_sem_diu').val()!=undefined&&$('#tot_sem_diu').val()!=""?$('#tot_sem_diu').val():"00:00") - timeInHours($('#sum_sem_diu').val()!=undefined&&$('#sum_sem_diu').val()!=""?$('#sum_sem_diu').val():"00:00")));
+        $('#res_sem_noc').val(hoursToString(timeInHours($('#tot_sem_noc').val()!=undefined&&$('#tot_sem_noc').val()!=""?$('#tot_sem_noc').val():"00:00") - timeInHours($('#sum_sem_noc').val()!=undefined&&$('#sum_sem_noc').val()!=""?$('#sum_sem_noc').val():"00:00")));
+        $('#res_dom_diu').val(hoursToString(timeInHours($('#tot_dom_diu').val()!=undefined&&$('#tot_dom_diu').val()!=""?$('#tot_dom_diu').val():"00:00") - timeInHours($('#sum_dom_diu').val()!=undefined&&$('#sum_dom_diu').val()!=""?$('#sum_dom_diu').val():"00:00")));
+        $('#res_dom_noc').val(hoursToString(timeInHours($('#tot_dom_noc').val()!=undefined&&$('#tot_dom_noc').val()!=""?$('#tot_dom_noc').val():"00:00") - timeInHours($('#sum_dom_noc').val()!=undefined&&$('#sum_dom_noc').val()!=""?$('#sum_dom_noc').val():"00:00")));
+        debugger;
+    }
+
+
 
 
     function RecalcularTipoHoras() {

@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from Operarios.views import Relevamiento, Operarios_list, Operarios_create, Operarios_update, Operarios_delete
 from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView,EsmeEmMarcacionesClass
-from Operarios.views import Planificacion_list, Planificacion_create, Jefes_list,Fiscales_list, Jefes_asig, Jefes_delete, asignarFiscales, asignarPuntosServicio
+from Operarios.views import Planificacion_list,getPuntosServicios, Planificacion_create, Jefes_list,Fiscales_list, Jefes_asig, Jefes_delete, asignarFiscales, asignarPuntosServicio
 from Operarios.views import Fiscales_asig, Fiscales_delete
 from Operarios.views import obtenerMarcacion,getMarcaciones,obtenerFeriado,getFeriados,makeFeriados,editFeriados,deleteFeriados,descargarMarcaciones
 from Operarios import viewsAsignacion 
@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^operaciones/operarios/editar/(?P<pk>\d+)/$', viewsOperario.Operarios_update, name='operarios_update'),
     url(r'^operaciones/operarios/eliminar/(?P<pk>\d+)/$', viewsOperario.Operarios_delete, name='operarios_delete'),
     url(r'^planificacion/listar/', Planificacion_list, name='planificar_list'),
+     url(r'^planificacion/puntoServicios/', getPuntosServicios, name='getPuntosServiciosPla'),
     url(r'^planificacion/planificar/(?P<id_puntoServicio>\d+)/$', Planificacion_create, name='planificar_create'),
     url(r'^operaciones/jefes/listar/', Jefes_list, name='jefes_list'),
     url(r'^operaciones/fiscales/listar/', Fiscales_list, name='fiscales_list'),
@@ -49,6 +50,7 @@ urlpatterns = [
     url(r'^asignacion/agregarDetalle', viewsAsignacion.agregar_detalle, name='addDetalle'),
     url(r'^asignacion/diasLibres', viewsAsignacion.getDiasLibres, name='getDiasLibres'),
     url(r'^asignacion/guardarAsignacion', viewsAsignacion.guardarAsignacion, name='guardarAsignacion'),
+    url(r'^asignacion/puntoServicios', viewsAsignacion.getPuntosServicios, name='getPuntosServicios'),
     url(r'^marcacion/vista', obtenerMarcacion , name='marcaciones_url'),
     url(r'^marcacion/listar/', getMarcaciones , name='marcaciones_get'),
     url(r'^asignacion/operarios'+

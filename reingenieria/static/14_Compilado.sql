@@ -3980,3 +3980,186 @@ AS
 	CLOSE cursorIt
 	DEALLOCATE cursorIt
 END	
+
+USE [aireinegnier]
+GO
+/****** Object:  Trigger [dbo].[trg_vrs_Operarios_relevamientocab]    Script Date: 3/7/2019 10:01:29 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TRIGGER [dbo].[trg_header_relevamientocab]
+ON [dbo].[Operarios_relevamientocab]
+AFTER UPDATE
+AS
+	BEGIN
+	DECLARE @TransactionName varchar(20) = 'Transactional';
+	BEGIN TRAN @TransactionName 
+	BEGIN TRY
+		DECLARE @nuevoID int;
+		DECLARE @dp0_id int;
+		DECLARE @dp0_fecha datetime2 ;
+		DECLARE @dp0_cantidad int;
+		DECLARE @dp0_puntoServicio_id int;
+		DECLARE @dp0_cantidadHrTotal nvarchar(max);
+		DECLARE @dp0_cantidadHrEsp nvarchar(max);
+		DECLARE @dp0_fechaInicio date;
+		DECLARE @dp0_usuario_id int;
+		DECLARE @dp0_tipoSalario_id int;
+		DECLARE @dp0_comentario nvarchar(max);
+		DECLARE @dp0_cantAprendices int;
+		DECLARE @dp0_estado nvarchar(max);
+		DECLARE @dp0_fechaFin date;
+        DECLARE @dp1_id int;
+		DECLARE @dp1_fecha datetime2 ;
+		DECLARE @dp1_cantidad int;
+		DECLARE @dp1_puntoServicio_id int;
+		DECLARE @dp1_cantidadHrTotal nvarchar(max);
+		DECLARE @dp1_cantidadHrEsp nvarchar(max);
+		DECLARE @dp1_fechaInicio date;
+		DECLARE @dp1_usuario_id int;
+		DECLARE @dp1_tipoSalario_id int;
+		DECLARE @dp1_comentario nvarchar(max);
+		DECLARE @dp1_cantAprendices int;
+		DECLARE @dp1_estado nvarchar(max);
+		DECLARE @dp1_fechaFin date;
+		DECLARE @tmp_fechaIncio datetime;
+		DECLARE @tmp_fechaFin datetime;
+		DECLARE @tmp_vregistro int;
+		DECLARE @tmp1_vregistro int;
+
+		DECLARE cursorIt CURSOR LOCAL FOR SELECT * FROM inserted
+		OPEN cursorIt
+		FETCH NEXT FROM cursorIt INTO @dp0_id,@dp0_fecha,@dp0_cantidad,@dp0_puntoServicio_id,@dp0_cantidadHrTotal,@dp0_cantidadHrEsp,@dp0_fechaInicio,@dp0_usuario_id,@dp0_tipoSalario_id,@dp0_comentario,@dp0_cantAprendices,@dp0_estado,@dp0_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			DECLARE cursorDt CURSOR LOCAL FOR SELECT * FROM deleted where id=dp0_id
+            OPEN cursorDt
+            FETCH NEXT FROM cursorDt INTO @dp1_id,@dp1_fecha,@dp1_cantidad,@dp1_puntoServicio_id,@dp1_cantidadHrTotal,@dp1_cantidadHrEsp,@dp1_fechaInicio,@dp1_usuario_id,@dp1_tipoSalario_id,@dp1_comentario,@dp1_cantAprendices,@dp1_estado,@dp1_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+            WHILE @@FETCH_STATUS = 0
+            BEGIN
+                if(dp1_cantidadHrTotal!=dp0_cantidadHrTotal)
+                BEGIN
+                    UPDATE [dbo].[Operarios_planificacioncab] set rePlanificar=True where puntoServicio_id=@dp0_puntoServicio_id and vfechaFin is NULL;
+                    UPDATE [dbo].[Operarios_asignacioncab] set reAsignar=True where puntoServicio_id=@dp0_puntoServicio_id and vfechaFin is NULL;
+                END
+            FETCH NEXT FROM cursorDt INTO @dp1_id,@dp1_fecha,@dp1_cantidad,@dp1_puntoServicio_id,@dp1_cantidadHrTotal,@dp1_cantidadHrEsp,@dp1_fechaInicio,@dp1_usuario_id,@dp1_tipoSalario_id,@dp1_comentario,@dp1_cantAprendices,@dp1_estado,@dp1_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+            END		
+		FETCH NEXT FROM cursorIt INTO @dp0_id,@dp0_fecha,@dp0_cantidad,@dp0_puntoServicio_id,@dp0_cantidadHrTotal,@dp0_cantidadHrEsp,@dp0_fechaInicio,@dp0_usuario_id,@dp0_tipoSalario_id,@dp0_comentario,@dp0_cantAprendices,@dp0_estado,@dp0_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+		END
+
+		COMMIT TRANSACTION @TransactionName;
+	END TRY 
+	BEGIN CATCH 
+		print error_message();
+		SELECT ERROR_MESSAGE() AS ErrorMessage
+		ROLLBACK TRAN @TransactionName; 
+	END CATCH
+	CLOSE cursorIt
+	DEALLOCATE cursorIt
+END	
+
+USE [aireinegnier]
+GO
+/****** Object:  Trigger [dbo].[trg_vrs_Operarios_planificacioncab]    Script Date: 3/7/2019 09:54:31 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TRIGGER [dbo].[trg_vrs_Operarios_hd_planificacioncab]
+ON [dbo].[Operarios_planificacioncab]
+AFTER UPDATE
+AS
+	BEGIN
+	DECLARE @TransactionName varchar(20) = 'Transactional';
+	BEGIN TRAN @TransactionName 
+	BEGIN TRY
+		DECLARE @nuevoID int;
+		DECLARE @dp2_id int;
+		DECLARE @dp2_fecha datetime2 ;
+		DECLARE @dp2_cantidad int;
+		DECLARE @dp2_cantHoras nvarchar(max);
+		DECLARE @dp2_cantHorasNoc nvarchar(max);
+		DECLARE @dp2_cantHorasEsp nvarchar(max);
+		DECLARE @dp2_puntoServicio_id int;
+        DECLARE @tmp_fechaIncio datetime;
+		DECLARE @tmp_fechaFin datetime;
+		DECLARE @tmp1_vregistro int;
+		DECLARE @tmp_vregistro int;
+		DECLARE @nuevo_asignacionCab_id int;
+		DECLARE @nuevo_planificacionCab_id int;
+        DECLARE @replanificar bit;
+		DECLARE cursorIt CURSOR LOCAL FOR SELECT * FROM inserted
+		OPEN cursorIt
+		FETCH NEXT FROM cursorIt INTO @dp2_id,@dp2_fecha,@dp2_cantidad,@dp2_cantHoras,@dp2_cantHorasNoc,@dp2_cantHorasEsp,@dp2_puntoServicio_id,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro,@replanificar
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			if(@replanificar='True')
+            BEGIN
+                update dbo.Operarios_planificacioncab set rePlanificar='False' where id=@dp2_id;
+            END
+            FETCH NEXT FROM cursorIt INTO @dp2_id,@dp2_fecha,@dp2_cantidad,@dp2_cantHoras,@dp2_cantHorasNoc,@dp2_cantHorasEsp,@dp2_puntoServicio_id,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro,@replanificar
+		END
+		COMMIT TRANSACTION @TransactionName;
+	END TRY 
+	BEGIN CATCH 
+		print error_message();
+		SELECT ERROR_MESSAGE() AS ErrorMessage
+		ROLLBACK TRAN @TransactionName; 
+	END CATCH
+	CLOSE cursorIt
+	DEALLOCATE cursorIt
+END	
+
+
+USE [aireinegnier]
+GO
+/****** Object:  Trigger [dbo].[trg_vrs_Operarios_asignacioncab]    Script Date: 3/7/2019 09:56:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TRIGGER [dbo].[trg_vrs_Operarios_hd_asignacioncab]
+ON [dbo].[Operarios_asignacioncab]
+AFTER UPDATE
+AS
+	BEGIN
+	DECLARE @TransactionName varchar(20) = 'Transactional';
+	BEGIN TRAN @TransactionName 
+	BEGIN TRY
+		DECLARE @nuevoID int;
+		DECLARE @dp1_id int;
+		DECLARE @dp1_fechaUltimaMod datetime2 ;
+		DECLARE @dp1_totalasignado nvarchar(max);
+		DECLARE @dp1_puntoServicio_id int;
+		DECLARE @dp1_usuario_id int;
+        DECLARE @tmp_fechaIncio datetime;
+		DECLARE @tmp_fechaFin datetime;
+		DECLARE @tmp_vregistro int;
+		DECLARE @reasignar bit;
+
+		DECLARE cursorIt CURSOR LOCAL FOR SELECT * FROM inserted
+		OPEN cursorIt
+		FETCH NEXT FROM cursorIt INTO @dp1_id,@dp1_fechaUltimaMod,@dp1_totalasignado,@dp1_puntoServicio_id,@dp1_usuario_id,@tmp_fechaIncio,@tmp_fechaFin,@tmp_vregistro,@reasignar
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			if(@reasignar='True')
+            BEGIN
+                update dbo.Operarios_asignacioncab set reAsignar='False' where id=@dp1_id;
+            END
+            FETCH NEXT FROM cursorIt INTO @dp1_id,@dp1_fechaUltimaMod,@dp1_totalasignado,@dp1_puntoServicio_id,@dp1_usuario_id,@tmp_fechaIncio,@tmp_fechaFin,@tmp_vregistro,@reasignar
+			END
+		COMMIT TRANSACTION @TransactionName;
+	END TRY 
+	BEGIN CATCH 
+		print error_message();
+		SELECT ERROR_MESSAGE() AS ErrorMessage
+		ROLLBACK TRAN @TransactionName; 
+	END CATCH
+	CLOSE cursorIt
+	DEALLOCATE cursorIt
+END	
+

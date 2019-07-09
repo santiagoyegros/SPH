@@ -285,8 +285,8 @@ def guardarAsignacion(request):
             if request.POST.get('error') is not None and request.POST.get('error')=='true':
                 response['codigo']=1
                 response['dato']=[]
-                response['mensaje']="Horas Inválidas"
-                messages.warning(request, 'Las horas asignadas son inválidas')
+                response['mensaje']="Favor verifique las horas asignadas..."
+                #messages.warning(request, 'Las horas asignadas son inválidas')
                 return HttpResponse(
                     json.dumps(response),
                     content_type="application/json"

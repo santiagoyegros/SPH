@@ -861,7 +861,7 @@
                 document.location.href="/reingenieria/asignacion/listar";
                 setMessageAlert("No se pudo guardar la Asignación");
             }else if(result.codigo==1){
-                setMessageAlert("No se pudo guardar la Asignación");
+                setMessageAlert(result.mensaje);
                 $('html, body').animate({scrollTop:0},'fast');
             }
         })
@@ -1752,15 +1752,53 @@
             $('#id_asignaciondet_set-' + i + '-totalHoras').val(total_horas_detalle.split(':')[0]);
         }
 
+        
+        var total_sem_diurnas=undefined;
+        temp = hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas!=undefined?total_sem_diurnas:'00:00')));
+        if (temp.substring(0, 1) == '-') {
+            document.getElementById("res_sem_diu").style.color = "#ff0000";
+        } else {
+            document.getElementById("res_sem_diu").style.color = "#000000";
+        }
+
+        var total_sem_nocturnas=undefined;
+        temp = hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas!=undefined?total_sem_nocturnas:'00:00')));
+        if (temp.substring(0, 1) == '-') {
+            document.getElementById("res_sem_noc").style.color = "#ff0000";
+        } else {
+            document.getElementById("res_sem_noc").style.color = "#000000";
+        }
+
+        var total_dom_diurnas=undefined;
+        temp = hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas!=undefined?total_dom_diurnas:'00:00')));
+        if (temp.substring(0, 1) == '-') {
+            document.getElementById("res_dom_diu").style.color = "#ff0000";
+        } else {
+            document.getElementById("res_dom_diu").style.color = "#000000";
+        }
+
+        var total_dom_nocturnas=undefined;
+        temp = hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas!=undefined?total_dom_nocturnas:'00:00')));
+        if (temp.substring(0, 1) == '-') {
+            document.getElementById("res_dom_noc").style.color = "#ff0000";
+        } else {
+            document.getElementById("res_dom_noc").style.color = "#000000";
+        }
+
         $('#id_totalasignado').val(subTotal);
         $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(subTotal)));
-
+        //if($('#sumAll_resto').val()>=0){$('#sumAll_resto').removeClass("text-danger");}else{$('#sumAll_resto').addClass("text-danger");}
+        
 
         $('#res_sem_diu').val(hoursToString(timeInHours($('#tot_sem_diu').val()!=undefined&&$('#tot_sem_diu').val()!=""?$('#tot_sem_diu').val():"00:00") - timeInHours($('#sum_sem_diu').val()!=undefined&&$('#sum_sem_diu').val()!=""?$('#sum_sem_diu').val():"00:00")));
+        //if(timeInHours($('#tot_sem_diu').val()!=undefined&&$('#tot_sem_diu').val()!=""?$('#tot_sem_diu').val():"00:00") - timeInHours($('#sum_sem_diu').val()!=undefined&&$('#sum_sem_diu').val()!=""?$('#sum_sem_diu').val():"00:00")>=0){$('#res_sem_diu').removeClass("text-danger");}else{$('#res_sem_diu').addClass("text-danger");}
         $('#res_sem_noc').val(hoursToString(timeInHours($('#tot_sem_noc').val()!=undefined&&$('#tot_sem_noc').val()!=""?$('#tot_sem_noc').val():"00:00") - timeInHours($('#sum_sem_noc').val()!=undefined&&$('#sum_sem_noc').val()!=""?$('#sum_sem_noc').val():"00:00")));
+        //if(timeInHours($('#tot_sem_noc').val()!=undefined&&$('#tot_sem_noc').val()!=""?$('#tot_sem_noc').val():"00:00") - timeInHours($('#sum_sem_noc').val()!=undefined&&$('#sum_sem_noc').val()!=""?$('#sum_sem_noc').val():"00:00")>=0){$('#res_sem_noc').removeClass("text-danger");}else{$('#res_sem_noc').addClass("text-danger");}
         $('#res_dom_diu').val(hoursToString(timeInHours($('#tot_dom_diu').val()!=undefined&&$('#tot_dom_diu').val()!=""?$('#tot_dom_diu').val():"00:00") - timeInHours($('#sum_dom_diu').val()!=undefined&&$('#sum_dom_diu').val()!=""?$('#sum_dom_diu').val():"00:00")));
+        //if(timeInHours($('#tot_dom_diu').val()!=undefined&&$('#tot_dom_diu').val()!=""?$('#tot_dom_diu').val():"00:00") - timeInHours($('#sum_dom_diu').val()!=undefined&&$('#sum_dom_diu').val()!=""?$('#sum_dom_diu').val():"00:00")>=0){$('#res_dom_diu').removeClass("text-danger");}else{$('#res_dom_diu').addClass("text-danger");}
         $('#res_dom_noc').val(hoursToString(timeInHours($('#tot_dom_noc').val()!=undefined&&$('#tot_dom_noc').val()!=""?$('#tot_dom_noc').val():"00:00") - timeInHours($('#sum_dom_noc').val()!=undefined&&$('#sum_dom_noc').val()!=""?$('#sum_dom_noc').val():"00:00")));
-        debugger;
+        //if(timeInHours($('#tot_dom_noc').val()!=undefined&&$('#tot_dom_noc').val()!=""?$('#tot_dom_noc').val():"00:00") - timeInHours($('#sum_dom_noc').val()!=undefined&&$('#sum_dom_noc').val()!=""?$('#sum_dom_noc').val():"00:00")>=0){$('#res_dom_noc').removeClass("text-danger");}else{$('#res_dom_noc').addClass("text-danger");}
+        
     }
 
 

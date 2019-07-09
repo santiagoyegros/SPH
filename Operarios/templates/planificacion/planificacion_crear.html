@@ -687,7 +687,7 @@ function RecalcularHoras(){
 
         } //Fin del for
 
-        debugger;
+        
         if(total_horas_diurnas && total_horas_diurnas != 'NaN:NaN'){
             $('#id_cantHoras').val(total_horas_diurnas);
         }
@@ -735,7 +735,7 @@ function RecalcularHorasEsp(){
     //total = hoursToString(total);
     $('#sumAll_2').val(total);
     //aqui empieza el calculo del total de horas
-    debugger;
+    
     $('#id_cantHorasEsp').val(total);    
 }
 
@@ -827,10 +827,12 @@ $('input[id$="-cantidad"]').change(function() {
     $("form").submit(
         
         function(){
+            debugger;
             var planTotal=0;
             var totalHrs='{{ relevamiento.cantidadHrTotal }}';
             totalHrs=timeInHours(totalHrs!='None'&&totalHrs!=''?totalHrs:'00:00');
             planTotal=timeInHours($('#id_cantHoras').val());
+            planTotal+=timeInHours($('#id_cantHorasNoc').val());
             if(planTotal>totalHrs){
                 setMessageAlert("No se pudo guardar la Planificacion - La cantidad de horas de la planificacion supera al relevamiento");
                 return false;

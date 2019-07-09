@@ -735,11 +735,23 @@ def getFeriados(request):
             feriados=feriados.filter(fecha__lte=dtd);
         return HttpResponse(serializers.serialize('json', feriados), content_type = 'application/json', status = 200);
 def makeFeriados(request):
-        Feriados.objects.create(
-            anho= request.POST.get("anho"),
-            fecha=datetime.strptime(request.POST.get('fecha'),'%Y-%m-%dT%H:%M:%S.%fZ'),
-            descripcion= request.POST.get("descripcion"))
-        return HttpResponse(status = 201)
+        print(request.POST)
+        response={}
+        try:
+            Feriados.objects.create(
+                anho= request.POST.get("anho"),
+                fecha=datetime.strptime(request.POST.get('fecha'),'%Y-%m-%d'),
+                descripcion= request.POST.get("descripcion"))
+            response['dato']=[]
+            response['codigo']=0
+            response['mensaje']="Se creó el registro"
+            return HttpResponse(json.dumps(response),content_type="application/json")
+        except Exception as err:
+            logging.getLogger("error_logger").error('No se pudo crear el registro: {0}'.format(err))
+            response['codigo']=1
+            response['dato']=[]
+            response['mensaje']="No se pudo crear el registro"
+            return HttpResponse(json.dumps(response),content_type="application/json")
 def editFeriados(request,feriado_id):
         feriado=Feriados.objects.get(id = feriado_id);
         if request.POST.get('anho') is not None:

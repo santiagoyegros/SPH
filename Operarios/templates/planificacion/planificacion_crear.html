@@ -828,20 +828,10 @@ $('input[id$="-cantidad"]').change(function() {
         
         function(){
             var planTotal=0;
-            var planEsp=0;    
             var totalHrs='{{ relevamiento.cantidadHrTotal }}';
-            var cantidadHrEsp='{{ relevamiento.cantidadHrEsp }}';
-            
             totalHrs=timeInHours(totalHrs!='None'&&totalHrs!=''?totalHrs:'00:00');
-            cantidadHrEsp=timeInHours(cantidadHrEsp!='None'&&cantidadHrEsp!=''?cantidadHrEsp:'00:00');
-
             planTotal=timeInHours($('#id_cantHoras').val());
-            planEsp=timeInHours($('#id_cantHorasEsp').val());
-            
-
-
-            debugger;
-            if(planTotal>totalHrs || planEsp>cantidadHrEsp){
+            if(planTotal>totalHrs){
                 setMessageAlert("No se pudo guardar la Planificacion - La cantidad de horas de la planificacion supera al relevamiento");
                 return false;
             }else{

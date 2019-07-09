@@ -236,6 +236,7 @@
                                             function(){
                                                 console.log("cambio valor");
                                                 RecalcularHorasV2();
+                                                RecalcularTipoHoras();
 
                                         });
                                         });
@@ -826,13 +827,16 @@
 </script>
 <script>
     $(document).on("change", ".perfil-combo", function () {
-        RecalcularHoras();
+        RecalcularHorasV2();
+        RecalcularTipoHoras();
     });
     $(document).on("dp.change", ".examDate", function () {
-        RecalcularHoras();
+        RecalcularHorasV2();
+        RecalcularTipoHoras();
     });
     $(document).on("dp.change", ".examTime", function () {
-        RecalcularHoras();
+        RecalcularHorasV2();
+        RecalcularTipoHoras();
     });
 </script>
 
@@ -999,11 +1003,13 @@
         //EVENTO CHANGE PARA TIMES POR DEFECTO
         $('.input-group.time').each(function () {
             $(this).datetimepicker().on('dp.change', function (e) {
-                RecalcularHoras();
+                RecalcularHorasV2();
+                RecalcularTipoHoras();
             })
         });
         $('.input-group.time').each(function () {
             $(this).datetimepicker().on('dp.change', function (e) {
+                RecalcularHorasV2();
                 RecalcularTipoHoras();
             })
         });
@@ -1533,7 +1539,7 @@
             //document.getElementById('formulario').submit();
             //$("#leaveForm-" + id).hide();
             $('#leaveForm-' + id).css('display:none !important')
-            RecalcularHoras();
+            RecalcularHorasV2();
             RecalcularTipoHoras();
 
         }
@@ -1682,6 +1688,7 @@
 
     function RecalcularHorasV2() {
         //aqui empieza el calculo del total de horas normales
+        debugger;
         var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
         var totalDet = parseInt($totalDetalle.val(), 10);
         var subTotal= '00:00';
@@ -1748,8 +1755,9 @@
                     habilitarBusqueda(i);
                     total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
                 }
+                subTotal=SumHrMin(total_horas_detalle, subTotal);
             }
-            subTotal=SumHrMin(total_horas_detalle, subTotal);
+           
             $('#id_asignaciondet_set-' + i + '-totalHoras').val(total_horas_detalle.split(':')[0]);
         }
 
@@ -1969,7 +1977,7 @@
             var total = parseInt($totalDetalle.val(), 10);
             var clon = $('script[type="template/Detalle"]').html();
             clon_html = replaceAll(clon, '__prefix__', (total).toString());
-            clon_html1 = replaceAll(clon_html, 'id="leaveForm-"', 'id="leaveForm-' + (total).toString() + '"');
+            clon_html1 = replaceAll(clon_html, 'id="leaveForm"', 'id="leaveForm-' + (total).toString() + '"');
             clon_html2 = replaceAll(clon_html1, 'id="filter_operario-"', 'id="filter_operario-' + (total).toString() + '"');
             clon_html3 = replaceAll(clon_html2, 'id="modalFiltro"', 'id="modalFiltro' + (total).toString() + '"');
             clon_html4 = replaceAll(clon_html3, 'id="jsGrid"', 'id="jsGrid' + (total).toString() + '"');

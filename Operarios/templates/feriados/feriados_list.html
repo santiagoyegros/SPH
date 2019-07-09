@@ -82,7 +82,7 @@
             height: "90%",
             width: "100%",
             filtering: true,
-            inserting: false,
+            inserting: true,
             editing: true,
             sorting: true,
             paging: true,
@@ -116,6 +116,7 @@
                     return d.promise();
                 },
                 insertItem: function (item) {
+                    console.log("Data")
                     return $.ajax({
                         type: "POST",
                         url: "/reingenieria/feriados/crear",
@@ -140,8 +141,8 @@
             fields: [
                 { name: "anho", type: "text", width: 150, title: "Año" },
                 { name: "fecha", type: "date", width: 150, title: "Fecha" },
-                { name: "descripcion", type: "text", width: 150, title: "Descripcion del Feriado" }
-                // { type: "control" }
+                { name: "descripcion", type: "text", width: 150, title: "Descripcion del Feriado" },
+                { type: "control" }
             ]
         });
 

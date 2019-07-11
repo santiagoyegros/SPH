@@ -2,6 +2,7 @@ import logging
 import datetime as dt
 from Operarios.models import HorasNoProcesadas, HorasProcesadas, EsmeEmMarcaciones, AsignacionDet, AsignacionCab, PuntoServicio, AsignacionesProcesadas, AsigFiscalPuntoServicio, AsigJefeFiscal, Feriados, RemplazosCab, RemplazosDet
 
+from django.db.models import Q
 def procesarEntradaSalida(marcacion, marcacion2):
     #Paso 1: Busco la asignacion de la persona en el contrato, en el dia. 
     CodPersona = marcacion.codpersona
@@ -17,7 +18,7 @@ def procesarEntradaSalida(marcacion, marcacion2):
     logging.getLogger("error_logger").error('La consulta para buscar las asignaciones es: {0}'.format(consulta))
     
     try:
-        PuntoServicioObj = PuntoServicio.objects.filter(CodPuntoServicio=PuntoServicioCod).first()
+        PuntoServicioObj = PuntoServicio.objects.filter(Q(CodPuntoServicio=PuntoServicioCod) & Q(vfechaFin=None)).first()
     except PuntoServicio.DoesNotExist as err:
         logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         pass
@@ -131,8 +132,8 @@ def procesarEntradaSalida(marcacion, marcacion2):
     #Paso 3: Si no existe asignacion se almacena las horas sin aginacion.
     else:
         #Paso 3.1: Revisamos si la marcacion es de un fiscal
-        Esfiscal = AsigFiscalPuntoServicio.objects.filter(userFiscal__username=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod)
-        consulta = AsigFiscalPuntoServicio.objects.filter(userFiscal__username=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod).query
+        Esfiscal = AsigFiscalPuntoServicio.objects.filter(userFiscal__username=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod, puntoServicio__vfechaFin=None)
+        consulta = AsigFiscalPuntoServicio.objects.filter(userFiscal__username=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod, puntoServicio__vfechaFin=None).query
         logging.getLogger("error_logger").error('La consulta para buscar las asignaciones ya procesadas es: {0}'.format(consulta))
 
         #Paso 3.2: Revisamos si la marcacion es de una jefa de operaciones

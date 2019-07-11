@@ -52,16 +52,24 @@
                 return $result;
             },
             insertTemplate: function (value) {
-                console.log("inser");
-                return this._insertPicker = $("<input>").datetimepicker({ format: 'DD/MM/YYYY' });
+                // console.log("inser");
+                // return this._insertPicker = $("<input>").datetimepicker({ format: 'DD/MM/YYYY' });
+                this._insertPicker = $("<input>").datepicker({ dateFormat: 'dd/mm/yy' });
+                $result = this._filterControl = $("<div class='filter-input'>").append(this._insertPicker);
+                return $result;
             },
             editTemplate: function (value) {
 
                 return this._editPicker = $("<input>").datetimepicker({ format: 'DD/MM/YYYY' });
             },
             insertValue: function () {
-
-                return this._insertPicker.datetimepicker({ format: 'DD/MM/YYYY' });
+                var date = this._insertPicker.datepicker("getDate");
+                if (date) {
+                    var string =  date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" +("0" + (date.getDate())).slice(-2);
+                    return string;
+                }
+                console.log("INSERT VALUE",date)
+                //return this._insertPicker.datetimepicker({ format: 'DD/MM/YYYY' });
             },
             editValue: function () {
 
@@ -82,7 +90,7 @@
             height: "90%",
             width: "100%",
             filtering: true,
-            inserting: false,
+            inserting: true,
             editing: true,
             sorting: true,
             paging: true,
@@ -116,6 +124,7 @@
                     return d.promise();
                 },
                 insertItem: function (item) {
+                    console.log("DATA ",item)
                     return $.ajax({
                         type: "POST",
                         url: "/reingenieria/feriados/crear",
@@ -140,8 +149,8 @@
             fields: [
                 { name: "anho", type: "text", width: 150, title: "Año" },
                 { name: "fecha", type: "date", width: 150, title: "Fecha" },
-                { name: "descripcion", type: "text", width: 150, title: "Descripcion del Feriado" }
-                // { type: "control" }
+                { name: "descripcion", type: "text", width: 150, title: "Descripcion del Feriado" },
+                { type: "control" }
             ]
         });
 

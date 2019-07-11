@@ -22,6 +22,8 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import connection, transaction
 from Operarios.models import Motivos
+
+from django.db.models import Q
 @login_required
 
 def alertasList (request):
@@ -38,7 +40,7 @@ def alertasList (request):
     hoyFin=hoyIni.replace(hour=23,minute=59,second=59)
     alertasList=Alertas.objects.filter(FechaHora__gte=hoyIni,FechaHora__lte=hoyFin)
     operarios = Operario.objects.all()
-    PuntosServicio = PuntoServicio.objects.all()
+    PuntosServicio = PuntoServicio.objects.filter(vfechaFin=None)
     alertasList=alertasList.filter(Estado="ABIERTA")
     alertasList=alertasList.order_by("-FechaHora")
    
@@ -91,7 +93,7 @@ def alertasList (request):
 
         if a.PuntoServicio_id:
             try:
-                punto = PuntoServicio.objects.get(id=a.PuntoServicio_id)
+                punto = PuntoServicio.objects.get(Q(id=a.PuntoServicio_id) & Q(vfechaFin=None))
                 a.Punto_nombre = punto.NombrePServicio
             except PuntoServicio.DoesNotExist:
                 raise Http404("Punto de Servicio relacionado a una Alerta no existe")  
@@ -248,8 +250,10 @@ def gestion_alertas(request,alerta_id=None):
     diaRequerido=""
     prox_marcacion = ""
     horaConPenalizacion = ""
+    fiscal=""
     motivos=[]
     motivos = Motivos.objects.all()
+    supervisor=None
     if alerta.FechaHora:
             fecha = (alerta.FechaHora).strftime("%d/%m/%Y")
             alerta.Fecha = fecha 
@@ -260,26 +264,34 @@ def gestion_alertas(request,alerta_id=None):
     print("ALERTA ASIGNACION", alerta.Asignacion)
     if alerta.Asignacion:
         horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
-        print("HORARIO OPERARIO",horarios)
         penalizacionFinal=Parametros.objects.get(tipo__contains="ALERTAS", parametro__contains="PENALIZACION")
         if horarios:
             if horarios[0]:
-                horario = horarios[0].horaEntrada.strftime("%H:%M:%S") + " - " + horarios[0].horaSalida.strftime("%H:%M:%S")
-                horaFinal=datetime.datetime.strptime(horarios[0].horaEntrada.strftime("%H:%M:%S"), "%H:%M:%S") 
-                horaConPenalizacion=horaFinal+datetime.timedelta(minutes=int(penalizacionFinal.valor))
-                horaConPenalizacion = horaConPenalizacion.strftime("%H:%M:%S")
+                if horarios[0].horaEntrada:
+                    horario = horarios[0].horaEntrada.strftime("%H:%M:%S")
+                    horaFinal=datetime.datetime.strptime(horarios[0].horaEntrada.strftime("%H:%M:%S"), "%H:%M:%S") 
+                    horaConPenalizacion=horaFinal+datetime.timedelta(minutes=int(penalizacionFinal.valor))
+                    horaConPenalizacion = horaConPenalizacion.strftime("%H:%M:%S")
+                if horarios[0].horaSalida:
+                    horario = horario + " - " + horarios[0].horaSalida.strftime("%H:%M:%S")
+            
                 diaRequerido = horarios[0].diaEntrada
             if len(horarios)>1:
-                prox_marcacion = horarios[1].horaEntrada.strftime("%H:%M:%S") + " - " + horarios[1].horaSalida.strftime("%H:%M:%S")
-           
+                if horarios[1].horaEntrada:
+                    prox_marcacion = horarios[1].horaEntrada.strftime("%H:%M:%S") 
+                if horarios[1].horaSalida:
+                    prox_marcacion = prox_marcacion + " - " + horarios[1].horaSalida.strftime("%H:%M:%S")
     """obtener operario"""
     operario=Operario.objects.get(id=alerta.Operario.id)
-    puntoServicio=PuntoServicio.objects.get(id=alerta.PuntoServicio.id)
+    puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id) & Q(vfechaFin=None))
     """obtener el horario de ese punto de servicio para ese personaje"""
-    asignacionCab=AsignacionCab.objects.get(puntoServicio=puntoServicio)
-    asignacionOperario=AsignacionDet.objects.get(asignacionCab=asignacionCab, operario=operario)
-    fiscal=AsigFiscalPuntoServicio.objects.get(puntoServicio=puntoServicio)
-    supervisor=AsignacionDet.objects.filter(asignacionCab=asignacionCab, supervisor=True)[0]
+    asignacionCab=AsignacionCab.objects.get(Q(puntoServicio=puntoServicio) & Q(vfechaFin=None))
+    asignacionOperario=AsignacionDet.objects.get(Q(asignacionCab=asignacionCab) & Q(operario=operario) & Q(vfechaFin=None))
+    if AsigFiscalPuntoServicio.objects.filter(Q(puntoServicio=puntoServicio) & Q(vfechaFin=None)).exists():
+        fiscal=AsigFiscalPuntoServicio.objects.get(Q(puntoServicio=puntoServicio) & Q(vfechaFin=None))
+    supervisores=AsignacionDet.objects.filter(Q(asignacionCab=asignacionCab) & Q(supervisor=1) & Q(vfechaFin=None))
+    if supervisores:
+        supervisor=supervisores[0]
     alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)
     ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
     """CAMBIAMOS EL ESTADO DE LA ALERTA"""
@@ -426,8 +438,9 @@ def gestion_alertas(request,alerta_id=None):
                     asignacion_reemp = None
                     if alerta.Asignacion_id: 
                       asignacion_reemp =  AsignacionDet.objects.get(id=alerta.Asignacion_id) 
+                      asignacion_reempActualizada =  AsignacionDet.objects.get(Q(vregistro=asignacion_reemp.vregistro) & Q(vfechaFin=None)) 
                     operario_reemp  =Operario.objects.get(id=request.POST.get('idreemplazante'))
-                    remplazoDet=RemplazosDet.objects.create(Asignacion=asignacion_reemp, remplazo=operario_reemp, fecha=alerta.FechaHora.date(), remplazoCab=remplazoCab)
+                    remplazoDet=RemplazosDet.objects.create(Asignacion=asignacion_reempActualizada, remplazo=operario_reemp, fecha=alerta.FechaHora.date(), remplazoCab=remplazoCab)
                     
                     
                     """guardamos la respuesta a la alerta"""
@@ -481,7 +494,7 @@ def emparejar(request, alerta_id=None, emparejamiento_id=None):
     """alerta generada"""
     alerta=Alertas.objects.get(id=alerta_id)
     """obtener operario que se ausento"""
-    puntoServicio=PuntoServicio.objects.get(id=alerta.PuntoServicio.id)
+    puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id) & Q(vfechaFin=None))
     emparejamiento=Alertas.objects.get(id=emparejamiento_id)
     try :
         

@@ -30,8 +30,12 @@ def Asignacion_list(request):
         pk_puntoServSeleccionado = request.POST.get('asig_puntoServ')
         return redirect('Operarios:asignacion_create', id_puntoServicio=pk_puntoServSeleccionado)
     else:
+        asignaciones=AsigFiscalPuntoServicio.objects.filter(vfechaFin=None, userFiscal_id=request.user).only("puntoServicio_id")
+        print (request.user.id)
+        print ("Puntos asignados")
+        print (asignaciones)
         puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
-        contexto = {'PuntosServicio': puntoServi}
+        contexto = {'PuntosServicio': asignaciones}
         return render(request, 'asignacion/asignacion_list.html', context=contexto)
 
 def restarHoras(totalHora,asigHora,totalMin,asigMin):
@@ -80,8 +84,6 @@ def getPuntosServicios(request):
 
     response={}
     response['dato']=puntos
-    response['codigo']=0
-    response['mensaje']="Se listaron con éxito"
     return HttpResponse(json.dumps(response),content_type="application/json")
 
 def agregar_detalle(request):

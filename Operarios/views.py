@@ -852,6 +852,4 @@ def getPuntosServicios(request):
 
     response={}
     response['dato']=puntos
-    response['codigo']=0
-    response['mensaje']="Se listaron con éxito"
     return HttpResponse(json.dumps(response),content_type="application/json")

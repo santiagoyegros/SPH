@@ -4,7 +4,7 @@
 {% block content %}
 <h2>Asignación de Puntos de Servicio</h2>
 
-<form method='POST' action=''>
+<form method='POST' action='' id="formAsig" style="height: 480px !important"> 
     {% csrf_token %}
     <div class="form-group">
         <!-- <label for="exampleFormControlSelect1">Punto de Servicio:</label> -->
@@ -23,7 +23,7 @@
 <script>
     $(function () {
         $("#jsGrid").jsGrid({
-            height: "100%",
+            height: $("#formAsig").height(),
             width: "100%",
             filtering: false,
             inserting: false,
@@ -105,9 +105,6 @@
     }
     .jsgrid-grid-header, .jsgrid-grid-body{
         overflow: hidden !important;
-    }
-    .jsgrid-grid-body .jsgrid-table{
-        height: 100% !important;
     }
     .jsgrid-header-sort-asc:before{
         margin: 6px !important;

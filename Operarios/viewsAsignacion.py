@@ -31,6 +31,7 @@ def Asignacion_list(request):
         return redirect('Operarios:asignacion_create', id_puntoServicio=pk_puntoServSeleccionado)
     else:
         puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+        print(puntoServi)
         contexto = {'PuntosServicio': puntoServi}
         return render(request, 'asignacion/asignacion_list.html', context=contexto)
 
@@ -80,8 +81,8 @@ def getPuntosServicios(request):
 
     response={}
     response['dato']=puntos
-    response['codigo']=0
-    response['mensaje']="Se listaron con éxito"
+    # response['codigo']=0
+    # response['mensaje']="Se listaron con éxito"
     return HttpResponse(json.dumps(response),content_type="application/json")
 
 def agregar_detalle(request):

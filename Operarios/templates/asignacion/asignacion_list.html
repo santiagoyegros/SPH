@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block content %}
-<h2>Asignación de Puntos de Servicio</h2>
+<h2>Asignación de Operarios a Puntos de Servicio</h2>
 
-<form method='POST' action=''>
+<form method='POST' action='' id="formAsig" style="height:480px !important;">
     {% csrf_token %}
     <div class="form-group">
         <!-- <label for="exampleFormControlSelect1">Punto de Servicio:</label> -->
@@ -23,12 +23,12 @@
 <script>
     $(function () {
         $("#jsGrid").jsGrid({
-            height: "100%",
             width: "100%",
             filtering: false,
             inserting: false,
             editing: false,
             sorting: true,
+            height:$("#formAsig").height(),
             paging: true,
             autoload: true,
             pageSize: 10,
@@ -49,13 +49,12 @@
                         type: "GET",
                         url: "/reingenieria/asignacion/puntoServicios"
                     }).done(function (result) {
-                        console.log(result)
                         d.resolve($.map(result, function (item) {
-                            console.log(item)
+                            console.log("RESULT",item)
+                            console.log("extend ",$.extend(item, { id: item.id }));
                             return $.extend(item, { id: item.id });
                         }));
                     });
-
                     return d.promise();
                 }
             },
@@ -68,23 +67,28 @@
                 { name: "horasasignada", type: "text", width: 150, title: "Horas Asignadas" },
                 { name: "horafaltante", type: "text", width: 150, title: "Horas Faltantes" },
                 { name: "horatotal", type: "text", width: 150, title: "Total horas" },
-                { name: "estado", type: "text", width: 150, title: "Estado",
+                { name: "estado", type: "text", width: 150, title: "Estado"
+                ,
                 itemTemplate: function(value,item){
-                    if(item.estado=="1"){
-                        return "<i class='fas fa-circle' style='color:purple' title='REASIGNAR'></i>"
-                    }
-                    if(item.horafaltante=="0:0" ){ 
-                        return "<i class='fas fa-circle' style='color:green' title='TERMINADO'></i>"
-                    }
-                    if(item.horafaltante){
-                        if(item.horafaltante.includes("-")){
-                            return "<i class='fas fa-circle' style='color:red' title='HORAS EXCEDIDAS'></i>"
+                    console.log(item.id)
+                    if(item.id!=undefined){
+                        if(item.estado=="1"){
+                            return "<i class='fas fa-circle' style='color:purple' title='REASIGNAR'></i>"
+                        }
+                        if(item.horafaltante=="0:0" ){ 
+                            return "<i class='fas fa-circle' style='color:green' title='TERMINADO'></i>"
+                        }
+                        if(item.horafaltante){
+                            if(item.horafaltante.includes("-")){
+                                return "<i class='fas fa-circle' style='color:red' title='HORAS EXCEDIDAS'></i>"
+                            }
+                        }
+                        if(item.horafaltante!="0:0"){
+                            return "<i class='fas fa-circle' style='color:yellow' title='HORAS FALTANTES'></i>"
                         }
                     }
-                    if(item.horafaltante!="0:0"){
-                        return "<i class='fas fa-circle' style='color:yellow' title='HORAS FALTANTES'></i>"
-                    }
-                }} 
+                }
+            } 
             ]
         });
 
@@ -96,6 +100,7 @@
      #jsGrid{
         margin-top: 15px !important;
     }
+    
     .jsgrid-header-row>.jsgrid-header-cell {
         background: #86273E !important;
         color: white !important;
@@ -103,12 +108,13 @@
     .jsgrid-cell:last-child{
         text-align: center !important;
     }
-    .jsgrid-grid-header, .jsgrid-grid-body{
+     .jsgrid-grid-header, .jsgrid-grid-body{
         overflow: hidden !important;
-    }
-    .jsgrid-grid-body .jsgrid-table{
+    } 
+  
+    /* .jsgrid-grid-body .jsgrid-table{
         height: 100% !important;
-    }
+    } */
     .jsgrid-header-sort-asc:before{
         margin: 6px !important;
         border-width: 0 5px 10px !important;

@@ -1130,31 +1130,48 @@
                         }).done(function (result) {
 
                             var j = id;
+                            var index=1;
+                            var lunEntAnt = ""
+                            var lunSalAnt = ""
+                            var marEntAnt = ""
+                            var marSalAnt = ""
+                            var mieSalAnt = ""
+                            var mieEntAnt = ""
+                            var jueEntAnt = ""
+                            var jueSalAnt = ""
+                            var vieSalAnt = ""
+                            var vieEntAnt = ""
+                            var sabEntAnt = ""
+                            var sabSalAnt = ""
+                            var domEntAnt = ""
+                            var domSalAnt = ""
+                            var fechaIniAnt = ""
+                            var fechaFinAnt = ""
                             console.log("J= ",j)
                             console.log("Resultado");
                             console.log(result)
                             if (result.length > 0) {
+                                var operarios = result;
                                 if (j > 0) {
-                                    var index = 1;
+                                    index = 1;
                                     while (index <= j) {
-                                        var operarios = result;
-                                        var lunEntAnt = ""
-                                        var lunSalAnt = ""
-                                        var marEntAnt = ""
-                                        var marSalAnt = ""
-                                        var mieSalAnt = ""
-                                        var mieEntAnt = ""
-                                        var jueEntAnt = ""
-                                        var jueSalAnt = ""
-                                        var vieSalAnt = ""
-                                        var vieEntAnt = ""
-                                        var sabEntAnt = ""
-                                        var sabSalAnt = ""
-                                        var domEntAnt = ""
-                                        var domSalAnt = ""
-                                        var fechaIniAnt = ""
-                                        var fechaFinAnt = ""
-                                        console.log("CHECKEADO?",$("#id_asignaciondet_set-" + (index - 1) + "-DELETE")[0].checked)
+                                        operarios = result;
+                                        lunEntAnt = ""
+                                        lunSalAnt = ""
+                                        marEntAnt = ""
+                                        marSalAnt = ""
+                                        mieSalAnt = ""
+                                        mieEntAnt = ""
+                                        jueEntAnt = ""
+                                        jueSalAnt = ""
+                                        vieSalAnt = ""
+                                        vieEntAnt = ""
+                                        sabEntAnt = ""
+                                        sabSalAnt = ""
+                                        domEntAnt = ""
+                                        domSalAnt = ""
+                                        fechaIniAnt = ""
+                                        fechaFinAnt = ""
                                         if (!$("#id_asignaciondet_set-" + (index - 1) + "-DELETE")[0].checked) {
                                             if ($('#id_asignaciondet_set-' + (index - 1) + '-fechaInicio').val())
                                                 fechaIniAnt = $('#asignaciondet_set-' + (index - 1) + '-fechaInicio').val()
@@ -1196,8 +1213,7 @@
                                                     id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
-                                                            if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
+                                                            if (operarios[i].pk == id_operario) {
                                                                 operarios.splice(i, 1);
 
                                                                 break
@@ -1214,7 +1230,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1230,7 +1245,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1246,7 +1260,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1262,7 +1275,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1278,7 +1290,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1294,7 +1305,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }

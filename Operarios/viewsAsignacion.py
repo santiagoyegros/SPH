@@ -336,9 +336,10 @@ def guardarAsignacion(request):
                 content_type="application/json"
                 )
             else:
+
                 response['dato']=[]
                 response['codigo']=1
-                response['mensaje']="Ocurrió un error al guardar la asignacion"
+                response['mensaje']="Ocurrió un error al guardar la asignacion, favor verifique los datos"
                 return HttpResponse(
                 json.dumps(response),
                 content_type="application/json"

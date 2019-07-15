@@ -76,6 +76,45 @@ class PuntosServicioList(ListView):
             raise Http404("El usuario no tiene el cargo requerido para ingresar")        
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(permission_required('Operarios.view_puntoservicio', raise_exception=True), name='dispatch')
+class PuntosServicioAprobados(ListView):
+    #model = PuntoServicio
+    context_object_name = 'PuntoServicio'
+    template_name = "puntoServicio/puntoServicio_aprobado.html"
+    def get_queryset(self):
+        try:
+            #Traemos el cargo asignado
+            ConsultaCargoUsuario = Cargo.objects.filter(cargoasignado__user=self.request.user.id).query
+            logging.getLogger("error_logger").error('La consulta del cargo del usuario logueado ejecutada es: {0}'.format(ConsultaCargoUsuario))
+            cargoUsuario = Cargo.objects.get(cargoasignado__user=self.request.user.id)
+
+            if (cargoUsuario.cargo == 'Fiscal'):
+                #Si es fiscal, le trae sus puntos de servicios. 'Fiscal'
+                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
+                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+
+            elif (cargoUsuario.cargo == 'Jefe de Operaciones'):
+                #Si es jefe de operaciones -> Trae todo los puntos de servicio de sus fiscales. 'Jefe de Operaciones'
+                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
+                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                pass
+            elif (cargoUsuario.cargo == 'Gerente de Operaciones'):
+                #Si es Gerente de Operaciones/SubGerente -> Todos los contratos. 'Gerente de Operaciones'
+                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                pass
+
+            else:
+                #Else: algun error, de no tener el rol correcto.
+                pass
+        except Cargo.DoesNotExist:
+            raise Http404("El usuario no tiene el cargo requerido para ingresar")  
+
+
+@method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.add_puntoservicio', raise_exception=True), name='dispatch')
 class PuntoServicioCreate(SuccessMessageMixin, CreateView):
     model = PuntoServicio
@@ -130,6 +169,44 @@ class PuntoServicioDeleteView(SuccessMessageMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.warning(self.request, self.success_message)
         return super(PuntoServicioDeleteView, self).delete(request, *args, **kwargs)
+
+
+@login_required
+@permission_required('Operarios.view_puntoservicio', raise_exception=True)
+def PuntoServicio_list(request):
+
+    puntoServicio = PuntoServicio.objects.all()
+
+    if request.GET.get('id'):
+        puntoServicio=puntoServicio.filter(id__contains=request.GET.get('id'))
+    
+    if request.GET.get('CodPuntoServicio'):
+        puntoServicio=puntoServicio.filter(CodPuntoServicio__contains=request.GET.get('CodPuntoServicio'))
+    
+    if request.GET.get('NombrePServicio'):
+       puntoServicio=puntoServicio.filter(nombre__contains=request.GET.get('NombrePServicio'))
+
+    if request.GET.get('Cliente'):
+       puntoServicio=puntoServicio.filter(nombre__contains=request.GET.get('Cliente'))
+
+
+    paginado=Paginator(puntoServicio.order_by('id').values("id", "CodPuntoServicio", "NombrePServicio","Cliente"),  request.GET.get('pageSize'))
+    listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
+    dataPuntosServicio=list(listaPaginada)
+
+    """
+    Filtro nuevo
+    """
+    lista=dataPuntosServicio
+    response_data={}
+    response_data["data"]=lista
+    response_data["itemsCount"]=len(puntoServicio)
+    
+    
+    
+    return JsonResponse(response_data)
+ 
+
 
 @login_required
 @permission_required(['Operarios.add_relevamientocab', 'Operarios.view_relevamientocab'], raise_exception=True)

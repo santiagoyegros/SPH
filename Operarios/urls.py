@@ -6,7 +6,7 @@ from django.conf.urls import url, include
 from django.contrib.auth.decorators import login_required
 
 from Operarios.views import Relevamiento, Operarios_list, Operarios_create, Operarios_update, Operarios_delete
-from Operarios.views import PuntosServicioList, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView,EsmeEmMarcacionesClass
+from Operarios.views import PuntosServicioList,PuntosServicioAprobados, PuntoServicioCreate, PuntoServicioUpdateView, PuntoServicioDeleteView,EsmeEmMarcacionesClass
 from Operarios.views import Planificacion_list,getPuntosServicios, Planificacion_create, Jefes_list,Fiscales_list, Jefes_asig, Jefes_delete, asignarFiscales, asignarPuntosServicio
 from Operarios.views import Fiscales_asig, Fiscales_delete
 from Operarios.views import obtenerMarcacion,getMarcaciones,obtenerFeriado,getFeriados,makeFeriados,editFeriados,deleteFeriados,descargarMarcaciones
@@ -21,12 +21,14 @@ urlpatterns = [
     url(r'^bootstrap/$', TemplateView.as_view(template_name='bootstrap/example.html')),
     url(r'^test/', views.index_alert, name='index_alert'),
     url(r'^operaciones/puntoServicio/listar/', PuntosServicioList.as_view(), name='puntoServicio_list'),
+    url(r'^operaciones/puntoServicio/aprobado/', PuntosServicioAprobados.as_view() , name='servicio_aprobado'),
     url(r'^operaciones/puntoServicio/nuevo/', PuntoServicioCreate.as_view(), name='puntoServicio_create'),
     url(r'^operaciones/puntoServicio/editar/(?P<pk>\d+)/$', PuntosServicios_update, name='puntoServicio_update'),
     url(r'^operaciones/puntoServicio/eliminar/(?P<pk>\d+)/$', PuntoServicioDeleteView.as_view(), name='puntoServicio_delete'),
     url(r'^puntoServicio/relevamiento/(?P<id_puntoServicio>\d+)/$', Relevamiento, name='relevamiento'),
     url(r'^puntoServicio/relevamiento/$', Relevamiento, name='relevamiento_nuevo'),
     url(r'^operaciones/operarios/listar/', viewsOperario.Operarios_list , name='operarios_list'),
+    url(r'^operaciones/punto_Servicio/listar/', views.PuntoServicio_list , name='punto_servicio_list'),
     url(r'^operaciones/operarios/nuevo/', viewsOperario.Operarios_create, name='operarios_create'),
     url(r'^operaciones/operarios/editar/(?P<pk>\d+)/$', viewsOperario.Operarios_update, name='operarios_update'),
     url(r'^operaciones/operarios/eliminar/(?P<pk>\d+)/$', viewsOperario.Operarios_delete, name='operarios_delete'),

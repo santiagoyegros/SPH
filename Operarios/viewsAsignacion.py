@@ -35,7 +35,9 @@ def Asignacion_list(request):
         print ("Puntos asignados")
         print (asignaciones)
         puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
-        contexto = {'PuntosServicio': asignaciones}
+        print(puntoServi)
+        contexto = {'PuntosServicio': puntoServi}
+        #contexto = {'PuntosServicio': asignaciones}
         return render(request, 'asignacion/asignacion_list.html', context=contexto)
 
 def restarHoras(totalHora,asigHora,totalMin,asigMin):

@@ -4,7 +4,8 @@
 {% block content %}
 <h2>Planificacion de Puntos de Servicio</h2>
 
-<form method='POST' action='' id="formPla" style="height: 480px !important">
+<form method='POST' action='' id="formPlan" style="height:480px !important;">
+
     {% csrf_token %}
     <div class="form-group">
         <!-- <label for="exampleFormControlSelect1">Punto de Servicio:</label> -->
@@ -18,11 +19,13 @@
         </div>
         <input class="btn btn-primary" type="submit" value="Planificar"> -->
         <div id="jsGrid"></div>
+    </div>
 </form>
 <script>
     $(function () {
         $("#jsGrid").jsGrid({
-            height:$("#formPla").height(),
+            height: $("#formAsig").height(),
+          //height:$("#formPla").height(),
             width: "100%",
             filtering: false,
             inserting: false,
@@ -46,7 +49,7 @@
                     var d = $.Deferred();
                     $.ajax({
                         type: "GET",
-                        url: "/reingenieria/planificacion/puntoServicios"
+                        url: "/reingenieria/operaciones/puntoServicio/listar/"
                     }).done(function (result) {
                         console.log(result)
                         d.resolve($.map(result, function (item) {

@@ -70,7 +70,9 @@
             <div class="col-1 text-center">
                 <input type="checkbox" style="display:none" name="relevamientocupohoras_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
                 <a href="javascript:void(0);" onclick="deleteLeaveRowCup(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                    <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i class="fa fa-trash fa-lg"></i> Eliminar</div>
+             
+  
                 </a>
             </div>
         </div>
@@ -569,5 +571,24 @@ $('input[id$="cantCHoras"], [id^="id_relevamientocupohoras_set-"]').on('change',
 });
 
 </script>
+
+
+<style>
+
+.btn-guardar {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 30px;
+        cursor: pointer;
+    }
+
+.btn-eliminar {
+        background-color: gray !important;
+        border-color: gray !important;
+        padding: 7px 7px;
+        
+    }
+
+</style>
 
 {% endblock %}

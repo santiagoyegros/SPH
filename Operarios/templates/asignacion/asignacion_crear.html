@@ -680,7 +680,7 @@
                                         color: red !important;
                                         font-size: 25px;">
                                 {{asigDetFormSet.empty_form.DELETE}}
-                                <a id="buttondel" href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});"
+                                <a href="javascript:void(0);" onclick="deleteLeaveRow(this,);"
                                 class="remove muted pull-right">
                                 <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span
                                     class="visible-xs"></span>
@@ -2056,7 +2056,7 @@
             clon_html13 = replaceAll(clon_html12, 'name="diaFin-"', 'name="diaFin-' + (total).toString() + '"');
             clon_html14 = replaceAll(clon_html13, 'id="id_diaFin-"', 'id="id_diaFin-' + (total).toString() + '"');
             clon_html15 = replaceAll(clon_html14, 'id="perfil-"', 'id="perfil-' + (total).toString() + '"');
-            clon_html16 = replaceAll(clon_html15, 'id="buttondel"', 'id="buttondel-' + (total).toString() + '"');
+            clon_html16 = replaceAll(clon_html15, 'onclick="deleteLeaveRow(this,);"', 'onclick="deleteLeaveRow(this,' + (total).toString() + ');"');
             $('#formset-det').append(clon_html16);
             $('#id_asignaciondet_set-' + (total) + '-DELETE').attr('style', 'display:none !important')
             $("#id_asignaciondet_set-" + (total) + "-DELETE").prop("checked", false);

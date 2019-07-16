@@ -49,7 +49,7 @@
                     var d = $.Deferred();
                     $.ajax({
                         type: "GET",
-                        url: "/reingenieria/operaciones/puntoServicio/listar/"
+                        url: "/reingenieria/planificacion/puntoServicios/"
                     }).done(function (result) {
                         console.log(result)
                         d.resolve($.map(result, function (item) {

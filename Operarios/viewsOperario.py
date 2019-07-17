@@ -87,10 +87,8 @@ def Operarios_list(request):
     """
     lista=dataOperarios
     response_data={}
-    response_data["data"]=lista;
+    response_data["data"]=lista
     response_data["itemsCount"]=len(operarios)
-    
-    
     
     return JsonResponse(response_data)
  

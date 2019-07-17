@@ -82,7 +82,7 @@
                         var d = $.Deferred();
                         $.ajax({
                             type: "GET",
-                            url: "/reingenieria/operaciones/punto_Servicio/listar/",
+                            url: "/reingenieria/clientes/punto_Servicio/listar/",
                             data: filter
                         }).done(function (result) {
                             console.log(result);
@@ -107,14 +107,14 @@
 
                         var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button"})
                         .click(function(e) {
-                            document.location.href="/reingenieria/operaciones/puntoServicio/editar/"+item.id
+                            document.location.href="/reingenieria/clientes/puntoServicio/editar/"+item.id
                         });
 
                         var $customDeleteButton = $("<button>").attr({class: "customGridDeletebutton jsgrid-button jsgrid-delete-button"})
                         .click(function(e) {
                             if (confirm("Esta seguro que desea eliminar el registro"))
                             {
-                                document.location.href="/reingenieria/operaciones/puntoServicio/eliminar/"+item.id
+                                document.location.href="/reingenieria/clientes/puntoServicio/eliminar/"+item.id
                                
                             }
                         });

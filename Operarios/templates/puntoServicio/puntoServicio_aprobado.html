@@ -42,7 +42,7 @@
                         var d = $.Deferred();
                         $.ajax({
                             type: "GET",
-                            url: "/reingenieria/operaciones/punto_Servicio/listar/",
+                            url: "/reingenieria/clientes/punto_Servicio/listar/",
                             data: filter
                         }).done(function (result) {
                             console.log(result);
@@ -67,12 +67,12 @@
 
                         var $servicioAprobado = $("<button>").text("Serv aprobado").attr({class: "btn btn-warning btn-sm"}).attr({title:"prueba"})
                         .click(function(e) {
-                            document.location.href="/reingenieria/puntoServicio/relevamiento/"+item.id
+                            document.location.href="/reingenieria/clientes/puntoServicio/relevamiento/"+item.id
                         });
 
                         var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button"})
                         .click(function(e) {
-                            document.location.href="/reingenieria/puntoServicio/relevamiento/"+item.id
+                            document.location.href="/reingenieria/clientes/puntoServicio/relevamiento/"+item.id
                         });
 
                         return $("<div>").append($customEditButton);

@@ -62,7 +62,7 @@
                         var d = $.Deferred();
                         $.ajax({
                             type: "GET",
-                            url: "/reingenieria/operaciones/punto_Servicio/listar/",
+                            url: "/reingenieria/clientes/punto_Servicio/listar/",
                             data: filter
                         }).done(function (result) {
                             d.resolve($.map(result, function (item) {

@@ -57,7 +57,7 @@
                         var d = $.Deferred();
                         $.ajax({
                             type: "GET",
-                            url: "/reingenieria/operaciones/punto_Servicio/listar/",
+                            url: "/reingenieria/clientes/punto_Servicio/listar/",
                             data: filter
                         }).done(function (result) {
                             d.resolve($.map(result, function (item) {
@@ -79,15 +79,15 @@
                         itemTemplate: function (value, item) {
                             var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
 
-                            var $servicioAprobado = $("<button>").text("Serv aprobado").attr({ class: "btn btn-warning btn-sm" }).attr({ title: "prueba" })
-                                .click(function (e) {
-                                    document.location.href = "/reingenieria/puntoServicio/relevamiento/" + item.id
-                                });
+                        var $servicioAprobado = $("<button>").text("Serv aprobado").attr({class: "btn btn-warning btn-sm"}).attr({title:"prueba"})
+                        .click(function(e) {
+                            document.location.href="/reingenieria/clientes/puntoServicio/relevamiento/"+item.id
+                        });
 
-                            var $customEditButton = $("<button>").attr({ class: "customGridEditbutton jsgrid-button jsgrid-edit-button" })
-                                .click(function (e) {
-                                    document.location.href = "/reingenieria/puntoServicio/relevamiento/" + item.id
-                                });
+                        var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button"})
+                        .click(function(e) {
+                            document.location.href="/reingenieria/clientes/puntoServicio/relevamiento/"+item.id
+                        });
 
                             return $("<div>").append($customEditButton);
                         }

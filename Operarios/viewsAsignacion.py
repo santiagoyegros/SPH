@@ -83,7 +83,7 @@ def getPuntosServicios(request):
             "estado":estado
         })
         i=i+1
-
+    print(puntos)
     response={}
     response['dato']=puntos
     return HttpResponse(json.dumps(response),content_type="application/json")

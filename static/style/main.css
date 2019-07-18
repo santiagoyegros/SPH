@@ -8,4 +8,34 @@
     padding-left: 15px !important;
     width: 100%;
 }
-
+.btn-guardar {
+    background-color: #86273e !important;
+    border-color: #86273e !important;
+    padding: 7px 30px;
+    cursor: pointer; 
+}
+.btn-agregar {
+    background-color: #86273e !important;
+    border-color: #86273e !important;
+    padding: 7px 30px;
+    cursor: pointer; 
+}
+.btn-agregar {
+    background-color: #86273e !important;
+    border-color: #86273e !important;
+    padding: 7px 30px;
+    cursor: pointer; 
+}
+.btn-cancelar {
+    background-color: #707171 !important;
+    border-color: #707171 !important;
+    padding: 7px 30px;
+    cursor: pointer; 
+}
+.btn:focus{
+    box-shadow: none !important;
+}
+.bootstrap-select .dropdown-toggle{
+    border: 1px solid #d9d9d9 !important;
+    background-color: white !important;
+}

@@ -1,22 +1,39 @@
 {% extends "base.html" %}
 {% load static %}
 {% block base_head %}
-    <link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
+<link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet">
+</link>
 {% endblock %}
 {% block content %}
-<div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12 col-md-12">
-                <h2>Servicios aprobados de Puntos de servicio</h2>
-            </div>
-        </div>
-        <div class="col-lg-12 col-md-12" id="jsGrid"></div>
-</div>
+<h2>Servicios aprobados de Puntos de servicio</h2>
+<form method='POST' action='' id="formPuntoServicioAprobado">
+    {% csrf_token %}
+    <div class="form-group">
+        <div id="jsGrid"></div>
+    </div>
+</form>
 
-    <script>
-        $(function () {
+<script>
+    $(function () {
+        var clientes = [];
+        //SE OBTIENEN CLIENTES PARA EL FILTRADO POR CLIENTE
+        var d1 = $.ajax({
+            type: "GET",
+            url: "/reingenieria/operaciones/puntoServicio/clientes/"
+        }).done(function (result) {
+            var clientes = [];
+            var datos = result.dato;
+            clientes.push({
+                id: null,
+                nombre: null
+            });
+            for (let index = 0; index < datos.length; index++) {
+                clientes.push({
+                    id: datos[index].id,
+                    nombre: datos[index].Cliente
+                });
+            }
             $("#jsGrid").jsGrid({
-                height: "100%",
                 width: "100%",
                 filtering: true,
                 inserting: false,
@@ -24,7 +41,7 @@
                 sorting: true,
                 paging: true,
                 autoload: true,
-                pageSize: 15,
+                pageSize: 10,
                 pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
                 pageButtonCount: 1,
                 pagePrevText: "Anterior",
@@ -32,11 +49,9 @@
                 pageFirstText: "Primera",
                 pageLastText: "Ultima",
                 noDataContent: "No se han encontrado registros",
-                confirmDeleting:true,
-                deleteConfirm: "Esta seguro, que desea eliminar el registro??",
+                deleteConfirm: "Desea eliminar el registro?",
                 loadMessage: "Por favor, espere...",
                 invalidMessage: "Datos no válidos",
-                pageLoading:true,
                 controller: {
                     loadData: function (filter) {
                         var d = $.Deferred();
@@ -45,11 +60,9 @@
                             url: "/reingenieria/operaciones/punto_Servicio/listar/",
                             data: filter
                         }).done(function (result) {
-                            console.log(result);
-                            var resp={}
-                            resp.data=result.data;
-                            resp.itemsCount=result.itemsCount
-                            d.resolve(resp)
+                            d.resolve($.map(result, function (item) {
+                                return $.extend(item, { id: item.id });
+                            }));
                         });
 
                         return d.promise();
@@ -57,34 +70,57 @@
                 },
 
                 fields: [
-                    { name: "id",type:"text", width: 50,title: "Nro"},
-                    { name: "CodPuntoServicio",type:"text", width: 50,title: "Codigo P.Servicio" },
-                    { name: "NombrePServicio",type:"text", width: 50,title: "Punto de Servicio" },
-                    { name: "Cliente",type:"text", width: 50,title: "Cliente" },
-                    { type: "control", width:50, name:"Serv aprobado",
-                    itemTemplate: function(value, item) {
-                        var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
+                    { name: "id", type: "text", width: 50, title: "Nro" },
+                    { name: "codigoPuntoServicio", type: "text", width: 50, title: "Codigo P.Servicio" },
+                    { name: "nombrePuntoServicio", type: "text", width: 50, title: "Punto de Servicio" },
+                    { name: "clientePuntoServicio", type: "select", width: 50, title: "Cliente", items: clientes, valueField: "id", textField: "nombre", valueType: "string" },
+                    {
+                        type: "control", width: 50, name: "Serv aprobado",
+                        itemTemplate: function (value, item) {
+                            var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
 
-                        var $servicioAprobado = $("<button>").text("Serv aprobado").attr({class: "btn btn-warning btn-sm"}).attr({title:"prueba"})
-                        .click(function(e) {
-                            document.location.href="/reingenieria/puntoServicio/relevamiento/"+item.id
-                        });
+                            var $servicioAprobado = $("<button>").text("Serv aprobado").attr({ class: "btn btn-warning btn-sm" }).attr({ title: "prueba" })
+                                .click(function (e) {
+                                    document.location.href = "/reingenieria/puntoServicio/relevamiento/" + item.id
+                                });
 
-                        var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button"})
-                        .click(function(e) {
-                            document.location.href="/reingenieria/puntoServicio/relevamiento/"+item.id
-                        });
+                            var $customEditButton = $("<button>").attr({ class: "customGridEditbutton jsgrid-button jsgrid-edit-button" })
+                                .click(function (e) {
+                                    document.location.href = "/reingenieria/puntoServicio/relevamiento/" + item.id
+                                });
 
-                        return $("<div>").append($customEditButton);
-                    }
-                    },          
-        ]
+                            return $("<div>").append($customEditButton);
+                        }
+                    },
+                ]
 
 
 
             });
         });
-        
-    </script>
-    
+    });
+
+</script>
+<style>
+    .jsgrid-grid-header,
+    .jsgrid-grid-body {
+        overflow: auto;
+    }
+
+    #formPuntoServicioAprobado {
+        margin-top: 65px !important;
+    }
+
+    .jsgrid-header-sort-asc:before {
+        margin: 6px !important;
+        border-width: 0 5px 10px !important;
+        border-color: transparent transparent #ffffff !important;
+    }
+
+    .jsgrid-header-sort-desc:before {
+        border-width: 10px 5px 0;
+        margin: 5px !important;
+        border-color: #ffffff transparent transparent;
+    }
+</style>
 {% endblock %}

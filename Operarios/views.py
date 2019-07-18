@@ -54,17 +54,17 @@ class PuntosServicioList(ListView):
                 #Si es fiscal, le trae sus puntos de servicios. 'Fiscal'
                 consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
 
             elif (cargoUsuario.cargo == 'Jefe de Operaciones'):
                 #Si es jefe de operaciones -> Trae todo los puntos de servicio de sus fiscales. 'Jefe de Operaciones'
                 consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
                 pass
             elif (cargoUsuario.cargo == 'Gerente de Operaciones'):
                 #Si es Gerente de Operaciones/SubGerente -> Todos los contratos. 'Gerente de Operaciones'
-                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
                 return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
                 pass
@@ -174,39 +174,57 @@ class PuntoServicioDeleteView(SuccessMessageMixin, DeleteView):
 @login_required
 @permission_required('Operarios.view_puntoservicio', raise_exception=True)
 def PuntoServicio_list(request):
-
     puntoServicio = PuntoServicio.objects.all()
-
+    print(request.GET)
     if request.GET.get('id'):
         puntoServicio=puntoServicio.filter(id__contains=request.GET.get('id'))
     
-    if request.GET.get('CodPuntoServicio'):
-        puntoServicio=puntoServicio.filter(CodPuntoServicio__contains=request.GET.get('CodPuntoServicio'))
+    if request.GET.get('codigoPuntoServicio'):
+        puntoServicio=puntoServicio.filter(CodPuntoServicio__contains=request.GET.get('codigoPuntoServicio'))
     
-    if request.GET.get('NombrePServicio'):
-       puntoServicio=puntoServicio.filter(nombre__contains=request.GET.get('NombrePServicio'))
+    if request.GET.get('nombrePuntoServicio'):
+       puntoServicio=puntoServicio.filter(NombrePServicio__contains=request.GET.get('nombrePuntoServicio'))
 
-    if request.GET.get('Cliente'):
-       puntoServicio=puntoServicio.filter(nombre__contains=request.GET.get('Cliente'))
-
-
-    paginado=Paginator(puntoServicio.order_by('id').values("id", "CodPuntoServicio", "NombrePServicio","Cliente"),  request.GET.get('pageSize'))
-    listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
-    dataPuntosServicio=list(listaPaginada)
+    if request.GET.get('clientePuntoServicio'):
+        puntoServicio=puntoServicio.filter(Cliente_id=request.GET.get('clientePuntoServicio'))
 
     """
-    Filtro nuevo
+    Se reestructura para obtener nombre de cliente
     """
-    lista=dataPuntosServicio
-    response_data={}
-    response_data["data"]=lista
-    response_data["itemsCount"]=len(puntoServicio)
+    puntos = []
+    for p in puntoServicio:
+        cliente = ""
+        if p.Cliente:
+            cliente = Cliente.objects.get(id=p.Cliente.id)
+
+        puntos.append({
+            "id":p.id,
+            "codigoPuntoServicio":p.CodPuntoServicio,
+            "nombrePuntoServicio":p.NombrePServicio,
+            "clientePuntoServicio":cliente.id
+        })
     
+    # paginado=Paginator(puntoServicio.order_by('id').values("id", "CodPuntoServicio", "NombrePServicio","Cliente"),  request.GET.get('pageSize'))
+    # listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
+    # dataPuntosServicio=list(puntos)
     
-    
-    return JsonResponse(response_data)
+    response={}
+    response['dato']=puntos
+    return HttpResponse(json.dumps(response),content_type="application/json")
+
  
+def getClientes(request):
+    clientes = Cliente.objects.all()
+    list_clientes=[]
+    for c in clientes:
+        list_clientes.append({
+            "id":c.id,
+            "Cliente":c.Cliente
+        })
 
+    response={}
+    response['dato']=list_clientes
+    return HttpResponse(json.dumps(response),content_type="application/json")
 
 @login_required
 @permission_required(['Operarios.add_relevamientocab', 'Operarios.view_relevamientocab'], raise_exception=True)

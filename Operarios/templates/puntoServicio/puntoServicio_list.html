@@ -1,70 +1,52 @@
 {% extends "base.html" %}
 {% load static %}
 {% block base_head %}
-    <link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet"></link> 
+<link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet">
+</link>
 {% endblock %}
 {% block content %}
-<div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12 col-md-12">
-                <h1>Puntos de servicio</h1>
-            </div>
-        </div>        
-
-    <!--<h2>Puntos de Servicio</h2> -->
-    <!--Table-->
-    <!-- <table id="tablePreview" class="table table-hover table-sm"> -->
-    <!--Table head-->
-   <!-- <thead>
-        <tr>
-            <th>#</th>
-            <th>Codigo P. Servicio</th>
-            <th>Punto de Servicio</th>
-            <th>Cliente</th>
-            <th>Editar</th>
-            <th>Eliminar</th>
-            <th>Servicio Aprobado</th>
-        </tr>
-    </thead>-->
-    <!--Table head-->
-    <!--Table body-->
-    <!--<tbody>
-        {% if PuntoServicio %}
-        {% for puntosSer in PuntoServicio %}
-        <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ puntosSer.CodPuntoServicio }}</td>
-            <td>{{ puntosSer.NombrePServicio }}</td>
-            <td>{{ puntosSer.Cliente.Cliente }}</td>
-            <td> <a class='btn btn-primary btn-sm' href={% url 'Operarios:puntoServicio_update' puntosSer.id %}>Editar</a> </td>
-            <td> <a class='btn btn-danger btn-sm' href={% url 'Operarios:puntoServicio_delete' puntosSer.id %}>Eliminar</a> </td>
-            <td> <a class='btn btn-warning btn-sm' href={% url 'Operarios:relevamiento' puntosSer.id %}>Serv Aprobado</a> </td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-    </tbody> -->
-    <!--Table body-->
-    <!--</table> -->
-    <!--Table-->
-    <div class="col-lg-12 col-md-12" style="text-align: right">
-    <a class='btn btn-success btn-guardar' href='{% url 'Operarios:puntoServicio_create' %}' ><i class="fa fa-plus fa-lg"></i> Nuevo Punto de Servicio </a>
-    <div  class="col-lg-12 col-md-12" id="jsGrid"></div>
+<h2>Puntos de servicio</h2>
+<form method='POST' action='' id="formPuntoServicio">
+    {% csrf_token %}
+    <div class="form-group">
+        <a class='btn btn-success btn-agregar' style="    float: right;margin: 10px 0px"
+            href='{% url 'Operarios:puntoServicio_create' %}'><i class="fa fa-plus fa-lg"></i> Punto de Servicio </a>
+        <div id="jsGrid"></div>
     </div>
-    </div>
+</form>
 {% endblock %}
 {% block scripts %}
-    <script>
-        $(function () {
+<script>
+    $(function () {
+        var clientes = [];
+        //SE OBTIENEN CLIENTES PARA EL FILTRADO POR CLIENTE
+        var d1 = $.ajax({
+            type: "GET",
+            url: "/reingenieria/operaciones/puntoServicio/clientes/"
+        }).done(function (result) {
+            var clientes = [];
+            var datos = result.dato;
+            clientes.push({
+                id: null,
+                nombre: null
+            });
+            for (let index = 0; index < datos.length; index++) {
+                clientes.push({
+                    id: datos[index].id,
+                    nombre: datos[index].Cliente
+                });
+            }
+
             $("#jsGrid").jsGrid({
-                height: "100%",
                 width: "100%",
                 filtering: true,
                 inserting: false,
                 editing: false,
                 sorting: true,
+                // height: $("#formPuntoServicio").height(),
                 paging: true,
                 autoload: true,
-                pageSize: 15,
+                pageSize: 10,
                 pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
                 pageButtonCount: 1,
                 pagePrevText: "Anterior",
@@ -72,11 +54,9 @@
                 pageFirstText: "Primera",
                 pageLastText: "Ultima",
                 noDataContent: "No se han encontrado registros",
-                confirmDeleting:true,
-                deleteConfirm: "Esta seguro, que desea eliminar el registro??",
+                deleteConfirm: "Desea eliminar el registro?",
                 loadMessage: "Por favor, espere...",
                 invalidMessage: "Datos no válidos",
-                pageLoading:true,
                 controller: {
                     loadData: function (filter) {
                         var d = $.Deferred();
@@ -85,60 +65,69 @@
                             url: "/reingenieria/operaciones/punto_Servicio/listar/",
                             data: filter
                         }).done(function (result) {
-                            console.log(result);
-                            var resp={}
-                            resp.data=result.data;
-                            resp.itemsCount=result.itemsCount
-                            d.resolve(resp)
+                            d.resolve($.map(result, function (item) {
+                                return $.extend(item, { id: item.id });
+                            }));
                         });
 
                         return d.promise();
-                    },
-                },
-
-                fields: [
-                    { name: "id",type:"text", width: 50,title: "Nro"},
-                    { name: "CodPuntoServicio",type:"text", width: 50,title: "Codigo P.Servicio" },
-                    { name: "NombrePServicio",type:"text", width: 50,title: "Punto de Servicio" },
-                    { name: "Cliente",index:"Cliente.Cliente",type:"text", width: 50,title: "Cliente" },
-                    { type: "control",
-                    itemTemplate: function(value, item) {
-                        var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
-
-                        var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button"})
-                        .click(function(e) {
-                            document.location.href="/reingenieria/operaciones/puntoServicio/editar/"+item.id
-                        });
-
-                        var $customDeleteButton = $("<button>").attr({class: "customGridDeletebutton jsgrid-button jsgrid-delete-button"})
-                        .click(function(e) {
-                            if (confirm("Esta seguro que desea eliminar el registro"))
-                            {
-                                document.location.href="/reingenieria/operaciones/puntoServicio/eliminar/"+item.id
-                               
-                            }
-                        });
-
-                        return $("<div>").append($customEditButton).append($customDeleteButton);
                     }
-                    },                  
-        ]
+                },
+                fields: [
+                    { name: "id", type: "text", width: 50, title: "Nro" },
+                    { name: "codigoPuntoServicio", type: "text", width: 50, title: "Codigo P.Servicio" },
+                    { name: "nombrePuntoServicio", type: "text", width: 50, title: "Punto de Servicio" },
+                    { name: "clientePuntoServicio", type: "select", width: 50, title: "Cliente", items: clientes, valueField: "id", textField: "nombre", valueType: "string" },
+                    {
+                        type: "control",
+                        itemTemplate: function (value, item) {
+                            var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
+
+                            var $customEditButton = $("<button>").attr({ class: "customGridEditbutton jsgrid-button jsgrid-edit-button" })
+                                .click(function (e) {
+                                    document.location.href = "/reingenieria/operaciones/puntoServicio/editar/" + item.id
+                                });
+
+                            var $customDeleteButton = $("<button>").attr({ class: "customGridDeletebutton jsgrid-button jsgrid-delete-button" })
+                                .click(function (e) {
+                                    if (confirm("Esta seguro que desea eliminar el registro")) {
+                                        document.location.href = "/reingenieria/operaciones/puntoServicio/eliminar/" + item.id
+
+                                    }
+                                });
+
+                            return $("<div>").append($customEditButton).append($customDeleteButton);
+                        }
+                    },
+                ]
 
 
 
             });
         });
-        
-    </script>
+
+    });
+
+</script>
 
 <style>
 
-.btn-guardar {
-background-color: #86273e !important;
-border-color: #86273e !important;
-padding: 7px 20px;
-cursor: pointer;
-}        
+
+    .jsgrid-grid-header,
+    .jsgrid-grid-body {
+        overflow: auto;
+    }
+
+    .jsgrid-header-sort-asc:before {
+        margin: 6px !important;
+        border-width: 0 5px 10px !important;
+        border-color: transparent transparent #ffffff !important;
+    }
+
+    .jsgrid-header-sort-desc:before {
+        border-width: 10px 5px 0;
+        margin: 5px !important;
+        border-color: #ffffff transparent transparent;
+    }
 </style>
-    
 {% endblock %}

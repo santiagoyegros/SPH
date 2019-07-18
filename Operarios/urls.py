@@ -13,6 +13,7 @@ from Operarios.views import obtenerMarcacion,getMarcaciones,obtenerFeriado,getFe
 from Operarios import viewsAsignacion 
 from Operarios import viewsOperario, viewsAlerta
 from Operarios.views import PuntosServicios_update
+from Operarios.views import getClientes
 from Operarios.viewsAsignacion import cargarOperarios
 app_name = 'Operarios'
 
@@ -21,6 +22,7 @@ urlpatterns = [
     url(r'^bootstrap/$', TemplateView.as_view(template_name='bootstrap/example.html')),
     url(r'^test/', views.index_alert, name='index_alert'),
     url(r'^operaciones/puntoServicio/listar/', PuntosServicioList.as_view(), name='puntoServicio_list'),
+    url(r'^operaciones/puntoServicio/clientes/', getClientes, name='getClientes'),
     url(r'^operaciones/puntoServicio/aprobado/', PuntosServicioAprobados.as_view() , name='servicio_aprobado'),
     url(r'^operaciones/puntoServicio/nuevo/', PuntoServicioCreate.as_view(), name='puntoServicio_create'),
     url(r'^operaciones/puntoServicio/editar/(?P<pk>\d+)/$', PuntosServicios_update, name='puntoServicio_update'),

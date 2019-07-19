@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from openpyxl import Workbook
 from Operarios.models import Ciudad, Cliente, Nacionalidad
 from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet,EsmeEmMarcaciones, Feriados
-
+from django.db import connection, transaction
 
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 
@@ -52,21 +52,21 @@ class PuntosServicioList(ListView):
 
             if (cargoUsuario.cargo == 'Fiscal'):
                 #Si es fiscal, le trae sus puntos de servicios. 'Fiscal'
-                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id))
 
             elif (cargoUsuario.cargo == 'Jefe de Operaciones'):
                 #Si es jefe de operaciones -> Trae todo los puntos de servicio de sus fiscales. 'Jefe de Operaciones'
-                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id))
                 pass
             elif (cargoUsuario.cargo == 'Gerente de Operaciones'):
                 #Si es Gerente de Operaciones/SubGerente -> Todos los contratos. 'Gerente de Operaciones'
-                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id))
                 pass
 
             else:
@@ -101,7 +101,7 @@ class PuntoServicioUpdateView(SuccessMessageMixin, UpdateView):
 @login_required
 @permission_required('Operarios.change_puntoservicio', raise_exception=True)
 def PuntosServicios_update(request, pk):
-    puntoServicio = PuntoServicio.objects.get(Q(id=pk) & Q(vfechaFin=None))
+    puntoServicio = PuntoServicio.objects.get(Q(id=pk))
   
     if request.method == 'GET':
         form = PuntoServicioForm(instance=puntoServicio)
@@ -113,8 +113,29 @@ def PuntosServicios_update(request, pk):
     else:
         form = PuntoServicioForm(request.POST, instance=puntoServicio)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Punto de Servicio modificado correctamente.')
+            #form.save()
+            print(form.cleaned_data)
+            conn= connection.cursor()
+            params=(pk,form.cleaned_data.get('CodPuntoServicio'),
+            form.cleaned_data.get('NombrePServicio'),
+            form.cleaned_data.get('DireccionContrato'),
+            form.cleaned_data.get('Barrios'),
+            form.cleaned_data.get('Contacto'),
+            form.cleaned_data.get('MailContacto'),
+            form.cleaned_data.get('TelefonoContacto'),
+            form.cleaned_data.get('Coordenadas'),
+            str(form.cleaned_data.get('Ciudad')),
+            str(form.cleaned_data.get('Cliente')),
+            form.cleaned_data.get('NumeroMarcador'),
+            int(0),int(0));
+            print(params)
+            conn.execute('puntoServicio_trigger %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s',params)
+            result = conn.fetchone()[0]
+            conn.close()
+            if result==0:
+                messages.success(request, 'Punto de Servicio modificado correctamente.')    
+            else:
+                messages.success(request, 'Error al modificar Punto de Servicio.')    
         return redirect('Operarios:puntoServicio_list')
 
     return render(request, 'puntoServicio/puntoServicio_form.html', context=contexto) 
@@ -140,15 +161,16 @@ def Relevamiento(request, id_puntoServicio=None):
         """
         Obtenemos el punto de servicio
         """
-        puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None))
+        puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio))
     except PuntoServicio.DoesNotExist:
         raise Http404("Punto de Servicio no existe")
 
-    relevamiento = RelevamientoCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None)).first()
-
+    relevamiento = RelevamientoCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
+    cabeceraNueva=False
     if relevamiento == None:
         primeraVez = 1
         relevamiento = RelevamientoCab()
+        cabeceraNueva=True
 
        
     relevamientoDetFormSet =        inlineformset_factory(RelevamientoCab, RelevamientoDet, form=RelevamientoDetForm, extra=1, can_delete=True)
@@ -171,11 +193,236 @@ def Relevamiento(request, id_puntoServicio=None):
             relevamMenFormSet = relevamientoMensuFormSet(request.POST, instance=relevamiento)
 
             if form.is_valid() and relevamDetFormSet.is_valid() and relevamEspFormSet.is_valid() and relevamCuHrFormSet.is_valid() and relevamMenFormSet.is_valid():
-                form.save()
-                relevamDetFormSet.save()
-                relevamEspFormSet.save()
-                relevamCuHrFormSet.save()
-                relevamMenFormSet.save()
+                print(relevamMenFormSet.cleaned_data)
+                #update de la cabecera, retorna el nuevo ID
+                #print(relevamDetFormSet.cleaned_data)
+
+                #Estado y fecha setee en duro
+                """conn= connection.cursor()
+                params=(relevamiento.id,datetime.now(),form.cleaned_data.get('cantidad'),
+                puntoSer.id,form.cleaned_data.get('cantidadHrTotal'),form.cleaned_data.get('cantidadHrEsp'),
+                form.cleaned_data.get('fechaInicio'),None,str(form.cleaned_data.get('tipoSalario')),
+                form.cleaned_data.get('comentario'),form.cleaned_data.get('cantAprendices'),'Activo',None,None,0)
+                conn.execute('relevamiento_cab_trg  %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s',params)
+                result = conn.fetchone()[0]
+                nuevaCabeceraId=result
+                conn.close()
+                print(result)"""
+
+
+                #relevamDetFormSet.save()
+                """for item in relevamDetFormSet.cleaned_data:
+                    if ('DELETE' in item and item['DELETE'] == 'True'):
+                        #trigger delete call
+                        conn= connection.cursor()
+                        params=(relevamDetFormSet.cleaned_data.get('id'))
+                        conn.execute('relevamiento_det_del_trg  %s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('borre detalle')
+                            messages.success(request, 'detalle modificado correctamente.')    
+                        else:
+                            print('falle borrar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar detalle') 
+                    elif ('id' in item and  item['id'] is None):
+                        #trigger insert call
+                        conn= connection.cursor()
+                        params=(item.get('id'),item.get('orden'),
+                        item.get('lunEnt'),item.get('lunSal'),
+                        item.get('marEnt'),item.get('marSal'),
+                        item.get('mieEnt'),item.get('mieSal'),
+                        item.get('jueEnt'),item.get('jueSal'),
+                        item.get('vieEnt'),item.get('vieSal'),
+                        item.get('sabEnt'),item.get('sabSal'),
+                        item.get('domEnt'),item.get('domSal'),
+                        nuevaCabeceraId,item.get('tipoServPart'),0)
+                        
+                        conn.execute('relevamiento_det_ins_trg  %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s, %s %s,%s, %s,%s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('borre detalle')
+                            messages.success(request, 'detalle modificado correctamente.')    
+                        else:
+                            print('falle borrar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar detalle') 
+                    elif ('id' in item and  item['id'] is not None):
+                        conn= connection.cursor()
+
+                        params=(item.get('id'),item.get('orden'),
+                        item.get('lunEnt'),item.get('lunSal'),
+                        item.get('marEnt'),item.get('marSal'),
+                        item.get('mieEnt'),item.get('mieSal'),
+                        item.get('jueEnt'),item.get('jueSal'),
+                        item.get('vieEnt'),item.get('vieSal'),
+                        item.get('sabEnt'),item.get('sabSal'),
+                        item.get('domEnt'),item.get('domSal'),
+                        nuevaCabeceraId,item.get('tipoServPart'),0)
+                        
+                        conn.execute('relevamiento_det_upd_trg  %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('actualice detalle')
+                            messages.success(request, 'Punto de Servicio modificado correctamente.')    
+                        else:
+                            print('falle actualizar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar Punto de Servicio.') 
+
+
+
+                #print(relevamEspFormSet.cleaned_data)
+                for item in relevamEspFormSet.cleaned_data:
+                    if ('DELETE' in item and item['DELETE'] == 'True'):
+                        #trigger delete call
+                        conn= connection.cursor()
+                        params=(item.get('id'))
+                        conn.execute('relevamiento_esp_del_trg  %s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('borre detalle')
+                            messages.success(request, 'detalle modificado correctamente.')    
+                        else:
+                            print('falle borrar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar detalle') 
+                    elif ('id' in item and  item['id'] is None):
+                        #trigger insert call
+                        conn= connection.cursor()
+                        params=(item.get('id'),
+                        item.get('frecuencia'),
+                        nuevaCabeceraId,item.get('tipo'),
+                        item.get('cantHoras'),0,0)
+                        conn.execute('relevamiento_esp_ins_trg  %s, %s,%s,%s, %s,%s,%s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('borre detalle')
+                            messages.success(request, 'detalle modificado correctamente.')    
+                        else:
+                            print('falle borrar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar detalle') 
+                    elif ('id' in item and  item['id'] is not None):
+                        conn= connection.cursor()
+                        params=(item.get('id'),
+                        item.get('frecuencia'),
+                        nuevaCabeceraId,
+                        item.get('tipo'),
+                        item.get('cantHoras'),0,0)
+                        conn.execute('relevamiento_esp_ins_trg  %s, %s,%s,%s, %s,%s,%s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('actualice detalle')
+                            messages.success(request, 'Punto de Servicio modificado correctamente.')    
+                        else:
+                            print('falle actualizar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar Punto de Servicio.') 
+                
+                for item in relevamCuHrFormSet.cleaned_data:
+                    if ('DELETE' in item and item['DELETE'] == 'True'):
+                        #trigger delete call
+                        conn= connection.cursor()
+                        params=(item.get('id'))
+                        conn.execute('relevamiento_cuh_del_trg  %s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('borre detalle')
+                            messages.success(request, 'detalle modificado correctamente.')    
+                        else:
+                            print('falle borrar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar detalle') 
+                    elif ('id' in item and  item['id'] is None):
+                        #trigger insert call
+                        conn= connection.cursor()
+                        params=(item.get('id'),item.get('frecuencia'),nuevaCabeceraId,item.get('tipoHora'),item.get('cantCHoras'),0,0)
+                        conn.execute('relevamiento_cuh_ins_trg  %s,%s,%s, %s,%s,%s, %s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('borre detalle')
+                            messages.success(request, 'detalle modificado correctamente.')    
+                        else:
+                            print('falle borrar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar detalle') 
+                    elif ('id' in item and  item['id'] is not None):
+                        conn= connection.cursor()
+                        params=(item.get('id'),item.get('frecuencia'),nuevaCabeceraId,item.get('tipoHora'),item.get('cantCHoras'),0,0)
+                        conn.execute('relevamiento_cuh_upd_trg  %s,%s,%s, %s,%s,%s, %s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('actualice detalle')
+                            messages.success(request, 'Punto de Servicio modificado correctamente.')    
+                        else:
+                            print('falle actualizar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar Punto de Servicio.') 
+                
+                for item in relevamMenFormSet.cleaned_data:
+                    if ('DELETE' in item and item['DELETE'] == 'True'):
+                        #trigger delete call
+                        conn= connection.cursor()
+                        params=(item.get('id'))
+                        conn.execute('relevamiento_men_del_trg  %s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('borre detalle')
+                            messages.success(request, 'detalle modificado correctamente.')    
+                        else:
+                            print('falle borrar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar detalle') 
+                    elif ('id' in item and  item['id'] is None):
+                        #trigger insert call
+                        conn= connection.cursor()
+                        params=(item.get('id'),nuevaCabeceraIditem.get('mensuCantidad'),item.get('sueldo'),0,0)
+                        conn.execute('relevamiento_men_ins_trg  %s,%s,%s, %s,%s,%s ',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('borre detalle')
+                            messages.success(request, 'detalle modificado correctamente.')    
+                        else:
+                            print('falle borrar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar detalle') 
+                    elif ('id' in item and  item['id'] is not None):
+                        conn= connection.cursor()
+                        params=()
+                        conn.execute('relevamiento_men_upd_trg  %s,%s,%s, %s,%s,%s, %s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==0:
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            print('actualice detalle')
+                            messages.success(request, 'Punto de Servicio modificado correctamente.')    
+                        else:
+                            print('falle actualizar detalle')
+                            # VER QUE HACER EN CASO DE FALLO EN UN DETALLE
+                            messages.success(request, 'Error al modificar Punto de Servicio.')"""
                 return redirect('Operarios:puntoServicio_list')
             else:
                 messages.warning(request, 'No se pudo guardar los cambios')
@@ -410,8 +657,15 @@ def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
     #     asignacion.save()
     
     #se trae los fiscales disponibles
-    fiscales_disp = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal')
-    consulta2 = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal').query
+    fiscales_disp = User.objects.filter(cargoasignado__cargo__cargo='Fiscal').exclude(
+        id__in=AsigJefeFiscal.objects.filter(vfechaFin__isnull=True).values_list('userFiscal_id',flat=True));
+    
+    User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=False,
+    FiscalAsigJefeFiscal__vfechaFin__isnull=True,cargoasignado__cargo__cargo='Fiscal')
+    consulta2 = User.objects.filter(cargoasignado__cargo__cargo='Fiscal').exclude(id__in=AsigJefeFiscal.objects.filter(vfechaFin__isnull=True).values_list('userFiscal_id',flat=True));
+
+
+
     logging.getLogger("error_logger").error('La consulta de fiscales disponibles ejecutada es: {0}'.format(consulta2))
     #cargamos el contexto
     contexto = {'Fiscales': fiscales_asig,
@@ -437,14 +691,34 @@ def asignarFiscales(request,id_user_jefe=None ):
     if request.method == 'POST':
         if request.POST.getlist('fiscales_disp') != None:
             print(request.POST.getlist('fiscales_disp')) 
-            for fisAsig in fiscales_asig:
-                asignacion = AsigJefeFiscal.objects.get(userJefe=user_jefe, userFiscal=fisAsig)
-                asignacion.delete()
-
+            """for fisAsig in fiscales_asig:
+                asignacion = AsigJefeFiscal.objects.filter(userJefe=user_jefe, userFiscal=fisAsig)
+                #asignacion.delete()
+                asignacion.vfechaFin=datetime.now();
+                asignacion.save()
+            
             for fd_id in request.POST.getlist('fiscales_disp'):
                 user_fiscal = User.objects.get(pk=fd_id)
                 asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
-                asignacion.save() 
+                asignacion.vfechaFin=None;
+                asignacion.save() """
+            conn= connection.cursor()
+            params=(id_user_jefe,0)
+            conn.execute('asigjefefisc_des_trigger %s,%s',params)
+            result = conn.fetchone()[0]
+            conn.close()
+            if result==0:
+                    funciona=True;
+                    for fd_id in request.POST.getlist('fiscales_disp'):
+                        conn= connection.cursor()
+                        params=(id_user_jefe,fd_id,0,0)
+                        conn.execute('asig_jefeyfiscal_trigger %s,%s,%s,%s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==1:
+                            funciona=False;                        
+            else:
+                messages.success(request, 'Error al modificar las asignaciones.')  
 
     return redirect('Operarios:jefes_list')
 

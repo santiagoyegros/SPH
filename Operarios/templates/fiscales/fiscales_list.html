@@ -1,42 +1,117 @@
 {% extends "base.html" %}
+{% url 'Operarios:marcaciones_xls' as marcaciones_xls %}
 {% load static %}
+{% block title %}Marcaciones{% endblock %}
+
+{% block base_head %}
+<link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet">
+</link>
+{% endblock %}
 
 {% block content %}
-<div class="row">
-        <div class="col-md-12">
-                <h2>Fiscales</h2>
-                <!--Table-->
-                <table id="tablePreview" class="table table-hover table-sm mt-3">
-                <!--Table head-->
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nombre Fiscal</th>
-                        <th style="text-align: center;">Asignar Puntos de Servicio</th>
-                    </tr>
-                </thead>
-                <!--Table head-->
-                <!--Table body-->
-                <tbody>
-                    {% if Fiscales %}
-                    {% for fiscal in Fiscales %}
-                    <tr>
-                        <td style="width: 5%;">{{ forloop.counter }}</td>
-                        <td style="    width: 350px;">{{ fiscal.last_name }}, {{ fiscal.first_name }}</td>
-                        <td style="    text-align: center;
-                        width: 275px;"> <a class='btn btn-danger btn-sm'  href={% url 'Operarios:fiscales_asig' fiscal.id %}>Asignar</a> </td>
-                    </tr>
-                    {% endfor %}
-                    {% endif %}
-                </tbody>
-                <!--Table body-->
-                </table>
-                <!--Table-->
-            
-        </div>
-    </div>
-       
-    
+
+<h1 class='my-3'>Asignación de Fiscales a Puntos de servicios</h1>
 
 
+<div id="jsGrid"></div>
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    $(document).ready(function () {
+        $('.filter-fecha').on('change', function (e) {
+            console.log("FECHA");
+        });
+    });
+    $(function () {
+
+        $("#jsGrid").jsGrid({
+            height: "100%",
+            width: "100%",
+            filtering: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            pageSize: 9,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "No se han encontrado registros",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    console.log("FILTER", filter);
+                    $.ajax({
+                        type: "GET",
+                        url: "/reingenieria/operaciones/fiscalesAsignar/listar",
+                        data: filter
+                    }).done(function (result) {
+                        console.log(result);
+                        d.resolve($.map(result, function (item) {
+                            return $.extend(item.fields, { id: item.pk });
+                        }));
+                    });
+
+                    return d.promise();
+                },
+                
+            },
+
+            fields: [
+                
+                { name: "first_name", type: "text", width: 50, title: "Nombres" },
+                { name: "last_name", type: "text", width: 50, title: "Apellidos" },
+                { type: "control",
+                    itemTemplate: function(value, item) {
+                        var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
+
+                        var $Asignar = $("<button>").attr({class: "btn btn-success btn-guardar fa fa-map-marker fa-lg"})
+                        .click(function(e) {
+                            document.location.href="/reingenieria/operaciones/fiscales/asignar/"+item.id
+                        });
+                        return $("<div>").append($Asignar);
+                    }},
+            ]
+        });
+
+    });
+        /*,
+            { type: "control" }*/
+</script>
+<style>
+    .filter-fecha .bootstrap-datetimepicker-widget {
+        display: none !important;
+    }
+    .jsgrid-grid-header, .jsgrid-grid-body{
+        overflow: hidden !important;
+    }
+    .jsgrid-grid-body .jsgrid-table{
+        height: 100% !important;
+    }
+    .jsgrid-header-sort-asc:before{
+        margin: 6px !important;
+        border-width: 0 5px 10px !important;
+        border-color: transparent transparent #ffffff !important;
+    }
+    .jsgrid-header-sort-desc:before {
+    border-width: 10px 5px 0;
+    margin: 5px !important;
+    border-color: #ffffff transparent transparent;
+}
+    .btn-guardar {
+    background-color: #86273e !important;
+    border-color: #86273e !important;
+    padding: 7px 30px;
+    cursor: pointer;
+}    
+</style>
 {% endblock %}

@@ -70,14 +70,14 @@
             <div class="col-1 text-center">
                 <input type="checkbox" style="display:none" name="relevamientocupohoras_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
                 <a href="javascript:void(0);" onclick="deleteLeaveRowCup(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                    <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i class="fa fa-trash fa-lg"></i> Eliminar</div>
                 </a>
             </div>
         </div>
         {% endfor %}
     </div>
     <div class="row mt-3 justify-content-end">
-        <button id='btnCupH' class="btn btn-outline-info btn-sm">Añadir Cupo</button>
+        <button class="btn btn-success btn-add"><i class="fa fa-plus fa-lg"></i> Añadir Cupo</button>
     </div>
     
 
@@ -128,7 +128,7 @@
             <div class="col-1 p-0 text-center">
                 <input type="checkbox" style="display:none" name="relevamientodet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
                 <a href="javascript:void(0);" onclick="deleteLeaveRowDet(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                        <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i class="fa fa-trash fa-lg"></i> Eliminar</div>
                 </a>
             </div>
         </div>
@@ -136,7 +136,7 @@
 
     </div>
     <div class="row mt-3 justify-content-end">
-        <button type='submit' id='btnDet' class="btn btn-outline-info btn-sm" name='add_det'>Añadir Detalle</button>
+         <button class="btn btn-success btn-add"><i class="fa fa-plus fa-lg"></i> Añadir Detalle</button>
     </div>
     
 
@@ -170,7 +170,7 @@
             <div class="col-1 text-center">
                 <input type="checkbox" style="display:none" name="relevamientoesp_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
                 <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                        <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i class="fa fa-trash fa-lg"></i> Eliminar</div>
                 </a>
             </div>
         </div>
@@ -178,7 +178,7 @@
 
     </div>
     <div class="row mt-3 justify-content-end">
-        <button id='btnEsp' class="btn btn-outline-info btn-sm">Añadir Profundas</button>
+            <button class="btn btn-success btn-add"><i class="fa fa-plus fa-lg"></i> Añadir Profundas</button>
     </div>
 
     <!--Formulario de Mensualeros-->
@@ -211,7 +211,7 @@
 
     </div>
     <div class="row mt-3 justify-content-end">
-        <button id='btnMen' class="btn btn-outline-info btn-sm">Añadir Mensualero</button>
+        <button class="btn btn-success btn-add"><i class="fa fa-plus fa-lg"></i> Añadir Mensualero</button>
     </div>
     
     <div class="row mt-3">
@@ -569,5 +569,25 @@ $('input[id$="cantCHoras"], [id^="id_relevamientocupohoras_set-"]').on('change',
 });
 
 </script>
+
+
+<style>
+
+.btn-add {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 7px;
+        cursor: pointer;
+    }
+
+
+.btn-eliminar {
+        background-color: gray !important;
+        border-color: gray !important;
+        padding: 7px 7px;
+        
+    }
+
+</style>
 
 {% endblock %}

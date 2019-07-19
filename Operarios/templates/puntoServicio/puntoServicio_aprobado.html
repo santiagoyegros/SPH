@@ -5,17 +5,14 @@
 </link>
 {% endblock %}
 {% block content %}
-<h2>Puntos de servicio</h2>
-<form method='POST' action='' id="formPuntoServicio">
+<h2>Servicios aprobados de Puntos de servicio</h2>
+<form method='POST' action='' id="formPuntoServicioAprobado">
     {% csrf_token %}
     <div class="form-group">
-        <a class='btn btn-success btn-agregar' style="    float: right;margin: 10px 0px"
-            href='{% url 'Operarios:puntoServicio_create' %}'><i class="fa fa-plus fa-lg"></i> Punto de Servicio </a>
         <div id="jsGrid"></div>
     </div>
 </form>
-{% endblock %}
-{% block scripts %}
+
 <script>
     $(function () {
         var clientes = [];
@@ -36,14 +33,12 @@
                     nombre: datos[index].Cliente
                 });
             }
-
             $("#jsGrid").jsGrid({
                 width: "100%",
                 filtering: true,
                 inserting: false,
                 editing: false,
                 sorting: true,
-                // height: $("#formPuntoServicio").height(),
                 paging: true,
                 autoload: true,
                 pageSize: 10,
@@ -71,32 +66,30 @@
                         });
 
                         return d.promise();
-                    }
+                    },
                 },
+
                 fields: [
                     { name: "id", type: "text", width: 50, title: "Nro" },
                     { name: "codigoPuntoServicio", type: "text", width: 50, title: "Codigo P.Servicio" },
                     { name: "nombrePuntoServicio", type: "text", width: 50, title: "Punto de Servicio" },
                     { name: "clientePuntoServicio", type: "select", width: 50, title: "Cliente", items: clientes, valueField: "id", textField: "nombre", valueType: "string" },
                     {
-                        type: "control",
+                        type: "control", width: 50, name: "Serv aprobado",
                         itemTemplate: function (value, item) {
                             var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
 
-                            var $customEditButton = $("<button>").attr({ class: "customGridEditbutton jsgrid-button jsgrid-edit-button" })
-                                .click(function (e) {
-                                    document.location.href = "/reingenieria/operaciones/puntoServicio/editar/" + item.id
-                                });
+                        var $servicioAprobado = $("<button>").text("Serv aprobado").attr({class: "btn btn-warning btn-sm"}).attr({title:"prueba"})
+                        .click(function(e) {
+                            document.location.href="/reingenieria/clientes/puntoServicio/relevamiento/"+item.id
+                        });
 
-                            var $customDeleteButton = $("<button>").attr({ class: "customGridDeletebutton jsgrid-button jsgrid-delete-button" })
-                                .click(function (e) {
-                                    if (confirm("Esta seguro que desea eliminar el registro")) {
-                                        document.location.href = "/reingenieria/operaciones/puntoServicio/eliminar/" + item.id
+                        var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button"})
+                        .click(function(e) {
+                            document.location.href="/reingenieria/clientes/puntoServicio/relevamiento/"+item.id
+                        });
 
-                                    }
-                                });
-
-                            return $("<div>").append($customEditButton).append($customDeleteButton);
+                            return $("<div>").append($customEditButton);
                         }
                     },
                 ]
@@ -105,17 +98,17 @@
 
             });
         });
-
     });
 
 </script>
-
 <style>
-
-
     .jsgrid-grid-header,
     .jsgrid-grid-body {
         overflow: auto;
+    }
+
+    #formPuntoServicioAprobado {
+        margin-top: 65px !important;
     }
 
     .jsgrid-header-sort-asc:before {

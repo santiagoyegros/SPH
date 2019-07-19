@@ -116,7 +116,6 @@
                         url: "/reingenieria/marcacion/listar",
                         data: filter
                     }).done(function (result) {
-                        console.log(result);
                         d.resolve($.map(result, function (item) {
                             return $.extend(item.fields, { id: item.pk });
                         }));

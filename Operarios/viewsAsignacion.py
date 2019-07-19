@@ -30,8 +30,14 @@ def Asignacion_list(request):
         pk_puntoServSeleccionado = request.POST.get('asig_puntoServ')
         return redirect('Operarios:asignacion_create', id_puntoServicio=pk_puntoServSeleccionado)
     else:
-        puntoServi = PuntoServicio.objects.all()
+        asignaciones=AsigFiscalPuntoServicio.objects.filter(vfechaFin=None, userFiscal_id=request.user).only("puntoServicio_id")
+        print (request.user.id)
+        print ("Puntos asignados")
+        print (asignaciones)
+        puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+        print(puntoServi)
         contexto = {'PuntosServicio': puntoServi}
+        #contexto = {'PuntosServicio': asignaciones}
         return render(request, 'asignacion/asignacion_list.html', context=contexto)
 
 def restarHoras(totalHora,asigHora,totalMin,asigMin):
@@ -77,11 +83,9 @@ def getPuntosServicios(request):
             "estado":estado
         })
         i=i+1
-
+    print(puntos)
     response={}
     response['dato']=puntos
-    response['codigo']=0
-    response['mensaje']="Se listaron con éxito"
     return HttpResponse(json.dumps(response),content_type="application/json")
 
 def agregar_detalle(request):
@@ -340,9 +344,10 @@ def guardarAsignacion(request):
                 content_type="application/json"
                 )
             else:
+
                 response['dato']=[]
                 response['codigo']=1
-                response['mensaje']="Ocurrió un error al guardar la asignacion"
+                response['mensaje']="Ocurrió un error al guardar la asignacion, favor verifique los datos"
                 return HttpResponse(
                 json.dumps(response),
                 content_type="application/json"
@@ -388,12 +393,13 @@ def Asignacion_create(request, id_puntoServicio=None):
     except PuntoServicio.DoesNotExist as err:
         logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         raise Http404("Punto de Servicio no existe")
-    try:
+    """try:
         asigCab = AsignacionCab.objects.get(puntoServicio_id=id_puntoServicio)
         asigDet = AsignacionDet.objects.filter(asignacionCab_id=asigCab.id)
     except AsignacionCab.DoesNotExist as err:
         logging.getLogger("error_logger").error('Asignacion cabecera no existe: {0}'.format(err))
         raise Http404("Asignacion cabecera no existe")
+    """
 
     ''' Obtenemos el relevamiento para mostrar en la pantalla '''
     relevamiento = RelevamientoCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()

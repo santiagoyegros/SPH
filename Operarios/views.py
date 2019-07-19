@@ -54,8 +54,46 @@ class PuntosServicioList(ListView):
                 #Si es fiscal, le trae sus puntos de servicios. 'Fiscal'
                 consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id))
 
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+
+            elif (cargoUsuario.cargo == 'Jefe de Operaciones'):
+                #Si es jefe de operaciones -> Trae todo los puntos de servicio de sus fiscales. 'Jefe de Operaciones'
+                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                pass
+            elif (cargoUsuario.cargo == 'Gerente de Operaciones'):
+                #Si es Gerente de Operaciones/SubGerente -> Todos los contratos. 'Gerente de Operaciones'
+                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                pass
+
+            else:
+                #Else: algun error, de no tener el rol correcto.
+                pass
+        except Cargo.DoesNotExist:
+            raise Http404("El usuario no tiene el cargo requerido para ingresar")        
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(permission_required('Operarios.view_puntoservicio', raise_exception=True), name='dispatch')
+class PuntosServicioAprobados(ListView):
+    #model = PuntoServicio
+    context_object_name = 'PuntoServicio'
+    template_name = "puntoServicio/puntoServicio_aprobado.html"
+    def get_queryset(self):
+        try:
+            #Traemos el cargo asignado
+            ConsultaCargoUsuario = Cargo.objects.filter(cargoasignado__user=self.request.user.id).query
+            logging.getLogger("error_logger").error('La consulta del cargo del usuario logueado ejecutada es: {0}'.format(ConsultaCargoUsuario))
+            cargoUsuario = Cargo.objects.get(cargoasignado__user=self.request.user.id)
+
+            if (cargoUsuario.cargo == 'Fiscal'):
+                #Si es fiscal, le trae sus puntos de servicios. 'Fiscal'
+                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
+                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
             elif (cargoUsuario.cargo == 'Jefe de Operaciones'):
                 #Si es jefe de operaciones -> Trae todo los puntos de servicio de sus fiscales. 'Jefe de Operaciones'
                 consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)).query
@@ -73,7 +111,8 @@ class PuntosServicioList(ListView):
                 #Else: algun error, de no tener el rol correcto.
                 pass
         except Cargo.DoesNotExist:
-            raise Http404("El usuario no tiene el cargo requerido para ingresar")        
+            raise Http404("El usuario no tiene el cargo requerido para ingresar")  
+
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('Operarios.add_puntoservicio', raise_exception=True), name='dispatch')
@@ -151,6 +190,66 @@ class PuntoServicioDeleteView(SuccessMessageMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.warning(self.request, self.success_message)
         return super(PuntoServicioDeleteView, self).delete(request, *args, **kwargs)
+
+
+@login_required
+@permission_required('Operarios.view_puntoservicio', raise_exception=True)
+def PuntoServicio_list(request):
+    puntoServicio = PuntoServicio.objects.all()
+    print(request.GET)
+    if request.GET.get('id'):
+        puntoServicio=puntoServicio.filter(id__contains=request.GET.get('id'))
+    
+    if request.GET.get('codigoPuntoServicio'):
+        puntoServicio=puntoServicio.filter(CodPuntoServicio__contains=request.GET.get('codigoPuntoServicio'))
+    
+    if request.GET.get('nombrePuntoServicio'):
+       puntoServicio=puntoServicio.filter(NombrePServicio__contains=request.GET.get('nombrePuntoServicio'))
+
+    if request.GET.get('Cliente'):
+       puntoServicio=puntoServicio.filter(nombre__contains=request.GET.get('Cliente'))
+
+
+    if request.GET.get('clientePuntoServicio'):
+        puntoServicio=puntoServicio.filter(Cliente_id=request.GET.get('clientePuntoServicio'))
+
+    """
+    Se reestructura para obtener nombre de cliente
+    """
+    puntos = []
+    for p in puntoServicio:
+        cliente = ""
+        if p.Cliente:
+            cliente = Cliente.objects.get(id=p.Cliente.id)
+
+        puntos.append({
+            "id":p.id,
+            "codigoPuntoServicio":p.CodPuntoServicio,
+            "nombrePuntoServicio":p.NombrePServicio,
+            "clientePuntoServicio":cliente.id
+        })
+    
+    # paginado=Paginator(puntoServicio.order_by('id').values("id", "CodPuntoServicio", "NombrePServicio","Cliente"),  request.GET.get('pageSize'))
+    # listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
+    # dataPuntosServicio=list(puntos)
+    
+    response={}
+    response['dato']=puntos
+    return HttpResponse(json.dumps(response),content_type="application/json")
+
+ 
+def getClientes(request):
+    clientes = Cliente.objects.all()
+    list_clientes=[]
+    for c in clientes:
+        list_clientes.append({
+            "id":c.id,
+            "Cliente":c.Cliente
+        })
+
+    response={}
+    response['dato']=list_clientes
+    return HttpResponse(json.dumps(response),content_type="application/json")
 
 @login_required
 @permission_required(['Operarios.add_relevamientocab', 'Operarios.view_relevamientocab'], raise_exception=True)
@@ -525,7 +624,45 @@ def Operarios_delete(request, pk):
     return render(request, 'operarios/operarios_delete.html', {'operarios': operarios})
 
 
+def getPuntosServicios(request):
+    puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+    puntos =[]
+    i=1
+    for p in puntoServi:
+        totalHora=""
+        horasAsig=""
+        horas=""
+        minutos=""
+        horasRestante=""
+        minutosRestante=""
+        cantidadMinutos=""
+        estado=""
+        if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
+            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
+            totalHora = relevamientoCab.cantidadHrTotal
+        if AsignacionCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
+            asignacionCab = AsignacionCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
+            estado = asignacionCab.reAsignar
+            horasAsig = asignacionCab.totalasignado
+        if  totalHora and horasAsig:
+            horasTotales,minutosTotales = totalHora.split(':')
+            horasAsignadas,minutosAsignadas = horasAsig.split(':')
+            cantidadMinutos = restarHoras( int(horasTotales),int(horasAsignadas),int(minutosTotales),int(minutosAsignadas))
 
+        puntos.append({
+            "id":i,
+            "idPunto":p.id,
+            "puntservnombre":p.NombrePServicio,
+            "horatotal":totalHora,
+            "horasasignada":horasAsig,
+            "horafaltante":cantidadMinutos,
+            "estado":estado
+        })
+        i=i+1
+
+    response={}
+    response['dato']=puntos
+    return HttpResponse(json.dumps(response),content_type="application/json")
 
 
 @login_required
@@ -626,6 +763,50 @@ def Jefes_list(request):
     jefes = User.objects.filter(cargoasignado__cargo__cargo='Jefe de Operaciones')
     contexto = {'Jefes': jefes}
     return render(request, 'jefes/jefes_list.html', context=contexto)
+
+@login_required
+@permission_required('Operarios.view_operario', raise_exception=True)
+def JefesAsignar_list(request):
+
+    jefes = User.objects.filter(cargoasignado__cargo__cargo='Jefe de Operaciones')
+    if request.GET.get('first_name'):
+        jefes=jefes.filter(first_name__contains=request.GET.get('first_name'))
+    if request.GET.get('last_name'):
+        jefes=jefes.filter(last_name__contains=request.GET.get('last_name'))
+
+    paginado=Paginator(jefes.order_by('first_name').values("id", "first_name", "last_name"),  request.GET.get('pageSize'))
+    listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
+    dataJefes=list(listaPaginada)
+
+    """
+    Filtro nuevo
+    """
+    lista=dataJefes
+    response_data={}
+    response_data["data"]=lista
+    response_data["itemsCount"]=len(jefes)
+    return JsonResponse(response_data)
+
+@login_required
+@permission_required('Operarios.view_operario', raise_exception=True)
+def FiscalAsignar_list(request):
+
+    fiscal = User.objects.filter(cargoasignado__cargo__cargo='Fiscal')
+    if request.GET.get('first_name'):
+        fiscal=fiscal.filter(first_name__contains=request.GET.get('first_name'))
+    if request.GET.get('last_name'):
+        fiscal=fiscal.filter(last_name__contains=request.GET.get('last_name'))
+
+    # paginado=Paginator(fiscal.order_by('last_name').values("id","first_name", "last_name"),  request.GET.get('pageSize'))
+    # listaPaginada=paginado.page(request.GET.get('pageIndex')).object_list
+    # dataFiscal=list(listaPaginada)
+
+    """
+    Filtro nuevo
+    """
+   
+    return HttpResponse(serializers.serialize("json",fiscal ), content_type = 'application/json', status = 200);
+
 
 @login_required
 @permission_required('Operarios.view_operario', raise_exception=True)
@@ -1089,7 +1270,7 @@ def restarHoras(totalHora,asigHora,totalMin,asigMin):
     cantidadTotalDeMinutos = cantidadTotalDeMinutos%60
     return "{}:{}".format(cantidadTotalHoras,int(cantidadTotalDeMinutos))
 
-def getPuntosServicios(request):
+def vicios(request):
     puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
     puntos =[]
     i=1
@@ -1101,6 +1282,7 @@ def getPuntosServicios(request):
         horasRestante=""
         minutosRestante=""
         cantidadMinutos=""
+        estado=False
         if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
             relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
             totalHora = relevamientoCab.cantidadHrTotal
@@ -1126,6 +1308,4 @@ def getPuntosServicios(request):
 
     response={}
     response['dato']=puntos
-    response['codigo']=0
-    response['mensaje']="Se listaron con éxito"
     return HttpResponse(json.dumps(response),content_type="application/json")

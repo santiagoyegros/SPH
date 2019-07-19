@@ -13,20 +13,82 @@ from django.contrib.auth.models import User
 from Operarios.forms import  OperarioForm
 from Operarios.models import Operario, Nacionalidad, Ciudad, Especializacion
 from django.contrib import messages
-from datetime import datetime
+import datetime
+from datetime import date
+from datetime import datetime as dt 
 import json
 from django.core import serializers
 from django.core.paginator import Paginator
 from django.forms.models import model_to_dict
+from Operarios.models import DiaLibre
+
+def setearEnColumna(entidad,dia,hora):
+    if dia != None and dia != "''":
+        print("en setear en columna ",dia)
+        if hora != '' and hora != None:
+            if dia == 'lunEnt':
+                entidad.lunEnt = hora
+            elif dia == 'lunSal':
+                entidad.lunSal = hora
+            elif dia == 'marEnt':
+                entidad.marEnt = hora
+            elif dia == 'marSal':
+                entidad.marSal = hora
+            elif dia == 'mieEnt':
+                entidad.mieEnt = hora
+            elif dia == 'mieSal':
+                entidad.mieSal = hora
+            elif dia == 'jueEnt':
+                entidad.jueEnt = hora
+            elif dia == 'jueSal':
+                entidad.jueSal = hora
+            elif dia == 'vieEnt':
+                entidad.vieEnt = hora
+            elif dia == 'vieSal':
+                entidad.vieSal = hora
+            elif dia == 'sabEnt':
+                entidad.sabEnt = hora
+            elif dia == 'sabSal':
+                entidad.sabSal = hora
+            elif dia == 'domEnt':
+                entidad.domEnt = hora
+            elif dia == 'domSal':
+                entidad.domSal = hora
+
+    return entidad
+
 
 @login_required
 @permission_required('Operarios.add_operario', raise_exception=True)
 def Operarios_create(request):
+    diasEntrada = [{"id":"lunEnt","dia":"Lunes"},{"id":"marEnt","dia":"Martes"},{"id":"mieEnt", "dia":"Miercoles"},{"id":"jueEnt", "dia":"Jueves"},{"id":"vieEnt", "dia":"Viernes"},{"id":"sabEnt", "dia":"Sabado"}, {"id":"domEnt", "dia":"Domingo"}]
+    diasSalida = [{"id":"lunSal","dia":"Lunes"},{"id":"marSal","dia":"Martes"},{"id":"mieSal", "dia":"Miercoles"},{"id":"jueSal", "dia":"Jueves"},{"id":"vieSal", "dia":"Viernes"},{"id":"sabSal", "dia":"Sabado"}, {"id":"domSal", "dia":"Domingo"}]
+    diaIniDefault = "domEnt"
+    diaFDefault = "domSal"
+    horaIniDefault = "00:00"
+    horaFDefault="23:59"
+    is_valid = True
     if request.method == 'POST': 
+        print("POST",request.POST)
         form = OperarioForm(request.POST)
         print (form.errors)
-        if form.is_valid():
-            form.save()
+        if not request.POST.get('diaInicio'):
+            print("invalid")
+            is_valid=False
+        if not request.POST.get('diaFin'):
+            is_valid=False
+        if not request.POST.get('horaInicio'):
+            is_valid=False
+        if not request.POST.get('horaFin'):
+            is_valid=False
+
+        if form.is_valid() and is_valid:
+
+            new_operario = form.save()
+            diaLibre = DiaLibre(fechaCreacion=datetime.datetime.now(),id_operario=new_operario)
+            diaLibre = setearEnColumna(diaLibre,request.POST.get('diaInicio'),request.POST.get('horaInicio') )
+            diaLibre = setearEnColumna(diaLibre,request.POST.get('diaFin'),request.POST.get('horaFin'))                
+            diaLibre.save()
             messages.success(request, 'Operario creado correctamente.')
             return redirect('Operarios:operarios_vista')
         else:
@@ -34,17 +96,20 @@ def Operarios_create(request):
             nacionalidadList=Nacionalidad.objects.all()
             ciudadesList=Ciudad.objects.all()
             especialidadesList=Especializacion.objects.all()
-            
             contexto = {
             'title': 'Nuevo Operario',
             'form': form, 
+            'is_valid':is_valid, 
+            'diasSalida':diasSalida,
+            'diasEntrada':diasEntrada,
+            'diaIniDefault':diaIniDefault,
+            'diaFDefault':diaFDefault,
+            'horaIniDefault':horaIniDefault,
+            'horaFDefault':horaFDefault,
             'nacionalidadList': nacionalidadList, 
             'ciudadesList': ciudadesList, 
-            'especialidadesList': especialidadesList,
-            
-            
+            'especialidadesList': especialidadesList
             }
-        
     else:
         nacionalidadList=Nacionalidad.objects.all()
         ciudadesList=Ciudad.objects.all()
@@ -53,6 +118,13 @@ def Operarios_create(request):
         contexto = {
             'title': 'Nuevo Operario',
             'form': form, 
+            'is_valid':is_valid,
+            'diasSalida':diasSalida,
+            'diasEntrada':diasEntrada,
+            'diaIniDefault':diaIniDefault,
+            'diaFDefault':diaFDefault,
+            'horaIniDefault':horaIniDefault,
+            'horaFDefault':horaFDefault,
             'nacionalidadList': nacionalidadList, 
             'ciudadesList': ciudadesList, 
             'especialidadesList': especialidadesList
@@ -91,12 +163,60 @@ def Operarios_list(request):
     response_data["itemsCount"]=len(operarios)
     
     return JsonResponse(response_data)
- 
+def checkDiaInicio(diaLibre):
+    if diaLibre.domEnt:
+        return ["domEnt",diaLibre.domEnt]
+    if diaLibre.lunEnt:
+        return ["lunEnt",diaLibre.lunEnt]
+    if diaLibre.marEnt:
+        return ["marEnt",diaLibre.marEnt]
+    if diaLibre.mieEnt:
+        return ["mieEnt",diaLibre.mieEnt]
+    if diaLibre.jueEnt:
+        return ["jueEnt",diaLibre.jueEnt]
+    if diaLibre.vieEnt:
+        return ["vieEnt",diaLibre.vieEnt]
+    if diaLibre.sabEnt:
+        return ["sabEnt",diaLibre.sabEnt]
+    
+def checkDiaFin(diaLibre):
+    if diaLibre.domSal:
+        return ["domSal",diaLibre.domSal]
+    if diaLibre.lunSal:
+        return ["lunSal",diaLibre.lunSal]
+    if diaLibre.marSal:
+        return ["marSal",diaLibre.marSal]
+    if diaLibre.mieSal:
+        return ["mieSal",diaLibre.mieSal]
+    if diaLibre.jueSal:
+        return ["jueSal",diaLibre.jueSal]
+    if diaLibre.vieSal:
+        return ["vieSal",diaLibre.vieSal]
+    if diaLibre.sabSal:
+        return ["sabSal",diaLibre.sabSal]
 
 @login_required
 @permission_required('Operarios.change_operario', raise_exception=True)
 def Operarios_update(request, pk):
     operarios = Operario.objects.get(id=pk)
+    diasEntrada = [{"id":"lunEnt","dia":"Lunes"},{"id":"marEnt","dia":"Martes"},{"id":"mieEnt", "dia":"Miercoles"},{"id":"jueEnt", "dia":"Jueves"},{"id":"vieEnt", "dia":"Viernes"},{"id":"sabEnt", "dia":"Sabado"}, {"id":"domEnt", "dia":"Domingo"}]
+    diasSalida = [{"id":"lunSal","dia":"Lunes"},{"id":"marSal","dia":"Martes"},{"id":"mieSal", "dia":"Miercoles"},{"id":"jueSal", "dia":"Jueves"},{"id":"vieSal", "dia":"Viernes"},{"id":"sabSal", "dia":"Sabado"}, {"id":"domSal", "dia":"Domingo"}]
+   
+    """
+        'is_valid' controla la existencia de dia libre en un operario
+    """
+    is_valid = True
+    diaIniDefault = "domEnt"
+    diaFDefault = "domSal"
+    horaIniDefault = "00:00"
+    horaFDefault="23:59"
+    if DiaLibre.objects.filter(id_operario=operarios).exists():
+        diaLibre = DiaLibre.objects.get(id_operario=operarios)
+        diaIniDefault, horaIniDefault= checkDiaInicio(diaLibre)
+        diaFDefault, horaFDefault = checkDiaFin(diaLibre)
+    
+    else:
+        print("no tiene")
     if request.method == 'GET':
         formatedDateInicio = operarios.fechaInicio.strftime("%d-%m-%Y")
         formatedDateNacimiento = operarios.fechaNacimiento.strftime("%d-%m-%Y")
@@ -122,7 +242,14 @@ def Operarios_update(request, pk):
         contexto = {
             'title': 'Editar Operario',
             'form': form,
-            'ciudadSelect':ciudadSelect, 
+            'ciudadSelect':ciudadSelect,
+            'is_valid':is_valid,
+            'diasSalida':diasSalida,
+            'diasEntrada':diasEntrada,
+            'diaIniDefault':diaIniDefault,
+            'diaFDefault':diaFDefault,
+            'horaIniDefault':horaIniDefault,
+            'horaFDefault':horaFDefault,
             'ciudadesList':ciudadesList,
             'especialidadesList':especialidadesList,
             'especialidadSelect':especialidadSelect,
@@ -133,7 +260,7 @@ def Operarios_update(request, pk):
         }
     else:
         form = OperarioForm(request.POST, instance=operarios)
-       
+        print(form)
         if form.is_valid():
             form.save()
             messages.success(request, 'Operario modificado correctamente.')
@@ -154,6 +281,13 @@ def Operarios_update(request, pk):
                 'title': 'Editar Operario',
                 'form': form,
                 'ciudadSelect':ciudadSelect, 
+                'is_valid':is_valid,
+                'diasSalida':diasSalida,
+                'diaIniDefault':diaIniDefault,
+                'diaFDefault':diaFDefault,
+                'diasEntrada':diasEntrada,
+                'horaIniDefault':horaIniDefault,
+                'horaFDefault':horaFDefault,
                 'ciudadesList':ciudadesList,
                 'especialidadesList':especialidadesList,
                 'especialidadSelect':especialidadSelect,

@@ -11,9 +11,7 @@
     {% csrf_token %}
     <div class="form-group">
         <a class='btn btn-primary btn-agregar' style="float: right;margin: 10px 0px"
-            href='{% url 'Operarios:operarios_create' %}'> <i class="fa fa-plus">
-
-            </i> Operario </a>
+            href='{% url 'Operarios:operarios_create' %}'> <i class="fa fa-plus"></i> Nuevo </a>
         <div id="jsGrid"></div>
     </div>
 </form>
@@ -75,12 +73,12 @@
                     itemTemplate: function (value, item) {
                         var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
 
-                        var $customEditButton = $("<button>").attr({ class: "customGridEditbutton jsgrid-button jsgrid-edit-button" })
+                        var $customEditButton = $("<button>").attr({ class: "customGridEditbutton jsgrid-button jsgrid-edit-button", type:"button" })
                             .click(function (e) {
                                 document.location.href = "/reingenieria/operaciones/operarios/editar/" + item.id
                             });
 
-                        var $customDeleteButton = $("<button>").attr({ class: "customGridDeletebutton jsgrid-button jsgrid-delete-button" })
+                        var $customDeleteButton = $("<button>").attr({ class: "customGridDeletebutton jsgrid-button jsgrid-delete-button", type:"button" })
                             .click(function (e) {
                                 if (confirm("Esta seguro que desea eliminar el registro")) {
                                     document.location.href = "/reingenieria/operaciones/operarios/eliminar/" + item.id

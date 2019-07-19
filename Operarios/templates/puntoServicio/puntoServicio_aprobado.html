@@ -84,22 +84,17 @@
                             document.location.href="/reingenieria/clientes/puntoServicio/relevamiento/"+item.id
                         });
 
-                        var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button"})
+                        var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button", type: "button"})
                         .click(function(e) {
                             document.location.href="/reingenieria/clientes/puntoServicio/relevamiento/"+item.id
                         });
-
                             return $("<div>").append($customEditButton);
                         }
                     },
                 ]
-
-
-
             });
         });
     });
-
 </script>
 <style>
     .jsgrid-grid-header,

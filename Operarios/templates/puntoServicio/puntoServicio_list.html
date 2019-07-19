@@ -10,7 +10,7 @@
     {% csrf_token %}
     <div class="form-group">
         <a class='btn btn-success btn-agregar' style="    float: right;margin: 10px 0px"
-            href='{% url 'Operarios:puntoServicio_create' %}'><i class="fa fa-plus fa-lg"></i> Punto de Servicio </a>
+            href='{% url 'Operarios:puntoServicio_create' %}'><i class="fa fa-plus fa-lg"></i> Nuevo </a>
         <div id="jsGrid"></div>
     </div>
 </form>
@@ -74,7 +74,6 @@
                     }
                 },
                 fields: [
-                    { name: "id", type: "text", width: 50, title: "Nro" },
                     { name: "codigoPuntoServicio", type: "text", width: 50, title: "Codigo P.Servicio" },
                     { name: "nombrePuntoServicio", type: "text", width: 50, title: "Punto de Servicio" },
                     { name: "clientePuntoServicio", type: "select", width: 50, title: "Cliente", items: clientes, valueField: "id", textField: "nombre", valueType: "string" },

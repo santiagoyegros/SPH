@@ -49,7 +49,7 @@
                     var d = $.Deferred();
                     $.ajax({
                         type: "GET",
-                        url: "/reingenieria/planificacion/puntoServicios/"
+                        url: "/reingenieria/operaciones/planificacion/puntoServicios/"
                     }).done(function (result) {
                         console.log(result)
                         d.resolve($.map(result, function (item) {
@@ -62,7 +62,7 @@
                 }
             },
             rowClick: function (e) {
-                window.location.href = "/reingenieria/planificacion/planificar/" + e.item.idPunto
+                window.location.href = "/reingenieria/operaciones/planificacion/planificar/" + e.item.idPunto
             },
             fields: [
                 { name: "id", type: "text", width: 150, title: "Nro", headercss: "elm-table-header" },

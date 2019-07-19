@@ -2,107 +2,89 @@
 
 {% block content %}
 <div class='col-12 col-md-12 mx-auto'>
-{% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
-<form method='POST' action='{% if action_url %}{{ action_url }}{% endif %}'> 
+  {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
+  <form method='POST' action='{% if action_url %}{{ action_url }}{% endif %}'>
     {% csrf_token %}
     {% if next_url %}
     <input type='hidden' name='next' value='{{ next_url }}' />
     {% endif %}
 
-  <!-- {{ form.as_p }} -->
-<div class="row">
-  <div class="col-md-6">
-      <p>
-          <label for="id_Cliente">Cliente:</label> 
-          <!-- <select name="Cliente" class="form-control" required="" id="id_Cliente">
-          <option value="" selected="">---------</option>
-            {% for cliente in clientes %}
-              <option value="{{cliente.pk}}">{{cliente.Cliente}}</option>
-            {% endfor %}
-          </select>  -->
+    <!-- {{ form.as_p }} -->
+    <div class="row">
+      <div class="col-md-6">
+        <p>
+          <label for="id_Cliente">Cliente:</label>
           {{form.Cliente}}
         </p>
         <p>
-          <label for="id_CodPuntoServicio">Punto de Servicio:</label> 
-          <!-- <input type="text" name="CodPuntoServicio" class="form-control" maxlength="50" required="" id="id_CodPuntoServicio"> -->
+          <label for="id_CodPuntoServicio">Punto de Servicio:</label>
           {{form.CodPuntoServicio}}
         </p>
         <p>
-          <label for="id_NombrePServicio">Nombre de Punto de Servicio:</label> 
-          <!-- <input type="text" name="NombrePServicio" class="form-control" maxlength="100" required="" id="id_NombrePServicio"> -->
+          <label for="id_NombrePServicio">Nombre de Punto de Servicio:</label>
           {{form.NombrePServicio}}
         </p>
         <p>
-          <label for="id_DireccionContrato">Direccion del Punto de Servicio:</label> 
-          <!-- <input type="text" name="DireccionContrato" class="form-control" maxlength="150" required="" id="id_DireccionContrato"> -->
+          <label for="id_DireccionContrato">Direccion del Punto de Servicio:</label>
           {{form.DireccionContrato}}
         </p>
         <p>
-          <label for="id_Ciudad">Ciudad:</label> 
-          <!-- <select name="Ciudad" class="form-control" required="" id="id_Ciudad">
-            <option value="" selected="">---------</option>
-            {% for ciudad in ciudades %}
-              <option value="{{ciudad.pk}}">{{ciudad.NombreCiudad}}</option>
-            {% endfor %}
-          </select> -->
+          <label for="id_Ciudad">Ciudad:</label>
           {{form.Ciudad}}
         </p>
         <p>
-          <label for="id_Barrios">Barrio:</label> 
-          <!-- <input type="text" name="Barrios" class="form-control" maxlength="70" required="" id="id_Barrios"> -->
+          <label for="id_Barrios">Barrio:</label>
           {{form.Barrios}}
         </p>
-       
-  </div>
-  <div class="col-md-6">
-      <p>
-          <label for="id_Contacto">Contacto:</label> 
-          <!-- <input type="text" name="Contacto" class="form-control" maxlength="100" required="" id="id_Contacto"> -->
+
+      </div>
+      <div class="col-md-6">
+        <p>
+          <label for="id_Contacto">Contacto:</label>
           {{form.Contacto}}
         </p>
-      <p>
-          <label for="id_MailContacto">Mail del Contacto:</label> 
-          <!-- <input type="text" name="MailContacto" class="form-control" maxlength="70" id="id_MailContacto"> -->
+        <p>
+          <label for="id_MailContacto">Mail del Contacto:</label>
           {{form.MailContacto}}
         </p>
         <p>
-          <label for="id_TelefonoContacto">Telefono del Contacto:</label> 
-          <!-- <input type="text" name="TelefonoContacto" class="form-control" maxlength="100" required="" id="id_TelefonoContacto"> -->
+          <label for="id_TelefonoContacto">Telefono del Contacto:</label>
           {{form.TelefonoContacto}}
         </p>
         <p>
-          <label for="id_Coordenadas">Coordenadas:</label> 
-          <!-- <input type="text" name="Coordenadas" class="form-control" maxlength="100" required="" id="id_Coordenadas"> -->
+          <label for="id_Coordenadas">Coordenadas:</label>
           {{form.Coordenadas}}
         </p>
         <p>
-          <label for="id_NumeroMarcador">Numero del Marcador:</label> 
-          <!-- <input type="text" name="NumeroMarcador" class="form-control" maxlength="15" id="id_NumeroMarcador"> -->
+          <label for="id_NumeroMarcador">Numero del Marcador:</label>
           {{form.NumeroMarcador}}
         </p>
-      
-  </div>
-</div>
- 
-  <button type='submit' class='btn btn-success btn-guardar'><i class="fa fa-floppy-o fa-lg"></i> Guardar</button>
-  <a class='btn btn-success btn-cancelar' href={% url 'Operarios:puntoServicio_list' %}><i class="fa fa-times fa-lg"></i> Cancelar</a>
-</form>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12" style="margin: 10px !important;">
+        <a class='btn btn-success btn-cancelar' style="float:right;" href={% url 'Operarios:puntoServicio_list' %}><i
+            class="fa fa-times fa-lg"></i> Cancelar</a>
+        <button type='submit' class='btn btn-success btn-guardar' style="float:right;margin-right: 10px;"><i
+            class="fa fa-floppy-o fa-lg"></i> Guardar</button>
+
+      </div>
+    </div>
+
+  </form>
 </div>
 
 
 <style>
+  .jsgrid-grid-header {
+    overflow-y: auto !important;
+  }
 
-
-.jsgrid-grid-header{
-        overflow-y: auto !important;
-    }
-.btn-cancelar {
-        background-color: gray !important;
-        border-color: gray !important;
-        padding: 7px 30px;
-    }
-
+  .btn-cancelar {
+    background-color: gray !important;
+    border-color: gray !important;
+    padding: 7px 30px;
+  }
 </style>
 {% endblock %}
-
-

@@ -136,7 +136,7 @@ class RelevamientoForm(forms.ModelForm):
             'cantidadHrEsp': forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
             'fechaInicio': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"}),
             'tipoSalario': forms.Select(attrs={'class':'form-control form-control-sm'}), 
-            'comentario': forms.Textarea(attrs={'class':'form-control form-control-sm', 'rows':4, 'cols':60}),
+            'comentario': forms.Textarea(attrs={'class':'form-control form-control-sm noresize', 'rows':4, 'cols':60}),
         }
 
 class RelevamientoDetForm(forms.ModelForm):
@@ -297,7 +297,7 @@ class RelevamientoMensualerosForm(forms.ModelForm):
 
         widgets = {
             'mensuCantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
-            'sueldo': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'sueldo': forms.TextInput(attrs={'class':'form-control form-control-sm currency'}),
         }
 
 

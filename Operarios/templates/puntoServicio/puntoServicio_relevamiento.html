@@ -5,229 +5,311 @@
 
 <!--Aca inicia los mensajes personalizados -->
 {% if form.non_field_errors %}
-    <div class='container'>
-        {% for error in form.non_field_errors %}
-        <div class="alert alert-danger messages">Error: {{ error }}<br/></div>
-        {% endfor %}
-    </div>
+<div class='container'>
+    {% for error in form.non_field_errors %}
+    <div class="alert alert-danger messages">Error: {{ error }}<br /></div>
+    {% endfor %}
+</div>
 {% endif %}
 
 
 
-<div class='col mx-auto'>
-{% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
-<form method='POST' action='#' name='formulario' id='formulario'>
-    <input type="hidden" id="action" name="action" value=""> 
-    {% csrf_token %}
-    
-    <div class="container-fluid mb-4 mt-4">
-        <div class="row mt-3">
-            <div class="col-3"> {{ form.puntoServicio.label }} {{ form.puntoServicio }} </div>
-            <div class="col"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
-            <div class="col"> {{ form.cantAprendices.label }} {{ form.cantAprendices }}</div>
-            <div class="col-3"> {{ form.fechaInicio.label }} {{ form.fechaInicio }}</div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-4"> {{ form.cantidadHrTotal.label }} {{ form.cantidadHrTotal }}</div>
-            <div class="col-4"> {{ form.cantidadHrEsp.label }} {{ form.cantidadHrEsp }}</div> 
-            <div class="col-3"> {{ form.tipoSalario.label }} {{ form.tipoSalario }}</div>
-        </div>
-    </div>
-    
-    <!--Aca inicia los management_form -->
-    {{ relevamDetFormSet.management_form }}
-    {{ relevamEspFormSet.management_form }}
-    {{ relevamCuHrFormSet.management_form }}
-    {{ relevamMenFormSet.management_form }}
+<div class=''>
+    {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
+    <form method='POST' action='#' name='formulario' id='formulario'>
+        <input type="hidden" id="action" name="action" value="">
+        {% csrf_token %}
 
-    <!--Formulario de Cupo de Horas-->
-    <div class="container-fluid mb-3 mt-4" id='formset-CupoH'>
-        <h4>
-        Cupo de horas <small class="text-muted">Definicion de horas, frecuencia y tipo de Horas</small>
-        </h4>
-        <div class="row mt-3 mb-2 justify-content-end">
-            <div class="col-3 text-right"> Total Cupo de Horas: </div>
-            <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm" readonly/></div>
-        </div>
-        <div class="row">
-            <div class="col">Cantidad de Hrs </div>
-            <div class="col">Frecuencia </div>
-            <div class="col">Tipo de Horas </div>
-            <div class="col-1">Eliminar? </div>
-        </div>
-	    {% for form in relevamCuHrFormSet %}
-        <div class="row mt-2 leaveFormCup" id="leaveFormCup-{{ forloop.counter0 }}">
-            {{ form.id }}
-            <div class="col">
-                {{ form.cantCHoras }}
+        <div class="container-fluid mb-4 mt-4">
+            <div class="row mt-3">
+                <div class="col-6"> {{ form.puntoServicio.label }} {{ form.puntoServicio }} </div>
+                <div class="col-3"> {{ form.cantidadHrTotal.label }} {{ form.cantidadHrTotal }}</div>
+                <div class="col-3"> {{ form.cantidadHrEsp.label }} {{ form.cantidadHrEsp }}</div>
             </div>
-            <div class="col">
-                {{ form.frecuencia }}
-            </div>
-            <div class="col">
-                {{ form.tipoHora }}
-            </div>
-            <div class="col-1 text-center">
-                <input type="checkbox" style="display:none" name="relevamientocupohoras_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
-                <a href="javascript:void(0);" onclick="deleteLeaveRowCup(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                    <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i class="fa fa-trash fa-lg"></i> Eliminar</div>
-                </a>
+            <div class="row mt-3">
+                <div class="col-3"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
+                <div class="col-3"> {{ form.cantAprendices.label }} {{ form.cantAprendices }}</div>
+                <div class="col-3"> {{ form.fechaInicio.label }} {{ form.fechaInicio }}</div>
+                <div class="col-3"> {{ form.tipoSalario.label }} {{ form.tipoSalario }}</div>
             </div>
         </div>
-        {% endfor %}
-    </div>
-    <div class="row mt-3 justify-content-end">
-        <button class="btn btn-success btn-add"><i class="fa fa-plus fa-lg"></i> Añadir Cupo</button>
-    </div>
-    
+
+        <!--Aca inicia los management_form -->
+        {{ relevamDetFormSet.management_form }}
+        {{ relevamEspFormSet.management_form }}
+        {{ relevamCuHrFormSet.management_form }}
+        {{ relevamMenFormSet.management_form }}
+
+        <!--Formulario de Cupo de Horas-->
+        <div class="container-fluid mb-3 mt-4">
+            <div class="row mb-3 ">
+                <div class="col-md-12">
+                    <button class="btn btn-success btn-add" type="button" style="float:right" id="btnCupH"><i
+                            class="fa fa-plus fa-lg"></i> Añadir Cupo</button>
+                </div>
+
+            </div>
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-4">
+                            Cupo de horas
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-11 text-right title-right"> TOTAL CUPOS DE HORAS: </div>
+                                <div class="col-1 p-0"> <input id="sumAll_1" type="text" value=""
+                                        class="form-control form-control-sm total-cupos" readonly /></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id='formset-CupoH'>
+                    <div class="row header-table">
+                        <div class="col">Cantidad de Hrs </div>
+                        <div class="col">Frecuencia </div>
+                        <div class="col">Tipo de Horas </div>
+                        <div class="col-1">Eliminar? </div>
+                    </div>
+                    {% for form in relevamCuHrFormSet %}
+                    <div class="row mt-2 leaveFormCup" id="leaveFormCup-{{ forloop.counter0 }}">
+                        {{ form.id }}
+                        <div class="col">
+                            {{ form.cantCHoras }}
+                        </div>
+                        <div class="col">
+                            {{ form.frecuencia }}
+                        </div>
+                        <div class="col">
+                            {{ form.tipoHora }}
+                        </div>
+                        <div class="col-1 text-center btn-delete">
+                            <input type="checkbox" style="display:none"
+                                name="relevamientocupohoras_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
+                                id="{{ form.DELETE.id_for_label }}" />
+                            <a href="javascript:void(0);" onclick="deleteLeaveRowCup(this, {{ forloop.counter0 }});"
+                                class="remove muted pull-right">
+                                <div class='icon-delete' title="Eliminar" alt="Eliminar"><i
+                                        class="fa fa-trash fa-lg"></i></div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
 
 
-    <!--Formulario de Servicios Particulares-->
-    <div class="container-fluid mb-3 mt-4" id='formset-det'>
-        <h4>
-        Servicios Especificos <small class="text-muted">Definicion de dias y horario</small>
-        </h4>
-        <div class="row">
-            <div class="col-2 p-0 mt-3"> Servicio </div>
-            <div class="col p-0 text-center"> Lunes </div>
-            <div class="col p-0 text-center"> Martes </div>
-            <div class="col p-0 text-center"> Miercoles </div>
-            <div class="col p-0 text-center"> Jueves </div>
-            <div class="col p-0 text-center"> Viernes </div>
-            <div class="col p-0 text-center"> Sabado </div>
-            <div class="col p-0 text-center"> Domingo </div>
-            <div class="col-1 p-0 text-center"> Eliminar? </div>
         </div>
-	    {% for form in relevamDetFormSet %}
-        <div class="row mt-2 leaveFormDet" id="leaveFormDet-{{ forloop.counter0 }}">
-            {{ form.id }}
-            <div class="col-2 p-0 mt-3">
-                {{ form.tipoServPart }}
-            </div>
-            <div class="col p-0">
-                {{ form.lunEnt }}{{ form.lunSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.marEnt }}{{ form.marSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.mieEnt }}{{ form.mieSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.jueEnt }}{{ form.jueSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.vieEnt }}{{ form.vieSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.sabEnt }}{{ form.sabSal }}
-            </div>
-            <div class="col p-0">
-                {{ form.domEnt }}{{ form.domSal }}
-            </div>
-            <div class="col-1 p-0 text-center">
-                <input type="checkbox" style="display:none" name="relevamientodet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
-                <a href="javascript:void(0);" onclick="deleteLeaveRowDet(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                        <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i class="fa fa-trash fa-lg"></i> Eliminar</div>
-                </a>
-            </div>
-        </div>
-        {% endfor %}
 
-    </div>
-    <div class="row mt-3 justify-content-end">
-         <button class="btn btn-success btn-add"><i class="fa fa-plus fa-lg"></i> Añadir Detalle</button>
-    </div>
-    
+        <!--Formulario de Servicios Particulares-->
+        <div class="container-fluid mb-3 mt-4">
+            <div class="row mb-3 ">
+                <div class="col-md-12">
+                    <button class="btn btn-success btn-add" id="btnDet" type="button"
+                        style="float: right !important;"><i class="fa fa-plus fa-lg"></i> Añadir Detalle</button>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Servicios Especificos
+                            <!-- <small class="text-muted">Definicion de dias y horario</small>  -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id='formset-det'>
+                    <div class="row header-table">
+                        <div class="col-first p-0"> Servicio </div>
+                        <div class="col-day p-0 text-center"> Lunes </div>
+                        <div class="col-day p-0 text-center"> Martes </div>
+                        <div class="col-day p-0 text-center"> Miercoles </div>
+                        <div class="col-day p-0 text-center"> Jueves </div>
+                        <div class="col-day p-0 text-center"> Viernes </div>
+                        <div class="col-day p-0 text-center"> Sabado </div>
+                        <div class="col-day p-0 text-center"> Domingo </div>
+                        <div class="col-1 p-0 text-center"> Eliminar? </div>
+                    </div>
+                    {% for form in relevamDetFormSet %}
+                    <div class="row mt-2 leaveFormDet" id="leaveFormDet-{{ forloop.counter0 }}">
+                        {{ form.id }}
+                        <div class="col-first mt-3  ">
+                            {{ form.tipoServPart }}
+                        </div>
+                        <div class=" col-day  ">
+                            {{ form.lunEnt }}{{ form.lunSal }}
+                        </div>
+                        <div class=" col-day  ">
+                            {{ form.marEnt }}{{ form.marSal }}
+                        </div>
+                        <div class=" col-day  ">
+                            {{ form.mieEnt }}{{ form.mieSal }}
+                        </div>
+                        <div class=" col-day   ">
+                            {{ form.jueEnt }}{{ form.jueSal }}
+                        </div>
+                        <div class=" col-day  ">
+                            {{ form.vieEnt }}{{ form.vieSal }}
+                        </div>
+                        <div class=" col-day  ">
+                            {{ form.sabEnt }}{{ form.sabSal }}
+                        </div>
+                        <div class=" col-day  ">
+                            {{ form.domEnt }}{{ form.domSal }}
+                        </div>
+                        <div class="col-1 p-0 text-center btn-delete  ">
+                            <input type="checkbox" style="display:none"
+                                name="relevamientodet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
+                                id="{{ form.DELETE.id_for_label }}" />
+                            <a href="javascript:void(0);" onclick="deleteLeaveRowDet(this, {{ forloop.counter0 }});"
+                                class="remove muted pull-right">
+                                <div class='icon-delete' title="Eliminar" alt="Eliminar"><i
+                                        class="fa fa-trash fa-lg"></i></div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
 
-    <!--Formulario de Limpiezas Profundas-->
-    <div class="container-fluid mb-3 mt-4" id='formset-Esp'>
-        <h4>
-        Limpiezas Profundas <small class="text-muted">Definicion de horas y frecuencia</small>
-        </h4>
-        <div class="row mt-3 mb-2 justify-content-end">
-            <div class="col-3 text-right"> Total Horas Especiales: </div>
-            <div class="col-3">  <input id="sumAll_2" type="text" value="" class="form-control form-control-sm" readonly/></div>
         </div>
-        <div class="row">
-            <div class="col">Tipo limpieza especial </div>
-            <div class="col">Frecuencia </div>
-            <div class="col">Cantidad de Horas </div>
-            <div class="col-1">Eliminar? </div>
-        </div>
-	    {% for form in relevamEspFormSet %}
-        <div class="row mt-2 leaveFormEsp"  id="leaveFormEsp-{{ forloop.counter0 }}">
-            {{ form.id }}
-            <div class="col">
-                {{ form.tipo }}
-            </div>
-            <div class="col">
-                {{ form.frecuencia }}
-            </div>
-            <div class="col">
-                {{ form.cantHoras }}
-            </div>
-            <div class="col-1 text-center">
-                <input type="checkbox" style="display:none" name="relevamientoesp_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
-                <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                        <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i class="fa fa-trash fa-lg"></i> Eliminar</div>
-                </a>
-            </div>
-        </div>
-        {% endfor %}
 
-    </div>
-    <div class="row mt-3 justify-content-end">
-            <button class="btn btn-success btn-add"><i class="fa fa-plus fa-lg"></i> Añadir Profundas</button>
-    </div>
 
-    <!--Formulario de Mensualeros-->
-    <div class="container-fluid mb-3 mt-4" id='formset-Men'>
-        <h4>
-        Mensualeros <small class="text-muted">Definicion de cantidad y sueldos acordados</small>
-        </h4>
-        <div class="row">
-            <div class="col-2">Cant. Mensualeros </div>
-            <div class="col-2">Sueldo </div>
-            <div class="col-1">Eliminar? </div>
+
+        <!--Formulario de Limpiezas Profundas-->
+        <div class="container-fluid mb-3 mt-4">
+            <div class="row mb-3 justify-content-end">
+                <div class="col-md-12">
+                    <button class="btn btn-success btn-add" style="float: right !important;" id="btnEsp"
+                        type="button"><i class="fa fa-plus fa-lg"></i> Añadir Profundas</button>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-4">
+                            Limpiezas Profundas
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-11 text-right title-right">TOTAL HORAS ESPECIALES: </div>
+                                <div class="col-1 p-0"> <input id="sumAll_2" type="text" value=""
+                                        class="form-control form-control-sm total-cupos" readonly /></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id='formset-Esp'>
+                    <div class="row header-table">
+                        <div class="col">Tipo limpieza especial </div>
+                        <div class="col">Frecuencia </div>
+                        <div class="col">Cantidad de Horas </div>
+                        <div class="col-1">Eliminar? </div>
+                    </div>
+                    {% for form in relevamEspFormSet %}
+                    <div class="row mt-2 leaveFormEsp" id="leaveFormEsp-{{ forloop.counter0 }}">
+                        {{ form.id }}
+                        <div class="col">
+                            {{ form.tipo }}
+                        </div>
+                        <div class="col">
+                            {{ form.frecuencia }}
+                        </div>
+                        <div class="col">
+                            {{ form.cantHoras }}
+                        </div>
+                        <div class="col-1 text-center btn-delete">
+                            <input type="checkbox" style="display:none"
+                                name="relevamientoesp_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
+                                id="{{ form.DELETE.id_for_label }}" />
+                            <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, {{ forloop.counter0 }});"
+                                class="remove muted pull-right">
+                                <div class=' icon-delete' title="Eliminar" alt="Eliminar"><i
+                                        class="fa fa-trash fa-lg"></i></div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
         </div>
-	    {% for form in relevamMenFormSet %}
-        <div class="row mt-2 leaveFormMen" id="leaveFormMen-{{ forloop.counter0 }}">
-            {{ form.id }}
-            <div class="col-2">
-                {{ form.mensuCantidad }}
+
+
+        <!--Formulario de Mensualeros-->
+        <div class="container-fluid mb-3 mt-4">
+            <div class="row mb-3 justify-content-end">
+                <div class="col-md-12">
+                    <button class="btn btn-success btn-add" style="float:right !important;" type="button" id="btnMen"><i
+                            class="fa fa-plus fa-lg"></i> Añadir Mensualero</button>
+                </div>
             </div>
-            <div class="col-2">
-                {{ form.sueldo }}
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Mensualeros
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id='formset-Men'>
+                    <div class="row header-table">
+                        <div class="col-5">Cant. Mensualeros </div>
+                        <div class="col-5">Sueldo </div>
+                        <div class="col-2" style="text-align: center !important;">Eliminar? </div>
+                    </div>
+                    {% for form in relevamMenFormSet %}
+                    <div class="row mt-2 leaveFormMen" id="leaveFormMen-{{ forloop.counter0 }}">
+                        {{ form.id }}
+                        <div class="col-5">
+                            {{ form.mensuCantidad }}
+                        </div>
+                        <div class="col-5">
+                            {{ form.sueldo }}
+                        </div>
+                        <div class="col-2 text-center btn-delete">
+                            <input type="checkbox" style="display:none"
+                                name="relevamientomensualeros_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
+                                id="{{ form.DELETE.id_for_label }}" />
+                            <a href="javascript:void(0);" onclick="deleteLeaveRowMen(this, {{ forloop.counter0 }});"
+                                class="remove muted pull-right">
+                                <div class="fa fa-trash fa-lg icon-delete" title="Delete day off" alt="Eliminar"></div>
+                                <span class="visible-xs"></span>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-            <div class="col-1 text-center">
-                <input type="checkbox" style="display:none" name="relevamientomensualeros_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
-                <a href="javascript:void(0);" onclick="deleteLeaveRowMen(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                    <div class="fa fa-times fa-lg" title="Delete day off" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
-                </a>
+
+        </div>
+        <div class="container-fluid mb-3 mt-4"></div>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="col"> {{ form.comentario.label }} {{ form.comentario }}</div>
             </div>
         </div>
-        {% endfor %}
+        <div class="col-md-12">
+            <div class="col p-0" style="display: flex;justify-content: flex-end;margin: 20px 0px;">
+                <button type='submit' class='btn btn-primary btn-guardar' style="margin-right:10px;"> <i
+                        class="fa fa-save"></i>
+                    Guardar</button>
+                <a class='btn btn-primary btn-cancelar' href={% url 'Operarios:servicio_aprobado' %}> <i
+                        class="fa fa-times"></i> Cancelar</a>
+            </div>
 
-    </div>
-    <div class="row mt-3 justify-content-end">
-        <button class="btn btn-success btn-add"><i class="fa fa-plus fa-lg"></i> Añadir Mensualero</button>
-    </div>
-    
-    <div class="row mt-3">
-        <div class="col"> {{ form.comentario.label }} {{ form.comentario }}</div>
-    </div>
-
-    <div class="row mt-5 justify-content-end">
-        <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
-        <a class='btn btn-primary btn-sm' href={% url 'Operarios:puntoServicio_list' %}>Cancelar</a>
-    </div>
+        </div>
+</div>
 
 </form>
 </div>
 
+<script>
+    $(document).ready(function () {
+        $(".currency").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0 });
+    });
+</script>
 
-  
 <!-- Script que carga las filas dinamicamente -->
 <script type='template/CupoHoras'>
     <div class="row mt-2 leaveFormCup" id="leaveFormCup-__prefix__">
@@ -240,10 +322,10 @@
         <div class="col">
             {{ relevamCuHrFormSet.empty_form.tipoHora }}
         </div>
-        <div class="col-1 text-center">
+        <div class="col-1 text-center btn-delete">
             <input type="checkbox" style="display:none" name="relevamientocupohoras_set-__prefix__-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
             <a href="javascript:void(0);" onclick="deleteLeaveRowCup(this, __prefix__);" class="remove muted pull-right">
-                <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                <div class="fa fa-trash fa-lg icon-delete" title="Eliminar" alt="Eliminar"></div><span class="visible-xs"></span>
             </a>
         </div>
     </div>
@@ -251,34 +333,34 @@
 
 <script type='template/Detalle'>
     <div class="row mt-2 leaveFormDet" id="leaveFormDet-__prefix__">
-            <div class="col-2 p-0 mt-3">
+            <div class="col-first p-0 mt-3">
                 {{ relevamDetFormSet.empty_form.tipoServPart }}
             </div>
-            <div class="col p-0">
+            <div class="col-day p-0">
                 {{ relevamDetFormSet.empty_form.lunEnt }}{{ relevamDetFormSet.empty_form.lunSal }}
             </div>
-            <div class="col p-0">
+            <div class="col-day p-0">
                 {{ relevamDetFormSet.empty_form.marEnt }}{{ relevamDetFormSet.empty_form.marSal }}
             </div>
-            <div class="col p-0">
+            <div class="col-day p-0">
                 {{ relevamDetFormSet.empty_form.mieEnt }}{{ relevamDetFormSet.empty_form.mieSal }}
             </div>
-            <div class="col p-0">
+            <div class="col-day p-0">
                 {{ relevamDetFormSet.empty_form.jueEnt }}{{ relevamDetFormSet.empty_form.jueSal }}
             </div>
-            <div class="col p-0">
+            <div class="col-day p-0">
                 {{ relevamDetFormSet.empty_form.vieEnt }}{{ relevamDetFormSet.empty_form.vieSal }}
             </div>
-            <div class="col p-0">
+            <div class="col-day p-0">
                 {{ relevamDetFormSet.empty_form.sabEnt }}{{ relevamDetFormSet.empty_form.sabSal }}
             </div>
-            <div class="col p-0">
+            <div class="col-day p-0">
                 {{ relevamDetFormSet.empty_form.domEnt }}{{ relevamDetFormSet.empty_form.domSal }}
             </div>
-            <div class="col-1 p-0 text-center">
+            <div class="col-1 p-0 text-center btn-delete">
                 <input type="checkbox" style="display:none" name="relevamientodet_set-__prefix__-{{ relevamDetFormSet.empty_form.DELETE.name }}" id="{{ relevamDetFormSet.empty_form.DELETE.id_for_label }}" />
                 <a href="javascript:void(0);" onclick="deleteLeaveRowDet(this, __prefix__);" class="remove muted pull-right">
-                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                    <div class="fa fa-trash fa-lg icon-delete" title="Eliminar" alt="Eliminar"></div><span class="visible-xs"></span>
                 </a>
             </div>
         </div>
@@ -286,7 +368,7 @@
 
 
 <script type='template/Especiales'>
-    <div class="row mt-2 leaveFormMen" id="leaveFormMen-__prefix__">
+    <div class="row mt-2 leaveFormEsp" id="leaveFormEsp-__prefix__">
             <div class="col">
                 {{ relevamEspFormSet.empty_form.tipo }}
             </div>
@@ -296,10 +378,10 @@
             <div class="col">
                 {{ relevamEspFormSet.empty_form.cantHoras }}
             </div>
-            <div class="col-1 text-center">
+            <div class="col-1 text-center btn-delete">
                 <input type="checkbox" style="display:none" name="relevamientoesp_set-__prefix__-{{ relevamEspFormSet.empty_form.DELETE.name }}" id="{{ relevamEspFormSet.empty_form.DELETE.id_for_label }}" />
-                <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, __prefix__);" class="remove muted pull-right">
-                    <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, __prefix__);" class="remove muted pull-right icon-delete">
+                    <div class="fa fa-trash fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs"></span>
                 </a>
             </div>
         </div>  
@@ -307,16 +389,16 @@
 
 <script type='template/Mensualeros'>
     <div class="row mt-2 leaveFormMen" id="leaveFormMen-__prefix__">
-        <div class="col-2">
+        <div class="col-5">
             {{ relevamMenFormSet.empty_form.mensuCantidad }}
         </div>
-        <div class="col-2">
+        <div class="col-5">
             {{ relevamMenFormSet.empty_form.sueldo }}
         </div>
-        <div class="col-1 text-center">
+        <div class="col-2 text-center btn-delete">
             <input type="checkbox" style="display:none" name="relevamientomensualeros_set-__prefix__-{{ relevamMenFormSet.empty_form.DELETE.name }}" id="{{ relevamMenFormSet.empty_form.DELETE.id_for_label }}" />
             <a href="javascript:void(0);" onclick="deleteLeaveRowMen(this, __prefix__);" class="remove muted pull-right">
-                <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                <div class="fa fa-trash fa-lg icon-delete" title="Eliminar" alt="Eliminar"></div><span class="visible-xs"></span>
             </a>
         </div>
     </div>
@@ -326,268 +408,333 @@
 </div>
 
 <script>
-/**
- * Number.prototype.format(n, x, s, c)
- * 
- * @param integer n: length of decimal
- * @param integer x: length of whole part
- * @param mixed   s: sections delimiter
- * @param mixed   c: decimal delimiter
- */
-Number.prototype.format = function(n, x, s, c) {
-    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
-        num = this.toFixed(Math.max(0, ~~n));
-    
-    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
-};
+    /**
+     * Number.prototype.format(n, x, s, c)
+     * 
+     * @param integer n: length of decimal
+     * @param integer x: length of whole part
+     * @param mixed   s: sections delimiter
+     * @param mixed   c: decimal delimiter
+     */
+    Number.prototype.format = function (n, x, s, c) {
+        var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+            num = this.toFixed(Math.max(0, ~~n));
 
-function pad(d) {
-    return (d < 10) ? '0' + d.toString() : d.toString();
-}
+        return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+    };
 
-function timeInHours(str){
-   var sp = str.split(":");
-   return parseInt(sp[0]) + parseFloat(sp[1]/60);
-}
-
-function hoursToString(h){
-   var hours = Math.floor(h);
-   var minutes = ((h - hours)*60).toFixed(2);
-
-   return pad(hours) + ":" + pad(minutes);
-}
-
-function SumHrMin(h1, h2){
-    var sp = h1.split(":");
-    var hora1 = sp[0];
-    var min1 = sp[1];
-
-    sp = h2.split(":");
-    var hora2 = sp[0];
-    var min2 = sp[1];
-
-    var hora_total = parseInt(hora1) + parseInt(hora2);
-    var min_pre = parseInt(min1) + parseInt(min2);
-
-    var horas_adicionales = Math.floor((min_pre/60));
-    hora_total += horas_adicionales;
-    var min_total = (min_pre - (horas_adicionales*60));
-
-    return hora_total + ":" + pad(min_total);
-
-}
-
-function obtenerNumeroId(id){
-    var sp = id.split("-");
-    return sp[1];
-}
-
-function deleteLeaveRowCup(deleteLink, id) {
-    
-    $(deleteLink).closest('.leaveFormCup').hide();
-
-    $("#id_relevamientocupohoras_set-" + id + "-DELETE").prop("checked", true);
-    RecalcularHorasCup();
-}
-
-function deleteLeaveRowDet(deleteLink, id) {
-    
-    $(deleteLink).closest('.leaveFormDet').hide();
-
-    $("#id_relevamientodet_set-" + id + "-DELETE").prop("checked", true);
-}
-
-function deleteLeaveRowEsp(deleteLink, id) {
-    
-    $(deleteLink).closest('.leaveFormEsp').hide();
-
-    $("#id_relevamientoesp_set-" + id + "-DELETE").prop("checked", true);
-    RecalcularHorasEsp();
-}
-
-function deleteLeaveRowMen(deleteLink, id) {
-    
-    $(deleteLink).closest('.leaveFormMen').hide();
-
-    $("#id_relevamientomensualeros_set-" + id + "-DELETE").prop("checked", true);
-}
-
-function RecalcularHorasCup(){
-    //aqui empieza el calculo del total de Cupo de horas 
-    var total = '00:00';
-    var subtotal = 0;
-    $('input[id$="cantCHoras"]').each(function() {
-        
-        if ($(this).val() !== '') {
-
-            var n = obtenerNumeroId(this.id);
-            if(!($('#leaveFormCup-'+ n).css('display') == 'none')){
-                var frecuenciaCupo = $('#id_relevamientocupohoras_set-' + n + '-frecuencia').val();
-
-                if (frecuenciaCupo != 'FER'){
-                    total = SumHrMin($(this).val(), total) ;
-                }
-                
-            }
-
-        }
-    })
-        
-    //total = hoursToString(total);
-    $('#sumAll_1').val(total);
-
-    //aqui empieza el calculo del total de horas
-    var subtotal = 0;
-    var sumaEsp = timeInHours($('#sumAll_1').val());
-    subtotal = hoursToString(sumaEsp);
-    $('#id_cantidadHrTotal').val(SumHrMin(subtotal, '00:00'));
-}
-
-function RecalcularHorasEsp(){
-    //aqui empieza el calculo del total de horas especiales
-    var total = '00:00';
-    var subtotal = 0;
-    $('input[id$="cantHoras"]').each(function() {
-        
-        if ($(this).val() !== '') {
-
-            var n = obtenerNumeroId(this.id);
-            if(!($('#leaveFormEsp-'+ n).css('display') == 'none')){
-                var frecuencia = $('#id_relevamientoesp_set-' + n + '-frecuencia').val();
-
-                if(frecuencia == 'DIA'){
-                    total = SumHrMin(hoursToString(timeInHours($(this).val())*30), total);
-                }else if(frecuencia == 'SEM'){
-                    total = SumHrMin(hoursToString(timeInHours($(this).val())*4), total);
-                }else if(frecuencia == 'MEN'){
-                    total = SumHrMin(hoursToString(timeInHours($(this).val())), total);
-                }else if(frecuencia == 'BIM'){
-                    total = SumHrMin(hoursToString(timeInHours($(this).val())/2), total);
-                }else if(frecuencia == 'TRI'){
-                    total = SumHrMin(hoursToString(timeInHours($(this).val())/3), total);
-                }else if(frecuencia == 'CUA'){
-                    total = SumHrMin(hoursToString(timeInHours($(this).val())/4), total);
-                }else if(frecuencia == 'SEL'){
-                    total = SumHrMin(hoursToString(timeInHours($(this).val())/6), total);
-                }else if(frecuencia == 'ANU'){
-                    total = SumHrMin(hoursToString(timeInHours($(this).val())/12), total);
-                }
-            }
-        }
-    })
-    //total = hoursToString(total);
-    $('#sumAll_2').val(SumHrMin(total, '00:00'));
-
-    //aqui empieza el calculo del total de horas
-    var total = 0;
-    var sumaEsp = timeInHours($('#sumAll_2').val());
-    total = hoursToString(sumaEsp);
-    $('#id_cantidadHrEsp').val(SumHrMin(total, '00:00'));
-
-}
-
-$(function(){
-
-    // Reemplaza todas las coincidencias en vez de solo la primera
-    function replaceAll(text, busca, reemplaza){
-          while (text.toString().indexOf(busca) != -1)
-            text = text.toString().replace(busca, reemplaza);
-          return text;
+    function pad(d) {
+        return (d < 10) ? '0' + d.toString() : d.toString();
     }
 
-    var $totalDetalle = $('#id_relevamientodet_set-TOTAL_FORMS');
-
-    $('#btnDet').click(function(event) {
-        event.preventDefault();
-        var total = parseInt($totalDetalle.val(), 10);
-        var clon = $('script[type="template/Detalle"]').html();
-        clon_html = replaceAll(clon, '__prefix__', (total).toString());
-        $('#formset-det').append(clon_html);
-        $totalDetalle.val(total +  1);
-
-        //Seteamos action
-        document.getElementById('action').value = 'add_det';
-        //hacemos submit
-        document.getElementById('formulario').submit();
-    });
-
-    var $totalEspeciales = $('#id_relevamientoesp_set-TOTAL_FORMS');
-
-    $('#btnEsp').click(function(event) {
-        event.preventDefault();
-        var total = parseInt($totalEspeciales.val(), 10);
-        var clon = $('script[type="template/Especiales"]').html();
-        clon_html = replaceAll(clon, '__prefix__', (total).toString());
-        $('#formset-Esp').append(clon_html);
-        $totalEspeciales.val(total +  1);
-
-        //Seteamos action
-        //document.getElementById('action').value = 'add_esp';
-        //hacemos submit
-        //document.getElementById('formulario').submit();
-    });
-
-    var $totalCupoHoras = $('#id_relevamientocupohoras_set-TOTAL_FORMS');
-
-    $('#btnCupH').click(function(event) {
-        event.preventDefault();
-        var total = parseInt($totalCupoHoras.val(), 10);
-        var clon = $('script[type="template/CupoHoras"]').html();
-        clon_html = replaceAll(clon, '__prefix__', (total).toString());
-        $('#formset-CupoH').append(clon_html);
-        $totalCupoHoras.val(total +  1);
-    });
-
-    var $totalMensualeros = $('#id_relevamientomensualeros_set-TOTAL_FORMS');
-
-    $('#btnMen').click(function(event) {
-        event.preventDefault();
-        var total = parseInt($totalMensualeros.val(), 10);
-        var clon = $('script[type="template/Mensualeros"]').html();
-        clon_html = replaceAll(clon, '__prefix__', (total).toString());
-        $('#formset-Men').append(clon_html);
-        $totalMensualeros.val(total +  1);
-    });
-});
-
-$('input[id$="cantCHoras"], input[id$="cantHoras"]').on('change', function(e){
-    
-    str = $(this).val();
-    if ( !/:/.test( str ) ) { 
-        str += ':00'; 
+    function timeInHours(str) {
+        var sp = str.split(":");
+        return parseInt(sp[0]) + parseFloat(sp[1] / 60);
     }
 
-    $(this).val(str.replace(/^\d{1}:/, '0$&').replace(/:\d{1}$/, '$&0' )); 
-});
+    function hoursToString(h) {
+        var hours = Math.floor(h);
+        var minutes = ((h - hours) * 60).toFixed(2);
 
-$('input[id$="cantHoras"], [id^="id_relevamientoesp_set"]').on('change', function(e){
-        RecalcularHorasEsp();
-});
+        return pad(hours) + ":" + pad(minutes);
+    }
 
-$('input[id$="cantCHoras"], [id^="id_relevamientocupohoras_set-"]').on('change', function(e){
+    function SumHrMin(h1, h2) {
+        var sp = h1.split(":");
+        var hora1 = sp[0];
+        var min1 = sp[1];
+
+        sp = h2.split(":");
+        var hora2 = sp[0];
+        var min2 = sp[1];
+
+        var hora_total = parseInt(hora1) + parseInt(hora2);
+        var min_pre = parseInt(min1) + parseInt(min2);
+
+        var horas_adicionales = Math.floor((min_pre / 60));
+        hora_total += horas_adicionales;
+        var min_total = (min_pre - (horas_adicionales * 60));
+
+        return hora_total + ":" + pad(min_total);
+
+    }
+
+    function obtenerNumeroId(id) {
+        var sp = id.split("-");
+        return sp[1];
+    }
+
+    function deleteLeaveRowCup(deleteLink, id) {
+
+        $(deleteLink).closest('.leaveFormCup').hide();
+
+        $("#id_relevamientocupohoras_set-" + id + "-DELETE").prop("checked", true);
         RecalcularHorasCup();
-});
+    }
+
+    function deleteLeaveRowDet(deleteLink, id) {
+
+        $(deleteLink).closest('.leaveFormDet').hide();
+
+        $("#id_relevamientodet_set-" + id + "-DELETE").prop("checked", true);
+    }
+
+    function deleteLeaveRowEsp(deleteLink, id) {
+        console.log("BORRADO")
+        $(deleteLink).closest('.leaveFormEsp').hide();
+
+        $("#id_relevamientoesp_set-" + id + "-DELETE").prop("checked", true);
+        RecalcularHorasEsp();
+    }
+
+    function deleteLeaveRowMen(deleteLink, id) {
+
+        $(deleteLink).closest('.leaveFormMen').hide();
+
+        $("#id_relevamientomensualeros_set-" + id + "-DELETE").prop("checked", true);
+    }
+    $(document).ready(function () {
+        RecalcularHorasCup();
+        RecalcularHorasEsp();
+    });
+    function RecalcularHorasCup() {
+        //aqui empieza el calculo del total de Cupo de horas 
+        var total = '00:00';
+        var subtotal = 0;
+        $('input[id$="cantCHoras"]').each(function () {
+
+            if ($(this).val() !== '') {
+
+                var n = obtenerNumeroId(this.id);
+                if (!($('#leaveFormCup-' + n).css('display') == 'none')) {
+                    var frecuenciaCupo = $('#id_relevamientocupohoras_set-' + n + '-frecuencia').val();
+
+                    if (frecuenciaCupo != 'FER') {
+                        total = SumHrMin($(this).val(), total);
+                    }
+
+                }
+
+            }
+        })
+
+        //total = hoursToString(total);
+        $('#sumAll_1').val(total);
+
+        //aqui empieza el calculo del total de horas
+        var subtotal = 0;
+        var sumaEsp = timeInHours($('#sumAll_1').val());
+        subtotal = hoursToString(sumaEsp);
+        $('#id_cantidadHrTotal').val(SumHrMin(subtotal, '00:00'));
+    }
+
+    function RecalcularHorasEsp() {
+        //aqui empieza el calculo del total de horas especiales
+        var total = '00:00';
+        var subtotal = 0;
+        $('input[id$="cantHoras"]').each(function () {
+
+            if ($(this).val() !== '') {
+
+                var n = obtenerNumeroId(this.id);
+                if (!($('#leaveFormEsp-' + n).css('display') == 'none')) {
+                    var frecuencia = $('#id_relevamientoesp_set-' + n + '-frecuencia').val();
+
+                    if (frecuencia == 'DIA') {
+                        total = SumHrMin(hoursToString(timeInHours($(this).val()) * 30), total);
+                    } else if (frecuencia == 'SEM') {
+                        total = SumHrMin(hoursToString(timeInHours($(this).val()) * 4), total);
+                    } else if (frecuencia == 'MEN') {
+                        total = SumHrMin(hoursToString(timeInHours($(this).val())), total);
+                    } else if (frecuencia == 'BIM') {
+                        total = SumHrMin(hoursToString(timeInHours($(this).val()) / 2), total);
+                    } else if (frecuencia == 'TRI') {
+                        total = SumHrMin(hoursToString(timeInHours($(this).val()) / 3), total);
+                    } else if (frecuencia == 'CUA') {
+                        total = SumHrMin(hoursToString(timeInHours($(this).val()) / 4), total);
+                    } else if (frecuencia == 'SEL') {
+                        total = SumHrMin(hoursToString(timeInHours($(this).val()) / 6), total);
+                    } else if (frecuencia == 'ANU') {
+                        total = SumHrMin(hoursToString(timeInHours($(this).val()) / 12), total);
+                    }
+                }
+            }
+        })
+        //total = hoursToString(total);
+        $('#sumAll_2').val(SumHrMin(total, '00:00'));
+
+        //aqui empieza el calculo del total de horas
+        var total = 0;
+        var sumaEsp = timeInHours($('#sumAll_2').val());
+        total = hoursToString(sumaEsp);
+        $('#id_cantidadHrEsp').val(SumHrMin(total, '00:00'));
+
+    }
+
+    $(function () {
+
+        // Reemplaza todas las coincidencias en vez de solo la primera
+        function replaceAll(text, busca, reemplaza) {
+            while (text.toString().indexOf(busca) != -1)
+                text = text.toString().replace(busca, reemplaza);
+            return text;
+        }
+
+        var $totalDetalle = $('#id_relevamientodet_set-TOTAL_FORMS');
+
+        $('#btnDet').click(function (event) {
+            event.preventDefault();
+            var total = parseInt($totalDetalle.val(), 10);
+            var clon = $('script[type="template/Detalle"]').html();
+            clon_html = replaceAll(clon, '__prefix__', (total).toString());
+            $('#formset-det').append(clon_html);
+            $totalDetalle.val(total + 1);
+
+            //Seteamos action
+            document.getElementById('action').value = 'add_det';
+            //hacemos submit
+            // document.getElementById('formulario').submit();
+        });
+
+        var $totalEspeciales = $('#id_relevamientoesp_set-TOTAL_FORMS');
+
+        $('#btnEsp').click(function (event) {
+            event.preventDefault();
+            var total = parseInt($totalEspeciales.val(), 10);
+            var clon = $('script[type="template/Especiales"]').html();
+            clon_html = replaceAll(clon, '__prefix__', (total).toString());
+            $('#formset-Esp').append(clon_html);
+            $totalEspeciales.val(total + 1);
+
+            //Seteamos action
+            //document.getElementById('action').value = 'add_esp';
+            //hacemos submit
+            //document.getElementById('formulario').submit();
+        });
+
+        var $totalCupoHoras = $('#id_relevamientocupohoras_set-TOTAL_FORMS');
+
+        $('#btnCupH').click(function (event) {
+            event.preventDefault();
+            var total = parseInt($totalCupoHoras.val(), 10);
+            var clon = $('script[type="template/CupoHoras"]').html();
+            clon_html = replaceAll(clon, '__prefix__', (total).toString());
+            $('#formset-CupoH').append(clon_html);
+            $totalCupoHoras.val(total + 1);
+        });
+
+        var $totalMensualeros = $('#id_relevamientomensualeros_set-TOTAL_FORMS');
+
+        $('#btnMen').click(function (event) {
+            event.preventDefault();
+            var total = parseInt($totalMensualeros.val(), 10);
+            var clon = $('script[type="template/Mensualeros"]').html();
+            clon_html = replaceAll(clon, '__prefix__', (total).toString());
+            $('#formset-Men').append(clon_html);
+            //Se vuelve a inicializar cuando se agrega nuevo detalle mensualero
+            $(".currency").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0 });
+            $totalMensualeros.val(total + 1);
+        });
+    });
+
+    $('input[id$="cantCHoras"], input[id$="cantHoras"]').on('change', function (e) {
+
+        str = $(this).val();
+        if (!/:/.test(str)) {
+            str += ':00';
+        }
+
+        $(this).val(str.replace(/^\d{1}:/, '0$&').replace(/:\d{1}$/, '$&0'));
+    });
+
+    $('input[id$="cantHoras"], [id^="id_relevamientoesp_set"]').on('change', function (e) {
+
+        RecalcularHorasEsp();
+    });
+
+    $('input[id$="cantCHoras"], [id^="id_relevamientocupohoras_set-"]').on('change', function (e) {
+        RecalcularHorasCup();
+    });
 
 </script>
 
 
 <style>
+    .card-header {
+        background-color: #86273e !important;
+        color: white !important;
+        font-size: 20px !important;
+        border-radius: 0px !important;
+        border-bottom: 1px solid gray !important;
+    }
 
-.btn-add {
+    .card {
+        border-radius: 0px !important;
+    }
+
+    .btn-add {
         background-color: #86273e !important;
         border-color: #86273e !important;
         padding: 7px 7px;
         cursor: pointer;
     }
 
+    .input-group {
+        height: 31px !important;
+    }
 
-.btn-eliminar {
+    .btn-eliminar {
         background-color: gray !important;
         border-color: gray !important;
         padding: 7px 7px;
-        
+
     }
 
+    .total-cupos {
+        font-size: 18px !important;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0px !important;
+        color: white !important;
+        font-weight: 600 !important;
+    }
+
+    .title-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 15px !important;
+    }
+
+    .btn-delete {
+        display: flex;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .icon-delete {
+        color: #636363 !important;
+    }
+
+    .header-table div {
+        padding: 10px !important;
+        background-color: #636363 !important;
+        color: white !important;
+    }
+
+    .col-day {
+        width: 11% !important;
+    }
+
+    .col-first {
+        width: 14% !important;
+    }
+
+    .date {
+        padding: 0px 10px !important;
+        margin-bottom: 5px !important;
+    }
 </style>
+
 
 {% endblock %}

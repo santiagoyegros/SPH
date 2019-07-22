@@ -129,7 +129,7 @@ class RelevamientoForm(forms.ModelForm):
         }
 
         widgets = {
-            'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
+            'puntoServicio':  forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
             'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'cantAprendices': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'cantidadHrTotal': forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),

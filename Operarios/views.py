@@ -55,19 +55,19 @@ class PuntosServicioList(ListView):
                 consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
 
-                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id))
 
             elif (cargoUsuario.cargo == 'Jefe de Operaciones'):
                 #Si es jefe de operaciones -> Trae todo los puntos de servicio de sus fiscales. 'Jefe de Operaciones'
-                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)  ).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) )
                 pass
             elif (cargoUsuario.cargo == 'Gerente de Operaciones'):
                 #Si es Gerente de Operaciones/SubGerente -> Todos los contratos. 'Gerente de Operaciones'
-                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)  ).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                return PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) )
                 pass
 
             else:
@@ -91,9 +91,9 @@ class PuntosServicioAprobados(ListView):
 
             if (cargoUsuario.cargo == 'Fiscal'):
                 #Si es fiscal, le trae sus puntos de servicios. 'Fiscal'
-                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None) ).query
+                consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)  ).query
                 logging.getLogger("error_logger").error('La consulta de puntos de Servicio List ejecutada es: {0}'.format(consulta))
-                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) & Q(vfechaFin=None))
+                return PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id) )
             elif (cargoUsuario.cargo == 'Jefe de Operaciones'):
                 #Si es jefe de operaciones -> Trae todo los puntos de servicio de sus fiscales. 'Jefe de Operaciones'
                 consulta = PuntoServicio.objects.filter( Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=self.request.user.id)).query
@@ -292,22 +292,68 @@ def Relevamiento(request, id_puntoServicio=None):
             relevamMenFormSet = relevamientoMensuFormSet(request.POST, instance=relevamiento)
 
             if form.is_valid() and relevamDetFormSet.is_valid() and relevamEspFormSet.is_valid() and relevamCuHrFormSet.is_valid() and relevamMenFormSet.is_valid():
-                print(relevamMenFormSet.cleaned_data)
+                
                 #update de la cabecera, retorna el nuevo ID
                 #print(relevamDetFormSet.cleaned_data)
-
                 #Estado y fecha setee en duro
-                """conn= connection.cursor()
-                params=(relevamiento.id,datetime.now(),form.cleaned_data.get('cantidad'),
-                puntoSer.id,form.cleaned_data.get('cantidadHrTotal'),form.cleaned_data.get('cantidadHrEsp'),
-                form.cleaned_data.get('fechaInicio'),None,str(form.cleaned_data.get('tipoSalario')),
-                form.cleaned_data.get('comentario'),form.cleaned_data.get('cantAprendices'),'Activo',None,None,0)
-                conn.execute('relevamiento_cab_trg  %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s',params)
+                conn= connection.cursor()
+
+                params=(
+                    str({'id': str(relevamiento.id),'puntoServicio_id':str(puntoSer.id),
+                        'cantidad':form.cleaned_data.get('cantidad'),
+                        'cantAprendices':form.cleaned_data.get('cantAprendices'),
+                        'cantidadHrTotal':form.cleaned_data.get('cantidadHrTotal'),
+                        'cantidadHrEsp':form.cleaned_data.get('cantidadHrEsp'),
+                        'fechaInicio':str(form.cleaned_data.get('fechaInicio')),
+                        'tipoSalario':str(form.cleaned_data.get('tipoSalario')),
+                        'comentario':form.cleaned_data.get('comentario')}).replace('\'','\"'),
+                    str({
+                        'orden':relevamDetFormSet.cleaned_data.get('orden'),
+                        'relevamientocab_id':str(relevamiento.id),
+                        'tipoServPart':relevamDetFormSet.cleaned_data.get('tipoServPart'),
+                        'lunEnt':relevamDetFormSet.cleaned_data.get('lunEnt'),
+                        'lunSal':relevamDetFormSet.cleaned_data.get('lunSal'),
+                        'marEnt':relevamDetFormSet.cleaned_data.get('marEnt'),
+                        'marSal':relevamDetFormSet.cleaned_data.get('marSal'),
+                        'mieEnt':relevamDetFormSet.cleaned_data.get('mieEnt'),
+                        'mieSal':relevamDetFormSet.cleaned_data.get('mieSal'),
+                        'jueEnt':relevamDetFormSet.cleaned_data.get('jueEnt'),
+                        'jueSal':relevamDetFormSet.cleaned_data.get('jueSal'),
+                        'vieEnt':relevamDetFormSet.cleaned_data.get('vieEnt'),
+                        'vieSal':relevamDetFormSet.cleaned_data.get('vieSal'),
+                        'sabEnt':relevamDetFormSet.cleaned_data.get('sabEnt'),
+                        'sabSal':relevamDetFormSet.cleaned_data.get('sabSal'),
+                        'domEnt':relevamDetFormSet.cleaned_data.get('domEnt'),
+                        'domSal':relevamDetFormSet.cleaned_data.get('domSal'),
+                        'DELETE':relevamDetFormSet.cleaned_data.get('DELETE')}).replace('\'','\"'),
+                    str({
+                        'relevamientocab_id':str(relevamiento.id),
+                        'mensuCantidad':relevamMenFormSet.cleaned_data.get('mensuCantidad'),
+                        'sueldo':relevamMenFormSet.cleaned_data.get('sueldo'),
+                        'DELETE':relevamMenFormSet.cleaned_data.get('DELETE')}).replace('\'','\"'),
+                    str({	
+                        'relevamientocab_id':str(relevamiento.id),
+                        'cantCHoras':relevamCuHrFormSet.cleaned_data.get('cantCHoras'),
+                        'frecuencia':relevamCuHrFormSet.cleaned_data.get('frecuencia'),
+                        'tipoHora':relevamCuHrFormSet.cleaned_data.get('tipoHora'),
+                        'DELETE':relevamCuHrFormSet.cleaned_data.get('DELETE')}).replace('\'','\"'), 
+                    str({
+                        'relevamientocab_id':str(relevamiento.id),
+                        'tipo':relevamEspFormSet.cleaned_data.get('tipo'),
+                        'frecuencia':relevamEspFormSet.cleaned_data.get('frecuencia'),
+                        'cantHoras':relevamEspFormSet.cleaned_data.get('cantHoras'),
+                        'DELETE':relevamEspFormSet.cleaned_data.get('DELETE')}).replace('\'','\"'),
+                    0)
+
+
+                
+                print(params)
+                
+                conn.execute('relevamiento_manager %s,%s,%s,%s,%s,%s ',params)
                 result = conn.fetchone()[0]
                 nuevaCabeceraId=result
                 conn.close()
-                print(result)"""
-
+                print(result)
 
                 #relevamDetFormSet.save()
                 """for item in relevamDetFormSet.cleaned_data:
@@ -637,11 +683,11 @@ def getPuntosServicios(request):
         minutosRestante=""
         cantidadMinutos=""
         estado=""
-        if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
-            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
+        if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
+            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id) )
             totalHora = relevamientoCab.cantidadHrTotal
-        if AsignacionCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
-            asignacionCab = AsignacionCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
+        if AsignacionCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
+            asignacionCab = AsignacionCab.objects.get(Q(puntoServicio_id=p.id) )
             estado = asignacionCab.reAsignar
             horasAsig = asignacionCab.totalasignado
         if  totalHora and horasAsig:
@@ -671,16 +717,16 @@ def Planificacion_create(request, id_puntoServicio=None):
     logging.getLogger("error_logger").error('Se ingreso en el metodo planificacion_create')
     ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
     try:
-        puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None) )
+        puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio)  )
     except PuntoServicio.DoesNotExist as err:
         logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         raise Http404("Punto de Servicio no existe")
 
     ''' Obtenemos el relevamiento para mostrar en la pantalla '''
-    relevamiento = RelevamientoCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None)).first()
+    relevamiento = RelevamientoCab.objects.filter(Q(puntoServicio_id = puntoSer.id) ).first()
 
     ''' Obtenemos la planificacion en caso de que exista una '''
-    planificacion = PlanificacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None)) .first()
+    planificacion = PlanificacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id) ) .first()
 
     initial = []
     CantlimpiezaProf = 1
@@ -930,19 +976,19 @@ def Fiscales_asig(request, id_user_fiscal=None, id_puntoServicio=None):
         logging.getLogger("error_logger").error('Usuario de Fiscal no existe: {0}'.format(err))
 
     if id_puntoServicio != None:
-        puntoServicio = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None))
+        puntoServicio = PuntoServicio.objects.get(Q(pk=id_puntoServicio) )
         asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=puntoServicio)
         asignacion.save()
 
     #Se traen todos los puntos de servicio que estan asignados al fiscal en cuestion
     puntosServ_asig = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) & Q(puntoServicioAsigFiscalPuntoServicio__vfechaFin=None))
-    consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) & Q(vfechaFin=None)).query
+    consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) ).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
     print("Asignados",puntosServ_asig)
    
     #se trae los puntos de servicio disponibles 
-    puntosServ_disp = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True) & Q(vfechaFin=None))
-    consulta2 = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True) & Q(vfechaFin=None)).query
+    puntosServ_disp = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True) )
+    consulta2 = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal__isnull=True) ).query
     logging.getLogger("error_logger").error('La consulta de puntos de servicio disponibles ejecutada es: {0}'.format(consulta2))
 
     #cargamos el contexto
@@ -962,8 +1008,8 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
         logging.getLogger("error_logger").error('Usuario de Fiscal no existe: {0}'.format(err))
 
     #Se traen todos los puntos de servicio que estan asignados al fiscal en cuestion
-    puntosServ_asig = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) & Q(vfechaFin=None))
-    consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) & Q(vfechaFin=None)).query
+    puntosServ_asig = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) )
+    consulta = PuntoServicio.objects.filter(Q(puntoServicioAsigFiscalPuntoServicio__userFiscal=id_user_fiscal) ).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
     
     '''Se obtienen todos los ids seleccionados'''
@@ -977,7 +1023,7 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
                 asignacion.delete()
 
             for PS_id in request.POST.getlist('puntos_disp'):
-                nuevoPunto = PuntoServicio.objects.get(Q(pk=PS_id) & Q(vfechaFin=None))
+                nuevoPunto = PuntoServicio.objects.get(Q(pk=PS_id) )
                 print(nuevoPunto)
                 asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=nuevoPunto)
                 asignacion.save() 
@@ -988,7 +1034,7 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
 @permission_required('Operarios.delete_operario', raise_exception=True)
 def Fiscales_delete(request, id_user_fiscal=None, id_puntoServicio=None):
     user_fiscal = User.objects.get(pk=id_user_fiscal) 
-    puntoServicio = PuntoServicio.objects.get( Q(pk=id_puntoServicio) & Q(vfechaFin=None))
+    puntoServicio = PuntoServicio.objects.get( Q(pk=id_puntoServicio) )
 
     if request.method == 'POST':
         asignacion = AsigFiscalPuntoServicio.objects.get(userFiscal=user_fiscal, puntoServicio=puntoServicio)
@@ -1283,11 +1329,11 @@ def vicios(request):
         minutosRestante=""
         cantidadMinutos=""
         estado=False
-        if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
-            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
+        if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
+            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id) )
             totalHora = relevamientoCab.cantidadHrTotal
-        if PlanificacionCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
-            asignacionCab = PlanificacionCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
+        if PlanificacionCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
+            asignacionCab = PlanificacionCab.objects.get(Q(puntoServicio_id=p.id) )
             estado = asignacionCab.rePlanificar
             horasAsig = asignacionCab.cantHoras
         if  totalHora and horasAsig:

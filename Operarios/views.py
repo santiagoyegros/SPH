@@ -788,6 +788,7 @@ def Planificacion_create(request, id_puntoServicio=None):
             'planifOpeFormSet': planifOpeFormSet,
             'planifEspFormSet': planifEspFormSet,
             'relevamiento' : relevamiento,
+            'puntoServicio' : puntoSer
         }
 
     return render(request, 'planificacion/planificacion_crear.html', context=contexto)

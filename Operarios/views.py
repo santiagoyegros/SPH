@@ -507,7 +507,7 @@ def getPuntosServicios(request):
         cantidadMinutos=""
         estado=""
         if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
-            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id) )
+            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id))
             totalHora = relevamientoCab.cantidadHrTotal
         if AsignacionCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
             asignacionCab = AsignacionCab.objects.get(Q(puntoServicio_id=p.id) )

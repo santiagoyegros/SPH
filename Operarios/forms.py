@@ -324,10 +324,10 @@ class PlanificacionForm(forms.ModelForm):
 
         widgets = {
             'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
-            'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm','readonly':'readonly'}),
-            'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm','readonly':'readonly'}),
-            'cantHorasNoc': forms.TextInput(attrs={'class':'form-control form-control-sm','readonly':'readonly'}),
-            'cantHorasEsp': forms.TextInput(attrs={'class':'form-control form-control-sm','readonly':'readonly'})
+            'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm sinfondo','readonly':'readonly'}),
+            'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm sinfondo','readonly':'readonly'}),
+            'cantHorasNoc': forms.TextInput(attrs={'class':'form-control form-control-sm sinfondo','readonly':'readonly'}),
+            'cantHorasEsp': forms.TextInput(attrs={'class':'form-control form-control-sm sinfondo','readonly':'readonly'})
              }
 
 
@@ -410,7 +410,7 @@ class PlanificacionOpeForm(forms.ModelForm):
         }
 
         widgets = {
-            'especialista': forms.Select(attrs={'class':'form-row form-control-sm col-sm-6'}),
+            'especialista': forms.Select(attrs={'class':'form-row form-control-sm col-sm-12'}),
             'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'lun': forms.CheckboxInput(attrs={'class':'form-check-input p-0'}),
             'mar': forms.CheckboxInput(attrs={'class':'form-check-input p-0'}),

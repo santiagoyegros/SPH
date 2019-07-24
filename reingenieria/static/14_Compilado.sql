@@ -273,7 +273,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[relevamientocupohoras_trg]   
+CREATE OR ALTER  PROCEDURE [dbo].[relevamientocupohoras_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -357,7 +357,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[relevamiento_manager]   
+CREATE OR ALTER  PROCEDURE [dbo].[relevamiento_manager]   
 	@json_cab nvarchar(max),
 	@json_det nvarchar(max),
 	@json_men nvarchar(max),
@@ -472,7 +472,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[relevamiento_cab_trg]   
+CREATE OR ALTER  PROCEDURE [dbo].[relevamiento_cab_trg]   
   
 
 	@json nvarchar(max),
@@ -599,7 +599,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[puntoServicio_trigger]   
+CREATE OR ALTER  PROCEDURE [dbo].[puntoServicio_trigger]   
   
 
 	@p_id int,
@@ -976,7 +976,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER PROCEDURE [dbo].[planificacion_manager]   
+CREATE OR ALTER  PROCEDURE [dbo].[planificacion_manager]   
 	@json_cab nvarchar(max),
 	@json_ope nvarchar(max),
 	@json_esp nvarchar(max),
@@ -1051,12 +1051,12 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[asig_jefeyfiscal_trigger]    Script Date: 24/7/2019 12:03:56 ******/
+/****** Object:  StoredProcedure [dbo].[asig_jefeyfiscal_trigger]    Script Date: 24/7/2019 15:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[asig_jefeyfiscal_trigger]   
+CREATE OR ALTER  PROCEDURE [dbo].[asig_jefeyfiscal_trigger]   
   
 
 	@p_userJefe_id int,
@@ -1077,7 +1077,11 @@ AS
 		 select @p_userFiscal_id,@p_userJefe_id where not exists(select * from
 		 dbo.Operarios_asigjefefiscal where userFiscal_id=@p_userFiscal_id and userJefe_id=@p_userJefe_id)
 		 set @nuevoId=SCOPE_IDENTITY();
-
+		 select @veregistro=max(vregistro) from dbo.Operarios_histasigjefefiscal where userFiscal_id=@p_userFiscal_id and userJefe_id=@p_userJefe_id;
+		 if @veregistro is NUll
+		 begin
+			set @veregistro=0;
+		 end
 		 INSERT INTO [dbo].[Operarios_histasigjefefiscal]([userFiscal_id],[userJefe_id],[vfechaFin],[vfechaInicio],[vregistro],vactual_id)
 		 values( @p_userFiscal_id,@p_userJefe_id,NULL,CURRENT_TIMESTAMP,@veregistro,@nuevoId); 
 		COMMIT TRANSACTION @TransactionName;
@@ -1271,7 +1275,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER PROCEDURE [dbo].[asignacion_manager]   
+CREATE OR ALTER  PROCEDURE [dbo].[asignacion_manager]   
 	@json_cab nvarchar(max),
 	@json_det nvarchar(max),
 	@retorno int OUTPUT
@@ -1392,12 +1396,12 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[asigjefefisc_des_trigger]    Script Date: 24/7/2019 12:04:01 ******/
+/****** Object:  StoredProcedure [dbo].[asigjefefisc_des_trigger]    Script Date: 24/7/2019 15:43:59 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[asigjefefisc_des_trigger]   
+CREATE OR ALTER  PROCEDURE [dbo].[asigjefefisc_des_trigger]   
   
 
 	@p_userJefe_id int,
@@ -1413,7 +1417,7 @@ AS
 	BEGIN TRY
 		DECLARE @fechaCambio datetime;
 		SET @fechaCambio=CURRENT_TIMESTAMP;
-		update dbo.Operarios_histasigjefefiscal set vfechaFin=@fechaCambio,vregistro=vregistro+1,vactual_id=NULL where userJefe_id=@p_userJefe_id and vfechaFin is NULL
+		update dbo.Operarios_histasigjefefiscal set vfechaFin=@fechaCambio,vactual_id=NULL where userJefe_id=@p_userJefe_id and vfechaFin is NULL
 		delete from dbo.Operarios_asigjefefiscal where userJefe_id=@p_userJefe_id;
 		COMMIT TRANSACTION @TransactionName;
 		SET @retorno=0;
@@ -1428,6 +1432,7 @@ AS
 	Select @retorno as resultado;
 
 END	
+
 
 
 USE [aireinegnier]
@@ -1493,4 +1498,95 @@ AS
 END
 
 
+go
+
+USE [aireinegnier]
+GO
+/****** Object:  StoredProcedure [dbo].[asig_psfiscal_trigger]    Script Date: 24/7/2019 15:44:21 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER  PROCEDURE [dbo].[asig_psfiscal_trigger]   
+  
+
+	@p_userFiscal_id int,
+	@p_puntoServ_id int,
+	@veregistro int,
+	@retorno int OUTPUT
+	--@operario int
+AS   
+	
+  BEGIN
+	SET NOCOUNT ON;
+	Declare @error nvarchar(max);
+	declare @nuevoId int;
+	DECLARE @TransactionName varchar(20) = 'Transactional';
+	BEGIN TRAN @TransactionName 
+	BEGIN TRY
+		 INSERT INTO [dbo].[Operarios_asigfiscalpuntoservicio](puntoServicio_id,userFiscal_id)
+		 select @p_puntoServ_id,@p_userFiscal_id where not exists(select * from
+		 dbo.Operarios_asigfiscalpuntoservicio where userFiscal_id=@p_userFiscal_id and puntoServicio_id=@p_puntoServ_id)
+		 set @nuevoId=SCOPE_IDENTITY();
+		 select @veregistro=max(vregistro) from dbo.Operarios_histasigfiscalpuntoservicio where userFiscal_id=@p_userFiscal_id and puntoServicio_id=@p_puntoServ_id;
+		 if @veregistro is NUll
+		 begin
+			set @veregistro=0;
+		 end
+		 set @veregistro=@veregistro+1;
+		 INSERT INTO [dbo].[Operarios_histasigfiscalpuntoservicio](puntoServicio_id,userFiscal_id,[vfechaFin],[vfechaInicio],[vregistro],vactual_id)
+		 values( @p_puntoServ_id,@p_userFiscal_id,NULL,CURRENT_TIMESTAMP,@veregistro,@nuevoId); 
+		COMMIT TRANSACTION @TransactionName;
+		SET @retorno=0;
+	END TRY 
+	BEGIN CATCH 
+		set @error=ERROR_MESSAGE();
+		ROLLBACK TRAN @TransactionName; 
+		SET @retorno=1;
+		insert into infolog(fechaHora,info) values(CURRENT_TIMESTAMP,@error)
+	END CATCH
+
+	Select @retorno as resultado;
+
+END	
+go
+
+USE [aireinegnier]
+GO
+/****** Object:  StoredProcedure [dbo].[asigpsfisc_des_trigger]    Script Date: 24/7/2019 15:44:45 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER  PROCEDURE [dbo].[asigpsfisc_des_trigger]   
+  
+
+	@p_userFiscal_id int,
+	@retorno int OUTPUT
+	--@operario int
+AS   
+	
+  BEGIN
+  SET NOCOUNT ON;
+	DECLARE @TransactionName varchar(20) = 'Transactional';
+	declare @err nvarchar(max);
+	BEGIN TRAN @TransactionName 
+	BEGIN TRY
+		DECLARE @fechaCambio datetime;
+		SET @fechaCambio=CURRENT_TIMESTAMP;
+		update dbo.Operarios_histasigfiscalpuntoservicio set vfechaFin=@fechaCambio,vactual_id=NULL where userFiscal_id=@p_userFiscal_id and vfechaFin is NULL
+		delete from dbo.Operarios_asigfiscalpuntoservicio where userFiscal_id=@p_userFiscal_id;
+		COMMIT TRANSACTION @TransactionName;
+		SET @retorno=0;
+	END TRY 
+	BEGIN CATCH 
+		set @err= ERROR_MESSAGE();
+		ROLLBACK TRAN @TransactionName; 
+		SET @retorno=1;
+		insert into dbo.infolog(fechaHora,info) values(CURRENT_TIMESTAMP,@err);
+	END CATCH
+
+	Select @retorno as resultado;
+
+END	
 go

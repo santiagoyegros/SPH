@@ -4,6 +4,7 @@ from Operarios.models import HorasNoProcesadas, HorasProcesadas, EsmeEmMarcacion
 
 from django.db.models import Q
 def procesarEntradaSalida(marcacion, marcacion2):
+    print("PROCESO HORAS")
     #Paso 1: Busco la asignacion de la persona en el contrato, en el dia. 
     CodPersona = marcacion.codpersona
     PuntoServicioCod = marcacion.codubicacion

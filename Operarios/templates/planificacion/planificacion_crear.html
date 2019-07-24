@@ -19,9 +19,11 @@
         border-radius: 0px !important;
         border-bottom: 1px solid gray !important;
     }
-    .col-dias{
+
+    .col-dias {
         width: 35% !important;
     }
+
     .card {
         border-radius: 0px !important;
     }
@@ -342,7 +344,7 @@
 
                     <!--Formulario de Detalles de Cupo de Horas -->
                     <div class="container-fluid mb-3 mt-4">
-                        <div class="row mb-3 justify-content-end">
+                        <div class="row mb-3 justify-content-end" style="    padding: 0rem 1rem;">
                             <div>
                                 <button type='submit' id='btnDet' class="btn btn-success btn-add" name='add_det'><i
                                         class="fa fa-plus fa-lg"></i> Añadir Detalle</button>
@@ -438,61 +440,75 @@
 
 
 
+                    <div class="container-fluid mb-3 mt-4">
+                        <div class="row mb-3 justify-content-end" style="    padding: 0rem 1rem;">
+
+                            <button type='submit' id='btnEsp' class="btn btn-success btn-add" name='add_esp' style="float:right !important;"><i
+                                    class="fa fa-plus fa-lg"></i> Añadir Profundas </button>
 
 
-                    <div style="padding-top:50px;" class="container-fluid mb-3 mt-4" id='formset-Esp'>
-                        <h4>
-                            Cupo de Limpiezas Profundas <small class="text-muted"></small>
-                        </h4>
-                        <div class="row mt-3 mb-2 justify-content-end">
-                            <div class="col-3 text-right"> Total Horas Especiales: </div>
-                            <div class="col-3"> <input id="sumAll_2" type="text" value=""
-                                    class="form-control form-control-sm" readonly /></div>
                         </div>
-                        <div class="row">
-                            <div class="col">Perfil Operario </div>
-                            <div class="col">Tipo limpieza especial </div>
-                            <div class="col">Frecuencia </div>
-                            <div class="col">Fecha Inicio </div>
-                            <div class="col">Cantidad de Horas </div>
-                            <div class="col-1">Eliminar </div>
+                        <div class="card" style="margin-bottom:15px !important;">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Cupo de Limpiezas Profundas
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-11 text-right title-right"> TOTAL HORAS ESPECIALES: </div>
+                                            <div class="col-1 p-0"><input id="sumAll_2" type="text" value=""
+                                                    class="form-control form-control-sm total-cupos" readonly /></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body" id='formset-Esp'>
+                                <div class="row">
+                                    <div class="col">Perfil Operario </div>
+                                    <div class="col">Tipo limpieza especial </div>
+                                    <div class="col">Frecuencia </div>
+                                    <div class="col">Fecha Inicio </div>
+                                    <div class="col">Cantidad de Horas </div>
+                                    <div class="col-1">Eliminar </div>
+                                </div>
+                                {% for form in planifEspFormSet %}
+                                <div class="row mt-2 leaveFormEsp" id="leaveFormEsp-{{ forloop.counter0 }}">
+                                    {{ form.id }}
+                                    <div class="col">
+                                        {{ form.especialista }}
+                                    </div>
+                                    <div class="col">
+                                        {{ form.tipo }}
+                                    </div>
+                                    <div class="col">
+                                        {{ form.frecuencia }}
+                                    </div>
+                                    <div class="col">
+                                        {{ form.fechaLimpProf }}
+                                    </div>
+                                    <div class="col">
+                                        {{ form.cantHoras }}
+                                    </div>
+                                    <div class="col-1 text-center">
+                                        <input type="checkbox" style="display:none"
+                                            name="planificacionesp_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
+                                            id="{{ form.DELETE.id_for_label }}" />
+                                        <a href="javascript:void(0);"
+                                            onclick="deleteLeaveRowEsp(this, {{ forloop.counter0 }});"
+                                            class="remove muted pull-right">
+                                            <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i
+                                                    class="fa fa-trash fa-lg"></i></div>
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                        {% for form in planifEspFormSet %}
-                        <div class="row mt-2 leaveFormEsp" id="leaveFormEsp-{{ forloop.counter0 }}">
-                            {{ form.id }}
-                            <div class="col">
-                                {{ form.especialista }}
-                            </div>
-                            <div class="col">
-                                {{ form.tipo }}
-                            </div>
-                            <div class="col">
-                                {{ form.frecuencia }}
-                            </div>
-                            <div class="col">
-                                {{ form.fechaLimpProf }}
-                            </div>
-                            <div class="col">
-                                {{ form.cantHoras }}
-                            </div>
-                            <div class="col-1 text-center">
-                                <input type="checkbox" style="display:none"
-                                    name="planificacionesp_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
-                                    id="{{ form.DELETE.id_for_label }}" />
-                                <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, {{ forloop.counter0 }});"
-                                    class="remove muted pull-right">
-                                    <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i
-                                            class="fa fa-trash fa-lg"></i></div>
-                                </a>
-                            </div>
-                        </div>
-                        {% endfor %}
+
+
                     </div>
-                    <div style="position:absolute; right:50px; margin: 0;">
 
-                        <button type='submit' id='btnEsp' class="btn btn-success btn-add" name='add_esp'><i
-                                class="fa fa-plus fa-lg"></i> Añadir Profundas</button>
-                    </div>
                     <div class="container-fluid mb-3 mt-4">
                         <div style="margin:60px; float:right;">
                             <button type='submit' class='btn btn-success btn-add'><i class="fa fa-floppy-o fa-lg"></i>
@@ -517,8 +533,9 @@
             {{ planifOpeFormSet.empty_form.especialista }}
         </div>
         <div class="row">
-            <div class="col-1">             Cantidad        </div>
-            <div class="col-5 text-center"> Dias de semana y Feriado </div>
+                <div class="col-2">         Cantidad        </div>
+            <div class="col-2">             Perfil        </div>
+            <div class="col-dias text-center"> Dias de semana y Feriado </div>
             <div class="col">               Hr Entrada      </div>
             <div class="col">               Hr Salida       </div>
             <div class="col-1">             Corte           </div>
@@ -529,7 +546,10 @@
             <div class="col-1">
                 {{ planifOpeFormSet.empty_form.cantidad }}
             </div>
-            <div class="col-5 p-0 text-center">
+            <div class="col-2">
+                {{ planifOpeFormSet.empty_form.especialista }}
+            </div>
+            <div class="col-dias p-0 text-center">
                 <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.lun }}<label class="form-check-label p-0">Lu</label></div>
                 <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.mar }}<label class="form-check-label p-0">Ma</label></div>
                 <div class="form-check form-check-inline p-2">{{ planifOpeFormSet.empty_form.mie }}<label class="form-check-label p-0">Mi</label></div>

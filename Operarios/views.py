@@ -494,7 +494,7 @@ def Operarios_delete(request, pk):
 
 
 def getPuntosServicios(request):
-    puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+    puntoServi = PuntoServicio.objects.all()
     puntos =[]
     i=1
     for p in puntoServi:
@@ -507,7 +507,7 @@ def getPuntosServicios(request):
         cantidadMinutos=""
         estado=""
         if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
-            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id) )
+            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id))
             totalHora = relevamientoCab.cantidadHrTotal
         if AsignacionCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
             asignacionCab = AsignacionCab.objects.get(Q(puntoServicio_id=p.id) )

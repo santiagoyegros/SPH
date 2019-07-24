@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'^clientes/punto_Servicio/listar/', views.PuntoServicio_list , name='punto_servicio_list'),
     url(r'^clientes/puntoServicio/relevamiento/(?P<id_puntoServicio>\d+)/$', Relevamiento, name='relevamiento'),
     url(r'^clientes/puntoServicio/relevamiento/$', Relevamiento, name='relevamiento_nuevo'),
-    url(r'^clientes/puntoServicio/clientes/', getClientes, name='getClientes'),
+    url(r'^operaciones/puntoServicio/clientes/', getClientes, name='getClientes'),
 
     url(r'^operaciones/operarios/listar/', viewsOperario.Operarios_list , name='operarios_list'),
     url(r'^operaciones/operarios/nuevo/', viewsOperario.Operarios_create, name='operarios_create'),

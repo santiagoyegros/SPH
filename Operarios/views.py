@@ -596,6 +596,7 @@ def Planificacion_create(request, id_puntoServicio=None):
                         pln_ope+=str({
                                 'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
                                 'DELETE':str(item.get('DELETE')),
+                                'planificacionCab_id': str(planificacion.id),    
                                 'especialista':str(item.get('especialista')),
                                 'cantidad':str(item.get('cantidad')),
                                 'lun':str(item.get('lun')),
@@ -620,7 +621,8 @@ def Planificacion_create(request, id_puntoServicio=None):
                     if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
                         pln_esp+=str({
                                 'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
-                                'DELETE':str(item.get('DELETE')),      
+                                'DELETE':str(item.get('DELETE')),  
+                                'planificacionCab_id': str(planificacion.id),    
                                 'especialista':str(item.get('especialista')),
                                 'tipo':str(item.get('tipo')),
                                 'frecuencia':str(item.get('frecuencia')),
@@ -647,14 +649,6 @@ def Planificacion_create(request, id_puntoServicio=None):
                 result = conn.fetchone()[0]
                 conn.close()
                 print(result)
-
-
-
-
-
-
-
-
                 messages.success(request, 'Se guardo correctamente la planificación')
                 return redirect('Operarios:planificar_list')
             else:
@@ -761,8 +755,6 @@ def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
     except User.DoesNotExist as err:
         logging.getLogger("error_logger").error('Usuario de Jefe de Operaciones no existe: {0}'.format(err))
 
-
-    #Se traen todos los fiscales que estan asignados al jefe de operaciones en cuestion 
     fiscales_asig = User.objects.filter(Q(FiscalAsigJefeFiscal__userJefe=id_user_jefe))
     consulta = User.objects.filter(FiscalAsigJefeFiscal__userJefe=id_user_jefe).query
     logging.getLogger("error_logger").error('La consulta ejecutada es: {0}'.format(consulta))
@@ -775,12 +767,9 @@ def Jefes_asig(request, id_user_jefe=None, id_user_fiscal=None):
     #     asignacion.save()
     
     #se trae los fiscales disponibles
-    fiscales_disp = User.objects.filter(cargoasignado__cargo__cargo='Fiscal').exclude(
-        id__in=AsigJefeFiscal.objects.all().values_list('userFiscal_id',flat=True));
-    
-    User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=False,cargoasignado__cargo__cargo='Fiscal')
-    consulta2 = User.objects.filter(cargoasignado__cargo__cargo='Fiscal').exclude(id__in=AsigJefeFiscal.objects.all().values_list('userFiscal_id',flat=True));
-
+    fiscales_disp = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal')
+    consulta2 = User.objects.filter(FiscalAsigJefeFiscal__userJefe__isnull=True, cargoasignado__cargo__cargo='Fiscal').query
+    logging.getLogger("error_logger").error('La consulta de fiscales disponibles ejecutada es: {0}'.format(consulta2))
 
 
     logging.getLogger("error_logger").error('La consulta de fiscales disponibles ejecutada es: {0}'.format(consulta2))
@@ -808,17 +797,6 @@ def asignarFiscales(request,id_user_jefe=None ):
     if request.method == 'POST':
         if request.POST.getlist('fiscales_disp') != None:
             print(request.POST.getlist('fiscales_disp')) 
-            """for fisAsig in fiscales_asig:
-                asignacion = AsigJefeFiscal.objects.filter(userJefe=user_jefe, userFiscal=fisAsig)
-                #asignacion.delete()
-                asignacion.vfechaFin=datetime.now();
-                asignacion.save()
-            
-            for fd_id in request.POST.getlist('fiscales_disp'):
-                user_fiscal = User.objects.get(pk=fd_id)
-                asignacion = AsigJefeFiscal(userJefe=user_jefe, userFiscal=user_fiscal)
-                asignacion.vfechaFin=None;
-                asignacion.save() """
             conn= connection.cursor()
             params=(id_user_jefe,0)
             conn.execute('asigjefefisc_des_trigger %s,%s',params)

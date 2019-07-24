@@ -129,14 +129,14 @@ class RelevamientoForm(forms.ModelForm):
         }
 
         widgets = {
-            'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
+            'puntoServicio':  forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
             'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'cantAprendices': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
             'cantidadHrTotal': forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
             'cantidadHrEsp': forms.TextInput(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
             'fechaInicio': DatePickerInput(format='%d/%m/%Y', options={"locale": "es"}),
             'tipoSalario': forms.Select(attrs={'class':'form-control form-control-sm'}), 
-            'comentario': forms.Textarea(attrs={'class':'form-control form-control-sm', 'rows':4, 'cols':60}),
+            'comentario': forms.Textarea(attrs={'class':'form-control form-control-sm noresize', 'rows':4, 'cols':60}),
         }
 
 class RelevamientoDetForm(forms.ModelForm):
@@ -297,7 +297,7 @@ class RelevamientoMensualerosForm(forms.ModelForm):
 
         widgets = {
             'mensuCantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
-            'sueldo': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'sueldo': forms.TextInput(attrs={'class':'form-control form-control-sm currency'}),
         }
 
 
@@ -311,7 +311,7 @@ class PlanificacionForm(forms.ModelForm):
             'cantidad',
             'cantHoras',
             'cantHorasNoc',
-            'cantHorasEsp',
+            'cantHorasEsp'
         ]
 
         labels = {
@@ -319,16 +319,16 @@ class PlanificacionForm(forms.ModelForm):
             'cantidad': 'Cantidad de Operarios',
             'cantHoras': 'Cantidad de Horas',
             'cantHorasNoc': 'Cantidad de Horas Nocturnas',
-            'cantHorasEsp': 'Cantidad de Horas Especiales',
+            'cantHorasEsp': 'Cantidad de Horas Especiales'
         }
 
         widgets = {
             'puntoServicio': forms.Select(attrs={'class':'form-control form-control-sm', 'readonly':'readonly'}),
-            'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
-            'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
-            'cantHorasNoc': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
-            'cantHorasEsp': forms.TextInput(attrs={'class':'form-control form-control-sm'})
-        }
+            'cantidad': forms.TextInput(attrs={'class':'form-control form-control-sm','readonly':'readonly'}),
+            'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm','readonly':'readonly'}),
+            'cantHorasNoc': forms.TextInput(attrs={'class':'form-control form-control-sm','readonly':'readonly'}),
+            'cantHorasEsp': forms.TextInput(attrs={'class':'form-control form-control-sm','readonly':'readonly'})
+             }
 
 
     def is_valid(self, cantidad, cantidadHrTotal, cantidadHrEsp):
@@ -423,7 +423,7 @@ class PlanificacionOpeForm(forms.ModelForm):
             'ent': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).start_of('Lunes'),
             'sal': TimePickerInput(attrs={'class':'form-control form-control-sm'}, options={"useCurrent": False, "showTodayButton": False, "stepping": 5}).end_of('Lunes'),
             'corte': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
-            'total': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'total': forms.TextInput(attrs={'class':'form-control form-control-sm','readonly':'readonly'}),
             
         }
 

@@ -9,6 +9,30 @@ background-color:antiquewhite;
 .legend .row:nth-of-type(even) div {
 background: #FFFFFF;
 }
+
+.btn-add {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 7px;
+        cursor: pointer;
+    }
+
+
+.btn-eliminar {
+        background-color: gray !important;
+        border-color: gray !important;
+        padding: 7px 20px;
+        }
+
+.btn-cancelar {
+        background-color: gray !important;
+        border-color: gray !important;
+        padding: 7px 7px;
+        
+    }
+
+
+
 </style>
 
 {% if form.non_field_errors %}
@@ -19,8 +43,8 @@ background: #FFFFFF;
 </div>
 {% endif %}
 <div class='col mx-auto'>
-{% if title %}<h1 class='my-3'>{{ title }} - {{relevamiento.puntoServicio.NombrePServicio}} ({{ relevamiento.puntoServicio }}){% endif %} </h1>
-
+{% if relevamiento.puntoServicio.NombrePServicio %}<h1 class='my-3'>{{ title }} - {{relevamiento.puntoServicio.NombrePServicio}} ({{ relevamiento.puntoServicio }}) </h1>
+{% else %}<h1 class='my-3'>{{ title }} - {{puntoServicio.NombrePServicio}} ({{puntoServicio.CodPuntoServicio}})</h1>{% endif %}
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
@@ -241,14 +265,14 @@ background: #FFFFFF;
   <div class="tab-pane fade show active" id="plani" role="tabpanel" aria-labelledby="plani-tab">
     <div class="card-body">
         <form method='POST' action='#' name='formulario' id='formulario'>
-            <input type="hidden" id="action" name="action" value="">
+            <input type="hidden" id="action" name="action" value="" >
             {% csrf_token %}
             {{ form.puntoServicio.as_hidden }}
             <div class="container-fluid mb-3 mt-1">
                 <div class="row mt-3">
                     <div class="col-3"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
                     <div class="col-3"> {{ form.cantHoras.label }} {{ form.cantHoras }}</div>
-                    <div class="col-3"> {{ form.cantHorasNoc.label }} {{ form.cantHorasNoc }}</div>
+                    <div class="col-3" readonly> {{ form.cantHorasNoc.label }} {{ form.cantHorasNoc }}</div>
                     <div class="col-3"> {{ form.cantHorasEsp.label }} {{ form.cantHorasEsp }}</div>
                 </div>
             </div>
@@ -311,15 +335,15 @@ background: #FFFFFF;
                         <div class="col-1 text-center">
                             <input type="checkbox" style="display:none" name="planificacionope_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
                             <a href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                                <div class="fa fa-times fa-lg" title="Delete day off" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                                <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i class="fa fa-trash fa-lg"></i></div>
                             </a>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-            <div class="row justify-content-end">
-                <button type='submit' id='btnDet' class="btn btn-outline-info btn-sm" name='add_det'>Añadir Detalle</button>
+            <div style="position:absolute; right:50px;">
+                <button type='submit' id='btnDet' class="btn btn-success btn-add" name='add_det'><i class="fa fa-plus fa-lg"></i> Añadir Detalle</button>
             </div>
 
 
@@ -337,7 +361,7 @@ background: #FFFFFF;
                     <div class="col">Frecuencia </div>
                     <div class="col">Fecha Inicio </div>
                     <div class="col">Cantidad de Horas </div>
-                    <div class="col-1">Eliminar? </div>
+                    <div class="col-1">Eliminar </div>
                 </div>
                 {% for form in planifEspFormSet %}
                 <div class="row mt-2 leaveFormEsp" id="leaveFormEsp-{{ forloop.counter0 }}">
@@ -360,19 +384,21 @@ background: #FFFFFF;
                     <div class="col-1 text-center">
                         <input type="checkbox" style="display:none" name="planificacionesp_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}" />
                         <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, {{ forloop.counter0 }});" class="remove muted pull-right">
-                            <div class="fa fa-times fa-lg" title="Eliminar" alt="Eliminar"></div><span class="visible-xs">Eliminar</span>
+                            <div class='btn btn-success btn-eliminar' title="Eliminar" alt="Eliminar"><i class="fa fa-trash fa-lg"></i></div>
                         </a>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-            <div class="row justify-content-end">
-                <button type='submit' id='btnEsp' class="btn btn-outline-info btn-sm" name='add_esp'>Añadir Profundas</button>
+            <div style="position:absolute; right:50px; margin: 0;">
+
+                <button type='submit' id='btnEsp' class="btn btn-success btn-add" name='add_esp'><i class="fa fa-plus fa-lg"></i> Añadir Profundas</button>
             </div>
-            <div class="row mt-5 justify-content-end">
-                <button type='submit' class='btn btn-default btn-sm'>Guardar</button>
-                <a class='btn btn-primary btn-sm' href={% url 'Operarios:planificar_list' %}>Cancelar</a>
-            </div>
+            <div class="container-fluid mb-3 mt-4">
+            <div style="margin-top:100px; flex:right;">
+                <button type='submit' class='btn btn-success btn-add'><i class="fa fa-floppy-o fa-lg"></i> Guardar</button>
+                <a class='btn btn-primary btn-cancelar' href={% url 'Operarios:planificar_list' %}><i class="fa fa-times fa-lg"></i>Cancelar</a>
+            </div></div>
 
         </form>
     </div>
@@ -695,7 +721,17 @@ function RecalcularHoras(){
         if(total_horas_nocturnas && total_horas_nocturnas != 'NaN:NaN' ){
             $('#id_cantHorasNoc').val(total_horas_nocturnas);
         }
-    
+
+        var totalHrsEspeciales=$('#id_cantHorasEsp').val();
+        var totalHoras=SumHrMin(total_horas_diurnas,total_horas_nocturnas);
+        if(totalHrsEspeciales.length==0)
+        {
+        $('#sumAll_1').val(totalHoras);
+        }else{
+        var totalHorasConEspeciales=SumHrMin(totalHoras,totalHrsEspeciales);
+        $('#sumAll_1').val(totalHorasConEspeciales);
+        }
+        
     }
 
 function RecalcularHorasEsp(){
@@ -736,7 +772,23 @@ function RecalcularHorasEsp(){
     $('#sumAll_2').val(total);
     //aqui empieza el calculo del total de horas
     
-    $('#id_cantHorasEsp').val(total);    
+    $('#id_cantHorasEsp').val(total);
+
+
+    var diurnas=$('#id_cantHoras').val();
+    var nocturnas=$('#id_cantHorasNoc').val();
+    var totalEspeciales = $('#id_cantHorasEsp').val();
+    var totalHrsSinEspeciales = SumHrMin(diurnas,nocturnas);
+    //Se suma el total de horas ya asignado con las horas especiales
+    if(totalHrsSinEspeciales != 'NaN:NaN'){
+    var totalHrsConEspeciales = SumHrMin(totalHrsSinEspeciales,totalEspeciales);
+    $('#sumAll_1').val(totalHrsConEspeciales);
+    //Si no hay aun nada asignado, el total de horas pasa a ser lo que se cargó en especiales
+    }else{
+    $('#sumAll_1').val(total);
+    }
+
+        
 }
 
 $(function(){
@@ -781,6 +833,8 @@ $(function(){
     });
 });
 
+
+
 $('input[id$="corte"], input[id$="total"], input[id$="cantHoras"]').on('change', function(e){
     
     str = $(this).val();
@@ -802,6 +856,8 @@ $('input[id^="id_planificacionope_set-"]').on('dp.change change', function(e){
     RecalcularHoras();
 });
 
+
+//Se setea la cantidad de operarios 
 $('input[id$="-cantidad"]').change(function() {
     
     //aqui empieza el calculo de la cantidad total de Operarios
@@ -815,6 +871,7 @@ $('input[id$="-cantidad"]').change(function() {
         var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
         if (parseInt(cantOpe) > 0){
             total += parseInt(cantOpe);
+
         }
     }
     //Cargamos el total en input de cantidad de operarios
@@ -839,7 +896,7 @@ $('input[id$="-cantidad"]').change(function() {
             }else{
                 return true;
             }
-
+  
         }
     );
 

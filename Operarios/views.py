@@ -302,7 +302,7 @@ def Relevamiento(request, id_puntoServicio=None):
             'relevamCuHrFormSet': relevamCuHrFormSet,
             'relevamMenFormSet': relevamMenFormSet,
         }
-    #return render_to_response('puntoServicio/puntoServicio_relevamiento.html', locals())
+
     return render(request, 'puntoServicio/puntoServicio_relevamiento.html', context=contexto)
 
 
@@ -495,6 +495,7 @@ def Planificacion_create(request, id_puntoServicio=None):
             'planifOpeFormSet': planifOpeFormSet,
             'planifEspFormSet': planifEspFormSet,
             'relevamiento' : relevamiento,
+            'puntoServicio' : puntoSer
         }
 
     return render(request, 'planificacion/planificacion_crear.html', context=contexto)

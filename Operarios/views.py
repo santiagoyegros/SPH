@@ -418,7 +418,7 @@ def Relevamiento(request, id_puntoServicio=None):
             'relevamCuHrFormSet': relevamCuHrFormSet,
             'relevamMenFormSet': relevamMenFormSet,
         }
-    #return render_to_response('puntoServicio/puntoServicio_relevamiento.html', locals())
+
     return render(request, 'puntoServicio/puntoServicio_relevamiento.html', context=contexto)
 
 

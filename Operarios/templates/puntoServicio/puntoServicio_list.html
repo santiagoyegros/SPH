@@ -82,15 +82,15 @@
                         itemTemplate: function (value, item) {
                             var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
 
-                            var $customEditButton = $("<button>").attr({ class: "customGridEditbutton jsgrid-button jsgrid-edit-button" })
+                            var $customEditButton = $("<button>").attr({ class: "customGridEditbutton jsgrid-button jsgrid-edit-button", type:"button"})
                                 .click(function (e) {
-                                    document.location.href = "/reingenieria/operaciones/puntoServicio/editar/" + item.id
+                                    document.location.href = "/reingenieria/clientes/puntoServicio/editar/" + item.id
                                 });
 
-                            var $customDeleteButton = $("<button>").attr({ class: "customGridDeletebutton jsgrid-button jsgrid-delete-button" })
+                            var $customDeleteButton = $("<button>").attr({ class: "customGridDeletebutton jsgrid-button jsgrid-delete-button", type:"button" })
                                 .click(function (e) {
                                     if (confirm("Esta seguro que desea eliminar el registro")) {
-                                        document.location.href = "/reingenieria/operaciones/puntoServicio/eliminar/" + item.id
+                                        document.location.href = "/reingenieria/clientes/puntoServicio/eliminar/" + item.id
 
                                     }
                                 });

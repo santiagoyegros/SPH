@@ -11,7 +11,7 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
-from django.db import transaction
+from django.db import connection, transaction
 import datetime
 from datetime import date
 from django.core import serializers
@@ -19,7 +19,6 @@ from Operarios.models import PuntoServicio, Operario, RelevamientoCab, Relevamie
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 from ast import literal_eval
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db import connection
 from datetime import datetime as dt
 import json
 from django.db.models import Q
@@ -30,11 +29,11 @@ def Asignacion_list(request):
         pk_puntoServSeleccionado = request.POST.get('asig_puntoServ')
         return redirect('Operarios:asignacion_create', id_puntoServicio=pk_puntoServSeleccionado)
     else:
-        asignaciones=AsigFiscalPuntoServicio.objects.filter(vfechaFin=None, userFiscal_id=request.user).only("puntoServicio_id")
+        asignaciones=AsigFiscalPuntoServicio.objects.filter(userFiscal_id=request.user).only("puntoServicio_id")
         print (request.user.id)
         print ("Puntos asignados")
         print (asignaciones)
-        puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+        puntoServi = PuntoServicio.objects.all()
         print(puntoServi)
         contexto = {'PuntosServicio': puntoServi}
         #contexto = {'PuntosServicio': asignaciones}
@@ -49,7 +48,7 @@ def restarHoras(totalHora,asigHora,totalMin,asigMin):
     return "{}:{}".format(cantidadTotalHoras,int(cantidadTotalDeMinutos))
 
 def getPuntosServicios(request):
-    puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+    puntoServi = PuntoServicio.objects.all()
     puntos =[]
     i=1
     for p in puntoServi:
@@ -61,11 +60,11 @@ def getPuntosServicios(request):
         minutosRestante=""
         cantidadMinutos=""
         estado=""
-        if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
-            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
+        if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id)).exists():
+            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id))
             totalHora = relevamientoCab.cantidadHrTotal
-        if AsignacionCab.objects.filter(Q(puntoServicio_id=p.id) & Q(vfechaFin=None)).exists():
-            asignacionCab = AsignacionCab.objects.get(Q(puntoServicio_id=p.id) & Q(vfechaFin=None))
+        if AsignacionCab.objects.filter(Q(puntoServicio_id=p.id)).exists():
+            asignacionCab = AsignacionCab.objects.get(Q(puntoServicio_id=p.id))
             estado = asignacionCab.reAsignar
             horasAsig = asignacionCab.totalasignado
         if  totalHora and horasAsig:
@@ -96,10 +95,10 @@ def agregar_detalle(request):
             id_puntoServicio=request.POST.get('id_puntoServicio')
             
             ''' Obtenemos el punto de servicio'''
-            puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None))
+            puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio))
         
             ''' Obtenemos la asignacion en caso de que exista una '''
-            asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None) ).first()
+            asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
 
             if asignacion == None:
                 asignacion = AsignacionCab()
@@ -278,10 +277,10 @@ def guardarAsignacion(request):
             id_puntoServicio=request.POST.get('puntoServicio')
                     
             ''' Obtenemos el punto de servicio'''
-            puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None))
+            puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio))
                 
             ''' Obtenemos la asignacion en caso de que exista una '''
-            asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None)).first()
+            asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
 
             if asignacion == None:
                 asignacion = AsignacionCab()
@@ -305,8 +304,14 @@ def guardarAsignacion(request):
             print ("asign error",AsigDetFormSet.errors)
             if form.is_valid() and AsigDetFormSet.is_valid():
                 """Se guarda completo"""
+                
                 form.save()
                 AsigDetFormSet.save()
+                print("FORM:")
+                print(form.cleaned_data)
+                print("Asig det:")
+                print(AsigDetFormSet.cleaned_data)
+
                 """Se guarda dia libre"""
                 i=0
                 for form in AsigDetFormSet:
@@ -383,7 +388,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     logging.getLogger("error_logger").error('Se ingreso en el metodo asignacion_create')
     ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
     try:
-        puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio) & Q(vfechaFin=None))
+        puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio))
     except PuntoServicio.DoesNotExist as err:
         logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         raise Http404("Punto de Servicio no existe")
@@ -396,7 +401,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     """
 
     ''' Obtenemos el relevamiento para mostrar en la pantalla '''
-    relevamiento = RelevamientoCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None)).first()
+    relevamiento = RelevamientoCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
     if relevamiento == None:
         logging.getLogger("error_logger").error('El punto de servicio no tiene servicio aprobado')
         raise Http404("El punto de servicio no tiene Servicio aprobado")
@@ -405,20 +410,19 @@ def Asignacion_create(request, id_puntoServicio=None):
         logging.getLogger("error_logger").error('Estamos revisando si existe detalle de cupo de horas')
         for cupo in relevamiento.relevamientocupohoras_set.iterator():
             """SI ES LA ULTIMA VERSION DE RELEVAMIENTO CUPOS HORAS"""
-            if cupo.vfechaFin == None:
-                if cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'SEM':
-                    sem_diurno = cupo.cantCHoras
-                elif cupo.tipoHora.tipoHorario == 'Nocturno' and cupo.frecuencia == 'SEM':
-                    sem_nocturno = cupo.cantCHoras
-                elif cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'DOM':
-                    dom_diurno = cupo.cantCHoras
-                elif cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'DOM':
-                    dom_nocturno = cupo.cantCHoras
+            if cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'SEM':
+                sem_diurno = cupo.cantCHoras
+            elif cupo.tipoHora.tipoHorario == 'Nocturno' and cupo.frecuencia == 'SEM':
+                sem_nocturno = cupo.cantCHoras
+            elif cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'DOM':
+                dom_diurno = cupo.cantCHoras
+            elif cupo.tipoHora.tipoHorario == 'Diurno' and cupo.frecuencia == 'DOM':
+                dom_nocturno = cupo.cantCHoras
 
         
 
     ''' Obtenemos la asignacion en caso de que exista una '''
-    asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id) & Q(vfechaFin=None) ).first()
+    asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
     """formDiaLibre = DiaLibreForm(request.POST)"""
 
     if asignacion == None:
@@ -759,8 +763,53 @@ def Asignacion_create(request, id_puntoServicio=None):
             print ("asign error",AsigDetFormSet.errors)
             if form.is_valid() and AsigDetFormSet.is_valid():
                 """Se guarda completo"""
-                form.save()
-                AsigDetFormSet.save()
+                #form.save()
+                #AsigDetFormSet.save()
+                emptyvar={}
+                asg_det="[ "
+                for item in  AsigDetFormSet.cleaned_data:
+                    if item != emptyvar:
+                        asg_det+=str({
+                                'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
+                                'DELETE':str(item.get('DELETE')),
+                                'asignacionCab_id': str(asignacion.id),
+                                'operario':str(item.get('operario')),
+                                'operario_id':str(str(item.get('operario').id) if item.get('operario') is not None else 'None'),
+                                'fechaInicio':str(item.get('fechaInicio')),
+                                'fechaFin':str(item.get('fechaFin')),
+                                'lunEnt':str(item.get('lunEnt')),
+                                'lunSal':str(item.get('lunSal')),
+                                'marEnt':str(item.get('marEnt')),
+                                'marSal':str(item.get('marSal')),
+                                'mieEnt':str(item.get('mieEnt')),
+                                'mieSal':str(item.get('mieSal')),
+                                'jueEnt':str(item.get('jueEnt')),
+                                'jueSal':str(item.get('jueSal')),
+                                'vieEnt':str(item.get('vieEnt')),
+                                'vieSal':str(item.get('vieSal')),
+                                'sabEnt':str(item.get('sabEnt')),
+                                'sabSal':str(item.get('sabSal')),
+                                'domEnt':str(item.get('domEnt')),
+                                'domSal':str(item.get('domSal')),
+                                'perfil':str(item.get('perfil')),
+                                'supervisor':str(item.get('supervisor')),
+                                'totalHoras':str(item.get('totalHoras'))
+                                })
+                        asg_det+=","
+                asg_det=asg_det[:-1]
+                asg_det+="]"
+                conn= connection.cursor()
+                params=(
+                    str({'id': str(asignacion.id),'puntoServicio_id':str(puntoSer.id),
+                        'totalasignado':str(form.cleaned_data.get('totalasignado')),
+                        'comentario':form.cleaned_data.get('comentario')}).replace('\'','\"'),
+                    asg_det.replace('\'','\"'),
+                    0)
+                print(params)
+                conn.execute('asignacion_manager %s,%s,%s ',params)
+                result = conn.fetchone()[0]
+                conn.close()
+                print(result)
                 messages.success(request, 'Se guardo correctamente la asignacion')
                 return redirect('Operarios:asignacion_list')
             else:

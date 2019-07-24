@@ -31,8 +31,8 @@
             </div>
     </div>
     <div class="col-md-12" style="    text-align: right;margin: 15px 0px;padding: 0px !important;">
-        <a href='{% url 'Operarios:fiscales_list' %}' class='btn btn-danger'>Volver</a>
-        <button type="submit" class='btn btn-primary'>Guardar</button>
+        <a href='{% url 'Operarios:fiscales_list' %}' class='btn btn-primary btn-cancelar'><i class="fa fa-arrow-left fa-lg"></i> Volver</a>
+        <button type="submit" class='btn btn-success btn-add'><i class="fa fa-floppy-o fa-lg"></i> Guardar</button>
     </div>
     
 </form>
@@ -125,4 +125,18 @@
             return false;
         });
     </script>
+    <style>
+        .btn-add {
+            background-color: #86273e !important;
+            border-color: #86273e !important;
+            padding: 7px 7px;
+            cursor: pointer;
+        }
+        .btn-volver {
+            background-color: gray !important;
+            border-color: gray !important;
+            padding: 7px 7px;
+    
+        }
+    </style>
 {% endblock %}

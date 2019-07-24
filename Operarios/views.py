@@ -883,19 +883,24 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
     
     '''Se obtienen todos los ids seleccionados'''
     if request.method == 'POST':
-        print("HOOOOOOLA",request.POST.getlist('puntos_disp'),puntosServ_asig)
         if request.POST.getlist('puntos_disp') != None:
-            for PSAsig in puntosServ_asig:
-                print("Punto de servicio",PSAsig)
-                asignacion = AsigFiscalPuntoServicio.objects.get(userFiscal=user_fiscal, puntoServicio=PSAsig)
-                print("BORRADO")
-                asignacion.delete()
-
-            for PS_id in request.POST.getlist('puntos_disp'):
-                nuevoPunto = PuntoServicio.objects.get(Q(pk=PS_id) )
-                print(nuevoPunto)
-                asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=nuevoPunto)
-                asignacion.save() 
+            conn= connection.cursor()
+            params=(id_user_fiscal,0)
+            conn.execute('asigpsfisc_des_trigger %s,%s',params)
+            result = conn.fetchone()[0]
+            conn.close()
+            if result==0:
+                    funciona=True;
+                    for ps_id in request.POST.getlist('puntos_disp'):
+                        conn= connection.cursor()
+                        params=(id_user_fiscal,ps_id,0,0)
+                        conn.execute('asig_psfiscal_trigger %s,%s,%s,%s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==1:
+                            funciona=False;                        
+            else:
+                messages.success(request, 'Error al modificar las asignaciones.') 
 
     return redirect('Operarios:fiscales_list')
 

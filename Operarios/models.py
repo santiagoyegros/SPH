@@ -654,6 +654,22 @@ class AlertaResp (models.Model):
     usuario=models.ForeignKey(User, blank=True, null=True,on_delete=models.SET_NULL)
     fecha_creacion = models.DateTimeField('Fecha Relevamiento', auto_now_add=True, blank=True, null=True)
 
+class CalendarioCupo (models.Model):
+    anho=models.IntegerField('Anho calendario', blank=True, null=True)
+    mes=models.CharField(verbose_name='Mes del anho', max_length=2)
+    cantLunes=models.IntegerField('Cant de lunes por mes', blank=True, null=True)
+    cantMartes=models.IntegerField('Cant de martes por mes', blank=True, null=True)
+    cantMiercoles=models.IntegerField('Cant de miercoles por mes', blank=True, null=True)
+    cantJueves=models.IntegerField('Cant de jueves por mes', blank=True, null=True)
+    cantViernes=models.IntegerField('Cant de viernes por mes', blank=True, null=True)
+    cantSabado=models.IntegerField('Cant de sabado por mes', blank=True, null=True)
+    cantDomingo=models.IntegerField('Cant de domingo por mes', blank=True, null=True)
+
+class CupoReal (models.Model):
+    puntoServicio=models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
+    anho=models.IntegerField('Anho calendario', blank=True, null=True)
+    mes=models.CharField(verbose_name='Mes del anho', max_length=2)
+    cupoCalculado=models.IntegerField('Cantidad de horas totales reales por mes', blank=True, null=True)
 
 #1
 class HistAsigJefeFiscal(models.Model):
@@ -936,7 +952,6 @@ class HistRelevamientoMensualeros(models.Model):
     vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
     vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
     vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
-
 
 
 

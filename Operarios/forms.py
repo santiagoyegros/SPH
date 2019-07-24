@@ -225,7 +225,7 @@ class RelevamientoEspForm(forms.ModelForm):
             'tipo': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'frecuencia': forms.Select(attrs={'class':'form-control form-control-sm'}),
             #'dia': forms.Select(attrs={'class':'form-control form-control-sm'}),
-            'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'})
+            'cantHoras': forms.TextInput(attrs={'class':'form-control form-control-sm cantHoras'})
         }
 
 class RelevamientoCupoHorasForm(forms.ModelForm):
@@ -246,7 +246,7 @@ class RelevamientoCupoHorasForm(forms.ModelForm):
         }
 
         widgets = {
-            'cantCHoras': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+            'cantCHoras': forms.TextInput(attrs={'class':'form-control form-control-sm cantCHoras'}),
             'frecuencia': forms.Select(attrs={'class':'form-control form-control-sm'}),
             'tipoHora': forms.Select(attrs={'class':'form-control form-control-sm'})
         }

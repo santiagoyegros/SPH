@@ -637,23 +637,42 @@
         });
     });
 
-    $('input[id$="cantCHoras"], input[id$="cantHoras"]').on('change', function (e) {
+    // $('input[id$="cantCHoras"], input[id$="cantHoras"]').on('change', function (e) {
 
+    //     str = $(this).val();
+    //     if (!/:/.test(str)) {
+    //         str += ':00';
+    //     }
+
+    //     $(this).val(str.replace(/^\d{1}:/, '0$&').replace(/:\d{1}$/, '$&0'));
+    // });
+
+    //LO DE ARRIBA NO FUNCIONA PARA APPENDED INPUTS
+    $(document).on("change", ".cantCHoras", function () {
+        console.log($(this).val())
         str = $(this).val();
-        if (!/:/.test(str)) {
-            str += ':00';
+        if(str != ""){
+            if (!/:/.test(str)) {
+                str += ':00';
+            }
+
+            $(this).val(str.replace(/^\d{1}:/, '0$&').replace(/:\d{1}$/, '$&0'));
+           
         }
-
-        $(this).val(str.replace(/^\d{1}:/, '0$&').replace(/:\d{1}$/, '$&0'));
-    });
-
-    $('input[id$="cantHoras"], [id^="id_relevamientoesp_set"]').on('change', function (e) {
-
-        RecalcularHorasEsp();
-    });
-
-    $('input[id$="cantCHoras"], [id^="id_relevamientocupohoras_set-"]').on('change', function (e) {
         RecalcularHorasCup();
+    });
+    $(document).on("change", ".cantHoras", function () {
+        console.log($(this).val())
+        str = $(this).val();
+        if(str != ""){
+            if (!/:/.test(str)) {
+                str += ':00';
+            }
+
+            $(this).val(str.replace(/^\d{1}:/, '0$&').replace(/:\d{1}$/, '$&0'));
+           
+        }
+        RecalcularHorasEsp();
     });
 
 </script>

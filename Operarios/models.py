@@ -682,6 +682,7 @@ class HistAsigJefeFiscal(models.Model):
 
 
 #2
+
 class HistAsigFiscalPuntoServicio(models.Model):
     userFiscal = models.ForeignKey(User, on_delete=models.CASCADE, related_name='HistFiscalAsigFiscalPuntoServicio')
     puntoServicio = models.OneToOneField(PuntoServicio, on_delete=models.CASCADE, related_name='HistpuntoServicioAsigFiscalPuntoServicio')

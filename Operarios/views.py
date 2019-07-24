@@ -494,7 +494,7 @@ def Operarios_delete(request, pk):
 
 
 def getPuntosServicios(request):
-    puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+    puntoServi = PuntoServicio.objects.all()
     puntos =[]
     i=1
     for p in puntoServi:
@@ -557,7 +557,7 @@ def Planificacion_create(request, id_puntoServicio=None):
         planificacion = PlanificacionCab()
         '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
         if relevamiento:
-            for relevesp in relevamiento.relevamientoesp_set.filter(vfechaFin=None):
+            for relevesp in relevamiento.relevamientoesp_set.get():
                 initial.append({'tipo': relevesp.tipo, 
                                 'frecuencia': relevesp.frecuencia,
                                 'cantHoras': relevesp.cantHoras})
@@ -1185,7 +1185,7 @@ def restarHoras(totalHora,asigHora,totalMin,asigMin):
     return "{}:{}".format(cantidadTotalHoras,int(cantidadTotalDeMinutos))
 
 def vicios(request):
-    puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+    puntoServi = PuntoServicio.objects.all()
     puntos =[]
     i=1
     for p in puntoServi:

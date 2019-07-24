@@ -43,8 +43,8 @@ background: #FFFFFF;
 </div>
 {% endif %}
 <div class='col mx-auto'>
-{% if title %}<h1 class='my-3'>{{ title }} - {{relevamiento.puntoServicio.NombrePServicio}} ({{ relevamiento.puntoServicio }}){% endif %} </h1>
-
+{% if relevamiento.puntoServicio.NombrePServicio %}<h1 class='my-3'>{{ title }} - {{relevamiento.puntoServicio.NombrePServicio}} ({{ relevamiento.puntoServicio }}) </h1>
+{% else %}<h1 class='my-3'>{{ title }} - {{puntoServicio.NombrePServicio}} ({{puntoServicio.CodPuntoServicio}})</h1>{% endif %}
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
@@ -288,7 +288,7 @@ background: #FFFFFF;
                 </h4>
                 <div class="row mt-3 mb-2 justify-content-end">
                     <div class="col-3 text-right"> Total Horas: </div>
-                    <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm"/></div>
+                    <div class="col-3">  <input id="sumAll_1" type="text" value="" class="form-control form-control-sm" readonly/></div>
                 </div>
                 {% for form in planifOpeFormSet %}
                 <div id="leaveForm-{{ forloop.counter0 }}" class="container-fluid border rounded border-top-0 border-bottom-0 border-right-1 border-left-1 border-danger mb-1 leaveForm">
@@ -721,7 +721,17 @@ function RecalcularHoras(){
         if(total_horas_nocturnas && total_horas_nocturnas != 'NaN:NaN' ){
             $('#id_cantHorasNoc').val(total_horas_nocturnas);
         }
-    
+
+        var totalHrsEspeciales=$('#id_cantHorasEsp').val();
+        var totalHoras=SumHrMin(total_horas_diurnas,total_horas_nocturnas);
+        if(totalHrsEspeciales.length==0)
+        {
+        $('#sumAll_1').val(totalHoras);
+        }else{
+        var totalHorasConEspeciales=SumHrMin(totalHoras,totalHrsEspeciales);
+        $('#sumAll_1').val(totalHorasConEspeciales);
+        }
+        
     }
 
 function RecalcularHorasEsp(){
@@ -762,7 +772,23 @@ function RecalcularHorasEsp(){
     $('#sumAll_2').val(total);
     //aqui empieza el calculo del total de horas
     
-    $('#id_cantHorasEsp').val(total);    
+    $('#id_cantHorasEsp').val(total);
+
+
+    var diurnas=$('#id_cantHoras').val();
+    var nocturnas=$('#id_cantHorasNoc').val();
+    var totalEspeciales = $('#id_cantHorasEsp').val();
+    var totalHrsSinEspeciales = SumHrMin(diurnas,nocturnas);
+    //Se suma el total de horas ya asignado con las horas especiales
+    if(totalHrsSinEspeciales != 'NaN:NaN'){
+    var totalHrsConEspeciales = SumHrMin(totalHrsSinEspeciales,totalEspeciales);
+    $('#sumAll_1').val(totalHrsConEspeciales);
+    //Si no hay aun nada asignado, el total de horas pasa a ser lo que se cargó en especiales
+    }else{
+    $('#sumAll_1').val(total);
+    }
+
+        
 }
 
 $(function(){

@@ -845,7 +845,10 @@
         }
         
         var totalHoras = SumHrMin(total_horas_diurnas, total_horas_nocturnas);
+        var aux=$('#id_cantHorasEsp').val();
         $('#sumAll_1').val(totalHoras);
+        $('#sumAll_2').val(aux)
+
     }
 
     function RecalcularHorasEsp() {

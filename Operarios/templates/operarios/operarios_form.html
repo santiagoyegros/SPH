@@ -304,11 +304,11 @@
                 <select name="diaInicio" class="form-control form-control-sm select-form" maxlength="10" required
                   id="id_diaInicio">
                   {% for d in diasEntrada %}
-                  {% if d.id == diaIniDefault %}
-                  <option value="{{d.id}}" selected>{{d.dia}}</option>
-                  {% else %}
-                  <option value="{{d.id}}">{{d.dia}}</option>
-                  {% endif %}
+                    {% if d.id == diaIniDefault %}
+                    <option value="{{d.id}}" selected>{{d.dia}}</option>
+                    {% else %}
+                    <option value="{{d.id}}">{{d.dia}}</option>
+                    {% endif %}
                   {% endfor %}
                 </select>
               </div>
@@ -395,7 +395,9 @@
     event.preventDefault();
     document.getElementById('formulario').submit();
   });
-
+  $(document).ready(function () {
+    $
+  });
 
 
 </script>
@@ -408,7 +410,7 @@
     list-style: none !important;
     color: red !important;
   }
-  .dropdown-menu.show{
+  .bootstrap-select .dropdown-menu.show{
     transform: translate3d(0px, 35px, 0px) !important;
     height: 160px !important;
   }

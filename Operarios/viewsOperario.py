@@ -89,6 +89,7 @@ def Operarios_create(request):
             diaLibre = DiaLibre(fechaCreacion=datetime.datetime.now(),id_operario=new_operario)
             diaLibre = setearEnColumna(diaLibre,request.POST.get('diaInicio'),request.POST.get('horaInicio') )
             diaLibre = setearEnColumna(diaLibre,request.POST.get('diaFin'),request.POST.get('horaFin'))                
+            print(diaLibre)
             diaLibre.save()
             messages.success(request, 'Operario creado correctamente.')
             return redirect('Operarios:operarios_vista')
@@ -102,6 +103,15 @@ def Operarios_create(request):
                 nacionalidadId =  int(request.POST.get('nacionalidad'))
             if request.POST.get('profesion'):
                 profesionesId = str(request.POST.getlist('profesion'))
+            #DIA LIBRE
+            if request.POST.get('diaInicio'):
+                diaIniDefault = request.POST.get('diaInicio') 
+            if request.POST.get('diaFin'):
+                diaFDefault = request.POST.get('diaFin')
+            if request.POST.get('horaInicio'):
+                horaIniDefault = request.POST.get('horaInicio') 
+            if request.POST.get('horaFin'):
+                horaFDefault = request.POST.get('horaFin')
 
             messages.warning(request, 'No se pudo cargar el Operario, verifique los campos')
             nacionalidadList=Nacionalidad.objects.all()
@@ -233,7 +243,7 @@ def Operarios_update(request, pk):
         diaLibre = DiaLibre.objects.get(id_operario=operarios)
         diaIniDefault, horaIniDefault= checkDiaInicio(diaLibre)
         diaFDefault, horaFDefault = checkDiaFin(diaLibre)
-    
+        print(diaIniDefault,diaFDefault)
     else:
         print("no tiene")
     if request.method == 'GET':
@@ -298,12 +308,21 @@ def Operarios_update(request, pk):
         form = OperarioForm(request.POST, instance=operarios)
         print(request.POST)
         if form.is_valid():
-            form.save()
+            new_operario= form.save()
+            if DiaLibre.objects.filter(id_operario=new_operario.id).exists():
+                diaLibre = DiaLibre.objects.get(id_operario=new_operario.id)
+                diaLibre.delete()
+            #Se crea un nuevo registro
+            diaLibreNew = DiaLibre(fechaCreacion=datetime.datetime.now(),id_operario=new_operario)
+            diaLibreNew = setearEnColumna(diaLibreNew,request.POST.get('diaInicio'),request.POST.get('horaInicio') )
+            diaLibreNew = setearEnColumna(diaLibreNew,request.POST.get('diaFin'),request.POST.get('horaFin'))                
+            
+            diaLibreNew.save()
             messages.success(request, 'Operario modificado correctamente.')
             return redirect('Operarios:operarios_vista')
         else:
             messages.warning(request, 'No se pudo modificar el Operario, verifique los campos')
-            profesionId=lugarNacimientoId=ciudadId=nacionalidadId=""
+            profesionesId=lugarNacimientoId=ciudadId=nacionalidadId=""
             if request.POST.get('profesion'):
                 profesionesId = str(request.POST.getlist('profesion'))
             if request.POST.get('lugarNacimiento'):

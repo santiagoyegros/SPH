@@ -68,7 +68,7 @@
                     itemTemplate: function(value, item) {
                         var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
 
-                        var $Asignar = $("<button>").attr({class: "btn btn-success btn-guardar fa fa-users fa-lg"})
+                        var $Asignar = $("<button>").attr({class: "btn btn-guardar fa fa-users fa-lg"})
                         .click(function(e) {
                             document.location.href="/reingenieria/operaciones/jefes/asignar/"+item.id
                         });
@@ -90,10 +90,11 @@
 <style>
 
 .btn-guardar {
-background-color: white !important;
-border-color:white !important;
+background-color:transparent !important;
+border: none;
+background-repeat: no-repeat;
+border-color:transparent !important;
 color:#86273e;
-padding: 7px 30px;
 cursor: pointer;
 } 
 

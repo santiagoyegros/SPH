@@ -154,12 +154,11 @@
                   class="selectpicker form-control" data-live-search="true" data-size="5" title="Seleccionar...."
                   required>
                   {% for ciudad in ciudadesList %}
-                  {% if ciudad.id == lugarSelect.id %}
-                  <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected" value="{{ciudad.id}}">
-                    {{ciudad.NombreCiudad}}</option>
-                  {% else %}
-                  <option data-tokens="{{ciudad.NombreCiudad}}" value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
-                  {% endif %}
+                    {% if ciudad.id == form.lugarNacimiento.value %}
+                      <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected" value="{{ciudad.id}}">{{ciudad.NombreCiudad}}</option>
+                    {% else %}
+                      <option data-tokens="{{ciudad.NombreCiudad}}" value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                    {% endif %}
                   {% endfor %}
                 </select>
 
@@ -230,12 +229,12 @@
                   class="selectpicker form-control" data-live-search="true" data-size="5" required
                   title="Seleccionar....">
                   {% for ciudad in ciudadesList %}
-                  {% if ciudad.id == ciudadSelect.id %}
-                  <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected" value="{{ciudad.id}}">
-                    {{ciudad.NombreCiudad}}</option>
-                  {% else %}
-                  <option data-tokens="{{ciudad.NombreCiudad}}" value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
-                  {% endif %}
+                    {% if ciudad.id == ciudadSelect.id %}
+                    <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected" value="{{ciudad.id}}">
+                      {{ciudad.NombreCiudad}}</option>
+                    {% else %}
+                    <option data-tokens="{{ciudad.NombreCiudad}}" value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                    {% endif %}
                   {% endfor %}
                 </select>
                 {{ form.ciudad.errors }}

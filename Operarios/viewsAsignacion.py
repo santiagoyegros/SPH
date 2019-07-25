@@ -810,7 +810,10 @@ def Asignacion_create(request, id_puntoServicio=None):
                 result = conn.fetchone()[0]
                 conn.close()
                 print(result)
-                messages.success(request, 'Se guardo correctamente la asignacion')
+                if result==0:
+                    messages.success(request, 'Se guardo correctamente la asignacion')
+                else:
+                    messages.warning(request, 'No se pudo guardar los cambios')    
                 return redirect('Operarios:asignacion_list')
             else:
                 messages.warning(request, 'No se pudo guardar los cambios')

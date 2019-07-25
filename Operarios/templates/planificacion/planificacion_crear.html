@@ -116,209 +116,245 @@
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade" id="relev" role="tabpanel" aria-labelledby="relev-tab">
-            <div class="card-body">
-                <div class="container-fluid mb-1 mt-2 ">
-                    <div class="row">
-                        <div class="col"><u>Punto de Servicio:</u> {{relevamiento.puntoServicio.NombrePServicio}}
-                            ({{ relevamiento.puntoServicio }})</div>
+            <!-- DATOS GENERALES -->
+            <div class="container-fluid mb-3 mt-4">
+                <div class="card" style="margin-bottom:15px !important;">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-12">
+                                Datos Generales
+                            </div>
+                        </div>
                     </div>
-                    <div class="row">
-                        <div class="col"><u>Fecha de Relevamiento:</u> {{ relevamiento.fecha }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col"><u>Cantidad de Operarios:</u> {{ relevamiento.cantidad }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col"><u>Cantidad de Horas totales por Semana:</u> {{ relevamiento.cantidadHrTotal }}
-                            hrs</div>
-                    </div>
-                    <div class="row">
-                        <div class="col"><u>Cantidad de Horas Especiales por Mes:</u> {{ relevamiento.cantidadHrEsp }}
-                            hrs</div>
-                    </div>
-                    <div class="row">
-                        <div class="col"><u>Comentarios:</u> {{ relevamiento.comentario }}</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p>>Fecha de Relevamiento:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>Cantidad de Operarios:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                                <div class="col-md-4">
+                                    <p></p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p></p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p></p>
+                                </div>
+                            </div>
+                        <div class="row">
+                            <div class="col"><u>Punto de Servicio:</u> {{relevamiento.puntoServicio.NombrePServicio}}
+                                ({{ relevamiento.puntoServicio }})</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><u>Fecha de Relevamiento:</u> {{ relevamiento.fecha }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><u>Cantidad de Operarios:</u> {{ relevamiento.cantidad }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><u>Cantidad de Horas totales por Semana:</u>
+                                {{ relevamiento.cantidadHrTotal }}
+                                hrs</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><u>Cantidad de Horas Especiales por Mes:</u>
+                                {{ relevamiento.cantidadHrEsp }}
+                                hrs</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><u>Comentarios:</u> {{ relevamiento.comentario }}</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="container-fluid mb-3 mt-3" id='formset-det-relevamiento'>
-                    <!-- Cupo de Horas -->
-                    {% if relevamiento.relevamientocupohoras_set.all %}
-                    <div class="container-fluid border mb-4 mt-3">
-                        <h5 class='mt-2'>
-                            Cupo de Horas <small class="text-muted">Detalle de horas</small>
-                        </h5>
-                        <table class="table table-sm table-hover mt-2">
-                            <thead>
-                                <tr>
-                                    <th scope="col-2"> Cantidad de Hrs </th>
-                                    <th scope="col-2"> Frecuencia </th>
-                                    <th scope="col-2"> Tipo de Horas </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for relevcupo in relevamiento.relevamientocupohoras_set.all %}
-                                <tr>
-                                    <td>
-                                        {% if relevcupo.cantCHoras %}
-                                        {{ relevcupo.cantCHoras }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relevcupo.frecuencia %}
-                                        {{ relevcupo.get_frecuencia_display}}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relevcupo.tipoHora %}
-                                        {{ relevcupo.tipoHora }}
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            </tbody>
-                            {% endfor %}
-                        </table>
-                    </div>
-                    {% endif %}
 
-                    <!-- Relevamiento realizados -->
-                    {% if relevamiento.relevamientodet_set.all %}
-                    <div class="container-fluid border mb-4 mt-3">
-                        <h5 class='mt-2'>
-                            Servicios Especificos <small class="text-muted">Detalle de servicios</small>
-                        </h5>
-                        <table class="table table-sm table-hover mt-2">
-                            <thead>
-                                <tr>
-                                    <th scope="col-2"> Servicio </th>
-                                    <th scope="col-2"> Lunes </th>
-                                    <th scope="col-2"> Martes </th>
-                                    <th scope="col-2"> Miercoles </th>
-                                    <th scope="col-2"> Jueves </th>
-                                    <th scope="col-2"> Viernes </th>
-                                    <th scope="col-2"> Sabado </th>
-                                    <th scope="col-2"> Domingo </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for relev in relevamiento.relevamientodet_set.all %}
-                                <tr>
-                                    <th scope="row">{{ relev.tipoServPart }}</th>
-                                    <td>
-                                        {% if relev.lunEnt %}
-                                        {{ relev.lunEnt }} a {{ relev.lunSal }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relev.marEnt %}
-                                        {{ relev.marEnt }} a {{ relev.marSal }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relev.mieEnt %}
-                                        {{ relev.mieEnt }} a {{ relev.mieSal }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relev.jueEnt %}
-                                        {{ relev.jueEnt }} a {{ relev.jueSal }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relev.vieEnt %}
-                                        {{ relev.vieEnt }} a {{ relev.vieSal }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relev.sabEnt %}
-                                        {{ relev.sabEnt }} a {{ relev.sabSal }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relev.domEnt %}
-                                        {{ relev.domEnt }} a {{ relev.domSal }}
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            </tbody>
-                            {% endfor %}
-                        </table>
-                    </div>
-                    {% endif %}
+            </div>
+            <!-- Cupo de Horas -->
+            <div class="container-fluid mb-3 mt-3" id='formset-det-relevamiento'>
 
-                    <!-- Relevamiento horas de limpieza profunda -->
-                    {% if relevamiento.relevamientoesp_set.all %}
-                    <div class="container-fluid border mb-4 mt-3">
-                        <h5 class='mt-2'>
-                            Limpiezas Profundas <small class="text-muted">Detalle de horas</small>
-                        </h5>
-                        <table class="table table-sm table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col-2"> Tipo limpieza especial </th>
-                                    <th scope="col-2"> Frecuencia </th>
-                                    <th scope="col-2"> Cantidad de Horas </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for relevesp in relevamiento.relevamientoesp_set.all %}
-                                <tr>
-                                    <td scope="row">
-                                        {% if relevesp.tipo %}
-                                        {{ relevesp.tipo }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relevesp.frecuencia %}
-                                        {{ relevesp.get_frecuencia_display }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relevesp.cantHoras %}
-                                        {{ relevesp.cantHoras }}
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            </tbody>
-                            {% endfor %}
-                        </table>
-                    </div>
-                    {% endif %}
-
-                    <!-- Mensuales -->
-                    {% if relevamiento.relevamientomensualeros_set.all %}
-                    <div class="container-fluid border mb-4 mt-3">
-                        <h5 class='mt-2'>
-                            Mensualeros <small class="text-muted">Detalle de sueldos</small>
-                        </h5>
-                        <table class="table table-sm table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col-2"> Cantidad </th>
-                                    <th scope="col-2"> Sueldos </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for relevmen in relevamiento.relevamientomensualeros_set.all %}
-                                <tr>
-                                    <td scope="row">
-                                        {% if relevmen.mensuCantidad %}
-                                        {{ relevmen.mensuCantidad }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if relevmen.sueldo %}
-                                        {{ relevmen.sueldo }}
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            </tbody>
-                            {% endfor %}
-                        </table>
-                    </div>
-                    {% endif %}
-
+                {% if relevamiento.relevamientocupohoras_set.all %}
+                <div class="container-fluid border mb-4 mt-3">
+                    <h5 class='mt-2'>
+                        Cupo de Horas <small class="text-muted">Detalle de horas</small>
+                    </h5>
+                    <table class="table table-sm table-hover mt-2">
+                        <thead>
+                            <tr>
+                                <th scope="col-2"> Cantidad de Hrs </th>
+                                <th scope="col-2"> Frecuencia </th>
+                                <th scope="col-2"> Tipo de Horas </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for relevcupo in relevamiento.relevamientocupohoras_set.all %}
+                            <tr>
+                                <td>
+                                    {% if relevcupo.cantCHoras %}
+                                    {{ relevcupo.cantCHoras }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relevcupo.frecuencia %}
+                                    {{ relevcupo.get_frecuencia_display}}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relevcupo.tipoHora %}
+                                    {{ relevcupo.tipoHora }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                        {% endfor %}
+                    </table>
                 </div>
+                {% endif %}
+
+                <!-- Relevamiento realizados -->
+                {% if relevamiento.relevamientodet_set.all %}
+                <div class="container-fluid border mb-4 mt-3">
+                    <h5 class='mt-2'>
+                        Servicios Especificos <small class="text-muted">Detalle de servicios</small>
+                    </h5>
+                    <table class="table table-sm table-hover mt-2">
+                        <thead>
+                            <tr>
+                                <th scope="col-2"> Servicio </th>
+                                <th scope="col-2"> Lunes </th>
+                                <th scope="col-2"> Martes </th>
+                                <th scope="col-2"> Miercoles </th>
+                                <th scope="col-2"> Jueves </th>
+                                <th scope="col-2"> Viernes </th>
+                                <th scope="col-2"> Sabado </th>
+                                <th scope="col-2"> Domingo </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for relev in relevamiento.relevamientodet_set.all %}
+                            <tr>
+                                <th scope="row">{{ relev.tipoServPart }}</th>
+                                <td>
+                                    {% if relev.lunEnt %}
+                                    {{ relev.lunEnt }} a {{ relev.lunSal }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relev.marEnt %}
+                                    {{ relev.marEnt }} a {{ relev.marSal }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relev.mieEnt %}
+                                    {{ relev.mieEnt }} a {{ relev.mieSal }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relev.jueEnt %}
+                                    {{ relev.jueEnt }} a {{ relev.jueSal }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relev.vieEnt %}
+                                    {{ relev.vieEnt }} a {{ relev.vieSal }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relev.sabEnt %}
+                                    {{ relev.sabEnt }} a {{ relev.sabSal }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relev.domEnt %}
+                                    {{ relev.domEnt }} a {{ relev.domSal }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+                {% endif %}
+
+                <!-- Relevamiento horas de limpieza profunda -->
+                {% if relevamiento.relevamientoesp_set.all %}
+                <div class="container-fluid border mb-4 mt-3">
+                    <h5 class='mt-2'>
+                        Limpiezas Profundas <small class="text-muted">Detalle de horas</small>
+                    </h5>
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col-2"> Tipo limpieza especial </th>
+                                <th scope="col-2"> Frecuencia </th>
+                                <th scope="col-2"> Cantidad de Horas </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for relevesp in relevamiento.relevamientoesp_set.all %}
+                            <tr>
+                                <td scope="row">
+                                    {% if relevesp.tipo %}
+                                    {{ relevesp.tipo }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relevesp.frecuencia %}
+                                    {{ relevesp.get_frecuencia_display }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relevesp.cantHoras %}
+                                    {{ relevesp.cantHoras }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+                {% endif %}
+
+                <!-- Mensuales -->
+                {% if relevamiento.relevamientomensualeros_set.all %}
+                <div class="container-fluid border mb-4 mt-3">
+                    <h5 class='mt-2'>
+                        Mensualeros <small class="text-muted">Detalle de sueldos</small>
+                    </h5>
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col-2"> Cantidad </th>
+                                <th scope="col-2"> Sueldos </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for relevmen in relevamiento.relevamientomensualeros_set.all %}
+                            <tr>
+                                <td scope="row">
+                                    {% if relevmen.mensuCantidad %}
+                                    {{ relevmen.mensuCantidad }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if relevmen.sueldo %}
+                                    {{ relevmen.sueldo }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+                {% endif %}
+
             </div>
         </div>
         <div class="tab-pane fade show active" id="plani" role="tabpanel" aria-labelledby="plani-tab">
@@ -443,8 +479,9 @@
                     <div class="container-fluid mb-3 mt-4">
                         <div class="row mb-3 justify-content-end" style="    padding: 0rem 1rem;">
 
-                            <button type='submit' id='btnEsp' class="btn btn-success btn-add" name='add_esp' style="float:right !important;"><i
-                                    class="fa fa-plus fa-lg"></i> Añadir Profundas </button>
+                            <button type='submit' id='btnEsp' class="btn btn-success btn-add" name='add_esp'
+                                style="float:right !important;"><i class="fa fa-plus fa-lg"></i> Añadir Profundas
+                            </button>
 
 
                         </div>

@@ -290,6 +290,24 @@ def Relevamiento(request, id_puntoServicio=None):
             relevamEspFormSet = relevamientoEspFormSet(request.POST, instance=relevamiento)
             relevamCuHrFormSet = relevamientoCupoHorasFormSet(request.POST, instance=relevamiento)
             relevamMenFormSet = relevamientoMensuFormSet(request.POST, instance=relevamiento)
+            i = 0
+            post_mutable = request.POST.copy()
+            for form in relevamMenFormSet:
+                if request.POST.get('relevamientomensualeros_set-'+str(i)+'-sueldo') != 'None':
+                    sueldoMask = request.POST.get('relevamientomensualeros_set-'+str(i)+'-sueldo')
+                    end = len(sueldoMask)
+                    sueldoMask = sueldoMask[3:end]
+                    sueldoUnmask = sueldoMask.replace('.','')
+                    post_mutable['relevamientomensualeros_set-'+str(i)+'-sueldo'] =sueldoUnmask
+                i+=1
+            form = RelevamientoForm(post_mutable, instance=relevamiento)
+            relevamMenFormSet = relevamientoMensuFormSet(post_mutable, instance=relevamiento)
+
+            print(form.errors)
+            print(relevamDetFormSet.errors)
+            print(relevamEspFormSet.errors)
+            print(relevamCuHrFormSet.errors)
+            print(relevamMenFormSet.errors)
 
             if form.is_valid() and relevamDetFormSet.is_valid() and relevamEspFormSet.is_valid() and relevamCuHrFormSet.is_valid() and relevamMenFormSet.is_valid():
                 
@@ -330,7 +348,7 @@ def Relevamiento(request, id_puntoServicio=None):
                     if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
                         rel_men+=str({
                             'relevamientocab_id':str(relevamiento.id),
-                            'mensuCantidad':str(item.get('mensuCantidad')),
+                            'mensuCantidad':(0 if item.get('mensuCantidad') is None else str(item.get('mensuCantidad'))),
                             'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
                             'sueldo':str(item.get('sueldo')),
                             'DELETE':str(item.get('DELETE'))})
@@ -371,27 +389,30 @@ def Relevamiento(request, id_puntoServicio=None):
                 conn= connection.cursor()
                 params=(
                     str({'id': str(relevamiento.id),'puntoServicio_id':str(puntoSer.id),
-                        'cantidad':form.cleaned_data.get('cantidad'),
-                        'cantAprendices':form.cleaned_data.get('cantAprendices'),
-                        'cantidadHrTotal':form.cleaned_data.get('cantidadHrTotal'),
-                        'cantidadHrEsp':form.cleaned_data.get('cantidadHrEsp'),
+                        'cantidad': int(0 if form.cleaned_data.get('cantidad') is None else form.cleaned_data.get('cantidad')),
+                        'cantAprendices': int(0 if form.cleaned_data.get('cantAprendices') is None else form.cleaned_data.get('cantAprendices')),
+                        'cantidadHrTotal': 0 if form.cleaned_data.get('cantidadHrTotal') is None else form.cleaned_data.get('cantidadHrTotal'),
+                        'cantidadHrEsp': 0 if form.cleaned_data.get('cantidadHrEsp') is None else form.cleaned_data.get('cantidadHrEsp'),
                         'fechaInicio':str(form.cleaned_data.get('fechaInicio')),
                         'tipoSalario':str(form.cleaned_data.get('tipoSalario')),
-                        'comentario':form.cleaned_data.get('comentario')}).replace('\'','\"'),
+                        'comentario': str(form.cleaned_data.get('comentario'))}).replace('\'','\"'),
                     rel_det.replace('\'','\"'),
                     rel_men.replace('\'','\"'),
                     rel_cup.replace('\'','\"'), 
                     rel_esp.replace('\'','\"'),
                     0)
-
                 print(params)
                 
                 conn.execute('relevamiento_manager %s,%s,%s,%s,%s,%s ',params)
                 result = conn.fetchone()[0]
-                nuevaCabeceraId=result
-                conn.close()
                 print(result)
-                return redirect('Operarios:puntoServicio_list')
+                conn.close()
+                
+                if result==0:
+                    messages.success(request, 'Servicio aprobado creado correctamente.')
+                    return redirect('Operarios:servicio_aprobado')
+                else:
+                    messages.warning(request, 'No se pudo guardar los cambios')    
             else:
                 messages.warning(request, 'No se pudo guardar los cambios')
     else:
@@ -492,7 +513,6 @@ def Operarios_delete(request, pk):
         return redirect('Operarios:operarios_list')
     return render(request, 'operarios/operarios_delete.html', {'operarios': operarios})
 
-
 def getPuntosServicios(request):
     puntoServi = PuntoServicio.objects.all()
     puntos =[]
@@ -556,8 +576,8 @@ def Planificacion_create(request, id_puntoServicio=None):
     if planificacion == None:
         planificacion = PlanificacionCab()
         '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
-        if relevamiento:
-            for relevesp in relevamiento.relevamientoesp_set.filter(vfechaFin=None):
+        if relevamiento and relevamiento.relevamientoesp_set.exists():
+            for relevesp in relevamiento.relevamientoesp_set.get():
                 initial.append({'tipo': relevesp.tipo, 
                                 'frecuencia': relevesp.frecuencia,
                                 'cantHoras': relevesp.cantHoras})
@@ -569,6 +589,7 @@ def Planificacion_create(request, id_puntoServicio=None):
                 #         'cantHoras': 99}
                 #         ]
             CantlimpiezaProf = len(initial)
+           
 
     planificacionOpeFormSet = inlineformset_factory(PlanificacionCab, PlanificacionOpe, form=PlanificacionOpeForm, extra=1, can_delete=True)
     planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=PlanificacionEspForm, extra=CantlimpiezaProf, can_delete=True)
@@ -649,8 +670,11 @@ def Planificacion_create(request, id_puntoServicio=None):
                 result = conn.fetchone()[0]
                 conn.close()
                 print(result)
-                messages.success(request, 'Se guardo correctamente la planificación')
-                return redirect('Operarios:planificar_list')
+                if result==0:
+                    messages.success(request, 'Se guardo correctamente la planificación')
+                    return redirect('Operarios:planificar_list')
+                else:
+                    messages.warning(request, 'No se pudo guardar los cambios')  
             else:
                 messages.warning(request, 'No se pudo guardar los cambios')
     else:
@@ -811,7 +835,8 @@ def asignarFiscales(request,id_user_jefe=None ):
                         result = conn.fetchone()[0]
                         conn.close()
                         if result==1:
-                            funciona=False;                        
+                            funciona=False;
+                            messages.success(request, 'Error al modificar las asignaciones.')                                    
             else:
                 messages.success(request, 'Error al modificar las asignaciones.')  
 
@@ -897,7 +922,8 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
                         result = conn.fetchone()[0]
                         conn.close()
                         if result==1:
-                            funciona=False;                        
+                            funciona=False;
+                            messages.success(request, 'Error al modificar las asignaciones.')                         
             else:
                 messages.success(request, 'Error al modificar las asignaciones.') 
 
@@ -1190,7 +1216,7 @@ def restarHoras(totalHora,asigHora,totalMin,asigMin):
     return "{}:{}".format(cantidadTotalHoras,int(cantidadTotalDeMinutos))
 
 def vicios(request):
-    puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+    puntoServi = PuntoServicio.objects.all()
     puntos =[]
     i=1
     for p in puntoServi:

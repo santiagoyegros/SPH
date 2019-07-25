@@ -1,7 +1,7 @@
 ALTER DATABASE reigenieria SET COMPATIBILITY_LEVEL =  130 go
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 25/7/2019 11:25:36 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 25/7/2019 15:12:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -29,7 +29,7 @@ AS
 		select @delete="value" from OpenJson(@json) where "key"='DELETE';
 		select @p_sueldo="value" from OpenJson(@json) where "key"='sueldo' and "value"!='None';
 		select @p_mensuCantidad="value" from OpenJson(@json) where "key"='mensuCantidad' and "value"!='None';
-		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id';
+		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id' and "value"!='None';
 		select @p_id_tmp="value" from OpenJson(@json) where "key"='id' and "value"!='None';
 		if  @p_id_tmp  is not NULL and @p_id_tmp!='None'
 		BEGIN
@@ -81,7 +81,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientoesp_trg]    Script Date: 25/7/2019 11:25:30 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientoesp_trg]    Script Date: 25/7/2019 15:12:52 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -112,7 +112,7 @@ AS
 		select @p_cantHoras="value" from OpenJson(@json) where "key"='cantHoras';
 		select @p_tipo_id="value" from OpenJson(@json) where "key"='tipo_id';
 		select @p_tipo="value" from OpenJson(@json) where "key"='tipoServicio';
-		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id';
+		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id' and "value"!='None';
 		select @p_frecuencia="value" from OpenJson(@json) where "key"='frecuencia';
 		select @p_id_tmp="value" from OpenJson(@json) where "key"='id' and "value"!='None';
 
@@ -174,7 +174,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientodet_trg]    Script Date: 25/7/2019 11:25:27 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientodet_trg]    Script Date: 25/7/2019 15:12:50 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -217,7 +217,7 @@ AS
 		select @delete="value" from OpenJson(@json) where "key"='DELETE';
 		select @p_tipoServPart_id="value" from OpenJson(@json) where "key"='tipoServPart_id';
 		select @p_tipoServPart="value" from OpenJson(@json) where "key"='tipoServPart';
-		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id';
+		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id' and "value"!='None';
 		select @p_domSal="value" from OpenJson(@json) where "key"='domSal' and "value"!='None';
 		select @p_domEnt="value" from OpenJson(@json) where "key"='domEnt' and "value"!='None';
 		select @p_sabSal="value" from OpenJson(@json) where "key"='sabSal' and "value"!='None';
@@ -293,7 +293,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientocupohoras_trg]    Script Date: 25/7/2019 11:25:44 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientocupohoras_trg]    Script Date: 25/7/2019 15:12:47 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -324,7 +324,7 @@ AS
 		select @p_cantHoras="value" from OpenJson(@json) where "key"='cantCHoras';
 		select @p_tipoHora_id="value" from OpenJson(@json) where "key"='tipoHora_id';
 		select @p_tipoHora="value" from OpenJson(@json) where "key"='tipoHora';
-		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id';
+		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id' and "value"!='None';
 		select @p_frecuencia="value" from OpenJson(@json) where "key"='frecuencia';
 		select @p_id_tmp="value" from OpenJson(@json) where "key"='id' and "value"!='None';
 		
@@ -388,12 +388,12 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamiento_manager]    Script Date: 24/7/2019 12:04:39 ******/
+/****** Object:  StoredProcedure [dbo].[relevamiento_manager]    Script Date: 25/7/2019 15:12:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[relevamiento_manager]   
+ALTER PROCEDURE [dbo].[relevamiento_manager]   
 	@json_cab nvarchar(max),
 	@json_det nvarchar(max),
 	@json_men nvarchar(max),
@@ -405,7 +405,6 @@ AS
 	
   BEGIN
   SET NOCOUNT ON;
-
 	DECLARE @TransactionName varchar(20) = 'Transactional';
 	Declare @err_msg nvarchar(max);
 	BEGIN TRAN @TransactionName 
@@ -413,13 +412,14 @@ AS
 		DECLARE @fechaCambio datetime;
 		SET @fechaCambio=CURRENT_TIMESTAMP;
 			DECLARE @RC int;
+			DECLARE @cab int;
 			DECLARE @tmp nvarchar(max);
 			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
 			insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
 			insert into infolog(fechaHora,info) values(@fechaCambio,@json_men);
 			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cup);
 			insert into infolog(fechaHora,info) values(@fechaCambio,@json_esp);
-			EXECUTE @RC = [dbo].[relevamiento_cab_trg] @json_cab,@fechaCambio,@retorno
+			EXECUTE @RC = [dbo].[relevamiento_cab_trg] @json_cab,@fechaCambio,0
 			/*det*/
 			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_det)
 			OPEN cursorIt
@@ -481,6 +481,7 @@ AS
 			END
 			CLOSE cursorIt
 			DEALLOCATE cursorIt
+			SET @retorno=0;
 		COMMIT TRANSACTION @TransactionName;
 		SET @retorno=0;
 	END TRY 
@@ -497,18 +498,18 @@ AS
 	END CATCH
 	Select @retorno as resultado;
 
-END	
+END		
 
 GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamiento_cab_trg]    Script Date: 24/7/2019 12:04:37 ******/
+/****** Object:  StoredProcedure [dbo].[relevamiento_cab_trg]    Script Date: 25/7/2019 15:12:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[relevamiento_cab_trg]   
+ALTER PROCEDURE [dbo].[relevamiento_cab_trg]   
   
 
 	@json nvarchar(max),
@@ -537,7 +538,7 @@ AS
 		DECLARE @dp0_fechaFin date;
 		DECLARE @dp0_fecha datetime2;
 		Declare @delete nvarchar(max);
-		select @dp0_id_tmp="value" from OpenJson(@json) where "key"='id';
+		select @dp0_id_tmp="value" from OpenJson(@json) where "key"='id' and value!='None';
 		select @dp0_fecha=cast("value"as date) from OpenJson(@json) where "key"='fechaInicio';
 		select @dp0_cantidad="value" from OpenJson(@json) where "key"='cantidad';
 		select @dp0_puntoServicio_id="value" from OpenJson(@json) where "key"='puntoServicio_id';
@@ -621,10 +622,9 @@ AS
 				@dp0_cantidadHrEsp,@dp0_fechaInicio,@dp0_usuario_id,@dp0_tipoSalario_id,@dp0_comentario,@dp0_cantAprendices,
 				@dp0_estado,@dp0_fechaFin,@fechaCambio,NULL,@tmp1_vregistro,@dp0_id
 		end
-		SET @retorno=0;
 		Select @retorno as resultado;
 
-END	
+END		
 
 GO
 

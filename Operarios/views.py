@@ -348,7 +348,7 @@ def Relevamiento(request, id_puntoServicio=None):
                     if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
                         rel_men+=str({
                             'relevamientocab_id':str(relevamiento.id),
-                            'mensuCantidad':str(item.get('mensuCantidad')),
+                            'mensuCantidad':(0 if item.get('mensuCantidad') is None else str(item.get('mensuCantidad'))),
                             'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
                             'sueldo':str(item.get('sueldo')),
                             'DELETE':str(item.get('DELETE'))})
@@ -408,7 +408,7 @@ def Relevamiento(request, id_puntoServicio=None):
                 print(result)
                 conn.close()
                 
-                if result!=1:
+                if result==0:
                     messages.success(request, 'Servicio aprobado creado correctamente.')
                     return redirect('Operarios:servicio_aprobado')
                 else:

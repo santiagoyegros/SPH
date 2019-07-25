@@ -1051,12 +1051,12 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[asig_jefeyfiscal_trigger]    Script Date: 24/7/2019 15:43:29 ******/
+/****** Object:  StoredProcedure [dbo].[asig_jefeyfiscal_trigger]    Script Date: 25/7/2019 10:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[asig_jefeyfiscal_trigger]   
+CREATE OR ALTER PROCEDURE [dbo].[asig_jefeyfiscal_trigger]   
   
 
 	@p_userJefe_id int,
@@ -1083,7 +1083,7 @@ AS
 			set @veregistro=0;
 		 end
 		 INSERT INTO [dbo].[Operarios_histasigjefefiscal]([userFiscal_id],[userJefe_id],[vfechaFin],[vfechaInicio],[vregistro],vactual_id)
-		 values( @p_userFiscal_id,@p_userJefe_id,NULL,CURRENT_TIMESTAMP,@veregistro,@nuevoId); 
+		 values( @p_userFiscal_id,@p_userJefe_id,NULL,CURRENT_TIMESTAMP,@veregistro+1,@nuevoId); 
 		COMMIT TRANSACTION @TransactionName;
 		SET @retorno=0;
 	END TRY 

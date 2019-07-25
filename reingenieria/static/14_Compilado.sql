@@ -1,6 +1,7 @@
+ALTER DATABASE reigenieria SET COMPATIBILITY_LEVEL =  130 go
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 24/7/2019 12:04:51 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 25/7/2019 15:12:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -28,7 +29,7 @@ AS
 		select @delete="value" from OpenJson(@json) where "key"='DELETE';
 		select @p_sueldo="value" from OpenJson(@json) where "key"='sueldo' and "value"!='None';
 		select @p_mensuCantidad="value" from OpenJson(@json) where "key"='mensuCantidad' and "value"!='None';
-		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id';
+		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id' and "value"!='None';
 		select @p_id_tmp="value" from OpenJson(@json) where "key"='id' and "value"!='None';
 		if  @p_id_tmp  is not NULL and @p_id_tmp!='None'
 		BEGIN
@@ -52,6 +53,14 @@ AS
 				update dbo.Operarios_relevamientomensualeros set 
 					 sueldo=@p_sueldo,mensuCantidad=@p_mensuCantidad,relevamientocab_id=@p_relevamientocab_id where id=@p_id;
 			end
+			if @delete is not NULL and @delete='True'
+			begin
+                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
+				INSERT INTO dbo.Operarios_histrelevamientomensualeros(sueldo,mensuCantidad,relevamientocab_id,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_sueldo,@p_mensuCantidad,@p_relevamientocab_id,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update Operarios_histrelevamientomensualeros set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_relevamientomensualeros  where id=@p_id;
+			end
 		end
 
 
@@ -72,7 +81,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientoesp_trg]    Script Date: 24/7/2019 12:04:49 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientoesp_trg]    Script Date: 25/7/2019 15:12:52 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -103,7 +112,7 @@ AS
 		select @p_cantHoras="value" from OpenJson(@json) where "key"='cantHoras';
 		select @p_tipo_id="value" from OpenJson(@json) where "key"='tipo_id';
 		select @p_tipo="value" from OpenJson(@json) where "key"='tipoServicio';
-		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id';
+		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id' and "value"!='None';
 		select @p_frecuencia="value" from OpenJson(@json) where "key"='frecuencia';
 		select @p_id_tmp="value" from OpenJson(@json) where "key"='id' and "value"!='None';
 
@@ -135,6 +144,15 @@ AS
 				update dbo.Operarios_relevamientoesp set 
 					 cantHoras=@p_cantHoras,tipo_id=@p_tipo_id,relevamientocab_id=@p_relevamientocab_id,frecuencia=@p_frecuencia where id=@p_id;
 			end
+			if @delete is not NULL and @delete='True'
+			begin
+                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
+				INSERT INTO dbo.Operarios_histrelevamientoesp(cantHoras,tipo_id,relevamientocab_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_cantHoras,@p_tipo_id,@p_relevamientocab_id,@p_frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update Operarios_histrelevamientoesp set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_relevamientoesp  where id=@p_id;
+				
+			end
 		end
 
 
@@ -156,7 +174,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientodet_trg]    Script Date: 24/7/2019 12:04:44 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientodet_trg]    Script Date: 25/7/2019 15:12:50 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -199,7 +217,7 @@ AS
 		select @delete="value" from OpenJson(@json) where "key"='DELETE';
 		select @p_tipoServPart_id="value" from OpenJson(@json) where "key"='tipoServPart_id';
 		select @p_tipoServPart="value" from OpenJson(@json) where "key"='tipoServPart';
-		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id';
+		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id' and "value"!='None';
 		select @p_domSal="value" from OpenJson(@json) where "key"='domSal' and "value"!='None';
 		select @p_domEnt="value" from OpenJson(@json) where "key"='domEnt' and "value"!='None';
 		select @p_sabSal="value" from OpenJson(@json) where "key"='sabSal' and "value"!='None';
@@ -234,11 +252,11 @@ AS
 			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientodet where vactual_id=@p_id;
 			if @tmp1_vregistro is NULL
 			begin
-				set @tmp1_vregistro=1;
+				set @tmp1_vregistro=@retorno-1;
 				INSERT INTO dbo.Operarios_histrelevamientodet(tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden,vfechaInicio,vfechaFin,vregistro,vactual_id)
 				select tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden,@fechaCambio,NULL,@tmp1_vregistro,@p_id from dbo.Operarios_relevamientodet where id=@p_id;
 			end
-
+			
 			update dbo.Operarios_histrelevamientodet set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
 			set @tmp1_vregistro=@tmp1_vregistro+1;
 			if @delete is not NULL and @delete='False'
@@ -248,12 +266,19 @@ AS
 				update dbo.Operarios_relevamientodet set 
 					 tipoServPart_id=@p_tipoServPart_id,relevamientocab_id=@p_relevamientocab_id,domSal=@p_domSal,domEnt=@p_domEnt,sabSal=@p_sabSal,sabEnt=@p_sabEnt,vieSal=@p_vieSal,vieEnt=@p_vieEnt,jueSal=@p_jueSal,jueEnt=@p_jueEnt,mieSal=@p_mieSal,mieEnt=@p_mieEnt,marSal=@p_marSal,marEnt=@p_marEnt,lunSal=@p_lunSal,lunEnt=@p_lunEnt,orden=@p_orden where id=@p_id;
 			end
+			if @delete is not NULL and @delete='True'
+			begin
+				INSERT INTO dbo.Operarios_histrelevamientodet(tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_tipoServPart_id,@p_relevamientocab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@p_orden,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update Operarios_histrelevamientodet set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_relevamientodet  where id=@p_id;
+			end
 		end
 
 
 		if  @p_id is NULL
 		begin
-			set @tmp1_vregistro=1;
+			set @tmp1_vregistro=@retorno;
 			INSERT INTO dbo.Operarios_relevamientodet(tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden)
 			select @p_tipoServPart_id,@p_relevamientocab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@p_orden;
 			set @p_id=SCOPE_IDENTITY();
@@ -268,12 +293,12 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientocupohoras_trg]    Script Date: 24/7/2019 12:04:42 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientocupohoras_trg]    Script Date: 25/7/2019 15:12:47 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[relevamientocupohoras_trg]   
+ALTER PROCEDURE [dbo].[relevamientocupohoras_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -299,7 +324,7 @@ AS
 		select @p_cantHoras="value" from OpenJson(@json) where "key"='cantCHoras';
 		select @p_tipoHora_id="value" from OpenJson(@json) where "key"='tipoHora_id';
 		select @p_tipoHora="value" from OpenJson(@json) where "key"='tipoHora';
-		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id';
+		select @p_relevamientocab_id="value" from OpenJson(@json) where "key"='relevamientocab_id' and "value"!='None';
 		select @p_frecuencia="value" from OpenJson(@json) where "key"='frecuencia';
 		select @p_id_tmp="value" from OpenJson(@json) where "key"='id' and "value"!='None';
 		
@@ -332,6 +357,15 @@ AS
 				update dbo.Operarios_relevamientocupohoras set 
 					 cantHoras=@p_cantHoras,tipoHora_id=@p_tipoHora_id,relevamientocab_id=@p_relevamientocab_id,frecuencia=@p_frecuencia where id=@p_id;
 			end
+			if @delete is not NULL and @delete='True'
+			begin
+                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
+				INSERT INTO dbo.Operarios_histrelevamientocupohoras(cantHoras,tipoHora_id,relevamientocab_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_cantHoras,@p_tipoHora_id,@p_relevamientocab_id,@p_frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update Operarios_histrelevamientocupohoras set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_relevamientocupohoras  where id=@p_id;
+			end
+
 		end
 
 
@@ -348,16 +382,18 @@ AS
 		Select @retorno as resultado;
 END
 
+
+
 GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamiento_manager]    Script Date: 24/7/2019 12:04:39 ******/
+/****** Object:  StoredProcedure [dbo].[relevamiento_manager]    Script Date: 25/7/2019 15:12:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[relevamiento_manager]   
+ALTER PROCEDURE [dbo].[relevamiento_manager]   
 	@json_cab nvarchar(max),
 	@json_det nvarchar(max),
 	@json_men nvarchar(max),
@@ -369,7 +405,6 @@ AS
 	
   BEGIN
   SET NOCOUNT ON;
-
 	DECLARE @TransactionName varchar(20) = 'Transactional';
 	Declare @err_msg nvarchar(max);
 	BEGIN TRAN @TransactionName 
@@ -377,13 +412,14 @@ AS
 		DECLARE @fechaCambio datetime;
 		SET @fechaCambio=CURRENT_TIMESTAMP;
 			DECLARE @RC int;
+			DECLARE @cab int;
 			DECLARE @tmp nvarchar(max);
 			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
 			insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
 			insert into infolog(fechaHora,info) values(@fechaCambio,@json_men);
 			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cup);
 			insert into infolog(fechaHora,info) values(@fechaCambio,@json_esp);
-			EXECUTE @RC = [dbo].[relevamiento_cab_trg] @json_cab,@fechaCambio,@retorno
+			EXECUTE @RC = [dbo].[relevamiento_cab_trg] @json_cab,@fechaCambio,0
 			/*det*/
 			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_det)
 			OPEN cursorIt
@@ -445,6 +481,7 @@ AS
 			END
 			CLOSE cursorIt
 			DEALLOCATE cursorIt
+			SET @retorno=0;
 		COMMIT TRANSACTION @TransactionName;
 		SET @retorno=0;
 	END TRY 
@@ -461,18 +498,18 @@ AS
 	END CATCH
 	Select @retorno as resultado;
 
-END	
+END		
 
 GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamiento_cab_trg]    Script Date: 24/7/2019 12:04:37 ******/
+/****** Object:  StoredProcedure [dbo].[relevamiento_cab_trg]    Script Date: 25/7/2019 15:12:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[relevamiento_cab_trg]   
+ALTER PROCEDURE [dbo].[relevamiento_cab_trg]   
   
 
 	@json nvarchar(max),
@@ -501,7 +538,7 @@ AS
 		DECLARE @dp0_fechaFin date;
 		DECLARE @dp0_fecha datetime2;
 		Declare @delete nvarchar(max);
-		select @dp0_id_tmp="value" from OpenJson(@json) where "key"='id';
+		select @dp0_id_tmp="value" from OpenJson(@json) where "key"='id' and value!='None';
 		select @dp0_fecha=cast("value"as date) from OpenJson(@json) where "key"='fechaInicio';
 		select @dp0_cantidad="value" from OpenJson(@json) where "key"='cantidad';
 		select @dp0_puntoServicio_id="value" from OpenJson(@json) where "key"='puntoServicio_id';
@@ -585,10 +622,9 @@ AS
 				@dp0_cantidadHrEsp,@dp0_fechaInicio,@dp0_usuario_id,@dp0_tipoSalario_id,@dp0_comentario,@dp0_cantAprendices,
 				@dp0_estado,@dp0_fechaFin,@fechaCambio,NULL,@tmp1_vregistro,@dp0_id
 		end
-		SET @retorno=0;
 		Select @retorno as resultado;
 
-END	
+END		
 
 GO
 
@@ -703,7 +739,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[planificacionope_trg]    Script Date: 24/7/2019 12:04:33 ******/
+/****** Object:  StoredProcedure [dbo].[planificacionope_trg]    Script Date: 25/7/2019 11:34:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -752,6 +788,7 @@ AS
 		select @p_fer="value" from OpenJson(@json) where "key"='fer';
 		select @p_dom="value" from OpenJson(@json) where "key"='dom';
 		select @p_sab="value" from OpenJson(@json) where "key"='sab';
+		select @delete="value" from OpenJson(@json) where "key"='DELETE';
 		select @p_vie="value" from OpenJson(@json) where "key"='vie';
 		select @p_jue="value" from OpenJson(@json) where "key"='jue';
 		select @p_mie="value" from OpenJson(@json) where "key"='mie';
@@ -780,10 +817,20 @@ AS
 			end
 			update dbo.Operarios_histplanificacionope set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
 			set @tmp1_vregistro=@tmp1_vregistro+1;
-			INSERT INTO dbo.Operarios_histplanificacionope(total,corte,planificacionCab_id,especialista_id,sal,ent,fer,dom,sab,vie,jue,mie,mar,lun,cantidad,vfechaInicio,vfechaFin,vregistro,vactual_id)
-			select @p_total,@p_corte,@p_planificacionCab_id,@p_especialista_id,@p_sal,@p_ent,@p_fer,@p_dom,@p_sab,@p_vie,@p_jue,@p_mie,@p_mar,@p_lun,@p_cantidad,@fechaCambio,NULL,@tmp1_vregistro,@p_id
-			update dbo.Operarios_planificacionope set 
-				 total=@p_total,corte=@p_corte,planificacionCab_id=@p_planificacionCab_id,especialista_id=@p_especialista_id,sal=@p_sal,ent=@p_ent,fer=@p_fer,dom=@p_dom,sab=@p_sab,vie=@p_vie,jue=@p_jue,mie=@p_mie,mar=@p_mar,lun=@p_lun,cantidad=@p_cantidad where id=@p_id;
+			if @delete is not NULL and @delete='False'
+			begin
+				INSERT INTO dbo.Operarios_histplanificacionope(total,corte,planificacionCab_id,especialista_id,sal,ent,fer,dom,sab,vie,jue,mie,mar,lun,cantidad,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_total,@p_corte,@p_planificacionCab_id,@p_especialista_id,@p_sal,@p_ent,@p_fer,@p_dom,@p_sab,@p_vie,@p_jue,@p_mie,@p_mar,@p_lun,@p_cantidad,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update dbo.Operarios_planificacionope set 
+					 total=@p_total,corte=@p_corte,planificacionCab_id=@p_planificacionCab_id,especialista_id=@p_especialista_id,sal=@p_sal,ent=@p_ent,fer=@p_fer,dom=@p_dom,sab=@p_sab,vie=@p_vie,jue=@p_jue,mie=@p_mie,mar=@p_mar,lun=@p_lun,cantidad=@p_cantidad where id=@p_id;
+			end
+			if @delete is not NULL and @delete='True'
+			begin
+                INSERT INTO dbo.Operarios_histplanificacionope(total,corte,planificacionCab_id,especialista_id,sal,ent,fer,dom,sab,vie,jue,mie,mar,lun,cantidad,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_total,@p_corte,@p_planificacionCab_id,@p_especialista_id,@p_sal,@p_ent,@p_fer,@p_dom,@p_sab,@p_vie,@p_jue,@p_mie,@p_mar,@p_lun,@p_cantidad,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update Operarios_histplanificacionope set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_planificacionope  where id=@p_id;
+			end
 		end
 		if  @p_id is NULL
 		begin
@@ -798,12 +845,14 @@ AS
 		Select @retorno as resultado;
 END
 
+
+
 GO
 
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[planificacionesp_trg]    Script Date: 24/7/2019 12:04:30 ******/
+/****** Object:  StoredProcedure [dbo].[planificacionesp_trg]    Script Date: 25/7/2019 11:34:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -836,6 +885,7 @@ AS
 		select @p_fechaLimpProf="value" from OpenJson(@json) where "key"='fechaLimpProf' and "value"!='None';
 		select @p_cantHoras="value" from OpenJson(@json) where "key"='cantHoras';
 		select @p_tipo="value" from OpenJson(@json) where "key"='tipo';
+		select @delete="value" from OpenJson(@json) where "key"='DELETE';
 		select @p_planificacionCab_id="value" from OpenJson(@json) where "key"='planificacionCab_id';
 		select @p_especialista="value" from OpenJson(@json) where "key"='especialista';
 		select @p_frecuencia="value" from OpenJson(@json) where "key"='frecuencia';
@@ -871,10 +921,24 @@ AS
 			end
 			update dbo.Operarios_histplanificacionesp set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
 			set @tmp1_vregistro=@tmp1_vregistro+1;
-			INSERT INTO dbo.Operarios_histplanificacionesp(fechaLimpProf,cantHoras,tipo_id,planificacionCab_id,especialista_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
-			select @p_fechaLimpProf,@p_cantHoras,@p_tipo_id,@p_planificacionCab_id,@p_especialista_id,@p_frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id
-			update dbo.Operarios_planificacionesp set 
-				 fechaLimpProf=@p_fechaLimpProf,cantHoras=@p_cantHoras,tipo_id=@p_tipo_id,planificacionCab_id=@p_planificacionCab_id,especialista_id=@p_especialista_id,frecuencia=@p_frecuencia where id=@p_id;
+			if @delete is not NULL and @delete='False'
+			begin
+				INSERT INTO dbo.Operarios_histplanificacionesp(fechaLimpProf,cantHoras,tipo_id,planificacionCab_id,especialista_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_fechaLimpProf,@p_cantHoras,@p_tipo_id,@p_planificacionCab_id,@p_especialista_id,@p_frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update dbo.Operarios_planificacionesp set 
+					 fechaLimpProf=@p_fechaLimpProf,cantHoras=@p_cantHoras,tipo_id=@p_tipo_id,planificacionCab_id=@p_planificacionCab_id,especialista_id=@p_especialista_id,frecuencia=@p_frecuencia where id=@p_id;
+			end
+
+			if @delete is not NULL and @delete='True'
+			begin
+                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
+				INSERT INTO dbo.Operarios_histplanificacionesp(fechaLimpProf,cantHoras,tipo_id,planificacionCab_id,especialista_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_fechaLimpProf,@p_cantHoras,@p_tipo_id,@p_planificacionCab_id,@p_especialista_id,@p_frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update Operarios_histplanificacionesp set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_planificacionesp  where id=@p_id;
+			end
+			
+
 		end
 		if  @p_id is NULL
 		begin
@@ -1101,7 +1165,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[asignaciondet_trg]    Script Date: 24/7/2019 12:04:15 ******/
+/****** Object:  StoredProcedure [dbo].[asignaciondet_trg]    Script Date: 25/7/2019 11:34:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1145,6 +1209,7 @@ AS
 		select @p_perfil_id="value" from OpenJson(@json) where "key"='perfil_id';
 		select @p_supervisor="value" from OpenJson(@json) where "key"='supervisor';
 		select @p_fechaFin="value" from OpenJson(@json) where "key"='fechaFin';
+		select @delete="value" from OpenJson(@json) where "key"='DELETE';
 		select @p_totalHoras="value" from OpenJson(@json) where "key"='totalHoras';
 		select @p_fechaInicio="value" from OpenJson(@json) where "key"='fechaInicio';
 		select @p_operario_id="value" from OpenJson(@json) where "key"='operario_id';
@@ -1179,10 +1244,25 @@ AS
 			end
 			update dbo.Operarios_histasignaciondet set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
 			set @tmp1_vregistro=@tmp1_vregistro+1;
-			INSERT INTO dbo.Operarios_histasignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,vfechaInicio,vfechaFin,vregistro,vactual_id)
-			select @p_perfil_id,@p_supervisor,@p_fechaFin,@p_totalHoras,@p_fechaInicio,@p_operario_id,@p_asignacionCab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@fechaCambio,NULL,@tmp1_vregistro,@p_id
-			update dbo.Operarios_asignaciondet set 
-				 perfil_id=@p_perfil_id,supervisor=@p_supervisor,fechaFin=@p_fechaFin,totalHoras=@p_totalHoras,fechaInicio=@p_fechaInicio,operario_id=@p_operario_id,asignacionCab_id=@p_asignacionCab_id,domSal=@p_domSal,domEnt=@p_domEnt,sabSal=@p_sabSal,sabEnt=@p_sabEnt,vieSal=@p_vieSal,vieEnt=@p_vieEnt,jueSal=@p_jueSal,jueEnt=@p_jueEnt,mieSal=@p_mieSal,mieEnt=@p_mieEnt,marSal=@p_marSal,marEnt=@p_marEnt,lunSal=@p_lunSal,lunEnt=@p_lunEnt where id=@p_id;
+			if @delete is not NULL and @delete='False'
+			begin
+				INSERT INTO dbo.Operarios_histasignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_perfil_id,@p_supervisor,@p_fechaFin,@p_totalHoras,@p_fechaInicio,@p_operario_id,@p_asignacionCab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update dbo.Operarios_asignaciondet set 
+					 perfil_id=@p_perfil_id,supervisor=@p_supervisor,fechaFin=@p_fechaFin,totalHoras=@p_totalHoras,fechaInicio=@p_fechaInicio,operario_id=@p_operario_id,asignacionCab_id=@p_asignacionCab_id,domSal=@p_domSal,domEnt=@p_domEnt,sabSal=@p_sabSal,sabEnt=@p_sabEnt,vieSal=@p_vieSal,vieEnt=@p_vieEnt,jueSal=@p_jueSal,jueEnt=@p_jueEnt,mieSal=@p_mieSal,mieEnt=@p_mieEnt,marSal=@p_marSal,marEnt=@p_marEnt,lunSal=@p_lunSal,lunEnt=@p_lunEnt where id=@p_id;
+			end
+
+			if @delete is not NULL and @delete='True'
+			begin
+                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
+				INSERT INTO dbo.Operarios_histasignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_perfil_id,@p_supervisor,@p_fechaFin,@p_totalHoras,@p_fechaInicio,@p_operario_id,@p_asignacionCab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+			    update Operarios_histasignaciondet set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_asignaciondet  where id=@p_id;
+			end
+
+			
+
 		end
 		if  @p_id is NULL
 		begin

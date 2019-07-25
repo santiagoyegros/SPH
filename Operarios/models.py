@@ -674,7 +674,7 @@ class CupoReal (models.Model):
 #1
 class HistAsigJefeFiscal(models.Model):
     userJefe = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name='HistJefeOpAsigJefeFiscal')
-    userFiscal = models.OneToOneField(User, on_delete=models.CASCADE, related_name='HistFiscalAsigJefeFiscal')
+    userFiscal = models.ForeignKey(User,  null=True, on_delete=models.CASCADE)
     vactual =  models.ForeignKey(AsigJefeFiscal, null=True, on_delete=models.CASCADE)
     vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
     vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
@@ -685,7 +685,7 @@ class HistAsigJefeFiscal(models.Model):
 
 class HistAsigFiscalPuntoServicio(models.Model):
     userFiscal = models.ForeignKey(User, on_delete=models.CASCADE, related_name='HistFiscalAsigFiscalPuntoServicio')
-    puntoServicio = models.OneToOneField(PuntoServicio, on_delete=models.CASCADE, related_name='HistpuntoServicioAsigFiscalPuntoServicio')
+    puntoServicio = models.ForeignKey(PuntoServicio,  null=True, on_delete=models.CASCADE)
     vactual =  models.ForeignKey(AsigFiscalPuntoServicio, null=True, on_delete=models.CASCADE)
     vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
     vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)

@@ -13,12 +13,12 @@ def procesarEntradaSalida(marcacion, marcacion2):
     DiaSemana = marcacion.fecha.weekday()
     fecha = marcacion.fecha.date()
 
-    Asignaciones = AsignacionDet.objects.filter(Q(asignacionCab__puntoServicio__CodPuntoServicio=PuntoServicioCod) & Q(operario_id__NumCedula=CodPersona) & Q(vfechaFin=None))
-    consulta = AsignacionDet.objects.filter(Q(asignacionCab__puntoServicio__CodPuntoServicio=PuntoServicioCod) & Q(operario_id__NumCedula=CodPersona) & Q(vfechaFin=None)).query
+    Asignaciones = AsignacionDet.objects.filter(Q(asignacionCab__puntoServicio__CodPuntoServicio=PuntoServicioCod) & Q(operario_id__NumCedula=CodPersona))
+    consulta = AsignacionDet.objects.filter(Q(asignacionCab__puntoServicio__CodPuntoServicio=PuntoServicioCod) & Q(operario_id__NumCedula=CodPersona)).query
     logging.getLogger("error_logger").error('La consulta para buscar las asignaciones es: {0}'.format(consulta))
     
     try:
-        PuntoServicioObj = PuntoServicio.objects.filter(Q(CodPuntoServicio=PuntoServicioCod) & Q(vfechaFin=None)).first()
+        PuntoServicioObj = PuntoServicio.objects.filter(Q(CodPuntoServicio=PuntoServicioCod)).first()
     except PuntoServicio.DoesNotExist as err:
         logging.getLogger("error_logger").error('Punto de Servicio no existe: {0}'.format(err))
         pass
@@ -132,8 +132,8 @@ def procesarEntradaSalida(marcacion, marcacion2):
     #Paso 3: Si no existe asignacion se almacena las horas sin aginacion.
     else:
         #Paso 3.1: Revisamos si la marcacion es de un fiscal
-        Esfiscal = AsigFiscalPuntoServicio.objects.filter(userFiscal__username=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod, puntoServicio__vfechaFin=None)
-        consulta = AsigFiscalPuntoServicio.objects.filter(userFiscal__username=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod, puntoServicio__vfechaFin=None).query
+        Esfiscal = AsigFiscalPuntoServicio.objects.filter(userFiscal__username=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod)
+        consulta = AsigFiscalPuntoServicio.objects.filter(userFiscal__username=CodPersona, puntoServicio__CodPuntoServicio=PuntoServicioCod).query
         logging.getLogger("error_logger").error('La consulta para buscar las asignaciones ya procesadas es: {0}'.format(consulta))
 
         #Paso 3.2: Revisamos si la marcacion es de una jefa de operaciones

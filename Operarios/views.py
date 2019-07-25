@@ -573,8 +573,8 @@ def Planificacion_create(request, id_puntoServicio=None):
     if planificacion == None:
         planificacion = PlanificacionCab()
         '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
-        if relevamiento:
-            for relevesp in relevamiento.relevamientoesp_set.filter(vfechaFin=None):
+        if relevamiento and relevamiento.relevamientoesp_set.exists():
+            for relevesp in relevamiento.relevamientoesp_set.get():
                 initial.append({'tipo': relevesp.tipo, 
                                 'frecuencia': relevesp.frecuencia,
                                 'cantHoras': relevesp.cantHoras})
@@ -586,6 +586,7 @@ def Planificacion_create(request, id_puntoServicio=None):
                 #         'cantHoras': 99}
                 #         ]
             CantlimpiezaProf = len(initial)
+           
 
     planificacionOpeFormSet = inlineformset_factory(PlanificacionCab, PlanificacionOpe, form=PlanificacionOpeForm, extra=1, can_delete=True)
     planificacionEspFormSet = inlineformset_factory(PlanificacionCab, PlanificacionEsp, form=PlanificacionEspForm, extra=CantlimpiezaProf, can_delete=True)
@@ -899,19 +900,24 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
     
     '''Se obtienen todos los ids seleccionados'''
     if request.method == 'POST':
-        print("HOOOOOOLA",request.POST.getlist('puntos_disp'),puntosServ_asig)
         if request.POST.getlist('puntos_disp') != None:
-            for PSAsig in puntosServ_asig:
-                print("Punto de servicio",PSAsig)
-                asignacion = AsigFiscalPuntoServicio.objects.get(userFiscal=user_fiscal, puntoServicio=PSAsig)
-                print("BORRADO")
-                asignacion.delete()
-
-            for PS_id in request.POST.getlist('puntos_disp'):
-                nuevoPunto = PuntoServicio.objects.get(Q(pk=PS_id) )
-                print(nuevoPunto)
-                asignacion = AsigFiscalPuntoServicio(userFiscal=user_fiscal, puntoServicio=nuevoPunto)
-                asignacion.save() 
+            conn= connection.cursor()
+            params=(id_user_fiscal,0)
+            conn.execute('asigpsfisc_des_trigger %s,%s',params)
+            result = conn.fetchone()[0]
+            conn.close()
+            if result==0:
+                    funciona=True;
+                    for ps_id in request.POST.getlist('puntos_disp'):
+                        conn= connection.cursor()
+                        params=(id_user_fiscal,ps_id,0,0)
+                        conn.execute('asig_psfiscal_trigger %s,%s,%s,%s',params)
+                        result = conn.fetchone()[0]
+                        conn.close()
+                        if result==1:
+                            funciona=False;                        
+            else:
+                messages.success(request, 'Error al modificar las asignaciones.') 
 
     return redirect('Operarios:fiscales_list')
 
@@ -1202,7 +1208,7 @@ def restarHoras(totalHora,asigHora,totalMin,asigMin):
     return "{}:{}".format(cantidadTotalHoras,int(cantidadTotalDeMinutos))
 
 def vicios(request):
-    puntoServi = PuntoServicio.objects.filter(vfechaFin=None)
+    puntoServi = PuntoServicio.objects.all()
     puntos =[]
     i=1
     for p in puntoServi:

@@ -306,7 +306,7 @@
 
 <script>
     $(document).ready(function () {
-        $(".currency").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0 });
+        $(".currency").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0,autoUnmask:true });
     });
 </script>
 
@@ -416,6 +416,8 @@
      * @param mixed   s: sections delimiter
      * @param mixed   c: decimal delimiter
      */
+
+
     Number.prototype.format = function (n, x, s, c) {
         var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
             num = this.toFixed(Math.max(0, ~~n));
@@ -632,7 +634,7 @@
             clon_html = replaceAll(clon, '__prefix__', (total).toString());
             $('#formset-Men').append(clon_html);
             //Se vuelve a inicializar cuando se agrega nuevo detalle mensualero
-            $(".currency").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0 });
+            $(".currency").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0,removeMaskOnSubmit:true});
             $totalMensualeros.val(total + 1);
         });
     });

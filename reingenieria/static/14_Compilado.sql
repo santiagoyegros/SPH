@@ -1,4 +1,4 @@
-
+ALTER DATABASE reigenieria SET COMPATIBILITY_LEVEL =  130 go
 USE [aireinegnier]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 25/7/2019 11:25:36 ******/

@@ -113,6 +113,7 @@ def Operarios_create(request):
     else:
         nacionalidadList=Nacionalidad.objects.all()
         ciudadesList=Ciudad.objects.all()
+        print("CIUDADES ",ciudadesList)
         especialidadesList=Especializacion.objects.all()
         form = OperarioForm(initial={'nombre':'', 'apellido':'', 'direccion':'', 'numCedula':'', 'numPasaporte':'', 'barrios':'', 'banco':'', 'ctaBanco':'', 'nombreContacto':'', 'email':'', 'nroLegajo':'', 'latitud':0, 'longitud':0,'lugarNacimiento':'' })
         contexto = {

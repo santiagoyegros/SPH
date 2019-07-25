@@ -290,6 +290,24 @@ def Relevamiento(request, id_puntoServicio=None):
             relevamEspFormSet = relevamientoEspFormSet(request.POST, instance=relevamiento)
             relevamCuHrFormSet = relevamientoCupoHorasFormSet(request.POST, instance=relevamiento)
             relevamMenFormSet = relevamientoMensuFormSet(request.POST, instance=relevamiento)
+            i = 0
+            post_mutable = request.POST.copy()
+            for form in relevamMenFormSet:
+                if request.POST.get('relevamientomensualeros_set-'+str(i)+'-sueldo') != 'None':
+                    sueldoMask = request.POST.get('relevamientomensualeros_set-'+str(i)+'-sueldo')
+                    end = len(sueldoMask)
+                    sueldoMask = sueldoMask[3:end]
+                    sueldoUnmask = sueldoMask.replace('.','')
+                    post_mutable['relevamientomensualeros_set-'+str(i)+'-sueldo'] =sueldoUnmask
+                i+=1
+            form = RelevamientoForm(post_mutable, instance=relevamiento)
+            relevamMenFormSet = relevamientoMensuFormSet(post_mutable, instance=relevamiento)
+
+            print(form.errors)
+            print(relevamDetFormSet.errors)
+            print(relevamEspFormSet.errors)
+            print(relevamCuHrFormSet.errors)
+            print(relevamMenFormSet.errors)
 
             if form.is_valid() and relevamDetFormSet.is_valid() and relevamEspFormSet.is_valid() and relevamCuHrFormSet.is_valid() and relevamMenFormSet.is_valid():
                 
@@ -390,8 +408,8 @@ def Relevamiento(request, id_puntoServicio=None):
                 result = conn.fetchone()[0]
                 nuevaCabeceraId=result
                 conn.close()
-                print(result)
-                return redirect('Operarios:puntoServicio_list')
+                messages.success(request, 'Servicio aprobado creado correctamente.')
+                return redirect('Operarios:servicio_aprobado')
             else:
                 messages.warning(request, 'No se pudo guardar los cambios')
     else:
@@ -491,7 +509,6 @@ def Operarios_delete(request, pk):
         messages.warning(request, 'Operario eliminado correctamente')
         return redirect('Operarios:operarios_list')
     return render(request, 'operarios/operarios_delete.html', {'operarios': operarios})
-
 
 def getPuntosServicios(request):
     puntoServi = PuntoServicio.objects.all()

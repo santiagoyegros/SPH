@@ -1,6 +1,7 @@
+
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 24/7/2019 12:04:51 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 25/7/2019 11:25:36 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -52,6 +53,14 @@ AS
 				update dbo.Operarios_relevamientomensualeros set 
 					 sueldo=@p_sueldo,mensuCantidad=@p_mensuCantidad,relevamientocab_id=@p_relevamientocab_id where id=@p_id;
 			end
+			if @delete is not NULL and @delete='True'
+			begin
+                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
+				INSERT INTO dbo.Operarios_histrelevamientomensualeros(sueldo,mensuCantidad,relevamientocab_id,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_sueldo,@p_mensuCantidad,@p_relevamientocab_id,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update Operarios_histrelevamientomensualeros set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_relevamientomensualeros  where id=@p_id;
+			end
 		end
 
 
@@ -72,7 +81,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientoesp_trg]    Script Date: 24/7/2019 12:04:49 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientoesp_trg]    Script Date: 25/7/2019 11:25:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -135,6 +144,15 @@ AS
 				update dbo.Operarios_relevamientoesp set 
 					 cantHoras=@p_cantHoras,tipo_id=@p_tipo_id,relevamientocab_id=@p_relevamientocab_id,frecuencia=@p_frecuencia where id=@p_id;
 			end
+			if @delete is not NULL and @delete='True'
+			begin
+                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
+				INSERT INTO dbo.Operarios_histrelevamientoesp(cantHoras,tipo_id,relevamientocab_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_cantHoras,@p_tipo_id,@p_relevamientocab_id,@p_frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update Operarios_histrelevamientoesp set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_relevamientoesp  where id=@p_id;
+				
+			end
 		end
 
 
@@ -156,7 +174,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientodet_trg]    Script Date: 24/7/2019 12:04:44 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientodet_trg]    Script Date: 25/7/2019 11:25:27 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -234,11 +252,11 @@ AS
 			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientodet where vactual_id=@p_id;
 			if @tmp1_vregistro is NULL
 			begin
-				set @tmp1_vregistro=1;
+				set @tmp1_vregistro=@retorno-1;
 				INSERT INTO dbo.Operarios_histrelevamientodet(tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden,vfechaInicio,vfechaFin,vregistro,vactual_id)
 				select tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden,@fechaCambio,NULL,@tmp1_vregistro,@p_id from dbo.Operarios_relevamientodet where id=@p_id;
 			end
-
+			
 			update dbo.Operarios_histrelevamientodet set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
 			set @tmp1_vregistro=@tmp1_vregistro+1;
 			if @delete is not NULL and @delete='False'
@@ -248,12 +266,19 @@ AS
 				update dbo.Operarios_relevamientodet set 
 					 tipoServPart_id=@p_tipoServPart_id,relevamientocab_id=@p_relevamientocab_id,domSal=@p_domSal,domEnt=@p_domEnt,sabSal=@p_sabSal,sabEnt=@p_sabEnt,vieSal=@p_vieSal,vieEnt=@p_vieEnt,jueSal=@p_jueSal,jueEnt=@p_jueEnt,mieSal=@p_mieSal,mieEnt=@p_mieEnt,marSal=@p_marSal,marEnt=@p_marEnt,lunSal=@p_lunSal,lunEnt=@p_lunEnt,orden=@p_orden where id=@p_id;
 			end
+			if @delete is not NULL and @delete='True'
+			begin
+				INSERT INTO dbo.Operarios_histrelevamientodet(tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_tipoServPart_id,@p_relevamientocab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@p_orden,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update Operarios_histrelevamientodet set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_relevamientodet  where id=@p_id;
+			end
 		end
 
 
 		if  @p_id is NULL
 		begin
-			set @tmp1_vregistro=1;
+			set @tmp1_vregistro=@retorno;
 			INSERT INTO dbo.Operarios_relevamientodet(tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden)
 			select @p_tipoServPart_id,@p_relevamientocab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@p_orden;
 			set @p_id=SCOPE_IDENTITY();
@@ -268,12 +293,12 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientocupohoras_trg]    Script Date: 24/7/2019 12:04:42 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientocupohoras_trg]    Script Date: 25/7/2019 11:25:44 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[relevamientocupohoras_trg]   
+ALTER PROCEDURE [dbo].[relevamientocupohoras_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -332,6 +357,15 @@ AS
 				update dbo.Operarios_relevamientocupohoras set 
 					 cantHoras=@p_cantHoras,tipoHora_id=@p_tipoHora_id,relevamientocab_id=@p_relevamientocab_id,frecuencia=@p_frecuencia where id=@p_id;
 			end
+			if @delete is not NULL and @delete='True'
+			begin
+                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
+				INSERT INTO dbo.Operarios_histrelevamientocupohoras(cantHoras,tipoHora_id,relevamientocab_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				select @p_cantHoras,@p_tipoHora_id,@p_relevamientocab_id,@p_frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+				update Operarios_histrelevamientocupohoras set vactual_id=NULL where vactual_id=@p_id;
+				delete from dbo.Operarios_relevamientocupohoras  where id=@p_id;
+			end
+
 		end
 
 
@@ -347,6 +381,8 @@ AS
 		SET @retorno=0;
 		Select @retorno as resultado;
 END
+
+
 
 GO
 

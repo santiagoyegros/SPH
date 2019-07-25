@@ -282,13 +282,22 @@
                 </div>
             </div>
 
+            <div class="card" style="margin-bottom:15px !important;">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="card-header">
+                                    {{ form.comentario.label }}
+                            </div>
+                            <div class="col margen-comentarios"> 
+                                {{ form.comentario }}
+                            </div>
+                        </div>
+                    </div>
+                    </div>
         </div>
         <div class="container-fluid mb-3 mt-4"></div>
-        <div class="row mb-3">
-            <div class="col-md-12">
-                <div class="col"> {{ form.comentario.label }} {{ form.comentario }}</div>
-            </div>
-        </div>
+
+        
         <div class="col-md-12">
             <div class="col p-0" style="display: flex;justify-content: flex-end;margin: 20px 0px;">
                 <button type='submit' class='btn btn-primary btn-guardar' style="margin-right:10px;"> <i
@@ -707,6 +716,10 @@
         border-color: gray !important;
         padding: 7px 7px;
 
+    }
+
+    .margen-comentarios{
+        padding-top: 20px;
     }
 
     .total-cupos {

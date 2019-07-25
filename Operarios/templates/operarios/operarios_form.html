@@ -32,7 +32,7 @@
                 <label>Apellido</label>
                 <input id="apellido" name="{{form.apellido.name}}" value="{{form.apellido.value}}" type="text"
                   class="form-control" required>
-                {{ form.apellido.erorrs }}
+                {{ form.apellido.errors }}
               </div>
               <div class="form-group">
 
@@ -98,9 +98,8 @@
                 <label>Profesion</label>
                 <select id="profesion" name="{{form.profesion.name}}" value="{{form.profesion.value}}"
                   class="selectpicker form-control" data-live-search="true" multiple data-size="5" required>
-
                   {% for especialidad in especialidadesList %}
-                  {% if especialidad in especialidadSelect %}
+                  {% if especialidad.id_str in profesionesId %}
                   <option data-tokens="{{especialidad.especializacion}}" selected="selected"
                     value="{{especialidad.id}}"> {{especialidad.especializacion}}</option>
                   {% else %}
@@ -121,7 +120,7 @@
                   title="Seleccionar...." required>
 
                   {% for nacionalidad in nacionalidadList %}
-                  {% if nacionalidad.id == nacionalidadSelect.id %}
+                  {% if nacionalidad.id == nacionalidadId %}
                   <option data-tokens="{{nacionalidad.Pais}}" selected="selected" value="{{nacionalidad.id}}">
                     {{nacionalidad.Pais}}</option>
                   {% else %}
@@ -154,11 +153,12 @@
                   class="selectpicker form-control" data-live-search="true" data-size="5" title="Seleccionar...."
                   required>
                   {% for ciudad in ciudadesList %}
-                    {% if ciudad.id == form.lugarNacimiento.value %}
-                      <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected" value="{{ciudad.id}}">{{ciudad.NombreCiudad}}</option>
-                    {% else %}
-                      <option data-tokens="{{ciudad.NombreCiudad}}" value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
-                    {% endif %}
+                  {% if ciudad.id == lugarNacimientoId %}
+                  <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected" value="{{ciudad.id}}">
+                    {{ciudad.NombreCiudad}}</option>
+                  {% else %}
+                  <option data-tokens="{{ciudad.NombreCiudad}}" value="{{ciudad.id}}"> {{ciudad.NombreCiudad}}</option>
+                  {% endif %}
                   {% endfor %}
                 </select>
 
@@ -229,7 +229,7 @@
                   class="selectpicker form-control" data-live-search="true" data-size="5" required
                   title="Seleccionar....">
                   {% for ciudad in ciudadesList %}
-                    {% if ciudad.id == ciudadSelect.id %}
+                    {% if ciudad.id == ciudadId %}
                     <option data-tokens="{{ciudad.NombreCiudad}}" selected="selected" value="{{ciudad.id}}">
                       {{ciudad.NombreCiudad}}</option>
                     {% else %}
@@ -239,6 +239,7 @@
                 </select>
                 {{ form.ciudad.errors }}
               </div>
+        
               <div class="form-group">
                 <label>Barrio</label>
                 <input id="barrios" name="{{form.barrios.name}}" value="{{form.barrios.value}}" type="text"
@@ -299,25 +300,19 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-
                 <label>Día Inicio</label>
-
                 <select name="diaInicio" class="form-control form-control-sm select-form" maxlength="10" required
                   id="id_diaInicio">
-                  <option value="">---------</option>
                   {% for d in diasEntrada %}
-                    {% if d.id == diaIniDefault %}
-                    <option value="{{d.id}}" selected>{{d.dia}}</option>
-                    {% else %}
-                    <option value="{{d.id}}">{{d.dia}}</option>
-                    {% endif %}
+                  {% if d.id == diaIniDefault %}
+                  <option value="{{d.id}}" selected>{{d.dia}}</option>
+                  {% else %}
+                  <option value="{{d.id}}">{{d.dia}}</option>
+                  {% endif %}
                   {% endfor %}
-
                 </select>
-
               </div>
               <div class="form-group">
-             
                 <label>Hora Inicio</label>
                 <div class="input-group date">
                   <input type="text" name="horaInicio" placeholder="Hora inicio" value="{{horaIniDefault}}" required
@@ -338,13 +333,12 @@
                 <label>Dia Fin</label>
                 <select name="diaFin" class="form-control form-control-sm select-form" maxlength="10" id="id_diaFin"
                   required>
-                  <option value="">---------</option>
                   {% for d in diasSalida %}
-                    {% if d.id == diaFDefault %}
-                    <option value="{{d.id}}" selected>{{d.dia}}</option>
-                    {% else %}
-                    <option value="{{d.id}}">{{d.dia}}</option>
-                    {% endif %}
+                  {% if d.id == diaFDefault %}
+                  <option value="{{d.id}}" selected>{{d.dia}}</option>
+                  {% else %}
+                  <option value="{{d.id}}">{{d.dia}}</option>
+                  {% endif %}
                   {% endfor %}
 
                 </select>
@@ -353,8 +347,8 @@
               <div class="form-group">
                 <label>Hora Fin</label>
                 <div class="input-group date">
-                  <input type="text" name="horaFin" placeholder="Hora Fin" value="{{horaFDefault}}" required class="form-control form-control-sm"
-                    id="id_horaFin"
+                  <input type="text" name="horaFin" placeholder="Hora Fin" value="{{horaFDefault}}" required
+                    class="form-control form-control-sm" id="id_horaFin"
                     dp_config="{&quot;id&quot;: &quot;dp_36&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_27&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 1, &quot;format&quot;: &quot;HH:mm&quot;}}">
                   <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
                     data-toggle="datetimepickerv">
@@ -402,6 +396,8 @@
     document.getElementById('formulario').submit();
   });
 
+
+
 </script>
 <style>
   .errorlist {
@@ -411,6 +407,15 @@
   .errorlist li {
     list-style: none !important;
     color: red !important;
+  }
+  .dropdown-menu.show{
+    transform: translate3d(0px, 35px, 0px) !important;
+    height: 160px !important;
+  }
+  .inner.show{
+    overflow-y: auto !important;
+    height: 100px !important;
+    overflow-x: hidden !important;
   }
 </style>
 </div>

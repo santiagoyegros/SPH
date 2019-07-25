@@ -66,14 +66,15 @@ def Operarios_create(request):
     diaIniDefault = "domEnt"
     diaFDefault = "domSal"
     horaIniDefault = "00:00"
+    lugarNacimientoId=""
+    nacionalidadId=""
     horaFDefault="23:59"
     is_valid = True
     if request.method == 'POST': 
-        print("POST",request.POST)
+        print("POST create",request.POST)
         form = OperarioForm(request.POST)
         print (form.errors)
         if not request.POST.get('diaInicio'):
-            print("invalid")
             is_valid=False
         if not request.POST.get('diaFin'):
             is_valid=False
@@ -81,7 +82,7 @@ def Operarios_create(request):
             is_valid=False
         if not request.POST.get('horaFin'):
             is_valid=False
-
+        
         if form.is_valid() and is_valid:
 
             new_operario = form.save()
@@ -92,13 +93,30 @@ def Operarios_create(request):
             messages.success(request, 'Operario creado correctamente.')
             return redirect('Operarios:operarios_vista')
         else:
+            lugarNacimientoId = ciudadId = profesionesId = ""
+            if request.POST.get('lugarNacimiento'):
+                lugarNacimientoId = int(request.POST.get('lugarNacimiento'))
+            if request.POST.get('ciudad'):
+                ciudadId = int(request.POST.get('ciudad'))
+            if request.POST.get('nacionalidad'):
+                nacionalidadId =  int(request.POST.get('nacionalidad'))
+            if request.POST.get('profesion'):
+                profesionesId = str(request.POST.getlist('profesion'))
+
             messages.warning(request, 'No se pudo cargar el Operario, verifique los campos')
             nacionalidadList=Nacionalidad.objects.all()
             ciudadesList=Ciudad.objects.all()
             especialidadesList=Especializacion.objects.all()
+            for espe in especialidadesList:
+                espe.id_str = str(espe.id)
+            
             contexto = {
             'title': 'Nuevo Operario',
             'form': form, 
+            'lugarNacimientoId':lugarNacimientoId,
+            'ciudadId':ciudadId,
+            'nacionalidadId':nacionalidadId,
+            'profesionesId':profesionesId,
             'is_valid':is_valid, 
             'diasSalida':diasSalida,
             'diasEntrada':diasEntrada,
@@ -228,22 +246,41 @@ def Operarios_update(request, pk):
             formatedDateFin = operarios.fechaFin.strftime("%d-%m-%Y")
             operarios.fechaFin=formatedDateFin
 
-  
         form = OperarioForm(instance=operarios)
-        ciudadSelect=operarios.ciudad
+        ciudadId=""
+        lugarNacimientoId=""
+        nacionalidadId=""
         ciudadesList=Ciudad.objects.all()
-        
-        especialidadesList=Especializacion.objects.all()
-        especialidadSelect=operarios.profesion.all()
+        nacionalidades = Nacionalidad.objects.all()
+        for ciudad in ciudadesList:
+            if str(ciudad.NombreCiudad) == str(operarios.ciudad):
+                ciudadId = ciudad.id
+            if str(ciudad.id) == str(operarios.lugarNacimiento_id):
+                lugarNacimientoId=ciudad.id
+        for nacion in nacionalidades:
+            if str(nacion.id) == str(operarios.nacionalidad_id):
+                nacionalidadId=nacion.id
 
+        especialidadesList=Especializacion.objects.all()
+        for espe in especialidadesList:
+                espe.id_str = str(espe.id)
+
+        profesionesId = []
+        for pro in operarios.profesion.all():
+            profesionesId.append(str(pro.id))
+        print("PROFESIONES ",profesionesId)
         nacionalidadList=Nacionalidad.objects.all()
         nacionalidadSelect=operarios.nacionalidad
 
         lugarSelect=operarios.lugarNacimiento
+
         contexto = {
             'title': 'Editar Operario',
             'form': form,
-            'ciudadSelect':ciudadSelect,
+            'ciudadId':ciudadId,
+            'lugarNacimientoId':lugarNacimientoId,
+            'nacionalidadId':nacionalidadId,
+            'profesionesId':profesionesId,
             'is_valid':is_valid,
             'diasSalida':diasSalida,
             'diasEntrada':diasEntrada,
@@ -253,34 +290,46 @@ def Operarios_update(request, pk):
             'horaFDefault':horaFDefault,
             'ciudadesList':ciudadesList,
             'especialidadesList':especialidadesList,
-            'especialidadSelect':especialidadSelect,
             'nacionalidadList':nacionalidadList,
             'nacionalidadSelect':nacionalidadSelect,
-            'especialidadSelect':especialidadSelect, 
             'lugarSelect':lugarSelect
         }
     else:
         form = OperarioForm(request.POST, instance=operarios)
-        print(form)
+        print(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Operario modificado correctamente.')
             return redirect('Operarios:operarios_vista')
         else:
             messages.warning(request, 'No se pudo modificar el Operario, verifique los campos')
+            profesionId=lugarNacimientoId=ciudadId=nacionalidadId=""
+            if request.POST.get('profesion'):
+                profesionesId = str(request.POST.getlist('profesion'))
+            if request.POST.get('lugarNacimiento'):
+                lugarNacimientoId = int(request.POST.get('lugarNacimiento'))
+            if request.POST.get('ciudad'):
+                ciudadId = int(request.POST.get('ciudad'))
+            if request.POST.get('nacionalidad'):
+                nacionalidadId =  int(request.POST.get('nacionalidad'))
             ciudadSelect=operarios.ciudad
             ciudadesList=Ciudad.objects.all()
         
             especialidadesList=Especializacion.objects.all()
-            especialidadSelect=operarios.profesion.all()
+            for espe in especialidadesList:
+                espe.id_str = str(espe.id)
 
             nacionalidadList=Nacionalidad.objects.all()
             nacionalidadSelect=operarios.nacionalidad
-
+   
             lugarSelect=operarios.lugarNacimiento
             contexto = {
                 'title': 'Editar Operario',
                 'form': form,
+                'profesionesId':profesionesId,
+                'lugarNacimientoId':lugarNacimientoId,
+                'ciudadId':ciudadId,
+                'nacionalidadId':nacionalidadId,
                 'ciudadSelect':ciudadSelect, 
                 'is_valid':is_valid,
                 'diasSalida':diasSalida,
@@ -291,10 +340,8 @@ def Operarios_update(request, pk):
                 'horaFDefault':horaFDefault,
                 'ciudadesList':ciudadesList,
                 'especialidadesList':especialidadesList,
-                'especialidadSelect':especialidadSelect,
                 'nacionalidadList':nacionalidadList,
                 'nacionalidadSelect':nacionalidadSelect,
-                'especialidadSelect':especialidadSelect,
                  'lugarSelect':lugarSelect
             }
         

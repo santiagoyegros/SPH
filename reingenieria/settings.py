@@ -28,6 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.11.31', 'GBCORETest.grupobaudelet.com']
 
+GLOBAL_SETTINGS = {
+    'MAX_CALLCENTER' : '30',
+    'USER_CALLCENTER':'1710'
+}
 
 # Application definition
 

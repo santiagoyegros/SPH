@@ -3,8 +3,8 @@ import datetime as dt
 from datetime import datetime, timedelta
 import datetime
 from django.db.models import Q
-from Operarios.models import Alertas,User,Motivos, AsignacionesProcesadas,AlertaResp, HorasNoProcesadas,Operario,AsignacionDet
-
+from Operarios.models import Parametros,Alertas,User,Motivos, AsignacionesProcesadas,AlertaResp, HorasNoProcesadas,Operario,AsignacionDet
+from django.conf import settings
 
 def getHoraDia(id_dia,id_asignacion):
     asignacionDet = AsignacionDet.objects.get(id = id_asignacion )
@@ -35,7 +35,11 @@ def registrar_ausencia():
     print('Procedimiento de registro de ausencias: ' + str(dt.datetime.now()))
     alertas = Alertas.objects.all()
     for a in alertas:
-        dateParametro=datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%mm-%dd %H:%M:%S"),"%Y-%mm-%dd %H:%M:%S") - datetime.timedelta(minutes=30)
+        callcenter_time = settings.GLOBAL_SETTINGS['MAX_CALLCENTER']
+        if Parametros.objects.filter(parametro = 'MAX_CALLCENTER').exists():
+            callcenter_db = Parametros.objects.get(parametro = 'MAX_CALLCENTER')
+            callcenter_time = callcenter_db.valor
+        dateParametro=datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%mm-%dd %H:%M:%S"),"%Y-%mm-%dd %H:%M:%S") - datetime.timedelta(minutes=int(callcenter_time))
         dateAlerta= datetime.datetime.strptime(a.FechaHora.strftime("%Y-%mm-%dd %H:%M:%S"),"%Y-%mm-%dd %H:%M:%S")
         if not a.Estado == 'PENDIENTE':
             if dateAlerta <= dateParametro:
@@ -70,7 +74,12 @@ def registrar_ausencia():
                                 #a.save()
                                 
                                 """Se guarda la respuesta de la alerta"""
-                                usuario = User.objects.get(id = 1710)
+                                user_parametrico = settings.GLOBAL_SETTINGS['USER_CALLCENTER']
+                                if Parametros.objects.filter(parametro = 'USER_CALLCENTER').exists():
+                                    user_db = Parametros.objects.get(parametro = 'USER_CALLCENTER')
+                                    user_parametrico = user_db.valor
+
+                                usuario = User.objects.get(id = user_parametrico)
                                 motivo = Motivos.objects.get(descripcion= "Gestión Automática")
                                 alerta_respuesta = AlertaResp(
                                     motivo = motivo,

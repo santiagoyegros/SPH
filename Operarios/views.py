@@ -578,7 +578,7 @@ def Planificacion_create(request, id_puntoServicio=None):
         planificacion = PlanificacionCab(puntoServicio=puntoSer,cantidad=0)
         planificacion.save()
         '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
-        print (relevamiento.relevamientoesp_set.all())
+
         if relevamiento:
             if len(relevamiento.relevamientoesp_set.all())>0:
                 for relevesp in relevamiento.relevamientoesp_set.all():

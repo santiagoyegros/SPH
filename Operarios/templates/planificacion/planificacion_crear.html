@@ -691,6 +691,35 @@
             $(document).ready(function () {
                 console.log("hola")
                 $(".input-sueldos").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0,removeMaskOnSubmit:true});
+                var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS');
+                for (var i = 0; i < totalDetalleOpe; i++) {
+
+
+                $('#id_planificacionope_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
+
+                var select = $('#id_planificacionope_set-' + (i) + '-DELETE')[0].checked;
+
+
+                if ($('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked")) {
+                    //$('td.delete input[type=checkbox]').hide()
+                    $(deleteLink).closest('.leaveForm-'+i).hide();
+
+                }
+                }
+                var totalEspeciales = $('#id_planificacionesp_set-TOTAL_FORMS');
+                for (var i = 0; i < totalEspeciales; i++) {
+
+                $('#id_planificacionesp_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
+
+                var select = $('#id_planificacionesp_set-' + (i) + '-DELETE')[0].checked;
+
+
+                if ($('#id_planificacionesp_set-' + (i) + '-DELETE').is(":checked")) {
+                    //$('td.delete input[type=checkbox]').hide()
+                    $(deleteLink).closest('.leaveFormEsp-'+i).hide();
+
+                }
+                }
             });
 
             function pad(d) {
@@ -777,6 +806,7 @@
                 $(deleteLink).closest('.leaveForm').hide();
 
                 $("#id_planificacionope_set-" + id + "-DELETE").prop("checked", true);
+                
                 RecalcularHoras();
                 // for formset functionality to work properly, need to update all existing form ids so they're sequential
                 //updateFormElementIndices('leaveForm');
@@ -793,6 +823,9 @@
                 //}
 
                 //updateLeaveTotal();
+                document.getElementById('action').value = 'add_det';
+                    //hacemos submit
+                document.getElementById('formulario').submit();
             }
 
             function deleteLeaveRowEsp(deleteLink, id) {
@@ -802,6 +835,9 @@
 
                 $("#id_planificacionesp_set-" + id + "-DELETE").prop("checked", true);
                 RecalcularHorasEsp();
+                document.getElementById('action').value = 'add_esp';
+                    //hacemos submit
+                document.getElementById('formulario').submit();
 
             }
 

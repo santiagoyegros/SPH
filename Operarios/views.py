@@ -141,7 +141,6 @@ class PuntoServicioUpdateView(SuccessMessageMixin, UpdateView):
 @permission_required('Operarios.change_puntoservicio', raise_exception=True)
 def PuntosServicios_update(request, pk):
     puntoServicio = PuntoServicio.objects.get(Q(id=pk))
-  
     if request.method == 'GET':
         form = PuntoServicioForm(instance=puntoServicio)
         contexto = {
@@ -152,29 +151,51 @@ def PuntosServicios_update(request, pk):
     else:
         form = PuntoServicioForm(request.POST, instance=puntoServicio)
         if form.is_valid():
-            #form.save()
-            print(form.cleaned_data)
-            conn= connection.cursor()
-            params=(pk,form.cleaned_data.get('CodPuntoServicio'),
-            form.cleaned_data.get('NombrePServicio'),
-            form.cleaned_data.get('DireccionContrato'),
-            form.cleaned_data.get('Barrios'),
-            form.cleaned_data.get('Contacto'),
-            form.cleaned_data.get('MailContacto'),
-            form.cleaned_data.get('TelefonoContacto'),
-            form.cleaned_data.get('Coordenadas'),
-            str(form.cleaned_data.get('Ciudad')),
-            str(form.cleaned_data.get('Cliente')),
-            form.cleaned_data.get('NumeroMarcador'),
-            int(0),int(0));
-            print(params)
-            conn.execute('puntoServicio_trigger %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s',params)
-            result = conn.fetchone()[0]
-            conn.close()
-            if result==0:
-                messages.success(request, 'Punto de Servicio modificado correctamente.')    
+            cambioAlgo=False
+            pSCopia = PuntoServicio.objects.get(Q(id=pk))
+            print(cambioAlgo)
+            cambioAlgo=((pSCopia is not None and pSCopia.CodPuntoServicio!=form.cleaned_data.get('CodPuntoServicio')) or cambioAlgo)
+            print(cambioAlgo)
+            cambioAlgo=((pSCopia is not None and pSCopia.NombrePServicio!=form.cleaned_data.get('NombrePServicio')) or cambioAlgo)
+            print(cambioAlgo)
+            cambioAlgo=((pSCopia is not None and pSCopia.DireccionContrato!=form.cleaned_data.get('DireccionContrato')) or cambioAlgo)
+            print(cambioAlgo)
+            cambioAlgo=((pSCopia is not None and pSCopia.Barrios!=form.cleaned_data.get('Barrios')) or cambioAlgo)
+            print(cambioAlgo)
+            cambioAlgo=((pSCopia is not None and pSCopia.Coordenadas!=form.cleaned_data.get('Coordenadas')) or cambioAlgo)
+            print(cambioAlgo)
+            cambioAlgo=((pSCopia is not None and pSCopia.Ciudad!=form.cleaned_data.get('Ciudad')) or cambioAlgo)
+            print(cambioAlgo)
+            cambioAlgo=((pSCopia is not None and pSCopia.Cliente!=form.cleaned_data.get('Cliente')) or cambioAlgo)
+            print(cambioAlgo)
+            cambioAlgo=((pSCopia is not None and pSCopia.NumeroMarcador!=form.cleaned_data.get('NumeroMarcador')) or cambioAlgo)
+            if cambioAlgo==True:
+                print(form.cleaned_data)
+                conn= connection.cursor()
+                params=(pk,form.cleaned_data.get('CodPuntoServicio'),
+                form.cleaned_data.get('NombrePServicio'),
+                form.cleaned_data.get('DireccionContrato'),
+                form.cleaned_data.get('Barrios'),
+                form.cleaned_data.get('Contacto'),
+                form.cleaned_data.get('MailContacto'),
+                form.cleaned_data.get('TelefonoContacto'),
+                form.cleaned_data.get('Coordenadas'),
+                str(form.cleaned_data.get('Ciudad')),
+                str(form.cleaned_data.get('Cliente')),
+                form.cleaned_data.get('NumeroMarcador'),
+                int(0),int(0));
+                print(params)
+                conn.execute('puntoServicio_trigger %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s',params)
+                result = conn.fetchone()[0]
+                conn.close()
+                if result==0:
+                    messages.success(request, 'Punto de Servicio modificado correctamente.')    
+                else:
+                    messages.success(request, 'Error al modificar Punto de Servicio.')    
             else:
-                messages.success(request, 'Error al modificar Punto de Servicio.')    
+                form.save()
+                messages.success(request, 'Punto de Servicio modificado correctamente.')    
+
         return redirect('Operarios:puntoServicio_list')
 
     return render(request, 'puntoServicio/puntoServicio_form.html', context=contexto) 

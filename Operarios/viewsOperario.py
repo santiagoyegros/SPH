@@ -241,9 +241,10 @@ def Operarios_update(request, pk):
     horaFDefault="23:59"
     if DiaLibre.objects.filter(id_operario=operarios).exists():
         diaLibre = DiaLibre.objects.get(id_operario=operarios)
-        diaIniDefault, horaIniDefault= checkDiaInicio(diaLibre)
-        diaFDefault, horaFDefault = checkDiaFin(diaLibre)
-        print(diaIniDefault,diaFDefault)
+        if checkDiaInicio(diaLibre):
+            diaIniDefault, horaIniDefault= checkDiaInicio(diaLibre)
+        if checkDiaFin(diaLibre):
+            diaFDefault, horaFDefault = checkDiaFin(diaLibre)
     else:
         print("no tiene")
     if request.method == 'GET':

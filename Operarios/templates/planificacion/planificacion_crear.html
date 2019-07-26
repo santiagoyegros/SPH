@@ -16,7 +16,18 @@
         font-weight: 400 !important;
         padding: 10px !important;
     }
-
+    .input-sueldos{
+        background-color: white !important;
+        border: none !important;
+    }
+    .table-hover tbody tr:hover {
+        background-color: transparent !important;
+    }
+    .input-sueldos{
+        background-color: white !important;
+        border: none !important;
+    }
+ 
     .card-header {
         background-color: #86273e !important;
         color: white !important;
@@ -364,12 +375,12 @@
                                     <tr>
                                         <td scope="row">
                                             {% if relevmen.mensuCantidad %}
-                                            {{ relevmen.mensuCantidad }}
+                                                {{ relevmen.mensuCantidad }}
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if relevmen.sueldo %}
-                                            {{ relevmen.sueldo }}
+                                              <input type="text" class="input-sueldos" value="{{ relevmen.sueldo }}" disabled>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -677,10 +688,10 @@
 
         <script>
 
-            //$(document).ready(function () {
-
-
-            ///});
+            $(document).ready(function () {
+                console.log("hola")
+                $(".input-sueldos").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0,removeMaskOnSubmit:true});
+            });
 
             function pad(d) {
                 return (d < 10) ? '0' + d.toString() : d.toString();

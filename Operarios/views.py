@@ -345,7 +345,7 @@ def Relevamiento(request, id_puntoServicio=None):
 
                 rel_men="[ "
                 for item in relevamMenFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
+                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ) and not ((item.get('mensuCantidad') is None or item.get('mensuCantidad') <=0 ) and ( item.get('sueldo') is None or item.get('sueldo') <=0) ):
                         rel_men+=str({
                             'relevamientocab_id':str(relevamiento.id),
                             'mensuCantidad':(0 if item.get('mensuCantidad') is None else str(item.get('mensuCantidad'))),
@@ -408,7 +408,7 @@ def Relevamiento(request, id_puntoServicio=None):
                 print(result)
                 conn.close()
                 
-                if result==0:
+                if result ==0:
                     messages.success(request, 'Servicio aprobado creado correctamente.')
                     return redirect('Operarios:servicio_aprobado')
                 else:
@@ -576,19 +576,21 @@ def Planificacion_create(request, id_puntoServicio=None):
     if planificacion == None:
         planificacion = PlanificacionCab()
         '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
-        if relevamiento and relevamiento.relevamientoesp_set.exists():
-            for relevesp in relevamiento.relevamientoesp_set.get():
-                initial.append({'tipo': relevesp.tipo, 
-                                'frecuencia': relevesp.frecuencia,
-                                'cantHoras': relevesp.cantHoras})
-                # initial=[
-                #         {'especialista': 2, 
-                #         'tipo': 2,
-                #         'frecuencia': 'ANUAL',
-                #         'dia': 'SAB',
-                #         'cantHoras': 99}
-                #         ]
-            CantlimpiezaProf = len(initial)
+        print (relevamiento.relevamientoesp_set.all())
+        if relevamiento:
+            if len(relevamiento.relevamientoesp_set.all())>0:
+                for relevesp in relevamiento.relevamientoesp_set.all():
+                    initial.append({'tipo': relevesp.tipo, 
+                                    'frecuencia': relevesp.frecuencia,
+                                    'cantHoras': relevesp.cantHoras})
+                    # initial=[
+                    #         {'especialista': 2, 
+                    #         'tipo': 2,
+                    #         'frecuencia': 'ANUAL',
+                    #         'dia': 'SAB',
+                    #         'cantHoras': 99}
+                    #         ]
+                CantlimpiezaProf = len(initial)
            
 
     planificacionOpeFormSet = inlineformset_factory(PlanificacionCab, PlanificacionOpe, form=PlanificacionOpeForm, extra=1, can_delete=True)

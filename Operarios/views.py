@@ -579,7 +579,7 @@ def Planificacion_create(request, id_puntoServicio=None):
             cantHoras = "00:00",cantHorasNoc="00:00",cantHorasEsp="00:00")
         planificacion.save()
         '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
-        print (relevamiento.relevamientoesp_set.all())
+
         if relevamiento:
             if len(relevamiento.relevamientoesp_set.all())>0:
                 for relevesp in relevamiento.relevamientoesp_set.all():

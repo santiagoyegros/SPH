@@ -576,19 +576,21 @@ def Planificacion_create(request, id_puntoServicio=None):
     if planificacion == None:
         planificacion = PlanificacionCab()
         '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
-        if relevamiento and relevamiento.relevamientoesp_set.exists():
-            for relevesp in relevamiento.relevamientoesp_set.get():
-                initial.append({'tipo': relevesp.tipo, 
-                                'frecuencia': relevesp.frecuencia,
-                                'cantHoras': relevesp.cantHoras})
-                # initial=[
-                #         {'especialista': 2, 
-                #         'tipo': 2,
-                #         'frecuencia': 'ANUAL',
-                #         'dia': 'SAB',
-                #         'cantHoras': 99}
-                #         ]
-            CantlimpiezaProf = len(initial)
+        print (relevamiento.relevamientoesp_set.all())
+        if relevamiento:
+            if len(relevamiento.relevamientoesp_set.all())>0:
+                for relevesp in relevamiento.relevamientoesp_set.all():
+                    initial.append({'tipo': relevesp.tipo, 
+                                    'frecuencia': relevesp.frecuencia,
+                                    'cantHoras': relevesp.cantHoras})
+                    # initial=[
+                    #         {'especialista': 2, 
+                    #         'tipo': 2,
+                    #         'frecuencia': 'ANUAL',
+                    #         'dia': 'SAB',
+                    #         'cantHoras': 99}
+                    #         ]
+                CantlimpiezaProf = len(initial)
            
 
     planificacionOpeFormSet = inlineformset_factory(PlanificacionCab, PlanificacionOpe, form=PlanificacionOpeForm, extra=1, can_delete=True)

@@ -12,7 +12,20 @@
         font-weight: 600 !important;
     }
 
-    .card-header {
+
+    .table thead th {
+        font-weight: 400 !important;
+        padding: 10px !important;
+    }
+    .input-sueldos{
+        background-color: white !important;
+        border: none !important;
+    }
+    .table-hover tbody tr:hover {
+        background-color: transparent !important;
+    }
+    
+      .card-header {
         background-color: #86273e !important;
         color: white !important;
         font-size: 20px !important;
@@ -324,34 +337,44 @@
 
                 <!-- Mensuales -->
                 {% if relevamiento.relevamientomensualeros_set.all %}
-                <div class="container-fluid border mb-4 mt-3">
-                    <h5 class='mt-2'>
-                        Mensualeros <small class="text-muted">Detalle de sueldos</small>
-                    </h5>
-                    <table class="table table-sm table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col-2"> Cantidad </th>
-                                <th scope="col-2"> Sueldos </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for relevmen in relevamiento.relevamientomensualeros_set.all %}
-                            <tr>
-                                <td scope="row">
-                                    {% if relevmen.mensuCantidad %}
-                                    {{ relevmen.mensuCantidad }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if relevmen.sueldo %}
-                                    {{ relevmen.sueldo }}
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                    </table>
+
+     
+                <div class="container-fluid mb-4 mt-5" style="padding: 0px !important;">
+                    <div class="card" style="margin-bottom:15px !important;">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Mensualeros
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="padding:15px 5px 0px 5px !important;">
+                            <table class="table table-sm table-hover">
+                                <thead class="header-table">
+                                    <tr>
+                                        <th scope="col-2"> Cantidad </th>
+                                        <th scope="col-2"> Sueldos </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for relevmen in relevamiento.relevamientomensualeros_set.all %}
+                                    <tr>
+                                        <td scope="row">
+                                            {% if relevmen.mensuCantidad %}
+                                                {{ relevmen.mensuCantidad }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if relevmen.sueldo %}
+                                              <input type="text" class="input-sueldos" value="{{ relevmen.sueldo }}" disabled>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 {% endif %}
 
@@ -643,10 +666,38 @@
 
 <script>
 
-    //$(document).ready(function () {
+            $(document).ready(function () {
+                console.log("hola")
+                $(".input-sueldos").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0,removeMaskOnSubmit:true});
+                var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS');
+                for (var i = 0; i < totalDetalleOpe; i++) {
 
 
-    ///});
+                $('#id_planificacionope_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
+
+                var select = $('#id_planificacionope_set-' + (i) + '-DELETE')[0].checked;
+
+                if ($('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked")) {
+                    //$('td.delete input[type=checkbox]').hide()
+                    $(deleteLink).closest('.leaveForm-'+i).hide();
+
+                }
+                }
+                var totalEspeciales = $('#id_planificacionesp_set-TOTAL_FORMS');
+                for (var i = 0; i < totalEspeciales; i++) {
+
+                $('#id_planificacionesp_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
+
+                var select = $('#id_planificacionesp_set-' + (i) + '-DELETE')[0].checked;
+
+
+                if ($('#id_planificacionesp_set-' + (i) + '-DELETE').is(":checked")) {
+                    //$('td.delete input[type=checkbox]').hide()
+                    $(deleteLink).closest('.leaveFormEsp-'+i).hide();
+
+                }
+                }
+            });
 
     function pad(d) {
         return (d < 10) ? '0' + d.toString() : d.toString();
@@ -728,7 +779,7 @@
         //var totalFormsField = $('#id_planificacionope_set-TOTAL_FORMS');
         //var totalForms = parseInt(totalFormsField.val()) - 1;
         //totalFormsField.val(totalForms);
-        var confirmar = confirm("Está seguro que desea eliminar el detalle?");
+        var confirmar = confirm("Está seguro que desea eliminar el registro?");
         if (confirmar == true) 
         {
         $(deleteLink).closest('.leaveForm').hide();
@@ -754,7 +805,7 @@
     }
 
     function deleteLeaveRowEsp(deleteLink, id) {
-        var confirmar = confirm("Está seguro que desea eliminar la profunda?");
+        var confirmar = confirm("Está seguro que desea eliminar el registro?");
         if (confirmar == true) 
         {
         $(deleteLink).closest('.leaveFormEsp').hide();
@@ -763,6 +814,7 @@
         }
 
     }
+
 
     function RecalcularHoras() {
         var total_horas_detalle = '00:00';
@@ -774,107 +826,109 @@
         //var i = obtenerNumeroId(this.id);
 
         for (i = 0; i < totalDet; i++) {
-            if (!($('#leaveForm-' + i).css('display') == 'none')) {
-                //Esta condicion controla las filas eliminadas
+                    if (!($('#leaveForm-' + i).css('display') == 'none')) {
+                        //Esta condicion controla las filas eliminadas
 
-                var temp_NocturnasDecimal = 0;
+                        var temp_NocturnasDecimal = 0;
 
-                //Cantidad y corte
-                var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
-                var corte = $('#id_planificacionope_set-' + i + '-corte').val();
+                        //Cantidad y corte
+                        var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
+                        var corte = $('#id_planificacionope_set-' + i + '-corte').val();
 
-                //Semana
-                var lun = $('#id_planificacionope_set-' + i + '-lun').prop("checked");
-                var mar = $('#id_planificacionope_set-' + i + '-mar').prop("checked");
-                var mie = $('#id_planificacionope_set-' + i + '-mie').prop("checked");
-                var jue = $('#id_planificacionope_set-' + i + '-jue').prop("checked");
-                var vie = $('#id_planificacionope_set-' + i + '-vie').prop("checked");
-                var sab = $('#id_planificacionope_set-' + i + '-sab').prop("checked");
-                var dom = $('#id_planificacionope_set-' + i + '-dom').prop("checked");
-                var fer = $('#id_planificacionope_set-' + i + '-fer').prop("checked");
+                        //Semana
+                        var lun = $('#id_planificacionope_set-' + i + '-lun').prop("checked");
+                        var mar = $('#id_planificacionope_set-' + i + '-mar').prop("checked");
+                        var mie = $('#id_planificacionope_set-' + i + '-mie').prop("checked");
+                        var jue = $('#id_planificacionope_set-' + i + '-jue').prop("checked");
+                        var vie = $('#id_planificacionope_set-' + i + '-vie').prop("checked");
+                        var sab = $('#id_planificacionope_set-' + i + '-sab').prop("checked");
+                        var dom = $('#id_planificacionope_set-' + i + '-dom').prop("checked");
+                        var fer = $('#id_planificacionope_set-' + i + '-fer').prop("checked");
 
-                //Entrada y salida
-                var Ent = $('#id_planificacionope_set-' + i + '-ent').val();
-                var Sal = $('#id_planificacionope_set-' + i + '-sal').val();
+                        //Entrada y salida
+                        var Ent = $('#id_planificacionope_set-' + i + '-ent').val();
+                        var Sal = $('#id_planificacionope_set-' + i + '-sal').val();
 
-                //Contamos la cantidad de dias
-                var TotalDias = 0;
-                if (lun) {
-                    TotalDias += 1;
-                }
-                if (mar) {
-                    TotalDias += 1;
-                }
-                if (mie) {
-                    TotalDias += 1;
-                }
-                if (jue) {
-                    TotalDias += 1;
-                }
-                if (vie) {
-                    TotalDias += 1;
-                }
-                if (sab) {
-                    TotalDias += 1;
-                }
-                if (dom) {
-                    TotalDias += 1;
-                }
-                if (fer) {
-                    TotalDias += 1;
-                }
+                        //Contamos la cantidad de dias
+                        var TotalDias = 0;
+                        if (lun) {
+                            TotalDias += 1;
+                        }
+                        if (mar) {
+                            TotalDias += 1;
+                        }
+                        if (mie) {
+                            TotalDias += 1;
+                        }
+                        if (jue) {
+                            TotalDias += 1;
+                        }
+                        if (vie) {
+                            TotalDias += 1;
+                        }
+                        if (sab) {
+                            TotalDias += 1;
+                        }
+                        if (dom) {
+                            TotalDias += 1;
+                        }
+                        if (fer) {
+                            TotalDias += 1;
+                        }
 
-                //Determinamos las horas diurnas y nocturnas
-                var limiteInferior = '06:00';
-                var limiteSuperior = '20:00';
+                        //Determinamos las horas diurnas y nocturnas
+                        var limiteInferior = '06:00';
+                        var limiteSuperior = '20:00';
 
-                if (mayor(limiteInferior, Ent) == 1) {
-                    var subLimiteSuperior = limiteInferior;
+                        if (mayor(limiteInferior, Ent) == 1) {
+                            var subLimiteSuperior = limiteInferior;
 
-                    if (mayor(subLimiteSuperior, Sal) == 1) {
-                        subLimiteSuperior = Sal;
+                            if (mayor(subLimiteSuperior, Sal) == 1) {
+                                subLimiteSuperior = Sal;
+                            }
+
+                            temp_NocturnasDecimal = (timeInHours(subLimiteSuperior) - timeInHours(Ent)) * TotalDias * cantOpe;
+                            total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
+
+                        } else if (mayor(Sal, limiteSuperior) == 1) {
+                            var subLimiteInferior = limiteSuperior;
+
+                            if (mayor(Ent, subLimiteInferior) == 1) {
+                                subLimiteInferior = Ent;
+                            }
+
+                            temp_NocturnasDecimal = (timeInHours(Sal) - timeInHours(subLimiteInferior)) * TotalDias * cantOpe;
+                            total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
+                        }
+
+                        var totalFilaDecimal = Math.round((timeInHours(Sal) - timeInHours(Ent)) * 100) / 100;
+                        var totalFila = hoursToString(totalFilaDecimal);
+                        var corteDecimal = 0;
+                        if (corte != '') {
+                            corteDecimal = timeInHours(corte);
+                        }
+
+                        //Calcular el total de fila
+                        var totalHorasFilas = (totalFilaDecimal - corteDecimal) * TotalDias * cantOpe;
+
+                        //Calculamos el total de las horas diurnas de la fila
+                        var total_horas_diurnas_fila = hoursToString(totalHorasFilas - temp_NocturnasDecimal);
+
+
+                        //Seteamos el total de la fila
+                        if (!(isNaN(totalHorasFilas))) {
+                            $('#id_planificacionope_set-' + i + '-total').val(hoursToString(totalHorasFilas));
+                        }
+
+
+                        if (total_horas_diurnas_fila && total_horas_diurnas_fila != 'NaN:NaN') {
+                            total_horas_diurnas = SumHrMin(total_horas_diurnas, total_horas_diurnas_fila);
+                        }
                     }
 
-                    temp_NocturnasDecimal = (timeInHours(subLimiteSuperior) - timeInHours(Ent)) * TotalDias * cantOpe;
-                    total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
-
-                } else if (mayor(Sal, limiteSuperior) == 1) {
-                    var subLimiteInferior = limiteSuperior;
-
-                    if (mayor(Ent, subLimiteInferior) == 1) {
-                        subLimiteInferior = Ent;
-                    }
-
-                    temp_NocturnasDecimal = (timeInHours(Sal) - timeInHours(subLimiteInferior)) * TotalDias * cantOpe;
-                    total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
-                }
-
-                var totalFilaDecimal = Math.round((timeInHours(Sal) - timeInHours(Ent)) * 100) / 100;
-                var totalFila = hoursToString(totalFilaDecimal);
-                var corteDecimal = 0;
-                if (corte != '') {
-                    corteDecimal = timeInHours(corte);
-                }
-
-                //Calcular el total de fila
-                var totalHorasFilas = (totalFilaDecimal - corteDecimal) * TotalDias * cantOpe;
-
-                //Calculamos el total de las horas diurnas de la fila
-                var total_horas_diurnas_fila = hoursToString(totalHorasFilas - temp_NocturnasDecimal);
+                } //Fin del for
 
 
-                //Seteamos el total de la fila
-                if (!(isNaN(totalHorasFilas))) {
-                    $('#id_planificacionope_set-' + i + '-total').val(hoursToString(totalHorasFilas));
-                }
-
-
-                if (total_horas_diurnas_fila && total_horas_diurnas_fila != 'NaN:NaN') {
-                    total_horas_diurnas = SumHrMin(total_horas_diurnas, total_horas_diurnas_fila);
-                }
-            }
-
-        } //Fin del for
 
 
         if (total_horas_diurnas && total_horas_diurnas != 'NaN:NaN') {

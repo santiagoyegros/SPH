@@ -304,15 +304,59 @@ def guardarAsignacion(request):
             print ("asign error",AsigDetFormSet.errors)
             if form.is_valid() and AsigDetFormSet.is_valid():
                 """Se guarda completo"""
-                
-                form.save()
-                AsigDetFormSet.save()
-                print("FORM:")
-                print(form.cleaned_data)
-                print("Asig det:")
-                print(AsigDetFormSet.cleaned_data)
-
+                emptyvar={}
+                asg_det="[ "
+                print("ENTRE A VALID")
+                for item in  AsigDetFormSet.cleaned_data:
+                    if item != emptyvar:
+                        asg_det+=str({
+                                'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
+                                'DELETE':str(item.get('DELETE')),
+                                'asignacionCab_id': str(asignacion.id),
+                                'operario':str(item.get('operario')),
+                                'operario_id':str(str(item.get('operario').id) if item.get('operario') is not None else 'None'),
+                                'fechaInicio':str(item.get('fechaInicio')),
+                                'fechaFin':str(item.get('fechaFin')),
+                                'lunEnt':str(item.get('lunEnt')),
+                                'lunSal':str(item.get('lunSal')),
+                                'marEnt':str(item.get('marEnt')),
+                                'marSal':str(item.get('marSal')),
+                                'mieEnt':str(item.get('mieEnt')),
+                                'mieSal':str(item.get('mieSal')),
+                                'jueEnt':str(item.get('jueEnt')),
+                                'jueSal':str(item.get('jueSal')),
+                                'vieEnt':str(item.get('vieEnt')),
+                                'vieSal':str(item.get('vieSal')),
+                                'sabEnt':str(item.get('sabEnt')),
+                                'sabSal':str(item.get('sabSal')),
+                                'domEnt':str(item.get('domEnt')),
+                                'domSal':str(item.get('domSal')),
+                                'perfil':str(item.get('perfil')),
+                                'perfil_id': 0 if item.get('perfil') is None else item.get('perfil').id,
+                                'supervisor':str(item.get('supervisor')),
+                                'totalHoras':str(item.get('totalHoras'))
+                                })
+                        asg_det+=","
+                asg_det=asg_det[:-1]
+                asg_det+="]"
+                conn= connection.cursor()
+                params=(
+                    str({'id': str(asignacion.id),'puntoServicio_id':str(puntoSer.id),
+                        'totalasignado':str(form.cleaned_data.get('totalasignado')),
+                        'comentario':str(form.cleaned_data.get('comentario'))}).replace('\'','\"'),
+                    asg_det.replace('\'','\"'),
+                    0)
+                print(params)
+                conn.execute('asignacion_manager %s,%s,%s ',params)
+                result = conn.fetchone()[0]
+                conn.close()
+                print(result)
+                if result==0:
+                    messages.success(request, 'Se guardo correctamente la asignacion')
+                else:
+                    messages.warning(request, 'No se pudo guardar los cambios')    
                 """Se guarda dia libre"""
+
                 i=0
                 for form in AsigDetFormSet:
                     operario=None
@@ -343,7 +387,9 @@ def guardarAsignacion(request):
                 content_type="application/json"
                 )
             else:
-
+                print("ENTRE A INVAAALID")
+                print(form.errors)
+                print(AsigDetFormSet.errors)
                 response['dato']=[]
                 response['codigo']=1
                 response['mensaje']="Ocurrió un error al guardar la asignacion, favor verifique los datos"
@@ -352,7 +398,7 @@ def guardarAsignacion(request):
                 content_type="application/json"
                 )
         except Exception as err:
-            transaction.rollback()
+            #transaction.rollback()
             logging.getLogger("error_logger").error('Ocurrió un error al listar los dias libres: {0}'.format(err))
             response['codigo']=1
             response['dato']=[]
@@ -426,7 +472,8 @@ def Asignacion_create(request, id_puntoServicio=None):
     """formDiaLibre = DiaLibreForm(request.POST)"""
 
     if asignacion == None:
-        asignacion = AsignacionCab()
+        asignacion = AsignacionCab(puntoServicio=puntoSer)
+        asignacion.save()
     
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
 
@@ -767,6 +814,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                 #AsigDetFormSet.save()
                 emptyvar={}
                 asg_det="[ "
+                print("ENTRE A VALID")
                 for item in  AsigDetFormSet.cleaned_data:
                     if item != emptyvar:
                         asg_det+=str({
@@ -816,6 +864,9 @@ def Asignacion_create(request, id_puntoServicio=None):
                     messages.warning(request, 'No se pudo guardar los cambios')    
                 return redirect('Operarios:asignacion_list')
             else:
+                print("ENTRE A INVAAALID")
+                print(form.errors)
+                print(AsigDetFormSet.errors)
                 messages.warning(request, 'No se pudo guardar los cambios')
 
     else:

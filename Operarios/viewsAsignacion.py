@@ -332,6 +332,7 @@ def guardarAsignacion(request):
                                 'domEnt':str(item.get('domEnt')),
                                 'domSal':str(item.get('domSal')),
                                 'perfil':str(item.get('perfil')),
+                                'perfil_id': 0 if item.get('perfil') is None else item.get('perfil').id,
                                 'supervisor':str(item.get('supervisor')),
                                 'totalHoras':str(item.get('totalHoras'))
                                 })

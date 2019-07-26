@@ -575,7 +575,8 @@ def Planificacion_create(request, id_puntoServicio=None):
     initial = []
     CantlimpiezaProf = 1
     if planificacion == None:
-        planificacion = PlanificacionCab(puntoServicio=puntoSer,cantidad=0)
+        planificacion = PlanificacionCab(puntoServicio=puntoSer,cantidad=0,
+            cantHoras = "00:00",cantHorasNoc="00:00",cantHorasEsp="00:00")
         planificacion.save()
         '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
         print (relevamiento.relevamientoesp_set.all())

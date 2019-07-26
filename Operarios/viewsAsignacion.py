@@ -308,7 +308,7 @@ def guardarAsignacion(request):
                 asg_det="[ "
                 print("ENTRE A VALID")
                 for item in  AsigDetFormSet.cleaned_data:
-                    if item != emptyvar:
+                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
                         asg_det+=str({
                                 'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
                                 'DELETE':str(item.get('DELETE')),
@@ -378,7 +378,6 @@ def guardarAsignacion(request):
                         else:
                             print("ya existe operario con dia ")
                     i=i+1
-                messages.success(request, 'Se guardo correctamente la asignacion')
                 response['dato']=[]
                 response['codigo']=0
                 response['mensaje']="Asignacion guardada con éxito"

@@ -479,9 +479,7 @@
                                             {{ form.total }}
                                         </div>
                                         <div class=" text-center p-0">
-                                            <input type="checkbox" style="display:none"
-                                                name="planificacionope_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
-                                                id="{{ form.DELETE.id_for_label }}" />
+                                            {{form.DELETE}}
                                             <a href="javascript:void(0);"
                                                 onclick="deleteLeaveRow(this, {{ forloop.counter0 }});"
                                                 class="remove muted pull-right">
@@ -551,9 +549,7 @@
                                         {{ form.cantHoras }}
                                     </div>
                                     <div class="col-1 text-center">
-                                        <input type="checkbox" style="display:none"
-                                            name="planificacionesp_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
-                                            id="{{ form.DELETE.id_for_label }}" />
+                                        {{form.DELETE}}
                                         <a href="javascript:void(0);"
                                             onclick="deleteLeaveRowEsp(this, {{ forloop.counter0 }});"
                                             class="remove muted pull-right">
@@ -669,31 +665,30 @@
             $(document).ready(function () {
                 console.log("hola")
                 $(".input-sueldos").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0,removeMaskOnSubmit:true});
-                var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS');
+                var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS').val();
+                console.log("Total operarios ", totalDetalleOpe);
                 for (var i = 0; i < totalDetalleOpe; i++) {
 
 
                 $('#id_planificacionope_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
 
-                var select = $('#id_planificacionope_set-' + (i) + '-DELETE')[0].checked;
+                console.log("Checkeado ", $('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked"));
 
                 if ($('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked")) {
                     //$('td.delete input[type=checkbox]').hide()
-                    $(deleteLink).closest('.leaveForm-'+i).hide();
-
+                    $('#leaveForm-' + i).hide()
                 }
                 }
-                var totalEspeciales = $('#id_planificacionesp_set-TOTAL_FORMS');
+                var totalEspeciales = $('#id_planificacionesp_set-TOTAL_FORMS').val();
                 for (var i = 0; i < totalEspeciales; i++) {
 
                 $('#id_planificacionesp_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
 
-                var select = $('#id_planificacionesp_set-' + (i) + '-DELETE')[0].checked;
-
 
                 if ($('#id_planificacionesp_set-' + (i) + '-DELETE').is(":checked")) {
                     //$('td.delete input[type=checkbox]').hide()
-                    $(deleteLink).closest('.leaveFormEsp-'+i).hide();
+                    $('#leaveFormEsp-' + i).hide()
+                    
 
                 }
                 }
@@ -779,13 +774,19 @@
         //var totalFormsField = $('#id_planificacionope_set-TOTAL_FORMS');
         //var totalForms = parseInt(totalFormsField.val()) - 1;
         //totalFormsField.val(totalForms);
+        
         var confirmar = confirm("Está seguro que desea eliminar el registro?");
         if (confirmar == true) 
         {
-        $(deleteLink).closest('.leaveForm').hide();
-
+            
+            $('#leaveForm-' + id).css('display:none !important')
+        
+        
         $("#id_planificacionope_set-" + id + "-DELETE").prop("checked", true);
         RecalcularHoras();
+        document.getElementById('action').value = 'add_det';
+            //hacemos submit
+        document.getElementById('formulario').submit();
         }
         // for formset functionality to work properly, need to update all existing form ids so they're sequential
         //updateFormElementIndices('leaveForm');
@@ -808,9 +809,12 @@
         var confirmar = confirm("Está seguro que desea eliminar el registro?");
         if (confirmar == true) 
         {
-        $(deleteLink).closest('.leaveFormEsp').hide();
+        $(deleteLink).closest('.leaveFormEsp'+id).hide();
         $("#id_planificacionesp_set-" + id + "-DELETE").prop("checked", true);
         RecalcularHorasEsp();
+        document.getElementById('action').value = 'add_det';
+            //hacemos submit
+        document.getElementById('formulario').submit();
         }
 
     }

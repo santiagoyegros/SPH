@@ -268,8 +268,9 @@ def Relevamiento(request, id_puntoServicio=None):
     cabeceraNueva=False
     if relevamiento == None:
         primeraVez = 1
-        relevamiento = RelevamientoCab()
+        relevamiento = RelevamientoCab(puntoServicio=puntoSer,cantAprendices=0,cantidad=0)
         cabeceraNueva=True
+        relevamiento.save()
 
        
     relevamientoDetFormSet =        inlineformset_factory(RelevamientoCab, RelevamientoDet, form=RelevamientoDetForm, extra=1, can_delete=True)
@@ -574,7 +575,8 @@ def Planificacion_create(request, id_puntoServicio=None):
     initial = []
     CantlimpiezaProf = 1
     if planificacion == None:
-        planificacion = PlanificacionCab()
+        planificacion = PlanificacionCab(puntoServicio=puntoSer,cantidad=0)
+        planificacion.save()
         '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
         print (relevamiento.relevamientoesp_set.all())
         if relevamiento:

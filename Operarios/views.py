@@ -345,7 +345,7 @@ def Relevamiento(request, id_puntoServicio=None):
 
                 rel_men="[ "
                 for item in relevamMenFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
+                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ) and not ((item.get('mensuCantidad') is None or item.get('mensuCantidad') <=0 ) and ( item.get('sueldo') is None or item.get('sueldo') <=0) ):
                         rel_men+=str({
                             'relevamientocab_id':str(relevamiento.id),
                             'mensuCantidad':(0 if item.get('mensuCantidad') is None else str(item.get('mensuCantidad'))),
@@ -408,7 +408,7 @@ def Relevamiento(request, id_puntoServicio=None):
                 print(result)
                 conn.close()
                 
-                if result==0:
+                if result >=0:
                     messages.success(request, 'Servicio aprobado creado correctamente.')
                     return redirect('Operarios:servicio_aprobado')
                 else:

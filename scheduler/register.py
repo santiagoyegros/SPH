@@ -13,5 +13,5 @@ def listener_error(event):
 def start():
     scheduler = BackgroundScheduler()
     scheduler.add_listener(listener_error, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
-    scheduler.add_job(ausencias.registrar_ausencia, 'interval', minutes=10)
+    scheduler.add_job(ausencias.registrar_ausencia, 'interval', minutes=15)
     scheduler.start()

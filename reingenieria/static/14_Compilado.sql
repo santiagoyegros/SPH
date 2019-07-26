@@ -1,7 +1,7 @@
-ALTER DATABASE reigenieria SET COMPATIBILITY_LEVEL =  130 go
+ALTER DATABASE reingenieria SET COMPATIBILITY_LEVEL =  130 go
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 25/7/2019 15:12:55 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 25/7/2019 22:23:01 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -37,15 +37,14 @@ AS
 		END
 		if  @p_id is not NULL
 		begin
-			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientomensualeros where vactual_id=@p_id;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientocab where vactual_id=@p_relevamientocab_id;
 			if @tmp1_vregistro is NULL
 			begin
 				set @tmp1_vregistro=1;
 				INSERT INTO dbo.Operarios_histrelevamientomensualeros(sueldo,mensuCantidad,relevamientocab_id,vfechaInicio,vfechaFin,vregistro,vactual_id)
 				select sueldo,mensuCantidad,relevamientocab_id,@fechaCambio,NULL,@tmp1_vregistro,@p_id from dbo.Operarios_relevamientomensualeros where id=@p_id;
 			end
-			update dbo.Operarios_histrelevamientomensualeros set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
-			set @tmp1_vregistro=@tmp1_vregistro+1;
+			update dbo.Operarios_histrelevamientomensualeros set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro-1;
 			if @delete is not NULL and @delete='False'
 			begin
 				INSERT INTO dbo.Operarios_histrelevamientomensualeros(sueldo,mensuCantidad,relevamientocab_id,vfechaInicio,vfechaFin,vregistro,vactual_id)
@@ -66,7 +65,7 @@ AS
 
 		if  @p_id is NULL
 		begin
-			set @tmp1_vregistro=1;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientocab where vactual_id=@p_relevamientocab_id;
 			INSERT INTO dbo.Operarios_relevamientomensualeros(sueldo,mensuCantidad,relevamientocab_id)
 			select @p_sueldo,@p_mensuCantidad,@p_relevamientocab_id;
 			set @p_id=SCOPE_IDENTITY();
@@ -81,7 +80,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientoesp_trg]    Script Date: 25/7/2019 15:12:52 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientoesp_trg]    Script Date: 25/7/2019 22:23:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -128,15 +127,14 @@ AS
 		END
 		if  @p_id is not NULL
 		begin
-			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientoesp where vactual_id=@p_id;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientocab where vactual_id=@p_relevamientocab_id;
 			if @tmp1_vregistro is NULL
 			begin
 				set @tmp1_vregistro=1;
 				INSERT INTO dbo.Operarios_histrelevamientoesp(cantHoras,tipo_id,relevamientocab_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
 				select cantHoras,tipo_id,relevamientocab_id,frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id from dbo.Operarios_relevamientoesp where id=@p_id;
 			end
-			update dbo.Operarios_histrelevamientoesp set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
-			set @tmp1_vregistro=@tmp1_vregistro+1;
+			update dbo.Operarios_histrelevamientoesp set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro-1;
 			if @delete is not NULL and @delete='False'
 			begin
 				INSERT INTO dbo.Operarios_histrelevamientoesp(cantHoras,tipo_id,relevamientocab_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
@@ -158,7 +156,7 @@ AS
 
 		if  @p_id is NULL
 		begin
-			set @tmp1_vregistro=1;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientocab where vactual_id=@p_relevamientocab_id;
 			INSERT INTO dbo.Operarios_relevamientoesp(cantHoras,tipo_id,relevamientocab_id,frecuencia)
 			select @p_cantHoras,@p_tipo_id,@p_relevamientocab_id,@p_frecuencia;
 			set @p_id=SCOPE_IDENTITY();
@@ -169,12 +167,14 @@ AS
 		Select @retorno as resultado;
 END
 
+
+
 GO
 
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientodet_trg]    Script Date: 25/7/2019 15:12:50 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientodet_trg]    Script Date: 25/7/2019 22:23:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -249,7 +249,7 @@ AS
 
 		if  @p_id is not NULL
 		begin
-			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientodet where vactual_id=@p_id;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientocab where vactual_id=@p_relevamientocab_id;
 			if @tmp1_vregistro is NULL
 			begin
 				set @tmp1_vregistro=@retorno-1;
@@ -257,8 +257,7 @@ AS
 				select tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden,@fechaCambio,NULL,@tmp1_vregistro,@p_id from dbo.Operarios_relevamientodet where id=@p_id;
 			end
 			
-			update dbo.Operarios_histrelevamientodet set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
-			set @tmp1_vregistro=@tmp1_vregistro+1;
+			update dbo.Operarios_histrelevamientodet set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro-1;
 			if @delete is not NULL and @delete='False'
 			begin
 				INSERT INTO dbo.Operarios_histrelevamientodet(tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden,vfechaInicio,vfechaFin,vregistro,vactual_id)
@@ -278,7 +277,7 @@ AS
 
 		if  @p_id is NULL
 		begin
-			set @tmp1_vregistro=@retorno;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientocab where vactual_id=@p_relevamientocab_id;
 			INSERT INTO dbo.Operarios_relevamientodet(tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden)
 			select @p_tipoServPart_id,@p_relevamientocab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@p_orden;
 			set @p_id=SCOPE_IDENTITY();
@@ -293,7 +292,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamientocupohoras_trg]    Script Date: 25/7/2019 15:12:47 ******/
+/****** Object:  StoredProcedure [dbo].[relevamientocupohoras_trg]    Script Date: 25/7/2019 22:24:18 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -341,15 +340,14 @@ AS
 		END
 		if  @p_id is not NULL
 		begin
-			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientocupohoras where vactual_id=@p_id;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientocab where vactual_id=@p_relevamientocab_id;
 			if @tmp1_vregistro is NULL
 			begin
 				set @tmp1_vregistro=1;
 				INSERT INTO dbo.Operarios_histrelevamientocupohoras(cantHoras,tipoHora_id,relevamientocab_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
 				select cantHoras,tipoHora_id,relevamientocab_id,frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id from dbo.Operarios_relevamientocupohoras where id=@p_id;
 			end
-			update dbo.Operarios_histrelevamientocupohoras set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
-			set @tmp1_vregistro=@tmp1_vregistro+1;
+			update dbo.Operarios_histrelevamientocupohoras set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro-1;
 			if @delete is not NULL and @delete='False'
 			begin
 				INSERT INTO dbo.Operarios_histrelevamientocupohoras(cantHoras,tipoHora_id,relevamientocab_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
@@ -371,7 +369,7 @@ AS
 
 		if  @p_id is NULL
 		begin
-			set @tmp1_vregistro=1;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histrelevamientocab where vactual_id=@p_relevamientocab_id;
 			INSERT INTO dbo.Operarios_relevamientocupohoras(cantHoras,tipoHora_id,relevamientocab_id,frecuencia)
 			select @p_cantHoras,@p_tipoHora_id,@p_relevamientocab_id,@p_frecuencia;
 			set @p_id=SCOPE_IDENTITY();
@@ -388,7 +386,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamiento_manager]    Script Date: 25/7/2019 15:12:42 ******/
+/****** Object:  StoredProcedure [dbo].[relevamiento_manager]    Script Date: 25/7/2019 21:36:41 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -504,7 +502,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamiento_cab_trg]    Script Date: 25/7/2019 15:12:38 ******/
+/****** Object:  StoredProcedure [dbo].[relevamiento_cab_trg]    Script Date: 25/7/2019 21:36:39 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -628,7 +626,7 @@ END
 
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[puntoServicio_trigger]    Script Date: 24/7/2019 12:04:35 ******/
 SET ANSI_NULLS ON
@@ -739,7 +737,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[planificacionope_trg]    Script Date: 25/7/2019 11:34:42 ******/
+/****** Object:  StoredProcedure [dbo].[planificacionope_trg]    Script Date: 25/7/2019 22:25:16 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -808,15 +806,14 @@ AS
 		END
 		if  @p_id is not NULL
 		begin
-			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histplanificacionope where vactual_id=@p_id;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histplanificacioncab where vactual_id=@p_planificacionCab_id;
 			if @tmp1_vregistro is NULL
 			begin
 				set @tmp1_vregistro=1;
 				INSERT INTO dbo.Operarios_histplanificacionope(total,corte,planificacionCab_id,especialista_id,sal,ent,fer,dom,sab,vie,jue,mie,mar,lun,cantidad,vfechaInicio,vfechaFin,vregistro,vactual_id)
 				select total,corte,planificacionCab_id,especialista_id,sal,ent,fer,dom,sab,vie,jue,mie,mar,lun,cantidad,@fechaCambio,NULL,@tmp1_vregistro,@p_id from dbo.Operarios_planificacionope where id=@p_id;
 			end
-			update dbo.Operarios_histplanificacionope set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
-			set @tmp1_vregistro=@tmp1_vregistro+1;
+			update dbo.Operarios_histplanificacionope set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro-1;
 			if @delete is not NULL and @delete='False'
 			begin
 				INSERT INTO dbo.Operarios_histplanificacionope(total,corte,planificacionCab_id,especialista_id,sal,ent,fer,dom,sab,vie,jue,mie,mar,lun,cantidad,vfechaInicio,vfechaFin,vregistro,vactual_id)
@@ -834,7 +831,7 @@ AS
 		end
 		if  @p_id is NULL
 		begin
-			set @tmp1_vregistro=1;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histplanificacioncab where vactual_id=@p_planificacionCab_id;
 			INSERT INTO dbo.Operarios_planificacionope(total,corte,planificacionCab_id,especialista_id,sal,ent,fer,dom,sab,vie,jue,mie,mar,lun,cantidad)
 			select @p_total,@p_corte,@p_planificacionCab_id,@p_especialista_id,@p_sal,@p_ent,@p_fer,@p_dom,@p_sab,@p_vie,@p_jue,@p_mie,@p_mar,@p_lun,@p_cantidad;
 			set @p_id=SCOPE_IDENTITY();
@@ -852,7 +849,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[planificacionesp_trg]    Script Date: 25/7/2019 11:34:38 ******/
+/****** Object:  StoredProcedure [dbo].[planificacionesp_trg]    Script Date: 25/7/2019 22:25:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -912,15 +909,14 @@ AS
 		END
 		if  @p_id is not NULL
 		begin
-			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histplanificacionesp where vactual_id=@p_id;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histplanificacioncab where vactual_id=@p_planificacionCab_id;
 			if @tmp1_vregistro is NULL
 			begin
 				set @tmp1_vregistro=1;
 				INSERT INTO dbo.Operarios_histplanificacionesp(fechaLimpProf,cantHoras,tipo_id,planificacionCab_id,especialista_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
 				select fechaLimpProf,cantHoras,tipo_id,planificacionCab_id,especialista_id,frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id from dbo.Operarios_planificacionesp where id=@p_id;
 			end
-			update dbo.Operarios_histplanificacionesp set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
-			set @tmp1_vregistro=@tmp1_vregistro+1;
+			update dbo.Operarios_histplanificacionesp set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro-1;
 			if @delete is not NULL and @delete='False'
 			begin
 				INSERT INTO dbo.Operarios_histplanificacionesp(fechaLimpProf,cantHoras,tipo_id,planificacionCab_id,especialista_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
@@ -942,7 +938,7 @@ AS
 		end
 		if  @p_id is NULL
 		begin
-			set @tmp1_vregistro=1;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histplanificacioncab where vactual_id=@p_planificacionCab_id;
 			INSERT INTO dbo.Operarios_planificacionesp(fechaLimpProf,cantHoras,tipo_id,planificacionCab_id,especialista_id,frecuencia)
 			select @p_fechaLimpProf,@p_cantHoras,@p_tipo_id,@p_planificacionCab_id,@p_especialista_id,@p_frecuencia;
 			set @p_id=SCOPE_IDENTITY();
@@ -954,7 +950,7 @@ AS
 END
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[planificacioncab_trg]    Script Date: 24/7/2019 12:04:28 ******/
 SET ANSI_NULLS ON
@@ -1032,7 +1028,7 @@ END
 
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[planificacion_manager]    Script Date: 24/7/2019 12:04:24 ******/
 SET ANSI_NULLS ON
@@ -1113,7 +1109,7 @@ END
 
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[asig_jefeyfiscal_trigger]    Script Date: 25/7/2019 10:05:05 ******/
 SET ANSI_NULLS ON
@@ -1165,7 +1161,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[asignaciondet_trg]    Script Date: 25/7/2019 11:34:25 ******/
+/****** Object:  StoredProcedure [dbo].[asignaciondet_trg]    Script Date: 25/7/2019 22:26:31 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1235,15 +1231,14 @@ AS
 		END
 		if  @p_id is not NULL
 		begin
-			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histasignaciondet where vactual_id=@p_id;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histasignacioncab where vactual_id=@p_asignacionCab_id
 			if @tmp1_vregistro is NULL
 			begin
 				set @tmp1_vregistro=1;
 				INSERT INTO dbo.Operarios_histasignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,vfechaInicio,vfechaFin,vregistro,vactual_id)
 				select perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,@fechaCambio,NULL,@tmp1_vregistro,@p_id from dbo.Operarios_asignaciondet where id=@p_id;
 			end
-			update dbo.Operarios_histasignaciondet set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
-			set @tmp1_vregistro=@tmp1_vregistro+1;
+			update dbo.Operarios_histasignaciondet set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro-1;
 			if @delete is not NULL and @delete='False'
 			begin
 				INSERT INTO dbo.Operarios_histasignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,vfechaInicio,vfechaFin,vregistro,vactual_id)
@@ -1266,7 +1261,7 @@ AS
 		end
 		if  @p_id is NULL
 		begin
-			set @tmp1_vregistro=1;
+			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histasignacioncab where vactual_id=@p_asignacionCab_id;
 			INSERT INTO dbo.Operarios_asignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt)
 			select @p_perfil_id,@p_supervisor,@p_fechaFin,@p_totalHoras,@p_fechaInicio,@p_operario_id,@p_asignacionCab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt;
 			set @p_id=SCOPE_IDENTITY();
@@ -1279,7 +1274,7 @@ END
 
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[asignacioncab_trg]    Script Date: 24/7/2019 12:04:12 ******/
 SET ANSI_NULLS ON
@@ -1347,7 +1342,7 @@ END
 
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[asignacion_manager]    Script Date: 24/7/2019 12:04:10 ******/
 SET ANSI_NULLS ON
@@ -1409,7 +1404,7 @@ END
 
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[asigjefefiscal_trg]    Script Date: 24/7/2019 12:04:03 ******/
 SET ANSI_NULLS ON
@@ -1474,7 +1469,7 @@ END
 GO
 
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[asigjefefisc_des_trigger]    Script Date: 24/7/2019 15:43:59 ******/
 SET ANSI_NULLS ON
@@ -1515,7 +1510,7 @@ END
 
 
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[asigfiscalpuntoservicio_trg]    Script Date: 24/7/2019 12:03:58 ******/
 SET ANSI_NULLS ON
@@ -1580,7 +1575,7 @@ END
 
 go
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[asig_psfiscal_trigger]    Script Date: 24/7/2019 15:44:21 ******/
 SET ANSI_NULLS ON
@@ -1631,7 +1626,7 @@ AS
 END	
 go
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[asigpsfisc_des_trigger]    Script Date: 24/7/2019 15:44:45 ******/
 SET ANSI_NULLS ON
@@ -1670,3 +1665,194 @@ AS
 
 END	
 go
+
+USE [reingenieria]
+GO
+/****** Object:  Trigger [dbo].[trg_vrs_Operarios_hd_asignacioncab]    Script Date: 25/7/2019 19:46:55 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER TRIGGER [dbo].[trg_vrs_Operarios_hd_asignacioncab]
+ON [dbo].[Operarios_asignacioncab]
+AFTER UPDATE
+AS
+	BEGIN
+	DECLARE @TransactionName varchar(20) = 'Transactional';
+	BEGIN TRAN @TransactionName 
+	BEGIN TRY
+		DECLARE @nuevoID int;
+		DECLARE @dp1_id int;
+		DECLARE @dp0_id int;
+		DECLARE @reasignar bit;
+		DECLARE @od_reasignar bit;
+
+		DECLARE cursorIt CURSOR LOCAL FOR SELECT id,reAsignar FROM inserted
+		OPEN cursorIt
+		FETCH NEXT FROM cursorIt INTO @dp1_id,@reasignar
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			DECLARE cursorDt CURSOR LOCAL FOR SELECT id,reAsignar FROM deleted where id=@dp1_id
+			OPEN cursorDt
+			FETCH NEXT FROM cursorDt INTO @dp0_id,@od_reasignar 
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				if @reasignar=@od_reasignar
+				BEGIN
+					update dbo.Operarios_asignacioncab set reAsignar='False' where id=@dp1_id;
+				END
+            FETCH NEXT FROM cursorDt INTO @dp0_id,@od_reasignar
+			END
+		FETCH NEXT FROM cursorIt INTO @dp1_id,@reasignar
+		END
+	COMMIT TRANSACTION @TransactionName;
+	END TRY 
+	BEGIN CATCH 
+		print error_message();
+		SELECT ERROR_MESSAGE() AS ErrorMessage
+		ROLLBACK TRAN @TransactionName; 
+	END CATCH
+	CLOSE cursorIt
+	DEALLOCATE cursorIt
+END	
+
+
+
+
+USE [reingenieria]
+GO
+/****** Object:  Trigger [dbo].[trg_vrs_Operarios_hd_planificacioncab]    Script Date: 25/7/2019 19:46:40 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER TRIGGER [dbo].[trg_vrs_Operarios_hd_planificacioncab]
+ON [dbo].[Operarios_planificacioncab]
+AFTER UPDATE
+AS
+	BEGIN
+	DECLARE @TransactionName varchar(20) = 'Transactional';
+	BEGIN TRAN @TransactionName 
+	BEGIN TRY
+		DECLARE @nuevoID int;
+		DECLARE @dp2_id int;
+        DECLARE @replanificar bit;
+		DECLARE @dp0_id int;
+        DECLARE @od_replanificar bit;
+
+
+		DECLARE cursorIt CURSOR LOCAL FOR SELECT id,rePlanificar FROM inserted
+		OPEN cursorIt
+		FETCH NEXT FROM cursorIt INTO @dp2_id,@replanificar
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			DECLARE cursorDt CURSOR LOCAL FOR SELECT id,rePlanificar FROM deleted where id=@dp2_id
+			OPEN cursorDt
+			FETCH NEXT FROM cursorDt INTO @dp0_id,@od_replanificar
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				if @od_replanificar=@replanificar
+				BEGIN
+					update dbo.Operarios_planificacioncab set rePlanificar='False' where id=@dp0_id;
+				END
+            FETCH NEXT FROM cursorDt INTO @dp0_id,@od_replanificar
+			END
+		   FETCH NEXT FROM cursorIt INTO @dp2_id,@replanificar
+		END
+		COMMIT TRANSACTION @TransactionName;
+	END TRY 
+	BEGIN CATCH 
+		print error_message();
+		SELECT ERROR_MESSAGE() AS ErrorMessage
+		ROLLBACK TRAN @TransactionName; 
+	END CATCH
+	CLOSE cursorIt
+	DEALLOCATE cursorIt
+END	
+
+
+USE [reingenieria]
+GO
+/****** Object:  Trigger [dbo].[trg_header_relevamientocab]    Script Date: 25/7/2019 19:46:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER TRIGGER [dbo].[trg_header_relevamientocab]
+ON [dbo].[Operarios_relevamientocab]
+AFTER UPDATE
+AS
+	BEGIN
+	DECLARE @TransactionName varchar(20) = 'Transactional';
+	BEGIN TRAN @TransactionName 
+	BEGIN TRY
+		DECLARE @nuevoID int;
+		DECLARE @dp0_id int;
+		DECLARE @dp0_fecha datetime2 ;
+		DECLARE @dp0_cantidad int;
+		DECLARE @dp0_puntoServicio_id int;
+		DECLARE @dp0_cantidadHrTotal nvarchar(max);
+		DECLARE @dp0_cantidadHrEsp nvarchar(max);
+		DECLARE @dp0_fechaInicio date;
+		DECLARE @dp0_usuario_id int;
+		DECLARE @dp0_tipoSalario_id int;
+		DECLARE @dp0_comentario nvarchar(max);
+		DECLARE @dp0_cantAprendices int;
+		DECLARE @dp0_estado nvarchar(max);
+		DECLARE @dp0_fechaFin date;
+        DECLARE @dp1_id int;
+		DECLARE @dp1_fecha datetime2 ;
+		DECLARE @dp1_cantidad int;
+		DECLARE @dp1_puntoServicio_id int;
+		DECLARE @dp1_cantidadHrTotal nvarchar(max);
+		DECLARE @dp1_cantidadHrEsp nvarchar(max);
+		DECLARE @dp1_fechaInicio date;
+		DECLARE @dp1_usuario_id int;
+		DECLARE @dp1_tipoSalario_id int;
+		DECLARE @dp1_comentario nvarchar(max);
+		DECLARE @dp1_cantAprendices int;
+		DECLARE @dp1_estado nvarchar(max);
+		DECLARE @dp1_fechaFin date;
+		DECLARE @tmp_fechaIncio datetime;
+		DECLARE @tmp_fechaFin datetime;
+		DECLARE @tmp_vregistro int;
+		DECLARE @tmp1_vregistro int;
+
+		DECLARE cursorIt CURSOR LOCAL FOR SELECT * FROM inserted
+		OPEN cursorIt
+		FETCH NEXT FROM cursorIt INTO @dp0_id,@dp0_fecha,@dp0_cantidad,@dp0_puntoServicio_id,@dp0_cantidadHrTotal,@dp0_cantidadHrEsp,@dp0_fechaInicio,@dp0_usuario_id,@dp0_tipoSalario_id,@dp0_comentario,@dp0_cantAprendices,@dp0_estado,@dp0_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			DECLARE cursorDt CURSOR LOCAL FOR SELECT * FROM deleted where id=@dp0_id
+            OPEN cursorDt
+            FETCH NEXT FROM cursorDt INTO @dp1_id,@dp1_fecha,@dp1_cantidad,@dp1_puntoServicio_id,@dp1_cantidadHrTotal,@dp1_cantidadHrEsp,@dp1_fechaInicio,@dp1_usuario_id,@dp1_tipoSalario_id,@dp1_comentario,@dp1_cantAprendices,@dp1_estado,@dp1_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+            WHILE @@FETCH_STATUS = 0
+            BEGIN
+                if(@dp1_cantidadHrTotal!=@dp0_cantidadHrTotal)
+                BEGIN
+				
+					ALTER TABLE [dbo].[Operarios_planificacioncab] DISABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
+					ALTER TABLE [dbo].[Operarios_asignacioncab]    DISABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
+                    UPDATE [dbo].[Operarios_planificacioncab] set rePlanificar='True' where puntoServicio_id=@dp0_puntoServicio_id and vfechaFin is NULL;
+                    UPDATE [dbo].[Operarios_asignacioncab] set reAsignar='True' where puntoServicio_id=@dp0_puntoServicio_id and vfechaFin is NULL;
+					ALTER TABLE [dbo].[Operarios_planificacioncab] ENABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
+					ALTER TABLE [dbo].[Operarios_asignacioncab]    ENABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
+                END
+            FETCH NEXT FROM cursorDt INTO @dp1_id,@dp1_fecha,@dp1_cantidad,@dp1_puntoServicio_id,@dp1_cantidadHrTotal,@dp1_cantidadHrEsp,@dp1_fechaInicio,@dp1_usuario_id,@dp1_tipoSalario_id,@dp1_comentario,@dp1_cantAprendices,@dp1_estado,@dp1_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+            END		
+		FETCH NEXT FROM cursorIt INTO @dp0_id,@dp0_fecha,@dp0_cantidad,@dp0_puntoServicio_id,@dp0_cantidadHrTotal,@dp0_cantidadHrEsp,@dp0_fechaInicio,@dp0_usuario_id,@dp0_tipoSalario_id,@dp0_comentario,@dp0_cantAprendices,@dp0_estado,@dp0_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+		END
+
+		COMMIT TRANSACTION @TransactionName;
+	END TRY 
+	BEGIN CATCH 
+		print error_message();
+		SELECT ERROR_MESSAGE() AS ErrorMessage
+		ROLLBACK TRAN @TransactionName; 
+	END CATCH
+	CLOSE cursorIt
+	DEALLOCATE cursorIt
+END	

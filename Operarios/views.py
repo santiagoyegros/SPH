@@ -396,7 +396,7 @@ def Relevamiento(request, id_puntoServicio=None):
                         'cantidadHrEsp': 0 if form.cleaned_data.get('cantidadHrEsp') is None else form.cleaned_data.get('cantidadHrEsp'),
                         'fechaInicio':str(form.cleaned_data.get('fechaInicio')),
                         'tipoSalario':str(form.cleaned_data.get('tipoSalario')),
-                        'comentario': str(form.cleaned_data.get('comentario'))}).replace('\'','\"'),
+                        'comentario': "" if form.cleaned_data.get('comentario') is None else str(form.cleaned_data.get('comentario'))}).replace('\'','\"'),
                     rel_det.replace('\'','\"'),
                     rel_men.replace('\'','\"'),
                     rel_cup.replace('\'','\"'), 

@@ -408,7 +408,7 @@ def Relevamiento(request, id_puntoServicio=None):
                 print(result)
                 conn.close()
                 
-                if result >=0:
+                if result ==0:
                     messages.success(request, 'Servicio aprobado creado correctamente.')
                     return redirect('Operarios:servicio_aprobado')
                 else:

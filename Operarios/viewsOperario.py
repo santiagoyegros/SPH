@@ -307,7 +307,17 @@ def Operarios_update(request, pk):
     else:
         form = OperarioForm(request.POST, instance=operarios)
         print(request.POST)
-        if form.is_valid():
+        #SE CONTROLA DIA LIBRE
+        is_valid = True
+        if not request.POST.get('diaInicio'):
+            is_valid=False
+        if not request.POST.get('diaFin'):
+            is_valid=False
+        if not request.POST.get('horaInicio'):
+            is_valid=False
+        if not request.POST.get('horaFin'):
+            is_valid=False
+        if form.is_valid() and is_valid:
             new_operario= form.save()
             if DiaLibre.objects.filter(id_operario=new_operario.id).exists():
                 diaLibre = DiaLibre.objects.get(id_operario=new_operario.id)

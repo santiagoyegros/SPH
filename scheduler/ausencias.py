@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import datetime
 from django.db.models import Q
 from Operarios.models import Alertas,User,Motivos, AsignacionesProcesadas,AlertaResp, HorasNoProcesadas,Operario,AsignacionDet
-
+from django.conf import settings
 
 def getHoraDia(id_dia,id_asignacion):
     asignacionDet = AsignacionDet.objects.get(id = id_asignacion )
@@ -70,6 +70,8 @@ def registrar_ausencia():
                                 #a.save()
                                 
                                 """Se guarda la respuesta de la alerta"""
+                                if Parametros.objects.filter(parametro = 'MAX_CALLCENTER'):
+                                    print(settings.GLOBAL_SETTINGS)
                                 usuario = User.objects.get(id = 1710)
                                 motivo = Motivos.objects.get(descripcion= "Gestión Automática")
                                 alerta_respuesta = AlertaResp(

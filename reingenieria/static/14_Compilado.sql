@@ -735,9 +735,9 @@ AS
 END	
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
-/****** Object:  StoredProcedure [dbo].[planificacionope_trg]    Script Date: 25/7/2019 22:25:16 ******/
+/****** Object:  StoredProcedure [dbo].[planificacionope_trg]    Script Date: 26/7/2019 11:06:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -847,9 +847,9 @@ END
 GO
 
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
-/****** Object:  StoredProcedure [dbo].[planificacionesp_trg]    Script Date: 25/7/2019 22:25:49 ******/
+/****** Object:  StoredProcedure [dbo].[planificacionesp_trg]    Script Date: 26/7/2019 11:06:36 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -952,7 +952,7 @@ GO
 
 USE [reingenieria]
 GO
-/****** Object:  StoredProcedure [dbo].[planificacioncab_trg]    Script Date: 24/7/2019 12:04:28 ******/
+/****** Object:  StoredProcedure [dbo].[planificacioncab_trg]    Script Date: 26/7/2019 11:06:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1159,9 +1159,9 @@ AS
 END	
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
-/****** Object:  StoredProcedure [dbo].[asignaciondet_trg]    Script Date: 25/7/2019 22:26:31 ******/
+/****** Object:  StoredProcedure [dbo].[asignaciondet_trg]    Script Date: 26/7/2019 11:06:44 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1186,6 +1186,7 @@ AS
 		DECLARE @p_totalHoras nvarchar(max);		
 		DECLARE @p_operario_id int;
 		DECLARE @p_asignacionCab_id int;
+
 		DECLARE @p_domSal time;
 		DECLARE @p_domEnt time;
 		DECLARE @p_sabSal time;
@@ -1202,29 +1203,29 @@ AS
 		DECLARE @p_lunEnt time;
 		DECLARE @p_id int;
 
-		select @p_perfil_id="value" from OpenJson(@json) where "key"='perfil_id';
+		select @p_perfil_id="value" from OpenJson(@json) where "key"='perfil_id' and "value"!='None';
 		select @p_supervisor="value" from OpenJson(@json) where "key"='supervisor';
-		select @p_fechaFin="value" from OpenJson(@json) where "key"='fechaFin';
 		select @delete="value" from OpenJson(@json) where "key"='DELETE';
-		select @p_totalHoras="value" from OpenJson(@json) where "key"='totalHoras';
-		select @p_fechaInicio="value" from OpenJson(@json) where "key"='fechaInicio';
-		select @p_operario_id="value" from OpenJson(@json) where "key"='operario_id';
+		select @p_totalHoras="value" from OpenJson(@json) where "key"='totalHoras' and "value"!='None' and "value"!='00';
+		select @p_fechaInicio=cast("value" as date) from OpenJson(@json) where "key"='fechaInicio' and "value"!='None';
+		select @p_fechaFin=cast("value" as date) from OpenJson(@json) where "key"='fechaFin' and "value"!='None';	
+		select @p_operario_id="value" from OpenJson(@json) where "key"='operario_id' and "value"!='None';
 		select @p_asignacionCab_id="value" from OpenJson(@json) where "key"='asignacionCab_id';
-		select @p_domSal="value" from OpenJson(@json) where "key"='domSal';
-		select @p_domEnt="value" from OpenJson(@json) where "key"='domEnt';
-		select @p_sabSal="value" from OpenJson(@json) where "key"='sabSal';
-		select @p_sabEnt="value" from OpenJson(@json) where "key"='sabEnt';
-		select @p_vieSal="value" from OpenJson(@json) where "key"='vieSal';
-		select @p_vieEnt="value" from OpenJson(@json) where "key"='vieEnt';
-		select @p_jueSal="value" from OpenJson(@json) where "key"='jueSal';
-		select @p_jueEnt="value" from OpenJson(@json) where "key"='jueEnt';
-		select @p_mieSal="value" from OpenJson(@json) where "key"='mieSal';
-		select @p_mieEnt="value" from OpenJson(@json) where "key"='mieEnt';
-		select @p_marSal="value" from OpenJson(@json) where "key"='marSal';
-		select @p_marEnt="value" from OpenJson(@json) where "key"='marEnt';
-		select @p_lunSal="value" from OpenJson(@json) where "key"='lunSal';
-		select @p_lunEnt="value" from OpenJson(@json) where "key"='lunEnt';
-		select @p_id="value" from OpenJson(@json) where "key"='id';
+		select @p_domSal=cast("value" as time) from OpenJson(@json) where "key"='domSal' and "value"!='None';
+		select @p_domEnt=cast("value" as time) from OpenJson(@json) where "key"='domEnt' and "value"!='None';
+		select @p_sabSal=cast("value" as time) from OpenJson(@json) where "key"='sabSal' and "value"!='None';
+		select @p_sabEnt=cast("value" as time) from OpenJson(@json) where "key"='sabEnt' and "value"!='None';
+		select @p_vieSal=cast("value" as time) from OpenJson(@json) where "key"='vieSal' and "value"!='None';
+		select @p_vieEnt=cast("value" as time) from OpenJson(@json) where "key"='vieEnt' and "value"!='None';
+		select @p_jueSal=cast("value" as time) from OpenJson(@json) where "key"='jueSal' and "value"!='None';
+		select @p_jueEnt=cast("value" as time) from OpenJson(@json) where "key"='jueEnt' and "value"!='None';
+		select @p_mieSal=cast("value" as time) from OpenJson(@json) where "key"='mieSal' and "value"!='None';
+		select @p_mieEnt=cast("value" as time) from OpenJson(@json) where "key"='mieEnt' and "value"!='None';
+		select @p_marSal=cast("value" as time) from OpenJson(@json) where "key"='marSal' and "value"!='None';
+		select @p_marEnt=cast("value" as time) from OpenJson(@json) where "key"='marEnt' and "value"!='None';
+		select @p_lunSal=cast("value" as time) from OpenJson(@json) where "key"='lunSal' and "value"!='None';
+		select @p_lunEnt=cast("value" as time) from OpenJson(@json) where "key"='lunEnt' and "value"!='None';
+		select @p_id="value" from OpenJson(@json) where "key"='id' and "value"!='None';
 		if  @p_id_tmp  is not NULL and @p_id_tmp!='None'
 		BEGIN
 			select @p_id=cast(@p_id_tmp as int)
@@ -1249,9 +1250,9 @@ AS
 
 			if @delete is not NULL and @delete='True'
 			begin
-                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
-				INSERT INTO dbo.Operarios_histasignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,vfechaInicio,vfechaFin,vregistro,vactual_id)
-				select @p_perfil_id,@p_supervisor,@p_fechaFin,@p_totalHoras,@p_fechaInicio,@p_operario_id,@p_asignacionCab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@fechaCambio,NULL,@tmp1_vregistro,@p_id
+        -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
+				--INSERT INTO dbo.Operarios_histasignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,vfechaInicio,vfechaFin,vregistro,vactual_id)
+				--select @p_perfil_id,@p_supervisor,@p_fechaFin,@p_totalHoras,@p_fechaInicio,@p_operario_id,@p_asignacionCab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@fechaCambio,NULL,@tmp1_vregistro,@p_id
 			    update Operarios_histasignaciondet set vactual_id=NULL where vactual_id=@p_id;
 				delete from dbo.Operarios_asignaciondet  where id=@p_id;
 			end
@@ -1276,7 +1277,7 @@ GO
 
 USE [reingenieria]
 GO
-/****** Object:  StoredProcedure [dbo].[asignacioncab_trg]    Script Date: 24/7/2019 12:04:12 ******/
+/****** Object:  StoredProcedure [dbo].[asignacioncab_trg]    Script Date: 26/7/2019 11:06:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1302,15 +1303,17 @@ AS
 		DECLARE @p_fechaUltimaMod datetime2 ;
 		DECLARE @p_id int;
 
-		select @p_usuario_id="value" from OpenJson(@json) where "key"='usuario_id';
-		select @p_puntoServicio_id="value" from OpenJson(@json) where "key"='puntoServicio_id';
-		select @p_totalasignado="value" from OpenJson(@json) where "key"='totalasignado';
-		select @p_fechaUltimaMod="value" from OpenJson(@json) where "key"='fechaUltimaMod';
-		select @p_id="value" from OpenJson(@json) where "key"='id';
-		if  @p_id_tmp  is not NULL and @p_id_tmp!='None'
-		BEGIN
-			select @p_id=cast(@p_id_tmp as int)
-		END
+		select @p_usuario_id="value" from OpenJson(@json) where "key"='usuario_id' and "value"!='None';
+		select @p_puntoServicio_id="value" from OpenJson(@json) where "key"='puntoServicio_id' and "value"!='None';
+		select @p_totalasignado="value" from OpenJson(@json) where "key"='totalasignado' and "value"!='None';
+		select @p_fechaUltimaMod="value" from OpenJson(@json) where "key"='fechaUltimaMod' and  "value"!='None' and "value"!='00';
+
+		if @p_fechaUltimaMod is NULL
+		begin
+			set @p_fechaUltimaMod = CURRENT_TIMESTAMP
+		end
+
+		select @p_id=cast("value" as int) from OpenJson(@json) where "key"='id' and "value"!='None';
 		if  @p_id is not NULL
 		begin
 			select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histasignacioncab where vactual_id=@p_id;

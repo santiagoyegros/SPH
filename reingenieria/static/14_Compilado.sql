@@ -1669,7 +1669,7 @@ AS
 END	
 go
 
-USE [reingenieria]
+USE [aireinegnier]
 GO
 /****** Object:  Trigger [dbo].[trg_vrs_Operarios_hd_asignacioncab]    Script Date: 25/7/2019 19:46:55 ******/
 SET ANSI_NULLS ON
@@ -1722,8 +1722,8 @@ END
 
 
 
-
-USE [reingenieria]
+go
+USE [aireinegnier]
 GO
 /****** Object:  Trigger [dbo].[trg_vrs_Operarios_hd_planificacioncab]    Script Date: 25/7/2019 19:46:40 ******/
 SET ANSI_NULLS ON
@@ -1775,8 +1775,9 @@ AS
 	DEALLOCATE cursorIt
 END	
 
+go
 
-USE [reingenieria]
+USE [aireinegnier]
 GO
 /****** Object:  Trigger [dbo].[trg_header_relevamientocab]    Script Date: 25/7/2019 19:46:30 ******/
 SET ANSI_NULLS ON
@@ -1792,61 +1793,35 @@ AS
 	DECLARE @TransactionName varchar(20) = 'Transactional';
 	BEGIN TRAN @TransactionName 
 	BEGIN TRY
-		DECLARE @nuevoID int;
+		
 		DECLARE @dp0_id int;
-		DECLARE @dp0_fecha datetime2 ;
-		DECLARE @dp0_cantidad int;
-		DECLARE @dp0_puntoServicio_id int;
 		DECLARE @dp0_cantidadHrTotal nvarchar(max);
-		DECLARE @dp0_cantidadHrEsp nvarchar(max);
-		DECLARE @dp0_fechaInicio date;
-		DECLARE @dp0_usuario_id int;
-		DECLARE @dp0_tipoSalario_id int;
-		DECLARE @dp0_comentario nvarchar(max);
-		DECLARE @dp0_cantAprendices int;
-		DECLARE @dp0_estado nvarchar(max);
-		DECLARE @dp0_fechaFin date;
-        DECLARE @dp1_id int;
-		DECLARE @dp1_fecha datetime2 ;
-		DECLARE @dp1_cantidad int;
-		DECLARE @dp1_puntoServicio_id int;
+		declare @dp0_puntoServicio_id int;
 		DECLARE @dp1_cantidadHrTotal nvarchar(max);
-		DECLARE @dp1_cantidadHrEsp nvarchar(max);
-		DECLARE @dp1_fechaInicio date;
-		DECLARE @dp1_usuario_id int;
-		DECLARE @dp1_tipoSalario_id int;
-		DECLARE @dp1_comentario nvarchar(max);
-		DECLARE @dp1_cantAprendices int;
-		DECLARE @dp1_estado nvarchar(max);
-		DECLARE @dp1_fechaFin date;
-		DECLARE @tmp_fechaIncio datetime;
-		DECLARE @tmp_fechaFin datetime;
-		DECLARE @tmp_vregistro int;
-		DECLARE @tmp1_vregistro int;
 
-		DECLARE cursorIt CURSOR LOCAL FOR SELECT * FROM inserted
+		DECLARE cursorIt CURSOR LOCAL FOR SELECT id,cantidadHrTotal,puntoServicio_id FROM inserted
 		OPEN cursorIt
-		FETCH NEXT FROM cursorIt INTO @dp0_id,@dp0_fecha,@dp0_cantidad,@dp0_puntoServicio_id,@dp0_cantidadHrTotal,@dp0_cantidadHrEsp,@dp0_fechaInicio,@dp0_usuario_id,@dp0_tipoSalario_id,@dp0_comentario,@dp0_cantAprendices,@dp0_estado,@dp0_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+		FETCH NEXT FROM cursorIt INTO @dp0_id,@dp0_cantidadHrTotal,@dp0_puntoServicio_id
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			DECLARE cursorDt CURSOR LOCAL FOR SELECT * FROM deleted where id=@dp0_id
+			DECLARE cursorDt CURSOR LOCAL FOR SELECT cantidadHrTotal FROM deleted where id=@dp0_id
             OPEN cursorDt
-            FETCH NEXT FROM cursorDt INTO @dp1_id,@dp1_fecha,@dp1_cantidad,@dp1_puntoServicio_id,@dp1_cantidadHrTotal,@dp1_cantidadHrEsp,@dp1_fechaInicio,@dp1_usuario_id,@dp1_tipoSalario_id,@dp1_comentario,@dp1_cantAprendices,@dp1_estado,@dp1_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+            FETCH NEXT FROM cursorDt INTO @dp1_cantidadHrTotal
             WHILE @@FETCH_STATUS = 0
             BEGIN
                 if(@dp1_cantidadHrTotal!=@dp0_cantidadHrTotal)
                 BEGIN
 				
-					ALTER TABLE [dbo].[Operarios_planificacioncab] DISABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
-					ALTER TABLE [dbo].[Operarios_asignacioncab]    DISABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
-                    UPDATE [dbo].[Operarios_planificacioncab] set rePlanificar='True' where puntoServicio_id=@dp0_puntoServicio_id and vfechaFin is NULL;
-                    UPDATE [dbo].[Operarios_asignacioncab] set reAsignar='True' where puntoServicio_id=@dp0_puntoServicio_id and vfechaFin is NULL;
-					ALTER TABLE [dbo].[Operarios_planificacioncab] ENABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
-					ALTER TABLE [dbo].[Operarios_asignacioncab]    ENABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
+					ALTER  TABLE [dbo].[Operarios_planificacioncab] DISABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
+					ALTER  TABLE [dbo].[Operarios_asignacioncab]    DISABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
+                    UPDATE [dbo].[Operarios_planificacioncab] set rePlanificar='True' where puntoServicio_id=@dp0_puntoServicio_id;
+                    UPDATE [dbo].[Operarios_asignacioncab] set reAsignar='True' where puntoServicio_id=@dp0_puntoServicio_id;
+					ALTER  TABLE [dbo].[Operarios_planificacioncab] ENABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
+					ALTER  TABLE [dbo].[Operarios_asignacioncab]    ENABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
                 END
-            FETCH NEXT FROM cursorDt INTO @dp1_id,@dp1_fecha,@dp1_cantidad,@dp1_puntoServicio_id,@dp1_cantidadHrTotal,@dp1_cantidadHrEsp,@dp1_fechaInicio,@dp1_usuario_id,@dp1_tipoSalario_id,@dp1_comentario,@dp1_cantAprendices,@dp1_estado,@dp1_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+            FETCH NEXT FROM cursorDt INTO @dp1_cantidadHrTotal
             END		
-		FETCH NEXT FROM cursorIt INTO @dp0_id,@dp0_fecha,@dp0_cantidad,@dp0_puntoServicio_id,@dp0_cantidadHrTotal,@dp0_cantidadHrEsp,@dp0_fechaInicio,@dp0_usuario_id,@dp0_tipoSalario_id,@dp0_comentario,@dp0_cantAprendices,@dp0_estado,@dp0_fechaFin,@tmp_fechaIncio,@tmp_fechaFin,@tmp1_vregistro
+		FETCH NEXT FROM cursorIt INTO @dp0_id,@dp0_cantidadHrTotal,@dp0_puntoServicio_id
 		END
 
 		COMMIT TRANSACTION @TransactionName;

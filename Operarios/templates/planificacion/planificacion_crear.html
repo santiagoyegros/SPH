@@ -827,12 +827,11 @@
 
         var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS');
         var totalDet = parseInt(totalDetalleOpe.val(), 10);
+        var totalOperarios=0;
         //var i = obtenerNumeroId(this.id);
-
         for (i = 0; i < totalDet; i++) {
-                    if (!($('#leaveForm-' + i).css('display') == 'none')) {
+                    if (!($('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked"))) {
                         //Esta condicion controla las filas eliminadas
-
                         var temp_NocturnasDecimal = 0;
 
                         //Cantidad y corte
@@ -928,25 +927,24 @@
                         if (total_horas_diurnas_fila && total_horas_diurnas_fila != 'NaN:NaN') {
                             total_horas_diurnas = SumHrMin(total_horas_diurnas, total_horas_diurnas_fila);
                         }
+                        if (parseInt(cantOpe) > 0) {
+                        totalOperarios += parseInt(cantOpe);
+                        }
                     }
+                    if (total_horas_diurnas && total_horas_diurnas != 'NaN:NaN') {
+                    $('#id_cantHoras').val(total_horas_diurnas);
+                    }
+                    if (total_horas_nocturnas && total_horas_nocturnas != 'NaN:NaN') {
+                    $('#id_cantHorasNoc').val(total_horas_nocturnas);
+                    }
+                    var totalHrs=SumHrMin(total_horas_diurnas,total_horas_nocturnas)            
+                    $('#sumAll_1').val(totalHrs);
+                    $('#id_cantidad').val(totalOperarios);
+                    
+                    
 
-                } //Fin del for
-
-
-
-
-        if (total_horas_diurnas && total_horas_diurnas != 'NaN:NaN') {
-            $('#id_cantHoras').val(total_horas_diurnas);
-        }
-
-        if (total_horas_nocturnas && total_horas_nocturnas != 'NaN:NaN') {
-            $('#id_cantHorasNoc').val(total_horas_nocturnas);
         }
         
-        var totalHoras = SumHrMin(total_horas_diurnas, total_horas_nocturnas);
-        var aux=$('#id_cantHorasEsp').val();
-        $('#sumAll_1').val(totalHoras);
-        $('#sumAll_2').val(aux)
 
     }
 
@@ -955,40 +953,41 @@
         //aqui empieza el calculo del total de horas especiales
         var total = '00:00';
         var subtotal = 0;
-        $('input[id$="-cantHoras"]').each(function () {
-            if ($(this).val() !== '') {
-
-                var n = obtenerNumeroId(this.id);
-
-                if (!($('#leaveFormEsp-' + n).css('display') == 'none')) {
-                    var frecuencia = $('#id_planificacionesp_set-' + n + '-frecuencia').val();
-
-                    if (frecuencia == 'DIA') {
-                        total = SumHrMin(hoursToString(timeInHours($(this).val()) * 30), total);
-                    } else if (frecuencia == 'SEM') {
-                        total = SumHrMin(hoursToString(timeInHours($(this).val()) * 4), total);
-                    } else if (frecuencia == 'MEN') {
-                        total = SumHrMin(hoursToString(timeInHours($(this).val())), total);
-                    } else if (frecuencia == 'BIM') {
-                        total = SumHrMin(hoursToString(timeInHours($(this).val()) / 2), total);
-                    } else if (frecuencia == 'TRI') {
-                        total = SumHrMin(hoursToString(timeInHours($(this).val()) / 3), total);
-                    } else if (frecuencia == 'CUA') {
-                        total = SumHrMin(hoursToString(timeInHours($(this).val()) / 4), total);
-                    } else if (frecuencia == 'SEL') {
-                        total = SumHrMin(hoursToString(timeInHours($(this).val()) / 6), total);
-                    } else if (frecuencia == 'ANU') {
-                        total = SumHrMin(hoursToString(timeInHours($(this).val()) / 12), total);
+        var totalEsp = $('#id_planificacionesp_set-TOTAL_FORMS');
+        var totEsp = parseInt(totalEsp.val(), 10);
+        
+        for (i = 0; i < totEsp; i++) 
+        {
+                if (!($('#id_planificacionesp_set-' + (i) + '-DELETE').is(":checked"))) 
+                {
+                    var frecuencia = $('#id_planificacionesp_set-' + i + '-frecuencia').val();
+                    if($('#id_planificacionesp_set-' + i + '-cantHoras').val())
+                    {
+                        if (frecuencia == 'DIA') {
+                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val())* 30),total);
+                        } else if (frecuencia == 'SEM') {
+                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()  ) * 4), total);
+                        } else if (frecuencia == 'MEN') {
+                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) ), total);
+                        } else if (frecuencia == 'BIM') {
+                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 2), total);
+                        } else if (frecuencia == 'TRI') {
+                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 3), total);
+                        } else if (frecuencia == 'CUA') {
+                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 4), total);
+                        } else if (frecuencia == 'SEL') {
+                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 6), total);
+                        } else if (frecuencia == 'ANU') {
+                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 12), total);
+                        }
                     }
-                    //total += Number($(this).val());
                 }
-            }
-        })
+        }
+            $('#sumAll_2').val(total);
+            $('#id_cantHorasEsp').val(total);
+        
         //total = hoursToString(total);
-        $('#sumAll_2').val(total);
-        //aqui empieza el calculo del total de horas
-
-        $('#id_cantHorasEsp').val(total);
+  
 
     }
 
@@ -1071,15 +1070,15 @@
         var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS');
         var totalDet = parseInt(totalDetalleOpe.val(), 10);
 
-        for (i = 0; i < totalDet; i++) {
-            var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
-            if (parseInt(cantOpe) > 0) {
-                total += parseInt(cantOpe);
+        // for (i = 0; i < totalDet; i++) {
+        //     var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
+        //     if (parseInt(cantOpe) > 0) {
+        //         total += parseInt(cantOpe);
 
-            }
-        }
+        //     }
+        // }
         //Cargamos el total en input de cantidad de operarios
-        $('#id_cantidad').val(total);
+       // $('#id_cantidad').val(total);
     });
 
 

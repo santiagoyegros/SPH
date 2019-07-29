@@ -31,7 +31,11 @@ def generarCantidadCupos():
     asignacion=AsignacionDet.objects.all()
     asigCabecera= AsignacionCab.objects.all()
     mes ='0'+ str(datetime.datetime.now().month)
+    fechaActual=datetime.date.today()
     anho=str(datetime.datetime.now().year)
+    fechaInicio=anho+'-'+mes+'-01'
+    print(fechaActual)
+    print(fechaInicio)
     cantLunes=""
     cantMartes=""
     cantMiercoles=""
@@ -39,6 +43,7 @@ def generarCantidadCupos():
     cantViernes=""
     cantSabado=""
     cantDomingo=""
+    #Se obtienen las cantidades de dias para el mes y año actual
     if(CalendarioCupo.objects.filter(Q(mes=mes )  & Q(anho=anho)).exists()):
         calendario=CalendarioCupo.objects.get(Q(mes=mes))
         cantLunes=calendario.cantLunes
@@ -48,6 +53,7 @@ def generarCantidadCupos():
         cantViernes=calendario.cantViernes
         cantSabado=calendario.cantSabado
         cantDomingo=calendario.cantDomingo
+    #Se recorre todos los puntos de servicios existentes
     for p in puntosServ:
         date_time_str ='00:00:00'
         totalCalculado='00:00:00'
@@ -58,90 +64,87 @@ def generarCantidadCupos():
         HrsViernes=datetime.datetime.strptime(date_time_str, '%H:%M:%S')
         HrsSabados=datetime.datetime.strptime(date_time_str, '%H:%M:%S')
         HrsDomingo=datetime.datetime.strptime(date_time_str, '%H:%M:%S')
+        #Se itera sobre la tabla asignacion cabecera
         for asigCab in asigCabecera:
+            #Se comprueba que exista una cabecera con el punto de servicio actual
             if asigCab.puntoServicio_id == p.id:
                 for a in asignacion:
                     if a.asignacionCab_id==asigCab.id:
-                        if(a.lunEnt!=None and a.lunSal!=None ):
-                            difLunes=datetime.datetime.combine(datetime.date.today(), a.lunSal) - datetime.datetime.combine(datetime.date.today(), a.lunEnt)
-                            Hrslunes=Hrslunes + difLunes
-                        if(a.marEnt!=None and a.marSal!=None ):
-                            difMartes=datetime.datetime.combine(datetime.date.today(), a.marSal) - datetime.datetime.combine(datetime.date.today(), a.marEnt)
-                            HrsMartes=HrsMartes + difMartes
-                        if(a.mieEnt!=None and a.mieSal!=None ):
-                            difMier=datetime.datetime.combine(datetime.date.today(), a.mieSal) - datetime.datetime.combine(datetime.date.today(), a.mieEnt)
-                            HrsMiercoles=HrsMiercoles + difMier
-                        if(a.jueEnt!=None and a.jueSal!=None ):
-                            difJue=datetime.datetime.combine(datetime.date.today(), a.jueSal) - datetime.datetime.combine(datetime.date.today(), a.jueEnt)
-                            HrsJueves=HrsJueves + difJue
-                        if(a.vieEnt!=None and a.vieSal!=None ):
-                            difVier=datetime.datetime.combine(datetime.date.today(), a.vieSal) - datetime.datetime.combine(datetime.date.today(), a.vieEnt)
-                            HrsViernes=HrsViernes + difVier
-                        if(a.sabEnt!=None and a.sabSal!=None ):
-                            difSab=datetime.datetime.combine(datetime.date.today(), a.sabSal) - datetime.datetime.combine(datetime.date.today(), a.sabEnt)
-                            HrsSabados=HrsSabados + difSab
-                        if(a.domEnt!=None and a.domSal!=None ):
-                            difVDom=datetime.datetime.combine(datetime.date.today(), a.domSal) - datetime.datetime.combine(datetime.date.today(), a.domEnt)
-                            HrsDomingo=HrsDomingo + difVDom
+                        #Se verifica que la asignacion este vigente
+                        if( (fechaInicio >= str(a.fechaInicio) and (a.fechaFin==None or fechaActual <= a.fechaFin ) ) or 
+                        (fechaInicio <= str(a.fechaInicio) and (a.fechaFin==None or fechaActual >= a.fechaFin  ))):
+                            if(a.lunEnt!=None and a.lunSal!=None ):
+                                difLunes=datetime.datetime.combine(datetime.date.today(), a.lunSal) - datetime.datetime.combine(datetime.date.today(), a.lunEnt)
+                                Hrslunes=Hrslunes + difLunes
+                            if(a.marEnt!=None and a.marSal!=None ):
+                                difMartes=datetime.datetime.combine(datetime.date.today(), a.marSal) - datetime.datetime.combine(datetime.date.today(), a.marEnt)
+                                HrsMartes=HrsMartes + difMartes
+                            if(a.mieEnt!=None and a.mieSal!=None ):
+                                difMier=datetime.datetime.combine(datetime.date.today(), a.mieSal) - datetime.datetime.combine(datetime.date.today(), a.mieEnt)
+                                HrsMiercoles=HrsMiercoles + difMier
+                            if(a.jueEnt!=None and a.jueSal!=None ):
+                                difJue=datetime.datetime.combine(datetime.date.today(), a.jueSal) - datetime.datetime.combine(datetime.date.today(), a.jueEnt)
+                                HrsJueves=HrsJueves + difJue
+                            if(a.vieEnt!=None and a.vieSal!=None ):
+                                difVier=datetime.datetime.combine(datetime.date.today(), a.vieSal) - datetime.datetime.combine(datetime.date.today(), a.vieEnt)
+                                HrsViernes=HrsViernes + difVier
+                            if(a.sabEnt!=None and a.sabSal!=None ):
+                                difSab=datetime.datetime.combine(datetime.date.today(), a.sabSal) - datetime.datetime.combine(datetime.date.today(), a.sabEnt)
+                                HrsSabados=HrsSabados + difSab
+                            if(a.domEnt!=None and a.domSal!=None ):
+                                difVDom=datetime.datetime.combine(datetime.date.today(), a.domSal) - datetime.datetime.combine(datetime.date.today(), a.domEnt)
+                                HrsDomingo=HrsDomingo + difVDom
         if(str(Hrslunes.time())!=date_time_str or str(HrsMartes.time())!=date_time_str or str(HrsMiercoles.time()) !=date_time_str or
           str(HrsJueves.time())!=date_time_str or str(HrsViernes.time()) !=date_time_str or str(HrsSabados.time())!=date_time_str
           or str(HrsDomingo.time()) !=date_time_str):
             print("\nEste es el punto de servicio:")
             print(p.NombrePServicio)
-            print(p.id)
+            print("id: "+str(p.id))
             print("Mes: "+mes)
             print("año: "+anho)
         if(str(Hrslunes.time())!=date_time_str):
             totalLunes='00:00:00'
             for i in range(0,cantLunes):
                 totalLunes=SumaHoras(totalLunes,str(Hrslunes.time()))
-            print("BUENO ACA total lunes: ")
-            print(totalLunes)
             totalCalculado=SumaHoras(totalCalculado,totalLunes)
         if(str(HrsMartes.time())!=date_time_str):
             totalMartes='00:00:00'
             for i in range(0,cantMartes):
                 totalMartes=SumaHoras(totalMartes,str(HrsMartes.time()))
-            print("BUENO ACA total martes: ")
-            print(totalMartes)
             totalCalculado=SumaHoras(totalCalculado,totalMartes)
         if(str(HrsMiercoles.time())!=date_time_str):
             totalMiercoles='00:00:00'
             for i in range(0,cantMiercoles):
                 totalMiercoles=SumaHoras(totalMiercoles,str(HrsMiercoles.time()))
-            print("BUENO ACA total MIERCOLES: ")
-            print(totalMiercoles)
             totalCalculado=SumaHoras(totalCalculado,totalMiercoles)
         if(str(HrsJueves.time())!=date_time_str):
             totalJueves='00:00:00'
             for i in range(0,cantJueves):
                 totalJueves=SumaHoras(totalJueves,str(HrsJueves.time()))
-            print("BUENO ACA total jueves: ")
-            print(totalJueves)
             totalCalculado=SumaHoras(totalCalculado,totalJueves)
         if(str(HrsViernes.time()) !=date_time_str):
             totalViernes='00:00:00'
             for i in range(0,cantViernes):
                 totalViernes=SumaHoras(totalViernes,str(HrsViernes.time()))
-            print("BUENO ACA total viernes: ")
-            print(totalViernes)
             totalCalculado=SumaHoras(totalCalculado,totalViernes)
         if(str(HrsSabados.time())!=date_time_str ):
             totalSabado='00:00:00'
             for i in range(0,cantSabado):
                 totalSabado=SumaHoras(totalSabado,str(HrsSabados.time()))
-            print("BUENO ACA total sabado: ")
-            print(totalSabado)
             totalCalculado=SumaHoras(totalCalculado,totalSabado)
         if(str(HrsDomingo.time()) !=date_time_str):
             totalDomingo='00:00:00'
             for i in range(0,cantDomingo):
                 totalDomingo=SumaHoras(totalDomingo,str(HrsDomingo.time()))
-            print("BUENO ACA total domingo: ")
-            print(totalDomingo)
             totalCalculado=SumaHoras(totalCalculado,totalDomingo)
         if(str(Hrslunes.time())!=date_time_str or str(HrsMartes.time())!=date_time_str or str(HrsMiercoles.time()) !=date_time_str or
           str(HrsJueves.time())!=date_time_str or str(HrsViernes.time()) !=date_time_str or str(HrsSabados.time())!=date_time_str
           or str(HrsDomingo.time()) !=date_time_str):
             print("Total Calculado: ")
-            print(totalCalculado)
+            aux=totalCalculado.split(":")
+            horas = aux[0]
+            print(horas+" Hrs")
+            cupo=CupoReal(anho=anho,mes=mes,cupoCalculado=int(horas),puntoServicio_id=p.id)
+            cupo.save()
+            print("GUARDADO")
+    print("FIN")

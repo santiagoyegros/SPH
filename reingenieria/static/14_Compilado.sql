@@ -54,10 +54,7 @@ AS
 			end
 			if @delete is not NULL and @delete='True'
 			begin
-                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
-				INSERT INTO dbo.Operarios_histrelevamientomensualeros(sueldo,mensuCantidad,relevamientocab_id,vfechaInicio,vfechaFin,vregistro,vactual_id)
-				select @p_sueldo,@p_mensuCantidad,@p_relevamientocab_id,@fechaCambio,NULL,@tmp1_vregistro,@p_id
-				update Operarios_histrelevamientomensualeros set vactual_id=NULL where vactual_id=@p_id;
+        update Operarios_histrelevamientomensualeros set vactual_id=NULL where vactual_id=@p_id;
 				delete from dbo.Operarios_relevamientomensualeros  where id=@p_id;
 			end
 		end
@@ -144,10 +141,7 @@ AS
 			end
 			if @delete is not NULL and @delete='True'
 			begin
-                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
-				INSERT INTO dbo.Operarios_histrelevamientoesp(cantHoras,tipo_id,relevamientocab_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
-				select @p_cantHoras,@p_tipo_id,@p_relevamientocab_id,@p_frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id
-				update Operarios_histrelevamientoesp set vactual_id=NULL where vactual_id=@p_id;
+        update Operarios_histrelevamientoesp set vactual_id=NULL where vactual_id=@p_id;
 				delete from dbo.Operarios_relevamientoesp  where id=@p_id;
 				
 			end
@@ -267,8 +261,6 @@ AS
 			end
 			if @delete is not NULL and @delete='True'
 			begin
-				INSERT INTO dbo.Operarios_histrelevamientodet(tipoServPart_id,relevamientocab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,orden,vfechaInicio,vfechaFin,vregistro,vactual_id)
-				select @p_tipoServPart_id,@p_relevamientocab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,@p_orden,@fechaCambio,NULL,@tmp1_vregistro,@p_id
 				update Operarios_histrelevamientodet set vactual_id=NULL where vactual_id=@p_id;
 				delete from dbo.Operarios_relevamientodet  where id=@p_id;
 			end
@@ -357,10 +349,7 @@ AS
 			end
 			if @delete is not NULL and @delete='True'
 			begin
-                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
-				INSERT INTO dbo.Operarios_histrelevamientocupohoras(cantHoras,tipoHora_id,relevamientocab_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
-				select @p_cantHoras,@p_tipoHora_id,@p_relevamientocab_id,@p_frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id
-				update Operarios_histrelevamientocupohoras set vactual_id=NULL where vactual_id=@p_id;
+       	update Operarios_histrelevamientocupohoras set vactual_id=NULL where vactual_id=@p_id;
 				delete from dbo.Operarios_relevamientocupohoras  where id=@p_id;
 			end
 

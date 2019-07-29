@@ -48,7 +48,7 @@ def registrar_alerta():
         print(cuenta)
         print(cuentaAlerta)
         if cuenta == 0 and cuentaAlerta==0:
-            alerta = Alertas(FechaHora=ahoraMod,Operario=operario,Asignacion=asig,PuntoServicio=cabecera.puntoServicio,Estado='Nueva',Tipo='NO-MARC' )
+            alerta = Alertas(FechaHora=ahoraMod,Operario=operario,Asignacion=asig,PuntoServicio=cabecera.puntoServicio,Estado='ABIERTA',Tipo='NO-MARC' )
             print("Cree una alerta")
             alerta.save()
         else:

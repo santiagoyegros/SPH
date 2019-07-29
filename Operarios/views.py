@@ -551,10 +551,10 @@ def getPuntosServicios(request):
         if RelevamientoCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
             relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=p.id))
             totalHora = relevamientoCab.cantidadHrTotal
-        if AsignacionCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
-            asignacionCab = AsignacionCab.objects.get(Q(puntoServicio_id=p.id) )
-            estado = asignacionCab.reAsignar
-            horasAsig = asignacionCab.totalasignado
+        if PlanificacionCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
+            planificacionCab = PlanificacionCab.objects.get(Q(puntoServicio_id=p.id) )
+            estado = planificacionCab.rePlanificar
+            horasAsig = planificacionCab.cantHoras
         if  totalHora and horasAsig:
             horasTotales,minutosTotales = totalHora.split(':')
             horasAsignadas,minutosAsignadas = horasAsig.split(':')
@@ -639,7 +639,7 @@ def Planificacion_create(request, id_puntoServicio=None):
                 emptyvar={}
                 pln_ope="[ "
                 for item in  planifOpeFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
+                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE')=='True' ):
                         pln_ope+=str({
                                 'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
                                 'DELETE':str(item.get('DELETE')),
@@ -862,7 +862,9 @@ def asignarFiscales(request,id_user_jefe=None ):
                         conn.close()
                         if result==1:
                             funciona=False;
-                            messages.success(request, 'Error al modificar las asignaciones.')                                    
+                            messages.warning(request, 'Error al modificar las asignaciones.')    
+                        else:
+                            messages.success(request, 'Asignacion guardada con exito')                                 
             else:
                 messages.success(request, 'Error al modificar las asignaciones.')  
 
@@ -949,7 +951,10 @@ def asignarPuntosServicio(request,id_user_fiscal=None):
                         conn.close()
                         if result==1:
                             funciona=False;
-                            messages.success(request, 'Error al modificar las asignaciones.')                         
+                            messages.warning(request, 'Error al modificar las asignaciones.')    
+                        else:
+                            messages.success(request, 'Asignacion guardada con exito')  
+                                               
             else:
                 messages.success(request, 'Error al modificar las asignaciones.') 
 

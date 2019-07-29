@@ -245,7 +245,7 @@
                 </div>
             </div>
             <div class="card" style="margin-bottom:15px !important;">
-                <div class="card-header">
+                <div class="header-table">
                     <div class="row">
                         <div class="col-md-12">
                             Mensualeros
@@ -316,7 +316,18 @@
 <script>
     $(document).ready(function () {
         $(".currency").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0,autoUnmask:true });
+        var totalDetalleOpe = $('#id_relevamientocupohoras_set-TOTAL_FORMS').val();
+        
+        console.log(totalDetalleOpe)
+        for (var i = 0; i < totalDetalleOpe; i++) {
+            console.log($('#id_relevamientocupohoras_set-' + (i) + '-DELETE'))
+          if ($('#id_relevamientocupohoras_set-' + (i) + '-DELETE').is(":checked")) {
+                $('#leaveFormCup-' + i).hide()
+            }
+        }
     });
+
+    
 </script>
 
 <!-- Script que carga las filas dinamicamente -->
@@ -476,33 +487,65 @@
     }
 
     function deleteLeaveRowCup(deleteLink, id) {
-
-        $(deleteLink).closest('.leaveFormCup').hide();
-
-        $("#id_relevamientocupohoras_set-" + id + "-DELETE").prop("checked", true);
-        RecalcularHorasCup();
+        var confirmar = confirm("Está seguro que desea eliminar el registro?");
+        if (confirmar == true) 
+        {
+            // $(deleteLink).closest('.leaveFormCup').hide();
+            $('#leaveFormCup-' + id).css('display:none !important')
+            $("#id_relevamientocupohoras_set-" + id + "-DELETE").prop("checked", true);
+            console.log("#id_relevamientocupohoras_set-" + id + "-DELETE");
+            RecalcularHorasCup();
+            //Seteamos action
+            document.getElementById('action').value = 'add_det';
+            //hacemos submit
+            document.getElementById('formulario').submit();
+        }
     }
 
     function deleteLeaveRowDet(deleteLink, id) {
+        var confirmar = confirm("Está seguro que desea eliminar el registro?");
+        if (confirmar == true) 
+        {
+            $(deleteLink).closest('.leaveFormDet').hide();
 
-        $(deleteLink).closest('.leaveFormDet').hide();
+            $("#id_relevamientodet_set-" + id + "-DELETE").prop("checked", true);
 
-        $("#id_relevamientodet_set-" + id + "-DELETE").prop("checked", true);
+            //Seteamos action
+            document.getElementById('action').value = 'add_det';
+            //hacemos submit
+            document.getElementById('formulario').submit();
+        }
     }
 
     function deleteLeaveRowEsp(deleteLink, id) {
-        console.log("BORRADO")
-        $(deleteLink).closest('.leaveFormEsp').hide();
+        var confirmar = confirm("Está seguro que desea eliminar el registro?");
+        if (confirmar == true) 
+        {
+            $(deleteLink).closest('.leaveFormEsp').hide();
 
-        $("#id_relevamientoesp_set-" + id + "-DELETE").prop("checked", true);
-        RecalcularHorasEsp();
+            $("#id_relevamientoesp_set-" + id + "-DELETE").prop("checked", true);
+            RecalcularHorasEsp();
+
+            //Seteamos action
+            document.getElementById('action').value = 'add_det';
+            //hacemos submit
+            document.getElementById('formulario').submit();
+        }
     }
 
     function deleteLeaveRowMen(deleteLink, id) {
+        var confirmar = confirm("Está seguro que desea eliminar el registro?");
+        if (confirmar == true) 
+        {
+            $(deleteLink).closest('.leaveFormMen').hide();
 
-        $(deleteLink).closest('.leaveFormMen').hide();
+            $("#id_relevamientomensualeros_set-" + id + "-DELETE").prop("checked", true);
 
-        $("#id_relevamientomensualeros_set-" + id + "-DELETE").prop("checked", true);
+            //Seteamos action
+            document.getElementById('action').value = 'add_det';
+            //hacemos submit
+            document.getElementById('formulario').submit();
+        }
     }
     $(document).ready(function () {
         RecalcularHorasCup();
@@ -632,6 +675,12 @@
             clon_html = replaceAll(clon, '__prefix__', (total).toString());
             $('#formset-CupoH').append(clon_html);
             $totalCupoHoras.val(total + 1);
+
+            //Seteamos action
+            document.getElementById('action').value = 'add_det';
+            //hacemos submit
+            document.getElementById('formulario').submit();
+
         });
 
         var $totalMensualeros = $('#id_relevamientomensualeros_set-TOTAL_FORMS');
@@ -645,6 +694,11 @@
             //Se vuelve a inicializar cuando se agrega nuevo detalle mensualero
             $(".currency").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0,removeMaskOnSubmit:true});
             $totalMensualeros.val(total + 1);
+
+            //Seteamos action
+            document.getElementById('action').value = 'add_det';
+            //hacemos submit
+            document.getElementById('formulario').submit();
         });
     });
 

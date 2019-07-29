@@ -29,13 +29,13 @@ def SumaHoras(h1,h2):
 def generarCantidadCupos():
     puntosServ=PuntoServicio.objects.all()
     asignacion=AsignacionDet.objects.all()
-    asigCabecera= AsignacionCab.objects.all()
-    mes ='0'+ str(datetime.datetime.now().month)
+    if(datetime.datetime.now().month<10):
+        mes ='0'+ str(datetime.datetime.now().month)
+    else:
+        mes =str(datetime.datetime.now().month)
     fechaActual=datetime.date.today()
     anho=str(datetime.datetime.now().year)
     fechaInicio=anho+'-'+mes+'-01'
-    print(fechaActual)
-    print(fechaInicio)
     cantLunes=""
     cantMartes=""
     cantMiercoles=""
@@ -65,7 +65,8 @@ def generarCantidadCupos():
         HrsSabados=datetime.datetime.strptime(date_time_str, '%H:%M:%S')
         HrsDomingo=datetime.datetime.strptime(date_time_str, '%H:%M:%S')
         #Se itera sobre la tabla asignacion cabecera
-        for asigCab in asigCabecera:
+        if AsignacionCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
+            asigCab = AsignacionCab.objects.get(Q(puntoServicio_id=p.id) )
             #Se comprueba que exista una cabecera con el punto de servicio actual
             if asigCab.puntoServicio_id == p.id:
                 for a in asignacion:
@@ -145,6 +146,6 @@ def generarCantidadCupos():
             horas = aux[0]
             print(horas+" Hrs")
             cupo=CupoReal(anho=anho,mes=mes,cupoCalculado=int(horas),puntoServicio_id=p.id)
-            cupo.save()
+            #cupo.save()
             print("GUARDADO")
     print("FIN")

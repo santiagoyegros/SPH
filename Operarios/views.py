@@ -25,6 +25,7 @@ import decimal
 from django.core.paginator import Paginator
 from django.forms.models import model_to_dict
 from datetime import datetime
+from math import floor
 from django.db.models import Q
 def index(request):
     return HttpResponse("Vista de Operarios")
@@ -535,6 +536,25 @@ def Operarios_delete(request, pk):
         return redirect('Operarios:operarios_list')
     return render(request, 'operarios/operarios_delete.html', {'operarios': operarios})
 
+def SumaHoras(h1,h2):
+    sp = h1.split(":")
+    hora1 = sp[0]
+    min1 = sp[1]
+
+    sp = h2.split(":")
+    hora2 = sp[0]
+    min2 = sp[1]
+
+    hora_total = int(hora1) + int(hora2)
+    min_pre = int(min1) + int(min2)
+
+    horas_adicionales = floor((min_pre / 60))
+    hora_total =hora_total + horas_adicionales
+    min_total = (min_pre - (horas_adicionales * 60))
+    p=str(min_total).zfill(2)
+    x= str(hora_total).zfill(2) + ":" + p + ":00"
+    return x
+
 def getPuntosServicios(request):
     puntoServi = PuntoServicio.objects.all()
     puntos =[]
@@ -554,10 +574,17 @@ def getPuntosServicios(request):
         if PlanificacionCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
             planificacionCab = PlanificacionCab.objects.get(Q(puntoServicio_id=p.id) )
             estado = planificacionCab.rePlanificar
-            horasAsig = planificacionCab.cantHoras
+            if(planificacionCab.cantHorasNoc != None):
+                horasAsig = SumaHoras(planificacionCab.cantHoras, planificacionCab.cantHorasNoc)
+            else:
+                horasAsig = planificacionCab.cantHoras
+            if(horasAsig!=None):
+                h=str(horasAsig).split(":")
+                horasAsig=h[0]+":"+h[1]
+            print(horasAsig)
         if  totalHora and horasAsig:
             horasTotales,minutosTotales = totalHora.split(':')
-            horasAsignadas,minutosAsignadas = horasAsig.split(':')
+            horasAsignadas,minutosAsignadas= horasAsig.split(':')
             cantidadMinutos = restarHoras( int(horasTotales),int(horasAsignadas),int(minutosTotales),int(minutosAsignadas))
 
         puntos.append({

@@ -4,12 +4,17 @@
     font-family: Futura;
     font-weight: normal;
     font-style: normal;
-    src:url("/static/fonts/Futura\ Std\ Bold.otf") format("opentype")
+    src:url("/static/fonts/Futura-Std-Bold.ttf") format("opentype");
+    src:url("/static/fonts/Futura-Std-Book-Oblique.ttf") format("opentype");
+    src:url("/static/fonts/Futura-Std-Extra-Bold.ttf") format("opentype");
+    src:url("/static/fonts/Futura-Std-Heavy.ttf") format("opentype");
+    src:url("/static/fonts/Futura-Std-Light.ttf") format("opentype");
+    src:url("/static/fonts/Futura-Std-Medium.ttf") format("opentype");
 }
 
-/* body{
+ body{
     font-family: Futura !important;
-} */
+}   
 
 h2 {
     font-family: Futura !important;

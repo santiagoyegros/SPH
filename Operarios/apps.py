@@ -11,6 +11,5 @@ class OperariosConfig(AppConfig):
         from scheduler import register
         register.start()
 
-        from scheduler import generadorDeCupos
-        generadorDeCupos.start()
+        
 

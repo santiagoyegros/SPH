@@ -302,12 +302,14 @@ def Relevamiento(request, id_puntoServicio=None):
 
     if request.method == 'POST':
         if  (request.POST.get('action') == 'add_det'):
+            print(request.POST) 
             form = RelevamientoForm(request.POST, instance=relevamiento)
             relevamDetFormSet = relevamientoDetFormSet(request.POST, instance=relevamiento)
             relevamEspFormSet = relevamientoEspFormSet(request.POST, instance=relevamiento)
             relevamCuHrFormSet = relevamientoCupoHorasFormSet(request.POST, instance=relevamiento)
             relevamMenFormSet = relevamientoMensuFormSet(request.POST, instance=relevamiento)
         else:
+            print(request.POST)
             form = RelevamientoForm(request.POST, instance=relevamiento)
             relevamDetFormSet = relevamientoDetFormSet(request.POST, instance=relevamiento)
             relevamEspFormSet = relevamientoEspFormSet(request.POST, instance=relevamiento)
@@ -341,7 +343,7 @@ def Relevamiento(request, id_puntoServicio=None):
                 
                 rel_det="[ "
                 for item in relevamDetFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
+                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') == True ):
                         rel_det+=str({
                                 'relevamientocab_id':str(relevamiento.id),
                                 'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
@@ -368,7 +370,7 @@ def Relevamiento(request, id_puntoServicio=None):
 
                 rel_men="[ "
                 for item in relevamMenFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ) and not ((item.get('mensuCantidad') is None or item.get('mensuCantidad') <=0 ) and ( item.get('sueldo') is None or item.get('sueldo') <=0) ):
+                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') == True ) and not ((item.get('mensuCantidad') is None or item.get('mensuCantidad') <=0 ) and ( item.get('sueldo') is None or item.get('sueldo') <=0) ):
                         rel_men+=str({
                             'relevamientocab_id':str(relevamiento.id),
                             'mensuCantidad':(0 if item.get('mensuCantidad') is None else str(item.get('mensuCantidad'))),
@@ -382,7 +384,7 @@ def Relevamiento(request, id_puntoServicio=None):
 
                 rel_cup="[ "
                 for item in relevamCuHrFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
+                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') == True ):
                         rel_cup+=str({	
                             'relevamientocab_id':str(relevamiento.id),
                             'cantCHoras':str(item.get('cantCHoras')),
@@ -397,7 +399,7 @@ def Relevamiento(request, id_puntoServicio=None):
 
                 rel_esp="[ "
                 for item in relevamEspFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
+                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') == True ):
                         rel_esp+=str({
                             'relevamientocab_id':str(relevamiento.id),
                             'tipoServicio':str(item.get('tipo')),
@@ -650,6 +652,7 @@ def Planificacion_create(request, id_puntoServicio=None):
     if request.method == 'POST':
 
         if  (request.POST.get('action') == 'add_det') or (request.POST.get('action') == 'add_esp'):
+          
             form = PlanificacionForm(request.POST, instance=planificacion)
             planifOpeFormSet = planificacionOpeFormSet(request.POST, instance=planificacion)
             planifEspFormSet = planificacionEspFormSet(request.POST, instance=planificacion)
@@ -666,7 +669,7 @@ def Planificacion_create(request, id_puntoServicio=None):
                 emptyvar={}
                 pln_ope="[ "
                 for item in  planifOpeFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE')=='True' ):
+                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') == 'True' ):
                         pln_ope+=str({
                                 'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
                                 'DELETE':str(item.get('DELETE')),

@@ -823,9 +823,7 @@ AS
 			end
 			if @delete is not NULL and @delete='True'
 			begin
-                INSERT INTO dbo.Operarios_histplanificacionope(total,corte,planificacionCab_id,especialista_id,sal,ent,fer,dom,sab,vie,jue,mie,mar,lun,cantidad,vfechaInicio,vfechaFin,vregistro,vactual_id)
-				select @p_total,@p_corte,@p_planificacionCab_id,@p_especialista_id,@p_sal,@p_ent,@p_fer,@p_dom,@p_sab,@p_vie,@p_jue,@p_mie,@p_mar,@p_lun,@p_cantidad,@fechaCambio,NULL,@tmp1_vregistro,@p_id
-				update Operarios_histplanificacionope set vactual_id=NULL where vactual_id=@p_id;
+        update Operarios_histplanificacionope set vactual_id=NULL where vactual_id=@p_id;
 				delete from dbo.Operarios_planificacionope  where id=@p_id;
 			end
 		end
@@ -927,10 +925,7 @@ AS
 
 			if @delete is not NULL and @delete='True'
 			begin
-                -- insert en hist updat hist set vactual_id=NULL where vactual_id=@p_id; delete where  where id=@p_id;
-				INSERT INTO dbo.Operarios_histplanificacionesp(fechaLimpProf,cantHoras,tipo_id,planificacionCab_id,especialista_id,frecuencia,vfechaInicio,vfechaFin,vregistro,vactual_id)
-				select @p_fechaLimpProf,@p_cantHoras,@p_tipo_id,@p_planificacionCab_id,@p_especialista_id,@p_frecuencia,@fechaCambio,NULL,@tmp1_vregistro,@p_id
-				update Operarios_histplanificacionesp set vactual_id=NULL where vactual_id=@p_id;
+        update Operarios_histplanificacionesp set vactual_id=NULL where vactual_id=@p_id;
 				delete from dbo.Operarios_planificacionesp  where id=@p_id;
 			end
 			

@@ -8,7 +8,6 @@ from django.conf import settings
 
 def getHoraDia(id_dia,id_asignacion):
     asignacionDet = AsignacionDet.objects.get(id = id_asignacion )
-    print("getHora",id_asignacion, "dia",id_dia)
     if id_dia == 0:
         return [asignacionDet.lunEnt,asignacionDet.lunSal]
     if id_dia == 1:
@@ -33,61 +32,79 @@ def getTipoHorario(entrada,salida):
         return "Nocturno"
 def registrar_ausencia():
     print('Procedimiento de registro de ausencias: ' + str(dt.datetime.now()))
-    alertas = Alertas.objects.all()
-    for a in alertas:
-        callcenter_time = settings.GLOBAL_SETTINGS['MAX_CALLCENTER']
-        if Parametros.objects.filter(parametro = 'MAX_CALLCENTER').exists():
-            callcenter_db = Parametros.objects.get(parametro = 'MAX_CALLCENTER')
-            callcenter_time = callcenter_db.valor
-        dateParametro=datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%mm-%dd %H:%M:%S"),"%Y-%mm-%dd %H:%M:%S") - datetime.timedelta(minutes=int(callcenter_time))
-        dateAlerta= datetime.datetime.strptime(a.FechaHora.strftime("%Y-%mm-%dd %H:%M:%S"),"%Y-%mm-%dd %H:%M:%S")
-        if not a.Estado == 'PENDIENTE':
-            if dateAlerta <= dateParametro:
-                if AsignacionDet.objects.filter(id=a.Asignacion_id).exists():
-                    """SI LA ASIGNACION DE LA ALERTA NO FUE PROCESADA"""
-                    if not AsignacionesProcesadas.objects.filter(asignacionDet_id=a.Asignacion_id).exists():
-                        """Corroboramos la consistencia de los datos"""
-                        if Operario.objects.filter(id=a.Operario_id).exists():
-                            operario = Operario.objects.get(id=a.Operario_id)
-                            entrada, salida = getHoraDia(dateAlerta.weekday(),a.Asignacion_id)
-                            if entrada and salida:
-                                """Obtiene total horas de la Alerta"""
-                                tentrada = timedelta(hours = entrada.hour, minutes= entrada.minute)
-                                tsalida = timedelta(hours = salida.hour, minutes= salida.minute)
-                                totalHoras = tsalida- tentrada
-                                """Se otiene el tipo de horario """
-                                tipoHorario = getTipoHorario(entrada,salida)
-                                noProcesada = HorasNoProcesadas(
-                                    NumCedulaOperario = operario.numCedula, 
-                                    Hentrada = entrada, 
-                                    Hsalida = salida, 
-                                    fecha = dateAlerta,
-                                    puntoServicio_id=a.PuntoServicio_id, 
-                                    total = totalHoras, 
-                                    TipoHora = tipoHorario,
-                                    comentario="AUSENCIA")
-                                """Se guarda el registro de hora no procesada"""
-                                #noProcesada.save() 
+    time_ejecucion = dt.datetime.now()
+    try:
+        alertas = Alertas.objects.all()
+        for a in alertas:
+            callcenter_time = settings.GLOBAL_SETTINGS['MAX_CALLCENTER']
+            if Parametros.objects.filter(parametro = 'MAX_CALLCENTER').exists():
+                callcenter_db = Parametros.objects.get(parametro = 'MAX_CALLCENTER')
+                callcenter_time = callcenter_db.valor
+            dateParametro=datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%mm-%dd %H:%M:%S"),"%Y-%mm-%dd %H:%M:%S") - datetime.timedelta(minutes=int(callcenter_time))
+            dateAlerta= datetime.datetime.strptime(a.FechaHora.strftime("%Y-%mm-%dd %H:%M:%S"),"%Y-%mm-%dd %H:%M:%S")
+            if a.Estado == 'ABIERTA':
+                if dateAlerta <= dateParametro:
+                    print("ALERTA ABIERTA ACTUAL",a.id)
+                    """Si existe un registro de la asignacion de la alerta"""
+                    if AsignacionDet.objects.filter(id=a.Asignacion_id).exists():
+                        """SI LA ASIGNACION DE LA ALERTA NO FUE PROCESADA"""
+                        if not AsignacionesProcesadas.objects.filter(asignacionDet_id=a.Asignacion_id).exists():
+                            print("Asignacion actual", a.Asignacion_id)
+                            """Corroboramos la consistencia de los datos"""
+                            if Operario.objects.filter(id=a.Operario_id).exists():
+                                operario = Operario.objects.get(id=a.Operario_id)
+                                print("Operario actual",operario.numCedula)
+                                """Se obtiene el horario de la Alerta"""
+                                entrada, salida = getHoraDia(dateAlerta.weekday(),a.Asignacion_id)
+                                if entrada and salida:
+                                    print("Horario de entrada y salida", entrada,salida)
+                                    """Obtiene total horas de la Alerta"""
+                                    tentrada = timedelta(hours = entrada.hour, minutes= entrada.minute)
+                                    tsalida = timedelta(hours = salida.hour, minutes= salida.minute)
+                                    totalHoras = tsalida - tentrada
+                                    print("Total horas", totalHoras)
+                                    print("Fecha de la alerta", dateAlerta)
+                                    
+                                    """ Se otiene el tipo de horario """
+                                    tipoHorario = getTipoHorario(entrada,salida)
+                                    print("Tipo horario",tipoHorario)
+                                    noProcesada = HorasNoProcesadas(
+                                        NumCedulaOperario = operario.numCedula, 
+                                        Hentrada = str(entrada), 
+                                        Hsalida = str(salida), 
+                                        fecha = dateAlerta,
+                                        puntoServicio_id=a.PuntoServicio_id, 
+                                        total = str(totalHoras), 
+                                        TipoHora = tipoHorario,
+                                        comentario="AUSENCIA")
+                                    """Se guarda el registro de hora no procesada"""
+                                    noProcesada.save() 
+                                    print("------>HORA NO PROCESADA GUARDADA")
+                                    """Se cierra la alerta"""
+                                    a.Estado = "CERRADA"
+                                    a.save()
+                                    print("------> ALERTA CERRADA")
+                                    """Se guarda la respuesta de la alerta"""
+                                    user_parametrico = settings.GLOBAL_SETTINGS['USER_CALLCENTER']
+                                    if Parametros.objects.filter(parametro = 'USER_CALLCENTER').exists():
+                                        user_db = Parametros.objects.get(parametro = 'USER_CALLCENTER')
+                                        user_parametrico = user_db.valor
 
-                                """Se cierra la alerta"""
-                                a.Estado = "CERRADA"
-                                #a.save()
-                                
-                                """Se guarda la respuesta de la alerta"""
-                                user_parametrico = settings.GLOBAL_SETTINGS['USER_CALLCENTER']
-                                if Parametros.objects.filter(parametro = 'USER_CALLCENTER').exists():
-                                    user_db = Parametros.objects.get(parametro = 'USER_CALLCENTER')
-                                    user_parametrico = user_db.valor
-
-                                usuario = User.objects.get(id = user_parametrico)
-                                motivo = Motivos.objects.get(descripcion= "Gestión Automática")
-                                alerta_respuesta = AlertaResp(
-                                    motivo = motivo,
-                                    accion = "AusenciaAuto",
-                                    hora = a.FechaHora,
-                                    fechaRetorno = a.FechaHora,
-                                    escalado = False,
-                                    comentarios = "Ausencia Automática",
-                                    usuario = usuario
-                                )
-                                #alerta_respuesta.save()
+                                    usuario = User.objects.get(id = user_parametrico)
+                                    motivo = Motivos.objects.get(descripcion= "Gestión Automática")
+                                    alerta_respuesta = AlertaResp(
+                                        motivo = motivo,
+                                        accion = "AusenciaAuto",
+                                        hora = time_ejecucion.time(),
+                                        fechaRetorno = time_ejecucion.date(),
+                                        escalado = False,
+                                        comentarios = "Ausencia Automática",
+                                        usuario = usuario,
+                                        id_alerta = a
+                                    )
+                                    alerta_respuesta.save()
+                                    print("------> RESPUESTA ALERTA GUARDADA")
+    except Exception as err:
+                transaction.rollback()
+                logging.getLogger("error_logger").error('Ocurrió un error al generar la ausencia automática: {0}'.format(err))
+                messages.warning(request, 'Ocurrió un error al generar la ausencia automática') 

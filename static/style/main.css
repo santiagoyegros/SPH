@@ -72,3 +72,6 @@ h1 {
     resize: none !important;
 }
 
+.jsgrid-search-mode-button{
+    display: none !important;
+}

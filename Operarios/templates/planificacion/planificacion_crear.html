@@ -933,7 +933,7 @@
                         }
                     }
                     
-                    if(total_horas_diurnas_fila.length==6 && corteDecimal)
+                    if(typeof(total_horas_diurnas_fila)!="undefined" && total_horas_diurnas_fila.length==6 && corteDecimal)
                      {
                          total_horas_nocturnas=hoursToString((totalFilaDecimal - corteDecimal) * TotalDias * cantOpe);
                      }

@@ -20,9 +20,18 @@
     .input-sueldos{
         background-color: white !important;
         border: none !important;
+        text-align: left !important;
     }
     .table-hover tbody tr:hover {
         background-color: transparent !important;
+    }
+
+    .estilo-servicio{
+        padding: .6rem !important;
+    }
+
+    .estilo-servicio2{
+        padding: .9rem !important;
     }
     
       .card-header {
@@ -209,17 +218,17 @@
                         <tbody>
                             {% for relevcupo in relevamiento.relevamientocupohoras_set.all %}
                             <tr>
-                                <td>
+                                <td class="estilo-servicio2">
                                     {% if relevcupo.cantCHoras %}
                                     {{ relevcupo.cantCHoras }}
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="estilo-servicio">
                                     {% if relevcupo.frecuencia %}
                                     {{ relevcupo.get_frecuencia_display}}
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="estilo-servicio2">
                                     {% if relevcupo.tipoHora %}
                                     {{ relevcupo.tipoHora }}
                                     {% endif %}
@@ -253,7 +262,7 @@
                         <tbody>
                             {% for relev in relevamiento.relevamientodet_set.all %}
                             <tr>
-                                <th scope="row">{{ relev.tipoServPart }}</th>
+                                <th class="estilo-servicio" scope="row">{{ relev.tipoServPart }}</th>
                                 <td>
                                     {% if relev.lunEnt %}
                                     {{ relev.lunEnt }} a {{ relev.lunSal }}
@@ -313,17 +322,17 @@
                         <tbody>
                             {% for relevesp in relevamiento.relevamientoesp_set.all %}
                             <tr>
-                                <td scope="row">
+                                <td scope="row" class="estilo-servicio">
                                     {% if relevesp.tipo %}
                                     {{ relevesp.tipo }}
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="estilo-servicio">
                                     {% if relevesp.frecuencia %}
                                     {{ relevesp.get_frecuencia_display }}
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td style="padding: .9rem !important;">
                                     {% if relevesp.cantHoras %}
                                     {{ relevesp.cantHoras }}
                                     {% endif %}
@@ -359,14 +368,14 @@
                                 <tbody>
                                     {% for relevmen in relevamiento.relevamientomensualeros_set.all %}
                                     <tr>
-                                        <td scope="row">
+                                        <td style="padding-left: 30px;" scope="row">
                                             {% if relevmen.mensuCantidad %}
                                                 {{ relevmen.mensuCantidad }}
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if relevmen.sueldo %}
-                                              <input type="text" class="input-sueldos" value="{{ relevmen.sueldo }}" disabled>
+                                              <input  class="input-sueldos" value="{{ relevmen.sueldo }}" disabled>
                                             {% endif %}
                                         </td>
                                     </tr>

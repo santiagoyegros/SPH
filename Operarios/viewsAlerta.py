@@ -30,6 +30,8 @@ def alertasList (request):
     estado="Abierta"
     fechaDesde=request.GET.get('fechaDesde')
     fechaHasta=request.GET.get('fechaHasta')
+    horaInicio=request.GET.get('horaInicio')
+    horaFin=request.GET.get('horaFin')
     puntoServicio=None
     operario=None
     tipoAlerta=None
@@ -50,21 +52,41 @@ def alertasList (request):
     print (request.GET.get('puntoServicio'))
     print (request.GET.get('fechaDesde'))
     print (request.GET.get('fechaHasta'))
+    print(request.GET.get('horaInicio'))
+    print(request.GET.get('horaFin'))
     print (request.GET.get('estado'))
     print (request.GET.get('tipoAlerta'))
     print (request.GET.get('operario'))
-    if request.GET.get("fechaDesde") and request.GET.get("fechaHasta"):
+
+
+    
+    if request.GET.get("fechaDesde") and request.GET.get("fechaHasta") and request.GET.get("horaInicio") and request.GET.get("horaFin"):
         fechaDesdeAux=datetime.datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").replace(hour=0,minute=0,second=0, microsecond=0)
         fechaHastaAux=datetime.datetime.strptime(request.GET.get('fechaHasta'), "%d/%m/%Y").replace(hour=23,minute=59,second=59, microsecond=0)     
         alertasList=Alertas.objects.filter(FechaHora__gte=fechaDesdeAux,FechaHora__lte=fechaHastaAux)
-        
+        print("---")
+        print(fechaDesdeAux)
+        print(fechaHastaAux)
+        print("----")
+        # aux1=str(request.GET.get("fechaDesde")).split('/')
+        # aux2=str(request.GET.get("fechaHasta")).split('/')
+        # fDesdeAux=aux1[0]+'-'+aux1[1]+'-'+aux1[2]+' '+request.GET.get("horaInicio")
+        # fHastaAux=aux2[0]+'-'+aux2[1]+'-'+aux2[2]+' '+request.GET.get("horaFin")
+
+
     if request.GET.get('estado'):
         alertasList=alertasList.filter(Estado__contains=request.GET.get('estado'))
         estado=request.GET.get('estado')
     if request.GET.get('tipoAlerta'):
-        alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))
+        print(request.GET.get('tipoAlerta'))
+        if(request.GET.get('tipoAlerta')=="TODOS"):
+             alertasList=alertasList.all()
+        else:
+            alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))
         tipoAlerta=request.GET.get('tipoAlerta')
     if request.GET.get('operario') :
+        print("aca hay:")
+        print(request.GET.get('operario'))
         alertasList=alertasList.filter(Operario_id=request.GET.get('operario'))
         operario=int(request.GET.get('operario'))
     if request.GET.get('puntoServicio') :

@@ -1,3 +1,31 @@
+
+
+@font-face{
+    font-family: Futura;
+    font-weight: normal;
+    font-style: normal;
+    src:url("/static/fonts/Futura-Std-Bold.ttf") format("opentype");
+    src:url("/static/fonts/Futura-Std-Book-Oblique.ttf") format("opentype");
+    src:url("/static/fonts/Futura-Std-Extra-Bold.ttf") format("opentype");
+    src:url("/static/fonts/Futura-Std-Heavy.ttf") format("opentype");
+    src:url("/static/fonts/Futura-Std-Light.ttf") format("opentype");
+    src:url("/static/fonts/Futura-Std-Medium.ttf") format("opentype");
+}
+
+ body{
+    font-family: Futura !important;
+}   
+
+h2 {
+    font-family: Futura !important;
+ 
+    color: #86273e !important;
+}
+h1 {
+    font-family: Futura !important;
+ 
+    color: #86273e !important;
+}
 .container-main {
     padding-top: 20px !important;
 }
@@ -7,5 +35,59 @@
     padding-right: 15px !important;
     padding-left: 15px !important;
     width: 100%;
+}
+.btn-guardar {
+    background-color: #86273e !important;
+    border-color: #86273e !important;
+    padding: 7px 30px;
+    cursor: pointer; 
+}
+.btn-agregar {
+    background-color: #86273e !important;
+    border-color: #86273e !important;
+    padding: 7px 30px;
+    cursor: pointer; 
+}
+.btn-agregar {
+    background-color: #86273e !important;
+    border-color: #86273e !important;
+    padding: 7px 30px;
+    cursor: pointer; 
+}
+.btn-cancelar {
+    background-color: #707171 !important;
+    border-color: #707171 !important;
+    padding: 7px 30px;
+    cursor: pointer; 
+}
+.btn:focus{
+    box-shadow: none !important;
+}
+.bootstrap-select .dropdown-toggle{
+    border: 1px solid #d9d9d9 !important;
+    background-color: white !important;
+}
+
+.noresize{
+    resize: none !important;
+}
+
+.jsgrid-search-mode-button{
+    display: none !important;
+}
+
+.jsgrid-cell input,.jsgrid-cell select{
+    width: 100%;
+    padding: .5rem .75rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: #495057;
+    background-color: #fff;
+    background-image: none;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    outline: none !important;
 }
 

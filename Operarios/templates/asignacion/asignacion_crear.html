@@ -522,7 +522,7 @@
 
         </div>
         <div class="col-lg-12 col-md-12" style="text-align: right;margin:15px 0px;">
-            <button type='button' onclick="guardarAsignacion()" class='btn btn-success'>Guardar</button>
+            <button type='button' id="guardar" onclick="guardarAsignacion()" class='btn btn-success'>Guardar</button>
             <a class='btn btn-danger' href={% url 'Operarios:asignacion_list' %}>Cancelar</a>
         </div>
 
@@ -536,7 +536,7 @@
 
 <script type='template/Detalle'>
 
-        <div class="row mt-2 leaveForm" id="leaveForm" style="    margin-bottom: 30px;">
+        <div class="row mt-2 leaveForm" id="leaveForm"  style="    margin-bottom: 30px;">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="row" style="margin: 0px 0px 10px 0px;">
@@ -680,11 +680,10 @@
                                         color: red !important;
                                         font-size: 25px;">
                                 {{asigDetFormSet.empty_form.DELETE}}
-
-                                <a href="javascript:void(0);" onclick="deleteLeaveRow(this, {{ forloop.counter0 }});"
-                                    class="remove muted pull-right">
-                                    <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span
-                                        class="visible-xs"></span>
+                                <a href="javascript:void(0);" onclick="deleteLeaveRow(this,);"
+                                class="remove muted pull-right">
+                                <div class="fa fa-trash" title="Eliminar" alt="Eliminar"></div><span
+                                    class="visible-xs"></span>
                                 </a>
                             </div>
 
@@ -820,7 +819,12 @@
                 $('#perfil-' + i).attr("disabled", "disabled");
                 $('#supervisor-' + i).attr("style", "display:block;margin: 8px 25px;");
                 $('#supervisor-' + i).attr("disabled", "disabled");
+                $('#guardar').prop("disabled", false);
                 //Los siguientes campos seràn deshabilitados solo si tienen datos               
+            }
+            else
+            {
+                $('#guardar').prop("disabled", true);
             }
         }
     });
@@ -1130,31 +1134,48 @@
                         }).done(function (result) {
 
                             var j = id;
+                            var index=1;
+                            var lunEntAnt = ""
+                            var lunSalAnt = ""
+                            var marEntAnt = ""
+                            var marSalAnt = ""
+                            var mieSalAnt = ""
+                            var mieEntAnt = ""
+                            var jueEntAnt = ""
+                            var jueSalAnt = ""
+                            var vieSalAnt = ""
+                            var vieEntAnt = ""
+                            var sabEntAnt = ""
+                            var sabSalAnt = ""
+                            var domEntAnt = ""
+                            var domSalAnt = ""
+                            var fechaIniAnt = ""
+                            var fechaFinAnt = ""
                             console.log("J= ",j)
                             console.log("Resultado");
                             console.log(result)
                             if (result.length > 0) {
+                                var operarios = result;
                                 if (j > 0) {
-                                    var index = 1;
+                                    index = 1;
                                     while (index <= j) {
-                                        var operarios = result;
-                                        var lunEntAnt = ""
-                                        var lunSalAnt = ""
-                                        var marEntAnt = ""
-                                        var marSalAnt = ""
-                                        var mieSalAnt = ""
-                                        var mieEntAnt = ""
-                                        var jueEntAnt = ""
-                                        var jueSalAnt = ""
-                                        var vieSalAnt = ""
-                                        var vieEntAnt = ""
-                                        var sabEntAnt = ""
-                                        var sabSalAnt = ""
-                                        var domEntAnt = ""
-                                        var domSalAnt = ""
-                                        var fechaIniAnt = ""
-                                        var fechaFinAnt = ""
-                                        console.log("CHECKEADO?",$("#id_asignaciondet_set-" + (index - 1) + "-DELETE")[0].checked)
+                                        operarios = result;
+                                        lunEntAnt = ""
+                                        lunSalAnt = ""
+                                        marEntAnt = ""
+                                        marSalAnt = ""
+                                        mieSalAnt = ""
+                                        mieEntAnt = ""
+                                        jueEntAnt = ""
+                                        jueSalAnt = ""
+                                        vieSalAnt = ""
+                                        vieEntAnt = ""
+                                        sabEntAnt = ""
+                                        sabSalAnt = ""
+                                        domEntAnt = ""
+                                        domSalAnt = ""
+                                        fechaIniAnt = ""
+                                        fechaFinAnt = ""
                                         if (!$("#id_asignaciondet_set-" + (index - 1) + "-DELETE")[0].checked) {
                                             if ($('#id_asignaciondet_set-' + (index - 1) + '-fechaInicio').val())
                                                 fechaIniAnt = $('#asignaciondet_set-' + (index - 1) + '-fechaInicio').val()
@@ -1196,8 +1217,7 @@
                                                     id_operario = $('#id_asignaciondet_set-' + (index - 1) + '-operario').val()
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
-                                                            if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
+                                                            if (operarios[i].pk == id_operario) {
                                                                 operarios.splice(i, 1);
 
                                                                 break
@@ -1214,7 +1234,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1230,7 +1249,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1246,7 +1264,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1262,7 +1279,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1278,7 +1294,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1294,7 +1309,6 @@
                                                     if (id_operario != '') {
                                                         for (var i = 0; i < operarios.length; i++) {
                                                             if ((operarios[i].pk) == (id_operario)) {
-                                                                print("Encuentra")
                                                                 operarios.splice(i, 1);
                                                                 break
                                                             }
@@ -1302,7 +1316,7 @@
                                                     }
                                                 }
                                             }
-                                                
+
                                         }
                                         index++;
 
@@ -1329,6 +1343,8 @@
                     var idPerfil = $('#id_asignaciondet_set-' + (id) + '-perfil').val();
                     var selectPerfil = $('#perfil-' + (id))[0];
                     verificarDiaLibre(ope,id);
+                    $('#guardar').prop("disabled", false);
+                    
                     $('#id_asignaciondet_set-' + id + '-operario').val(ope);
                     for (var i = 0; i < select.length; i++) {
 
@@ -1533,6 +1549,13 @@
         // $("#leaveForm-" + id).remove();
         if (confirm("Estas seguro que desea borrar el registro?")) {
             $(deleteLink).closest('.leaveForm').hide();
+            if (typeof id =='undefined')
+            {
+                var id_boton=deleteLink.id;
+                var id_clean=id_boton.substring(10);
+                id=id_clean
+            }
+            console.log("ID del eliminado ", id)
 
             $("#id_asignaciondet_set-" + id + "-DELETE").prop("checked", true);
 
@@ -1541,12 +1564,43 @@
             //document.getElementById('formulario').submit();
             //$("#leaveForm-" + id).hide();
             $('#leaveForm-' + id).css('display:none !important')
+            /**se verifica en caso que haya sido el primer elemento eliminado y ya no queda nada**/
+            verificarGuardar();
+            
             RecalcularHorasV2();
             RecalcularTipoHoras();
 
         }
 
 
+    }
+    function verificarGuardar()
+    {
+        var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
+        var totalDet = parseInt($totalDetalle.val(), 10);
+        console.log("Total Det ", totalDet)
+        var countDelete=0;
+        /**estado inicial**/
+        $('#guardar').prop("disabled", false);
+        for (var i=0; i< totalDet; i++)
+        {
+            if ($('#leaveForm-' + i).css('display')!='none') {
+                console.log($('#id_asignaciondet_set-' + i + '-operario').val())
+                if ($('#id_asignaciondet_set-' + i + '-operario').val()=="") {
+                    $('#guardar').prop("disabled", true);
+                    break;
+                }
+            }
+            else
+            {
+                countDelete++;
+            }
+        }
+        console.log("Total eliminados ", countDelete)
+        if (countDelete==totalDet)
+        {
+            $('#guardar').prop("disabled", true);
+        }
     }
     function habilitarBusqueda(id) {
         var formisValid = false;
@@ -1607,7 +1661,15 @@
             horasValid = true;
         }
         if (fechasValid && horasValid && hasPerfil) {
-            $('#filter_operario-' + id).prop("disabled", false);
+            var operario=$('#id_asignaciondet_set-' + i + '-operario').val();
+            if (operario=="")
+            {
+                $('#filter_operario-' + id).prop("disabled", false);
+            }
+            else
+            {
+                $('#filter_operario-' + id).prop("disabled", true);
+            }
         } else {
             $('#filter_operario-' + id).prop("disabled", true);
         }
@@ -1994,9 +2056,13 @@
             clon_html13 = replaceAll(clon_html12, 'name="diaFin-"', 'name="diaFin-' + (total).toString() + '"');
             clon_html14 = replaceAll(clon_html13, 'id="id_diaFin-"', 'id="id_diaFin-' + (total).toString() + '"');
             clon_html15 = replaceAll(clon_html14, 'id="perfil-"', 'id="perfil-' + (total).toString() + '"');
-            $('#formset-det').append(clon_html15);
+            clon_html16 = replaceAll(clon_html15, 'onclick="deleteLeaveRow(this,);"', 'onclick="deleteLeaveRow(this,' + (total).toString() + ');"');
+            $('#formset-det').append(clon_html16);
             $('#id_asignaciondet_set-' + (total) + '-DELETE').attr('style', 'display:none !important')
-
+            $("#id_asignaciondet_set-" + (total) + "-DELETE").prop("checked", false);
+            $('#guardar').prop("disabled", true);
+            
+            
             $totalDetalle.val(total + 1);
             var body = {
                 "id_puntoServicio": $('#id_puntoServicio').val(),

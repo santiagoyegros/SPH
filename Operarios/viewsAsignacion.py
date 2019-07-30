@@ -343,6 +343,7 @@ def guardarAsignacion(request):
                 params=(
                     str({'id': str(asignacion.id),'puntoServicio_id':str(puntoSer.id),
                         'totalasignado':str(form.cleaned_data.get('totalasignado')),
+                        'usuario_id':"None" if request.user is None else str(request.user.id),
                         'comentario':str(form.cleaned_data.get('comentario'))}).replace('\'','\"'),
                     asg_det.replace('\'','\"'),
                     0)

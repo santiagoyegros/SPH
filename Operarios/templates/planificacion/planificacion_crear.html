@@ -913,6 +913,7 @@
 
                         //Calcular el total de fila
                         var totalHorasFilas = (totalFilaDecimal - corteDecimal) * TotalDias * cantOpe;
+                       
 
                         //Calculamos el total de las horas diurnas de la fila
                         var total_horas_diurnas_fila = hoursToString(totalHorasFilas - temp_NocturnasDecimal);
@@ -931,6 +932,12 @@
                         totalOperarios += parseInt(cantOpe);
                         }
                     }
+                    
+                    if(typeof(total_horas_diurnas_fila)!="undefined" && total_horas_diurnas_fila.length==6 && corteDecimal)
+                     {
+                         total_horas_nocturnas=hoursToString((totalFilaDecimal - corteDecimal) * TotalDias * cantOpe);
+                     }
+
                     if (total_horas_diurnas && total_horas_diurnas != 'NaN:NaN') {
                     $('#id_cantHoras').val(total_horas_diurnas);
                     }

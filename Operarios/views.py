@@ -558,7 +558,7 @@ def SumaHoras(h1,h2):
     return x
 
 def getPuntosServicios(request):
-    puntoServi = PuntoServicio.objects.all()
+    puntoServi = PuntoServicio.objects.all().order_by('NombrePServicio')
     puntos =[]
     i=1
     for p in puntoServi:

@@ -283,6 +283,7 @@ class PlanificacionCab(models.Model):
     cantHorasNoc = models.CharField('Cantidad de Horas Nocturnas', max_length=8, blank=True, null=True)
     cantHorasEsp = models.CharField('Cantidad de Horas Especiales', max_length=8, blank=True, null=True)
     rePlanificar = models.BooleanField('Re planificar', default=False)
+    usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     def __str__(self):
         return self.puntoServicio.NombrePServicio
 
@@ -741,6 +742,7 @@ class HistPlanificacionCab(models.Model):
     cantHorasNoc = models.CharField('Cantidad de Horas Nocturnas', max_length=8, blank=True, null=True)
     cantHorasEsp = models.CharField('Cantidad de Horas Especiales', max_length=8, blank=True, null=True)
     rePlanificar = models.BooleanField('Re planificar', default=False)
+    usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     vactual =  models.ForeignKey(PlanificacionCab, blank=False, null=True, on_delete=models.CASCADE)
     vfechaInicio = models.DateTimeField('Fecha Inicio Reg', auto_now_add=False,null=True)
     vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)

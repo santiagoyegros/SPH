@@ -33,6 +33,11 @@
     .estilo-servicio2{
         padding: .9rem !important;
     }
+
+    .estilo-serves{
+        padding-left: 10px !important;
+    }
+
     
       .card-header {
         background-color: #86273e !important;
@@ -262,8 +267,8 @@
                         <tbody>
                             {% for relev in relevamiento.relevamientodet_set.all %}
                             <tr>
-                                <th class="estilo-servicio" scope="row">{{ relev.tipoServPart }}</th>
-                                <td>
+                                <th class="estilo-serves" scope="row">{{ relev.tipoServPart }}</th>
+                                <td class="estilo-serves">
                                     {% if relev.lunEnt %}
                                     {{ relev.lunEnt }} a {{ relev.lunSal }}
                                     {% endif %}
@@ -322,17 +327,17 @@
                         <tbody>
                             {% for relevesp in relevamiento.relevamientoesp_set.all %}
                             <tr>
-                                <td scope="row" class="estilo-servicio">
+                                <td scope="row" class="estilo-serves">
                                     {% if relevesp.tipo %}
                                     {{ relevesp.tipo }}
                                     {% endif %}
                                 </td>
-                                <td class="estilo-servicio">
+                                <td class="estilo-serves">
                                     {% if relevesp.frecuencia %}
                                     {{ relevesp.get_frecuencia_display }}
                                     {% endif %}
                                 </td>
-                                <td style="padding: .9rem !important;">
+                                <td class="estilo-serves">
                                     {% if relevesp.cantHoras %}
                                     {{ relevesp.cantHoras }}
                                     {% endif %}
@@ -368,7 +373,7 @@
                                 <tbody>
                                     {% for relevmen in relevamiento.relevamientomensualeros_set.all %}
                                     <tr>
-                                        <td style="padding-left: 30px;" scope="row">
+                                        <td style="padding-left: 10px;" scope="row">
                                             {% if relevmen.mensuCantidad %}
                                                 {{ relevmen.mensuCantidad }}
                                             {% endif %}

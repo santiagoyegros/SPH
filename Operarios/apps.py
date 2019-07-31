@@ -8,8 +8,8 @@ class OperariosConfig(AppConfig):
         #from scheduler import planificador
         #planificador.start()
         """Registro de ausencias"""
-        # from scheduler import register
-        # register.start()
+        from scheduler import register
+        register.start()
 
         
 

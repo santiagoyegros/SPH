@@ -48,7 +48,7 @@ def restarHoras(totalHora,asigHora,totalMin,asigMin):
     return "{}:{}".format(cantidadTotalHoras,int(cantidadTotalDeMinutos))
 
 def getPuntosServicios(request):
-    puntoServi = PuntoServicio.objects.all()
+    puntoServi = PuntoServicio.objects.all().order_by('NombrePServicio')
     puntos =[]
     i=1
     for p in puntoServi:
@@ -82,9 +82,19 @@ def getPuntosServicios(request):
             "estado":estado
         })
         i=i+1
-    print(puntos)
+    
+    ordered_puntos = []
+    clean_array = puntos.copy()
+    for p in puntos:
+        if p['estado']:
+            ordered_puntos.append(p)
+            clean_array.remove(p)
+    print()        
+    for cleanp in clean_array:
+        ordered_puntos.append(cleanp)         
+         
     response={}
-    response['dato']=puntos
+    response['dato']=ordered_puntos
     return HttpResponse(json.dumps(response),content_type="application/json")
 
 def agregar_detalle(request):
@@ -343,6 +353,7 @@ def guardarAsignacion(request):
                 params=(
                     str({'id': str(asignacion.id),'puntoServicio_id':str(puntoSer.id),
                         'totalasignado':str(form.cleaned_data.get('totalasignado')),
+                        'usuario_id':"None" if request.user is None else str(request.user.id),
                         'comentario':str(form.cleaned_data.get('comentario'))}).replace('\'','\"'),
                     asg_det.replace('\'','\"'),
                     0)

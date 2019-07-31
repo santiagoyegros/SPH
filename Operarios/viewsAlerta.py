@@ -53,11 +53,14 @@ def alertasList (request):
     print (request.GET.get('estado'))
     print (request.GET.get('tipoAlerta'))
     print (request.GET.get('operario'))
+
+
+    
     if request.GET.get("fechaDesde") and request.GET.get("fechaHasta"):
         fechaDesdeAux=datetime.datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").replace(hour=0,minute=0,second=0, microsecond=0)
         fechaHastaAux=datetime.datetime.strptime(request.GET.get('fechaHasta'), "%d/%m/%Y").replace(hour=23,minute=59,second=59, microsecond=0)     
         alertasList=Alertas.objects.filter(FechaHora__gte=fechaDesdeAux,FechaHora__lte=fechaHastaAux)
-        
+
     if request.GET.get('estado'):
         alertasList=alertasList.filter(Estado__contains=request.GET.get('estado'))
         estado=request.GET.get('estado')

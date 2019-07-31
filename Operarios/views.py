@@ -419,6 +419,7 @@ def Relevamiento(request, id_puntoServicio=None):
                         'cantidadHrTotal': 0 if form.cleaned_data.get('cantidadHrTotal') is None else form.cleaned_data.get('cantidadHrTotal'),
                         'cantidadHrEsp': 0 if form.cleaned_data.get('cantidadHrEsp') is None else form.cleaned_data.get('cantidadHrEsp'),
                         'fechaInicio':str(form.cleaned_data.get('fechaInicio')),
+                        'usuario_id':"None" if request.user is None else str(request.user.id),
                         'tipoSalario':str(form.cleaned_data.get('tipoSalario')),
                         'comentario': "" if form.cleaned_data.get('comentario') is None else str(form.cleaned_data.get('comentario'))}).replace('\'','\"'),
                     rel_det.replace('\'','\"'),
@@ -558,7 +559,7 @@ def SumaHoras(h1,h2):
     return x
 
 def getPuntosServicios(request):
-    puntoServi = PuntoServicio.objects.all()
+    puntoServi = PuntoServicio.objects.all().order_by('NombrePServicio')
     puntos =[]
     i=1
     for p in puntoServi:
@@ -576,6 +577,7 @@ def getPuntosServicios(request):
         if PlanificacionCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
             planificacionCab = PlanificacionCab.objects.get(Q(puntoServicio_id=p.id) )
             estado = planificacionCab.rePlanificar
+            
             if(planificacionCab.cantHorasNoc != None):
                 horasAsig = SumaHoras(planificacionCab.cantHoras, planificacionCab.cantHorasNoc)
             else:
@@ -583,12 +585,12 @@ def getPuntosServicios(request):
             if(horasAsig!=None):
                 h=str(horasAsig).split(":")
                 horasAsig=h[0]+":"+h[1]
-            print(horasAsig)
+            
         if  totalHora and horasAsig:
             horasTotales,minutosTotales = totalHora.split(':')
             horasAsignadas,minutosAsignadas= horasAsig.split(':')
             cantidadMinutos = restarHoras( int(horasTotales),int(horasAsignadas),int(minutosTotales),int(minutosAsignadas))
-
+        
         puntos.append({
             "id":i,
             "idPunto":p.id,
@@ -599,9 +601,18 @@ def getPuntosServicios(request):
             "estado":estado
         })
         i=i+1
-
+    
+    ordered_puntos = []
+    clean_array = puntos.copy()
+    for p in puntos:
+        if p['estado']:
+            ordered_puntos.append(p)
+            clean_array.remove(p)   
+    
+    for cleanp in clean_array:
+        ordered_puntos.append(cleanp) 
     response={}
-    response['dato']=puntos
+    response['dato']=ordered_puntos
     return HttpResponse(json.dumps(response),content_type="application/json")
 
 
@@ -714,6 +725,7 @@ def Planificacion_create(request, id_puntoServicio=None):
                     str({'id': str(planificacion.id),'puntoServicio_id':str(puntoSer.id),
                         	'puntoServicio':str(form.cleaned_data.get('puntoServicio')),
                             'cantidad':str(form.cleaned_data.get('cantidad')),
+                            'usuario_id':"None" if request.user is None else str(request.user.id),
                             'cantHoras':str(form.cleaned_data.get('cantHoras')),
                             'cantHorasNoc':str(form.cleaned_data.get('cantHorasNoc')),
                             'cantHorasEsp':str(form.cleaned_data.get('cantHorasEsp'))                             

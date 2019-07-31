@@ -491,7 +491,7 @@ GO
 
 USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[relevamiento_cab_trg]    Script Date: 25/7/2019 21:36:39 ******/
+/****** Object:  StoredProcedure [dbo].[relevamiento_cab_trg]    Script Date: 31/7/2019 11:53:17 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -532,7 +532,7 @@ AS
 		select @dp0_cantidadHrTotal="value" from OpenJson(@json) where "key"='cantidadHrTotal';
 		select @dp0_cantidadHrEsp="value" from OpenJson(@json) where "key"='cantidadHrEsp';
 		select @dp0_fechaInicio=cast("value"as date) from OpenJson(@json) where "key"='fechaInicio';
-		select @dp0_usuario_id="value" from OpenJson(@json) where "key"='usuario_id';
+		select @dp0_usuario_id="value" from OpenJson(@json) where "key"='usuario_id' and "value"!='None';
 		select @dp0_tipoSalario="value" from OpenJson(@json) where "key"='tipoSalario';
 		select @dp0_comentario="value" from OpenJson(@json) where "key"='comentario';
 		select @dp0_cantAprendices="value" from OpenJson(@json) where "key"='cantAprendices';
@@ -934,9 +934,9 @@ AS
 END
 GO
 
-USE [reingenieria]
+USE [aireinegnier]
 GO
-/****** Object:  StoredProcedure [dbo].[planificacioncab_trg]    Script Date: 26/7/2019 11:06:34 ******/
+/****** Object:  StoredProcedure [dbo].[planificacioncab_trg]    Script Date: 31/7/2019 11:53:14 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -961,6 +961,7 @@ AS
 		DECLARE @p_cantHorasNoc nvarchar(max);
 		DECLARE @p_cantHoras nvarchar(max);
 		DECLARE @p_cantidad int;
+		DECLARE @p_usuario_id int;
 		DECLARE @p_fecha datetime2 ;
 		DECLARE @p_id int;
 
@@ -968,6 +969,7 @@ AS
 		select @p_cantHorasEsp="value" from OpenJson(@json) where "key"='cantHorasEsp';
 		select @p_cantHorasNoc="value" from OpenJson(@json) where "key"='cantHorasNoc';
 		select @p_cantHoras="value" from OpenJson(@json) where "key"='cantHoras';
+		select @p_usuario_id="value" from OpenJson(@json) where "key"='usuario_id' and "value"!='None';
 		select @p_cantidad="value" from OpenJson(@json) where "key"='cantidad';
 		select @p_fecha="value" from OpenJson(@json) where "key"='fecha' and "value"!='None';
 		select @p_id="value" from OpenJson(@json) where "key"='id';
@@ -987,24 +989,24 @@ AS
 			if @tmp1_vregistro is NULL
 			begin
 				set @tmp1_vregistro=1;
-				INSERT INTO dbo.Operarios_histplanificacioncab(puntoServicio_id,cantHorasEsp,cantHorasNoc,cantHoras,cantidad,fecha,vfechaInicio,vfechaFin,vregistro,vactual_id,rePlanificar)
-				select puntoServicio_id,cantHorasEsp,cantHorasNoc,cantHoras,cantidad,fecha,@fechaCambio,NULL,@tmp1_vregistro,@p_id,rePlanificar from dbo.Operarios_planificacioncab where id=@p_id;
+				INSERT INTO dbo.Operarios_histplanificacioncab(puntoServicio_id,cantHorasEsp,cantHorasNoc,cantHoras,cantidad,fecha,vfechaInicio,vfechaFin,vregistro,vactual_id,rePlanificar,usuario_id)
+				select puntoServicio_id,cantHorasEsp,cantHorasNoc,cantHoras,cantidad,fecha,@fechaCambio,NULL,@tmp1_vregistro,@p_id,rePlanificar,usuario_id from dbo.Operarios_planificacioncab where id=@p_id;
 			end
 			update dbo.Operarios_histplanificacioncab set vfechaFin=@fechaCambio where vactual_id=@p_id and vregistro=@tmp1_vregistro;
 			set @tmp1_vregistro=@tmp1_vregistro+1;
-			INSERT INTO dbo.Operarios_histplanificacioncab(puntoServicio_id,cantHorasEsp,cantHorasNoc,cantHoras,cantidad,fecha,vfechaInicio,vfechaFin,vregistro,vactual_id,rePlanificar)
-			select @p_puntoServicio_id,@p_cantHorasEsp,@p_cantHorasNoc,@p_cantHoras,@p_cantidad,@p_fecha,@fechaCambio,NULL,@tmp1_vregistro,@p_id,'False'
+			INSERT INTO dbo.Operarios_histplanificacioncab(puntoServicio_id,cantHorasEsp,cantHorasNoc,cantHoras,cantidad,fecha,vfechaInicio,vfechaFin,vregistro,vactual_id,rePlanificar,usuario_id)
+			select @p_puntoServicio_id,@p_cantHorasEsp,@p_cantHorasNoc,@p_cantHoras,@p_cantidad,@p_fecha,@fechaCambio,NULL,@tmp1_vregistro,@p_id,'False',@p_usuario_id
 			update dbo.Operarios_planificacioncab set 
-				 puntoServicio_id=@p_puntoServicio_id,cantHorasEsp=@p_cantHorasEsp,cantHorasNoc=@p_cantHorasNoc,cantHoras=@p_cantHoras,cantidad=@p_cantidad,fecha=@p_fecha, rePlanificar='False' where id=@p_id;
+				 puntoServicio_id=@p_puntoServicio_id,cantHorasEsp=@p_cantHorasEsp,cantHorasNoc=@p_cantHorasNoc,cantHoras=@p_cantHoras,cantidad=@p_cantidad,fecha=@p_fecha, rePlanificar='False',usuario_id=@p_usuario_id where id=@p_id;
 		end
 		if  @p_id is NULL
 		begin
 			set @tmp1_vregistro=1;
-			INSERT INTO dbo.Operarios_planificacioncab(puntoServicio_id,cantHorasEsp,cantHorasNoc,cantHoras,cantidad,fecha,rePlanificar)
-			select @p_puntoServicio_id,@p_cantHorasEsp,@p_cantHorasNoc,@p_cantHoras,@p_cantidad,@p_fecha,'False';
+			INSERT INTO dbo.Operarios_planificacioncab(puntoServicio_id,cantHorasEsp,cantHorasNoc,cantHoras,cantidad,fecha,rePlanificar,usuario_id)
+			select @p_puntoServicio_id,@p_cantHorasEsp,@p_cantHorasNoc,@p_cantHoras,@p_cantidad,@p_fecha,'False',@p_usuario_id;
 			set @p_id=SCOPE_IDENTITY();
-			INSERT INTO dbo.Operarios_histplanificacioncab(puntoServicio_id,cantHorasEsp,cantHorasNoc,cantHoras,cantidad,fecha,vfechaInicio,vfechaFin,vregistro,vactual_id,rePlanificar)
-			select @p_puntoServicio_id,@p_cantHorasEsp,@p_cantHorasNoc,@p_cantHoras,@p_cantidad,@p_fecha,@fechaCambio,NULL,@tmp1_vregistro,@p_id,'False'
+			INSERT INTO dbo.Operarios_histplanificacioncab(puntoServicio_id,cantHorasEsp,cantHorasNoc,cantHoras,cantidad,fecha,vfechaInicio,vfechaFin,vregistro,vactual_id,rePlanificar,usuario_id)
+			select @p_puntoServicio_id,@p_cantHorasEsp,@p_cantHorasNoc,@p_cantHoras,@p_cantidad,@p_fecha,@fechaCambio,NULL,@tmp1_vregistro,@p_id,'False',@p_usuario_id
 		end
 		SET @retorno=0;
 		Select @retorno as resultado;

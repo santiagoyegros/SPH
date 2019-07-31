@@ -419,6 +419,7 @@ def Relevamiento(request, id_puntoServicio=None):
                         'cantidadHrTotal': 0 if form.cleaned_data.get('cantidadHrTotal') is None else form.cleaned_data.get('cantidadHrTotal'),
                         'cantidadHrEsp': 0 if form.cleaned_data.get('cantidadHrEsp') is None else form.cleaned_data.get('cantidadHrEsp'),
                         'fechaInicio':str(form.cleaned_data.get('fechaInicio')),
+                        'usuario_id':"None" if request.user is None else str(request.user.id),
                         'tipoSalario':str(form.cleaned_data.get('tipoSalario')),
                         'comentario': "" if form.cleaned_data.get('comentario') is None else str(form.cleaned_data.get('comentario'))}).replace('\'','\"'),
                     rel_det.replace('\'','\"'),
@@ -714,6 +715,7 @@ def Planificacion_create(request, id_puntoServicio=None):
                     str({'id': str(planificacion.id),'puntoServicio_id':str(puntoSer.id),
                         	'puntoServicio':str(form.cleaned_data.get('puntoServicio')),
                             'cantidad':str(form.cleaned_data.get('cantidad')),
+                            'usuario_id':"None" if request.user is None else str(request.user.id),
                             'cantHoras':str(form.cleaned_data.get('cantHoras')),
                             'cantHorasNoc':str(form.cleaned_data.get('cantHorasNoc')),
                             'cantHorasEsp':str(form.cleaned_data.get('cantHorasEsp'))                             

@@ -576,6 +576,7 @@ def getPuntosServicios(request):
         if PlanificacionCab.objects.filter(Q(puntoServicio_id=p.id) ).exists():
             planificacionCab = PlanificacionCab.objects.get(Q(puntoServicio_id=p.id) )
             estado = planificacionCab.rePlanificar
+            
             if(planificacionCab.cantHorasNoc != None):
                 horasAsig = SumaHoras(planificacionCab.cantHoras, planificacionCab.cantHorasNoc)
             else:
@@ -583,12 +584,12 @@ def getPuntosServicios(request):
             if(horasAsig!=None):
                 h=str(horasAsig).split(":")
                 horasAsig=h[0]+":"+h[1]
-            print(horasAsig)
+            
         if  totalHora and horasAsig:
             horasTotales,minutosTotales = totalHora.split(':')
             horasAsignadas,minutosAsignadas= horasAsig.split(':')
             cantidadMinutos = restarHoras( int(horasTotales),int(horasAsignadas),int(minutosTotales),int(minutosAsignadas))
-
+        
         puntos.append({
             "id":i,
             "idPunto":p.id,
@@ -599,9 +600,18 @@ def getPuntosServicios(request):
             "estado":estado
         })
         i=i+1
-
+    
+    ordered_puntos = []
+    clean_array = puntos.copy()
+    for p in puntos:
+        if p['estado']:
+            ordered_puntos.append(p)
+            clean_array.remove(p)   
+    
+    for cleanp in clean_array:
+        ordered_puntos.append(cleanp) 
     response={}
-    response['dato']=puntos
+    response['dato']=ordered_puntos
     return HttpResponse(json.dumps(response),content_type="application/json")
 
 

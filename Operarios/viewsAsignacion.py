@@ -82,9 +82,19 @@ def getPuntosServicios(request):
             "estado":estado
         })
         i=i+1
-    print(puntos)
+    
+    ordered_puntos = []
+    clean_array = puntos.copy()
+    for p in puntos:
+        if p['estado']:
+            ordered_puntos.append(p)
+            clean_array.remove(p)
+            
+    for cleanp in clean_array:
+        ordered_puntos.append(cleanp)         
+         
     response={}
-    response['dato']=puntos
+    response['dato']=ordered_puntos
     return HttpResponse(json.dumps(response),content_type="application/json")
 
 def agregar_detalle(request):

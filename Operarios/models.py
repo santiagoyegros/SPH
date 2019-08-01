@@ -956,7 +956,11 @@ class HistRelevamientoMensualeros(models.Model):
     vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
     vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
 
-
-
+class CupoUtilizado (models.Model):
+    puntoServicio=models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
+    anho=models.IntegerField('Anho del cupo', blank=True, null=True)
+    mes=models.CharField(verbose_name='Mes del cupo del anho', max_length=2)
+    cupoUtilizado=models.IntegerField('Cantidad de horas totales usadas por hora procesada', blank=True, null=True)
+    horasProcesadas=models.ForeignKey(HorasProcesadas, blank=True, null=True, on_delete=models.SET_NULL)
 
 

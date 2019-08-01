@@ -12,34 +12,49 @@
         font-weight: 600 !important;
     }
 
+    .card-body .title {
+        font-weight: bold !important;
+    }
+
+    .header-table tr {
+        padding: 10px !important;
+        background-color: #636363 !important;
+        color: white !important;
+    }
+
+    .card-body.datos {
+        padding:15px 5px 0px 5px !important;
+    }
 
     .table thead th {
         font-weight: 400 !important;
         padding: 10px !important;
     }
-    .input-sueldos{
+
+    .input-sueldos {
         background-color: white !important;
         border: none !important;
         text-align: left !important;
     }
+
     .table-hover tbody tr:hover {
         background-color: transparent !important;
     }
 
-    .estilo-servicio{
+    .estilo-servicio {
         padding: .6rem !important;
     }
 
-    .estilo-servicio2{
+    .estilo-servicio2 {
         padding: .9rem !important;
     }
 
-    .estilo-serves{
+    .estilo-serves {
         padding-left: 10px !important;
     }
 
-    
-      .card-header {
+
+    .card-header {
         background-color: #86273e !important;
         color: white !important;
         font-size: 20px !important;
@@ -156,49 +171,29 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4">
-                                <p>Fecha de Relevamiento:</p>
+                                <p class="title">Fecha de Relevamiento:</p>
+                                {{ relevamiento.fecha }}
                             </div>
                             <div class="col-md-4">
-                                <p>Cantidad de Operarios:</p>
+                                <p class="title">Cantidad de Operarios:</p>
+                                {{ relevamiento.cantidad }}
                             </div>
                             <div class="col-md-4">
-                                <p></p>
+                                <p class="title">Cantidad de Horas totales por Semana:</p>
+                                {{ relevamiento.cantidadHrTotal }} hrs
                             </div>
                         </div>
-                        <div class="row">
-                                <div class="col-md-4">
-                                    <p></p>
-                                </div>
-                                <div class="col-md-4">
-                                    <p></p>
-                                </div>
-                                <div class="col-md-4">
-                                    <p></p>
-                                </div>
+                        <div class="row" style="    margin-top: 40px;">
+                            <div class="col-md-4">
+                                <p class="title">Cantidad de Horas Especiales por Mes:</p>
+                                {{ relevamiento.cantidadHrEsp }} hrs
                             </div>
-                        <div class="row">
-                            <div class="col"><u>Punto de Servicio:</u> {{relevamiento.puntoServicio.NombrePServicio}}
-                                ({{ relevamiento.puntoServicio }})</div>
+                            <div class="col-md-8">
+                                <p class="title">Comentarios:</p>
+                                {{ relevamiento.comentario }}
+                            </div>
                         </div>
-                        <div class="row">
-                            <div class="col"><u>Fecha de Relevamiento:</u> {{ relevamiento.fecha }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col"><u>Cantidad de Operarios:</u> {{ relevamiento.cantidad }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col"><u>Cantidad de Horas totales por Semana:</u>
-                                {{ relevamiento.cantidadHrTotal }}
-                                hrs</div>
-                        </div>
-                        <div class="row">
-                            <div class="col"><u>Cantidad de Horas Especiales por Mes:</u>
-                                {{ relevamiento.cantidadHrEsp }}
-                                hrs</div>
-                        </div>
-                        <div class="row">
-                            <div class="col"><u>Comentarios:</u> {{ relevamiento.comentario }}</div>
-                        </div>
+
                     </div>
                 </div>
 
@@ -208,152 +203,172 @@
             <div class="container-fluid mb-3 mt-3" id='formset-det-relevamiento'>
 
                 {% if relevamiento.relevamientocupohoras_set.all %}
-                <div class="container-fluid border mb-4 mt-3">
-                    <h5 class='mt-2'>
-                        Cupo de Horas <small class="text-muted">Detalle de horas</small>
-                    </h5>
-                    <table class="table table-sm table-hover mt-2">
-                        <thead>
-                            <tr>
-                                <th scope="col-2"> Cantidad de Hrs </th>
-                                <th scope="col-2"> Frecuencia </th>
-                                <th scope="col-2"> Tipo de Horas </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for relevcupo in relevamiento.relevamientocupohoras_set.all %}
-                            <tr>
-                                <td class="estilo-servicio2">
-                                    {% if relevcupo.cantCHoras %}
-                                    {{ relevcupo.cantCHoras }}
-                                    {% endif %}
-                                </td>
-                                <td class="estilo-servicio">
-                                    {% if relevcupo.frecuencia %}
-                                    {{ relevcupo.get_frecuencia_display}}
-                                    {% endif %}
-                                </td>
-                                <td class="estilo-servicio2">
-                                    {% if relevcupo.tipoHora %}
-                                    {{ relevcupo.tipoHora }}
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                    </table>
+                <div class="card" style="margin-bottom:15px !important;">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-12">
+                                Cupo de Horas
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body datos">
+
+                        <table class="table table-sm table-hover mt-2">
+                            <thead class="header-table">
+                                <tr>
+                                    <th scope="col-2"> Cantidad de Hrs </th>
+                                    <th scope="col-2"> Frecuencia </th>
+                                    <th scope="col-2"> Tipo de Horas </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for relevcupo in relevamiento.relevamientocupohoras_set.all %}
+                                <tr>
+                                    <td class="estilo-servicio2">
+                                        {% if relevcupo.cantCHoras %}
+                                        {{ relevcupo.cantCHoras }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="estilo-servicio">
+                                        {% if relevcupo.frecuencia %}
+                                        {{ relevcupo.get_frecuencia_display}}
+                                        {% endif %}
+                                    </td>
+                                    <td class="estilo-servicio2">
+                                        {% if relevcupo.tipoHora %}
+                                        {{ relevcupo.tipoHora }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                        </table>
+                    </div>
                 </div>
                 {% endif %}
 
                 <!-- Relevamiento realizados -->
                 {% if relevamiento.relevamientodet_set.all %}
-                <div class="container-fluid border mb-4 mt-3">
-                    <h5 class='mt-2'>
-                        Servicios Especificos <small class="text-muted">Detalle de servicios</small>
-                    </h5>
-                    <table class="table table-sm table-hover mt-2">
-                        <thead>
-                            <tr>
-                                <th scope="col-2"> Servicio </th>
-                                <th scope="col-2"> Lunes </th>
-                                <th scope="col-2"> Martes </th>
-                                <th scope="col-2"> Miercoles </th>
-                                <th scope="col-2"> Jueves </th>
-                                <th scope="col-2"> Viernes </th>
-                                <th scope="col-2"> Sabado </th>
-                                <th scope="col-2"> Domingo </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for relev in relevamiento.relevamientodet_set.all %}
-                            <tr>
-                                <th class="estilo-serves" scope="row">{{ relev.tipoServPart }}</th>
-                                <td class="estilo-serves">
-                                    {% if relev.lunEnt %}
-                                    {{ relev.lunEnt }} a {{ relev.lunSal }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if relev.marEnt %}
-                                    {{ relev.marEnt }} a {{ relev.marSal }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if relev.mieEnt %}
-                                    {{ relev.mieEnt }} a {{ relev.mieSal }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if relev.jueEnt %}
-                                    {{ relev.jueEnt }} a {{ relev.jueSal }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if relev.vieEnt %}
-                                    {{ relev.vieEnt }} a {{ relev.vieSal }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if relev.sabEnt %}
-                                    {{ relev.sabEnt }} a {{ relev.sabSal }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if relev.domEnt %}
-                                    {{ relev.domEnt }} a {{ relev.domSal }}
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                    </table>
+                <div class="card" style="margin-bottom:15px !important;">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-12">
+                                Servicios Especificos
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body datos">
+
+                        <table class="table table-sm table-hover mt-2">
+                            <thead class="header-table">
+                                <tr>
+                                    <th scope="col-2"> Servicio </th>
+                                    <th scope="col-2"> Lunes </th>
+                                    <th scope="col-2"> Martes </th>
+                                    <th scope="col-2"> Miercoles </th>
+                                    <th scope="col-2"> Jueves </th>
+                                    <th scope="col-2"> Viernes </th>
+                                    <th scope="col-2"> Sabado </th>
+                                    <th scope="col-2"> Domingo </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for relev in relevamiento.relevamientodet_set.all %}
+                                <tr>
+                                    <td class="estilo-serves" scope="row">{{ relev.tipoServPart }}</td>
+                                    <td class="estilo-serves">
+                                        {% if relev.lunEnt %}
+                                        {{ relev.lunEnt }} a {{ relev.lunSal }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if relev.marEnt %}
+                                        {{ relev.marEnt }} a {{ relev.marSal }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if relev.mieEnt %}
+                                        {{ relev.mieEnt }} a {{ relev.mieSal }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if relev.jueEnt %}
+                                        {{ relev.jueEnt }} a {{ relev.jueSal }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if relev.vieEnt %}
+                                        {{ relev.vieEnt }} a {{ relev.vieSal }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if relev.sabEnt %}
+                                        {{ relev.sabEnt }} a {{ relev.sabSal }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if relev.domEnt %}
+                                        {{ relev.domEnt }} a {{ relev.domSal }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                        </table>
+                    </div>
                 </div>
                 {% endif %}
 
                 <!-- Relevamiento horas de limpieza profunda -->
                 {% if relevamiento.relevamientoesp_set.all %}
-                <div class="container-fluid border mb-4 mt-3">
-                    <h5 class='mt-2'>
-                        Limpiezas Profundas <small class="text-muted">Detalle de horas</small>
-                    </h5>
-                    <table class="table table-sm table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col-2"> Tipo limpieza especial </th>
-                                <th scope="col-2"> Frecuencia </th>
-                                <th scope="col-2"> Cantidad de Horas </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for relevesp in relevamiento.relevamientoesp_set.all %}
-                            <tr>
-                                <td scope="row" class="estilo-serves">
-                                    {% if relevesp.tipo %}
-                                    {{ relevesp.tipo }}
-                                    {% endif %}
-                                </td>
-                                <td class="estilo-serves">
-                                    {% if relevesp.frecuencia %}
-                                    {{ relevesp.get_frecuencia_display }}
-                                    {% endif %}
-                                </td>
-                                <td class="estilo-serves">
-                                    {% if relevesp.cantHoras %}
-                                    {{ relevesp.cantHoras }}
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                    </table>
+                <div class="card" style="margin-bottom:15px !important;">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-12">
+                                Limpiezas Profundas
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body datos">
+
+                        <table class="table table-sm table-hover mt-2">
+                            <thead class="header-table">
+                                <tr>
+                                    <th scope="col-2"> Tipo limpieza especial </th>
+                                    <th scope="col-2"> Frecuencia </th>
+                                    <th scope="col-2"> Cantidad de Horas </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for relevesp in relevamiento.relevamientoesp_set.all %}
+                                <tr>
+                                    <td scope="row" class="estilo-serves">
+                                        {% if relevesp.tipo %}
+                                        {{ relevesp.tipo }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="estilo-serves">
+                                        {% if relevesp.frecuencia %}
+                                        {{ relevesp.get_frecuencia_display }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="estilo-serves">
+                                        {% if relevesp.cantHoras %}
+                                        {{ relevesp.cantHoras }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                        </table>
+                    </div>
                 </div>
                 {% endif %}
 
                 <!-- Mensuales -->
                 {% if relevamiento.relevamientomensualeros_set.all %}
 
-     
-                <div class="container-fluid mb-4 mt-5" style="padding: 0px !important;">
+
                     <div class="card" style="margin-bottom:15px !important;">
                         <div class="card-header">
                             <div class="row">
@@ -362,8 +377,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body" style="padding:15px 5px 0px 5px !important;">
-                            <table class="table table-sm table-hover">
+                        <div class="card-body datos">
+                            <table class="table table-sm table-hover mt-2">
                                 <thead class="header-table">
                                     <tr>
                                         <th scope="col-2"> Cantidad </th>
@@ -375,12 +390,12 @@
                                     <tr>
                                         <td style="padding-left: 10px;" scope="row">
                                             {% if relevmen.mensuCantidad %}
-                                                {{ relevmen.mensuCantidad }}
+                                            {{ relevmen.mensuCantidad }}
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if relevmen.sueldo %}
-                                              <input  class="input-sueldos" value="{{ relevmen.sueldo }}" disabled>
+                                            <input class="input-sueldos" value="{{ relevmen.sueldo }}" disabled>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -389,7 +404,6 @@
                             </table>
                         </div>
                     </div>
-                </div>
                 {% endif %}
 
             </div>
@@ -404,7 +418,8 @@
                         <div class="row mt-3">
                             <div class="col-3"> {{ form.cantidad.label }} {{ form.cantidad }}</div>
                             <div class="col-3"> {{ form.cantHoras.label }} {{ form.cantHoras }}</div>
-                            <div class="col-3" readonly> {{ form.cantHorasNoc.label }} {{ form.cantHorasNoc }}</div>
+                            <div class="col-3" readonly> {{ form.cantHorasNoc.label }} {{ form.cantHorasNoc }}
+                            </div>
                             <div class="col-3"> {{ form.cantHorasEsp.label }} {{ form.cantHorasEsp }}</div>
                         </div>
                     </div>
@@ -433,7 +448,8 @@
                                         <div class="row">
                                             <div class="col-11 text-right title-right"> TOTAL DE HORAS: </div>
                                             <div class="col-1 p-0"> <input id="sumAll_1" type="text" value=""
-                                                    class="form-control form-control-sm total-cupos" readonly /></div>
+                                                    class="form-control form-control-sm total-cupos" readonly />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -515,7 +531,8 @@
                         <div class="row mb-3 justify-content-end" style="    padding: 0rem 1rem;">
 
                             <button type='submit' id='btnEsp' class="btn btn-success btn-add" name='add_esp'
-                                style="float:right !important;"><i class="fa fa-plus fa-lg"></i> Añadir Profundas
+                                style="float:right !important;"><i class="fa fa-plus fa-lg"></i> Añadir
+                                Profundas
                             </button>
 
 
@@ -528,9 +545,11 @@
                                     </div>
                                     <div class="col-md-8">
                                         <div class="row">
-                                            <div class="col-11 text-right title-right"> TOTAL HORAS ESPECIALES: </div>
+                                            <div class="col-11 text-right title-right"> TOTAL HORAS ESPECIALES:
+                                            </div>
                                             <div class="col-1 p-0"><input id="sumAll_2" type="text" value=""
-                                                    class="form-control form-control-sm total-cupos" readonly /></div>
+                                                    class="form-control form-control-sm total-cupos" readonly />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -676,37 +695,37 @@
 
 <script>
 
-            $(document).ready(function () {
-                console.log("hola")
-                $(".input-sueldos").inputmask({ alias : "currency", prefix: 'Gs ', radixPoint: ",",digits:0,removeMaskOnSubmit:true});
-                var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS').val();
-                console.log("Total operarios ", totalDetalleOpe);
-                for (var i = 0; i < totalDetalleOpe; i++) {
+    $(document).ready(function () {
+        console.log("hola")
+        $(".input-sueldos").inputmask({ alias: "currency", prefix: 'Gs ', radixPoint: ",", digits: 0, removeMaskOnSubmit: true });
+        var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS').val();
+        console.log("Total operarios ", totalDetalleOpe);
+        for (var i = 0; i < totalDetalleOpe; i++) {
 
 
-                $('#id_planificacionope_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
+            $('#id_planificacionope_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
 
-                console.log("Checkeado ", $('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked"));
+            console.log("Checkeado ", $('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked"));
 
-                if ($('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked")) {
-                    //$('td.delete input[type=checkbox]').hide()
-                    $('#leaveForm-' + i).hide()
-                }
-                }
-                var totalEspeciales = $('#id_planificacionesp_set-TOTAL_FORMS').val();
-                for (var i = 0; i < totalEspeciales; i++) {
+            if ($('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked")) {
+                //$('td.delete input[type=checkbox]').hide()
+                $('#leaveForm-' + i).hide()
+            }
+        }
+        var totalEspeciales = $('#id_planificacionesp_set-TOTAL_FORMS').val();
+        for (var i = 0; i < totalEspeciales; i++) {
 
-                $('#id_planificacionesp_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
+            $('#id_planificacionesp_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
 
 
-                if ($('#id_planificacionesp_set-' + (i) + '-DELETE').is(":checked")) {
-                    //$('td.delete input[type=checkbox]').hide()
-                    $('#leaveFormEsp-' + i).hide()
-                    
+            if ($('#id_planificacionesp_set-' + (i) + '-DELETE').is(":checked")) {
+                //$('td.delete input[type=checkbox]').hide()
+                $('#leaveFormEsp-' + i).hide()
 
-                }
-                }
-            });
+
+            }
+        }
+    });
 
     function pad(d) {
         return (d < 10) ? '0' + d.toString() : d.toString();
@@ -788,19 +807,18 @@
         //var totalFormsField = $('#id_planificacionope_set-TOTAL_FORMS');
         //var totalForms = parseInt(totalFormsField.val()) - 1;
         //totalFormsField.val(totalForms);
-        
+
         var confirmar = confirm("Está seguro que desea eliminar el registro?");
-        if (confirmar == true) 
-        {
-            
+        if (confirmar == true) {
+
             $('#leaveForm-' + id).css('display:none !important')
-        
-        
-        $("#id_planificacionope_set-" + id + "-DELETE").prop("checked", true);
-        RecalcularHoras();
-        document.getElementById('action').value = 'add_det';
+
+
+            $("#id_planificacionope_set-" + id + "-DELETE").prop("checked", true);
+            RecalcularHoras();
+            document.getElementById('action').value = 'add_det';
             //hacemos submit
-        document.getElementById('formulario').submit();
+            document.getElementById('formulario').submit();
         }
         // for formset functionality to work properly, need to update all existing form ids so they're sequential
         //updateFormElementIndices('leaveForm');
@@ -821,14 +839,13 @@
 
     function deleteLeaveRowEsp(deleteLink, id) {
         var confirmar = confirm("Está seguro que desea eliminar el registro?");
-        if (confirmar == true) 
-        {
-        $(deleteLink).closest('.leaveFormEsp'+id).hide();
-        $("#id_planificacionesp_set-" + id + "-DELETE").prop("checked", true);
-        RecalcularHorasEsp();
-        document.getElementById('action').value = 'add_det';
+        if (confirmar == true) {
+            $(deleteLink).closest('.leaveFormEsp' + id).hide();
+            $("#id_planificacionesp_set-" + id + "-DELETE").prop("checked", true);
+            RecalcularHorasEsp();
+            document.getElementById('action').value = 'add_det';
             //hacemos submit
-        document.getElementById('formulario').submit();
+            document.getElementById('formulario').submit();
         }
 
     }
@@ -841,131 +858,130 @@
 
         var totalDetalleOpe = $('#id_planificacionope_set-TOTAL_FORMS');
         var totalDet = parseInt(totalDetalleOpe.val(), 10);
-        var totalOperarios=0;
+        var totalOperarios = 0;
         //var i = obtenerNumeroId(this.id);
         for (i = 0; i < totalDet; i++) {
-                    if (!($('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked"))) {
-                        //Esta condicion controla las filas eliminadas
-                        var temp_NocturnasDecimal = 0;
+            if (!($('#id_planificacionope_set-' + (i) + '-DELETE').is(":checked"))) {
+                //Esta condicion controla las filas eliminadas
+                var temp_NocturnasDecimal = 0;
 
-                        //Cantidad y corte
-                        var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
-                        var corte = $('#id_planificacionope_set-' + i + '-corte').val();
+                //Cantidad y corte
+                var cantOpe = $('#id_planificacionope_set-' + i + '-cantidad').val();
+                var corte = $('#id_planificacionope_set-' + i + '-corte').val();
 
-                        //Semana
-                        var lun = $('#id_planificacionope_set-' + i + '-lun').prop("checked");
-                        var mar = $('#id_planificacionope_set-' + i + '-mar').prop("checked");
-                        var mie = $('#id_planificacionope_set-' + i + '-mie').prop("checked");
-                        var jue = $('#id_planificacionope_set-' + i + '-jue').prop("checked");
-                        var vie = $('#id_planificacionope_set-' + i + '-vie').prop("checked");
-                        var sab = $('#id_planificacionope_set-' + i + '-sab').prop("checked");
-                        var dom = $('#id_planificacionope_set-' + i + '-dom').prop("checked");
-                        var fer = $('#id_planificacionope_set-' + i + '-fer').prop("checked");
+                //Semana
+                var lun = $('#id_planificacionope_set-' + i + '-lun').prop("checked");
+                var mar = $('#id_planificacionope_set-' + i + '-mar').prop("checked");
+                var mie = $('#id_planificacionope_set-' + i + '-mie').prop("checked");
+                var jue = $('#id_planificacionope_set-' + i + '-jue').prop("checked");
+                var vie = $('#id_planificacionope_set-' + i + '-vie').prop("checked");
+                var sab = $('#id_planificacionope_set-' + i + '-sab').prop("checked");
+                var dom = $('#id_planificacionope_set-' + i + '-dom').prop("checked");
+                var fer = $('#id_planificacionope_set-' + i + '-fer').prop("checked");
 
-                        //Entrada y salida
-                        var Ent = $('#id_planificacionope_set-' + i + '-ent').val();
-                        var Sal = $('#id_planificacionope_set-' + i + '-sal').val();
+                //Entrada y salida
+                var Ent = $('#id_planificacionope_set-' + i + '-ent').val();
+                var Sal = $('#id_planificacionope_set-' + i + '-sal').val();
 
-                        //Contamos la cantidad de dias
-                        var TotalDias = 0;
-                        if (lun) {
-                            TotalDias += 1;
-                        }
-                        if (mar) {
-                            TotalDias += 1;
-                        }
-                        if (mie) {
-                            TotalDias += 1;
-                        }
-                        if (jue) {
-                            TotalDias += 1;
-                        }
-                        if (vie) {
-                            TotalDias += 1;
-                        }
-                        if (sab) {
-                            TotalDias += 1;
-                        }
-                        if (dom) {
-                            TotalDias += 1;
-                        }
-                        if (fer) {
-                            TotalDias += 1;
-                        }
+                //Contamos la cantidad de dias
+                var TotalDias = 0;
+                if (lun) {
+                    TotalDias += 1;
+                }
+                if (mar) {
+                    TotalDias += 1;
+                }
+                if (mie) {
+                    TotalDias += 1;
+                }
+                if (jue) {
+                    TotalDias += 1;
+                }
+                if (vie) {
+                    TotalDias += 1;
+                }
+                if (sab) {
+                    TotalDias += 1;
+                }
+                if (dom) {
+                    TotalDias += 1;
+                }
+                if (fer) {
+                    TotalDias += 1;
+                }
 
-                        //Determinamos las horas diurnas y nocturnas
-                        var limiteInferior = '06:00';
-                        var limiteSuperior = '20:00';
+                //Determinamos las horas diurnas y nocturnas
+                var limiteInferior = '06:00';
+                var limiteSuperior = '20:00';
 
-                        if (mayor(limiteInferior, Ent) == 1) {
-                            var subLimiteSuperior = limiteInferior;
+                if (mayor(limiteInferior, Ent) == 1) {
+                    var subLimiteSuperior = limiteInferior;
 
-                            if (mayor(subLimiteSuperior, Sal) == 1) {
-                                subLimiteSuperior = Sal;
-                            }
-
-                            temp_NocturnasDecimal = (timeInHours(subLimiteSuperior) - timeInHours(Ent)) * TotalDias * cantOpe;
-                            total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
-
-                        } else if (mayor(Sal, limiteSuperior) == 1) {
-                            var subLimiteInferior = limiteSuperior;
-
-                            if (mayor(Ent, subLimiteInferior) == 1) {
-                                subLimiteInferior = Ent;
-                            }
-
-                            temp_NocturnasDecimal = (timeInHours(Sal) - timeInHours(subLimiteInferior)) * TotalDias * cantOpe;
-                            total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
-                        }
-
-                        var totalFilaDecimal = Math.round((timeInHours(Sal) - timeInHours(Ent)) * 100) / 100;
-                        var totalFila = hoursToString(totalFilaDecimal);
-                        var corteDecimal = 0;
-                        if (corte != '') {
-                            corteDecimal = timeInHours(corte);
-                        }
-
-                        //Calcular el total de fila
-                        var totalHorasFilas = (totalFilaDecimal - corteDecimal) * TotalDias * cantOpe;
-                       
-
-                        //Calculamos el total de las horas diurnas de la fila
-                        var total_horas_diurnas_fila = hoursToString(totalHorasFilas - temp_NocturnasDecimal);
-
-
-                        //Seteamos el total de la fila
-                        if (!(isNaN(totalHorasFilas))) {
-                            $('#id_planificacionope_set-' + i + '-total').val(hoursToString(totalHorasFilas));
-                        }
-
-
-                        if (total_horas_diurnas_fila && total_horas_diurnas_fila != 'NaN:NaN') {
-                            total_horas_diurnas = SumHrMin(total_horas_diurnas, total_horas_diurnas_fila);
-                        }
-                        if (parseInt(cantOpe) > 0) {
-                        totalOperarios += parseInt(cantOpe);
-                        }
+                    if (mayor(subLimiteSuperior, Sal) == 1) {
+                        subLimiteSuperior = Sal;
                     }
-                    
-                    if(typeof(total_horas_diurnas_fila)!="undefined" && total_horas_diurnas_fila.length==6 && corteDecimal)
-                     {
-                         total_horas_nocturnas=hoursToString((totalFilaDecimal - corteDecimal) * TotalDias * cantOpe);
-                     }
 
-                    if (total_horas_diurnas && total_horas_diurnas != 'NaN:NaN') {
-                    $('#id_cantHoras').val(total_horas_diurnas);
+                    temp_NocturnasDecimal = (timeInHours(subLimiteSuperior) - timeInHours(Ent)) * TotalDias * cantOpe;
+                    total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
+
+                } else if (mayor(Sal, limiteSuperior) == 1) {
+                    var subLimiteInferior = limiteSuperior;
+
+                    if (mayor(Ent, subLimiteInferior) == 1) {
+                        subLimiteInferior = Ent;
                     }
-                    if (total_horas_nocturnas && total_horas_nocturnas != 'NaN:NaN') {
-                    $('#id_cantHorasNoc').val(total_horas_nocturnas);
-                    }
-                    var totalHrs=SumHrMin(total_horas_diurnas,total_horas_nocturnas)            
-                    $('#sumAll_1').val(totalHrs);
-                    $('#id_cantidad').val(totalOperarios);
-                    
-                    
+
+                    temp_NocturnasDecimal = (timeInHours(Sal) - timeInHours(subLimiteInferior)) * TotalDias * cantOpe;
+                    total_horas_nocturnas = SumHrMin(total_horas_nocturnas, hoursToString(temp_NocturnasDecimal));
+                }
+
+                var totalFilaDecimal = Math.round((timeInHours(Sal) - timeInHours(Ent)) * 100) / 100;
+                var totalFila = hoursToString(totalFilaDecimal);
+                var corteDecimal = 0;
+                if (corte != '') {
+                    corteDecimal = timeInHours(corte);
+                }
+
+                //Calcular el total de fila
+                var totalHorasFilas = (totalFilaDecimal - corteDecimal) * TotalDias * cantOpe;
+
+
+                //Calculamos el total de las horas diurnas de la fila
+                var total_horas_diurnas_fila = hoursToString(totalHorasFilas - temp_NocturnasDecimal);
+
+
+                //Seteamos el total de la fila
+                if (!(isNaN(totalHorasFilas))) {
+                    $('#id_planificacionope_set-' + i + '-total').val(hoursToString(totalHorasFilas));
+                }
+
+
+                if (total_horas_diurnas_fila && total_horas_diurnas_fila != 'NaN:NaN') {
+                    total_horas_diurnas = SumHrMin(total_horas_diurnas, total_horas_diurnas_fila);
+                }
+                if (parseInt(cantOpe) > 0) {
+                    totalOperarios += parseInt(cantOpe);
+                }
+            }
+
+            if (typeof (total_horas_diurnas_fila) != "undefined" && total_horas_diurnas_fila.length == 6 && corteDecimal) {
+                total_horas_nocturnas = hoursToString((totalFilaDecimal - corteDecimal) * TotalDias * cantOpe);
+            }
+
+            if (total_horas_diurnas && total_horas_diurnas != 'NaN:NaN') {
+                $('#id_cantHoras').val(total_horas_diurnas);
+            }
+            if (total_horas_nocturnas && total_horas_nocturnas != 'NaN:NaN') {
+                $('#id_cantHorasNoc').val(total_horas_nocturnas);
+            }
+            var totalHrs = SumHrMin(total_horas_diurnas, total_horas_nocturnas)
+            $('#sumAll_1').val(totalHrs);
+            $('#id_cantidad').val(totalOperarios);
+
+
 
         }
-        
+
 
     }
 
@@ -976,39 +992,36 @@
         var subtotal = 0;
         var totalEsp = $('#id_planificacionesp_set-TOTAL_FORMS');
         var totEsp = parseInt(totalEsp.val(), 10);
-        
-        for (i = 0; i < totEsp; i++) 
-        {
-                if (!($('#id_planificacionesp_set-' + (i) + '-DELETE').is(":checked"))) 
-                {
-                    var frecuencia = $('#id_planificacionesp_set-' + i + '-frecuencia').val();
-                    if($('#id_planificacionesp_set-' + i + '-cantHoras').val())
-                    {
-                        if (frecuencia == 'DIA') {
-                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val())* 30),total);
-                        } else if (frecuencia == 'SEM') {
-                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()  ) * 4), total);
-                        } else if (frecuencia == 'MEN') {
-                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) ), total);
-                        } else if (frecuencia == 'BIM') {
-                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 2), total);
-                        } else if (frecuencia == 'TRI') {
-                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 3), total);
-                        } else if (frecuencia == 'CUA') {
-                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 4), total);
-                        } else if (frecuencia == 'SEL') {
-                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 6), total);
-                        } else if (frecuencia == 'ANU') {
-                            total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 12), total);
-                        }
+
+        for (i = 0; i < totEsp; i++) {
+            if (!($('#id_planificacionesp_set-' + (i) + '-DELETE').is(":checked"))) {
+                var frecuencia = $('#id_planificacionesp_set-' + i + '-frecuencia').val();
+                if ($('#id_planificacionesp_set-' + i + '-cantHoras').val()) {
+                    if (frecuencia == 'DIA') {
+                        total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) * 30), total);
+                    } else if (frecuencia == 'SEM') {
+                        total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) * 4), total);
+                    } else if (frecuencia == 'MEN') {
+                        total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val())), total);
+                    } else if (frecuencia == 'BIM') {
+                        total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 2), total);
+                    } else if (frecuencia == 'TRI') {
+                        total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 3), total);
+                    } else if (frecuencia == 'CUA') {
+                        total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 4), total);
+                    } else if (frecuencia == 'SEL') {
+                        total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 6), total);
+                    } else if (frecuencia == 'ANU') {
+                        total = SumHrMin(hoursToString(timeInHours($('#id_planificacionesp_set-' + i + '-cantHoras').val()) / 12), total);
                     }
                 }
+            }
         }
-            $('#sumAll_2').val(total);
-            $('#id_cantHorasEsp').val(total);
-        
+        $('#sumAll_2').val(total);
+        $('#id_cantHorasEsp').val(total);
+
         //total = hoursToString(total);
-  
+
 
     }
 
@@ -1039,7 +1052,7 @@
         });
 
         var $totalEspeciales = $('#id_planificacionesp_set-TOTAL_FORMS');
-        var aux=$('#id_cantHorasEsp').val();
+        var aux = $('#id_cantHorasEsp').val();
         $('#sumAll_2').val(aux)
 
         $('#btnEsp').click(function (event) {
@@ -1099,7 +1112,7 @@
         //     }
         // }
         //Cargamos el total en input de cantidad de operarios
-       // $('#id_cantidad').val(total);
+        // $('#id_cantidad').val(total);
     });
 
 

@@ -84,9 +84,7 @@
                             {{ form.tipoHora }}
                         </div>
                         <div class="col-1 text-center btn-delete">
-                            <input type="checkbox" style="display:none"
-                                name="relevamientocupohoras_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
-                                id="{{ form.DELETE.id_for_label }}" />
+                            {{form.DELETE}}
                             <a href="javascript:void(0);" onclick="deleteLeaveRowCup(this, {{ forloop.counter0 }});"
                                 class="remove muted pull-right">
                                 <div class='icon-delete' title="Eliminar" alt="Eliminar"><i
@@ -158,9 +156,7 @@
                             {{ form.domEnt }}{{ form.domSal }}
                         </div>
                         <div class="col-1 p-0 text-center btn-delete  ">
-                            <input type="checkbox" style="display:none"
-                                name="relevamientodet_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
-                                id="{{ form.DELETE.id_for_label }}" />
+                            {{form.DELETE}}
                             <a href="javascript:void(0);" onclick="deleteLeaveRowDet(this, {{ forloop.counter0 }});"
                                 class="remove muted pull-right">
                                 <div class='icon-delete' title="Eliminar" alt="Eliminar"><i
@@ -219,9 +215,7 @@
                             {{ form.cantHoras }}
                         </div>
                         <div class="col-1 text-center btn-delete">
-                            <input type="checkbox" style="display:none"
-                                name="relevamientoesp_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
-                                id="{{ form.DELETE.id_for_label }}" />
+                           {{form.DELETE}}
                             <a href="javascript:void(0);" onclick="deleteLeaveRowEsp(this, {{ forloop.counter0 }});"
                                 class="remove muted pull-right">
                                 <div class=' icon-delete' title="Eliminar" alt="Eliminar"><i
@@ -268,9 +262,7 @@
                             {{ form.sueldo }}
                         </div>
                         <div class="col-2 text-center btn-delete">
-                            <input type="checkbox" style="display:none"
-                                name="relevamientomensualeros_set-{{ forloop.counter0 }}-{{ form.DELETE.name }}"
-                                id="{{ form.DELETE.id_for_label }}" />
+                            {{form.DELETE}}
                             <a href="javascript:void(0);" onclick="deleteLeaveRowMen(this, {{ forloop.counter0 }});"
                                 class="remove muted pull-right">
                                 <div class="fa fa-trash fa-lg icon-delete" title="Delete day off" alt="Eliminar"></div>
@@ -320,11 +312,49 @@
         
         console.log(totalDetalleOpe)
         for (var i = 0; i < totalDetalleOpe; i++) {
-            console.log($('#id_relevamientocupohoras_set-' + (i) + '-DELETE'))
+            $('#id_relevamientocupohoras_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
+          if ($('#id_relevamientocupohoras_set-' + (i) + '-DELETE').is(":checked")) {
+              console.log("Encontro");
+                $('#leaveFormCup-' + i).hide()
+            }
+        }
+        var $totalEspeciales = $('#id_relevamientoesp_set-TOTAL_FORMS').val();
+        for (var i = 0; i < totalDetalleOpe; i++) {
+            $('#id_relevamientoesp_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
+          if ($('#id_relevamientoesp_set-' + (i) + '-DELETE').is(":checked")) {
+                $('#leaveFormEsp-' + i).hide()
+            }
+        }
+
+        var totalDetCupo = $('#id_relevamientocupohoras_set-TOTAL_FORMS').val();
+        
+        console.log(totalDetCupo)
+        for (var i = 0; i < totalDetCupo; i++) {
+            $('#id_relevamientocupohoras_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
           if ($('#id_relevamientocupohoras_set-' + (i) + '-DELETE').is(":checked")) {
                 $('#leaveFormCup-' + i).hide()
             }
         }
+        var totalDetEs = $('#id_relevamientodet_set-TOTAL_FORMS').val();
+        
+        console.log(totalDetCupo)
+        for (var i = 0; i < totalDetCupo; i++) {
+            $('#id_relevamientodet_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
+          if ($('#id_relevamientodet_set-' + (i) + '-DELETE').is(":checked")) {
+                $('#leaveFormDet-' + i).hide()
+            }
+        }
+        var totalMens = $('#id_relevamientomensualeros_set-TOTAL_FORMS').val();
+        
+        console.log(totalMens)
+        for (var i = 0; i < totalMens; i++) {
+            $('#id_relevamientomensualeros_set-' + (i) + '-DELETE').attr('style', 'display:none !important')
+          if ($('#id_relevamientomensualeros_set-' + (i) + '-DELETE').is(":checked")) {
+                $('#leaveFormMen-' + i).hide()
+            }
+        }
+
+        
     });
 
     

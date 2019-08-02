@@ -145,7 +145,14 @@ def generarCantidadCupos():
             aux=totalCalculado.split(":")
             horas = aux[0]
             print(horas+" Hrs")
-            cupo=CupoReal(anho=anho,mes=mes,cupoCalculado=int(horas),puntoServicio_id=p.id)
-            #cupo.save()
+            if(CupoReal.objects.filter(Q(puntoServicio_id=p.id) & Q(mes=mes) & Q(anho=anho) ).exists()):
+                print("actualizo")
+                cupo=CupoReal.objects.get(Q(puntoServicio_id=p.id) & Q(mes=mes) & Q(anho=anho) )
+                cupo.cupoCalculado=int(horas)
+                cupo.save()
+            else:
+                print("inserto")
+                cupo=CupoReal(anho=anho,mes=mes,cupoCalculado=int(horas),puntoServicio_id=p.id)
+                cupo.save()
             print("GUARDADO")
     print("FIN")

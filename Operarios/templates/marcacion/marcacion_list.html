@@ -13,7 +13,7 @@
 <h1 class='my-3'>Marcaciones</h1>
 
 <a href="/reingenieria/marcacion/descargar">
-    <button type="button" class=" btn btn-agregar desperateButton float-right borderless">
+    <button type="button" onclick="cargandoDescarga()" class=" btn btn-agregar desperateButton float-right borderless">
       <i class="fa fa-download"></i>   Descargar
     </button>
 </a>
@@ -157,7 +157,24 @@
     });
         /*,
             { type: "control" }*/
+
+   
 </script>
+<script>
+    function cargandoDescarga(){
+        var error=true;
+        startLoader();
+        $.ajax({
+          url: "/reingenieria/marcacion/descargar",
+          type: "GET",
+          success: function(data) {
+            endLoader();
+          }
+      });    
+}
+</script>
+
+
 <style>
     .filter-fecha .bootstrap-datetimepicker-widget {
         display: none !important;

@@ -15,13 +15,186 @@ from django.db import connection, transaction
 import datetime
 from datetime import date
 from django.core import serializers
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet, DiaLibre, OperariosAsignacionDet, Especializacion
+from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet, DiaLibre, OperariosAsignacionDet, Especializacion, AsignacionesDet
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 from ast import literal_eval
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import datetime as dt
 import json
 from django.db.models import Q
+
+
+
+@login_required
+@permission_required('Operarios.view_asignacioncab', raise_exception=True)
+def Asignacion_agregar(request,id_puntoServicio=None,id_asignacionDetalle=None):
+    perfiles = Especializacion.objects.all() 
+    if request.method == 'POST':
+        print("ES POST")
+    else:
+        print("NO ES POST",id_puntoServicio)
+
+    contexto = {
+        'title': 'Asignación de Operarios',
+        'perfiles':perfiles,
+        'id_puntoServicio':id_puntoServicio,
+        'id_asignacionDetalle':id_asignacionDetalle
+    }
+    return render(request, 'asignacion/asignacion_agregar_detalle.html',context=contexto)
+
+def getAsignacionDetalle(request):
+    try:
+        print(request.GET)
+        response['codigo']=0
+        response['dato']=[]
+        response['mensaje']="Exito"
+        return HttpResponse(
+            json.dumps(response),
+            content_type="application/json"
+        ) 
+    except Exception as err:
+        #transaction.rollback()
+        logging.getLogger("error_logger").error('Ocurrió un error al eliminar la asignacion: {0}'.format(err))
+        response['codigo']=1
+        response['dato']=[]
+        response['mensaje']="Ocurrió un error al eliminar la asignacion"
+        return HttpResponse(
+            json.dumps(response),
+            content_type="application/json"
+        )       
+     
+
+def Eliminar_asignacion(request,id_asignacionDetalle):
+    try:
+        response = {}
+        tipo = request.POST.get('tipo')
+        if tipo.lower() == 'temporal':
+            if  AsignacionDetTmp.objects.filter(id=id_asignacionDetalle).exists():
+                asignacion = AsignacionDetTmp.objects.get(id=id_asignacionDetalle)
+        elif tipo.lower() == 'persistido':
+            if  AsignacionDet.objects.filter(id=id_asignacionDetalle).exists():
+                asignacion = AsignacionDet.objects.get(id=id_asignacionDetalle)
+        if asignacion:
+            asignacion.eliminado = True
+            asignacion.save()
+        response['codigo']=0
+        response['dato']=[]
+        response['mensaje']="Asignacion eliminada con éxito"
+        return HttpResponse(
+            json.dumps(response),
+            content_type="application/json"
+            )
+    except Exception as err:
+        #transaction.rollback()
+        logging.getLogger("error_logger").error('Ocurrió un error al eliminar la asignacion: {0}'.format(err))
+        response['codigo']=1
+        response['dato']=[]
+        response['mensaje']="Ocurrió un error al eliminar la asignacion"
+        return HttpResponse(
+            json.dumps(response),
+            content_type="application/json"
+        )       
+
+def formateoFecha(fechaIni):
+    if fechaIni:
+        date_time_obj = datetime.datetime.strptime(fechaIni,'%d/%m/%Y')
+        fechaIni=date_time_obj.strftime('%Y-%m-%d')
+        return fechaIni
+    return ""
+def guardarAsignacionOperario(request):
+    if request.method == 'POST':
+        try:
+            response={}
+            id_puntoServicio=request.POST.get('puntoServicio')
+                    
+            ''' Obtenemos el punto de servicio'''
+            puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio))
+                
+            ''' Obtenemos la asignacion en caso de que exista una '''
+            asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
+
+            if asignacion == None:
+                asignacion = AsignacionCab()
+
+            if request.POST.get('error') is not None and request.POST.get('error')=='true':
+                response['codigo']=1
+                response['dato']=[]
+                response['mensaje']="No se pudo guardar la asignacion, favor verifique las horas asignadas..."
+                
+                return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json"
+                    ) 
+            asg_det=""
+            
+            asg_det+=str({
+                'asignacionCab_id': str(asignacion.id),
+                'operario_id':str(str(request.POST.get('asignaciondet-operario')) if request.POST.get('asignaciondet-operario') is not None else 'None'),
+                'fechaInicio':formateoFecha(str(request.POST.get('asignaciondet-fechaInicio'))),
+                'fechaFin':formateoFecha(str(request.POST.get('asignaciondet-fechaFin'))),
+                'lunEnt':str(request.POST.get('asignaciondet-lunEnt')),
+                'lunSal':str(request.POST.get('asignaciondet-lunSal')),
+                'marEnt':str(request.POST.get('asignaciondet-marEnt')),
+                'marSal':str(request.POST.get('asignaciondet-marSal')),
+                'mieEnt':str(request.POST.get('asignaciondet-mieEnt')),
+                'mieSal':str(request.POST.get('asignaciondet-mieSal')),
+                'jueEnt':str(request.POST.get('asignaciondet-jueEnt')),
+                'jueSal':str(request.POST.get('asignaciondet-jueSal')),
+                'vieEnt':str(request.POST.get('asignaciondet-vieEnt')),
+                'vieSal':str(request.POST.get('asignaciondet-vieSal')),
+                'sabEnt':str(request.POST.get('asignaciondet-sabEnt')),
+                'sabSal':str(request.POST.get('asignaciondet-sabSal')),
+                'domEnt':str(request.POST.get('asignaciondet-domEnt')),
+                'domSal':str(request.POST.get('asignaciondet-domSal')),
+                'perfil_id':str(request.POST.get('asignaciondet-perfil')),
+                'supervisor': 'True' if request.POST.get('asignaciondet-supervisor') is not None else 'False',
+                'totalHoras':str(request.POST.get('asignaciondet-totalHoras'))
+            })
+            conn= connection.cursor()
+            params=(asg_det.replace('\'','\"'),0)
+            print("PARAMS",params)
+            conn.execute('asignaciondet_tmptrg %s,%s',params)
+            result = conn.fetchone()[0]
+            conn.close()
+            if result==0:
+                response['codigo']=0
+                response['dato']=[]
+                response['mensaje']="Se guardó correctamente la asignación"
+                messages.success(request, 'Se guardo correctamente la asignacion')
+            else:
+                response['codigo']=0
+                response['dato']=[]
+                response['mensaje']="Ocurrió un error en el procedimiento"
+            return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
+        except Exception as err:
+            #transaction.rollback()
+            logging.getLogger("error_logger").error('Ocurrió un error al guardar la asignación: {0}'.format(err))
+            response['codigo']=1
+            response['dato']=[]
+            response['mensaje']="Ocurrió un error al guardar la asignación"
+            return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
+
+
+def asignacionesTmpConf(asignacionCab_id):
+        conn= connection.cursor()
+        params=[asignacionCab_id]
+        conn.execute('SELECT * FROM [dbo].[listarasignaciones] (%s)',params)
+        result = conn.fetchall()
+        conn.close()
+        print(result)
+        return [AsignacionesDet(*row) for row in result]
+
+
+
+                
+#############################################################################################
+
 @login_required
 @permission_required('Operarios.view_asignacioncab', raise_exception=True)
 def Asignacion_list(request):
@@ -439,7 +612,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     perfiles = Especializacion.objects.all()
     openModal=False
     idModal = None
-  
+    
     
     logging.getLogger("error_logger").error('Se ingreso en el metodo asignacion_create')
     ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
@@ -479,6 +652,18 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     ''' Obtenemos la asignacion en caso de que exista una '''
     asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
+    #SE LISTA TODAS LAS ASIGNACIONES
+    asignaciones = asignacionesTmpConf(asignacion.id)
+    print("ASIIIIGNACIONES")
+    for asig in asignaciones:
+        print(asig.perfil)
+        if asig.perfil:
+            perfil = Especializacion.objects.get(id = asig.perfil)
+            asig.perfil_nombre = perfil.especializacion
+        if asig.operario_id:
+            operario = Operario.objects.get(id = asig.operario_id)
+            asig.operario_nombre = operario.nombre + " " + operario.apellido
+        asig.puntoServicio_id = id_puntoServicio
     """formDiaLibre = DiaLibreForm(request.POST)"""
 
     if asignacion == None:
@@ -869,7 +1054,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                 conn.close()
                 print(result)
                 if result==0:
-                    messages.success(request, 'Se guardo correctamente la asignacion')
+                    messages.success(request, 'Se guardo correctamente la asignación')
                 else:
                     messages.warning(request, 'No se pudo guardar los cambios')    
                 return redirect('Operarios:asignacion_list')
@@ -890,7 +1075,8 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     #operarios_json = json.dumps(operarios)
     contexto = {
-            'title': 'Nueva Asignación',
+            'title': 'Detalle de Asignaciones',
+            'asignaciones':asignaciones,
             'pservicio': puntoSer,
             'form': form,
             'operarios':operarios,
@@ -1053,7 +1239,6 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
        
         conn.close()
         return [OperariosAsignacionDet(*row) for row in result]
-
 
 def cargarOperarios(request, id_puntoServicio:None):
     try:

@@ -55,7 +55,16 @@ urlpatterns = [
     url(r'^asignacion/listar/', viewsAsignacion.Asignacion_list, name='asignacion_list'),
     url(r'^asignacion/asignar/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_create, name='asignacion_create'),
     url(r'^asignacion/asignar/operarios', viewsAsignacion.getOperarios, name='getOperarios'),
-    url(r'^asignacion/agregarDetalle', viewsAsignacion.agregar_detalle, name='addDetalle'),
+    #SERVICIO QUE AGREGABA DETALLE SIN RECARGAR PAGINA
+    #url(r'^asignacion/agregarDetalle', viewsAsignacion.agregar_detalle, name='addDetalle'),
+    #NUEVA VERSION DE ASIGNACION DETALLE
+    url(r'^asignacion/agregarDetalle/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_agregar, name='addDetalle'),
+    url(r'^asignacion/verDetalle/(?P<id_puntoServicio>\d+)/(?P<id_asignacionDetalle>\d+)/$', viewsAsignacion.Asignacion_agregar, name='verDetalle'),
+    url(r'^asignacion/asignacionDetalle', viewsAsignacion.getAsignacionDetalle, name='getAsignacionDetalle'),
+    url(r'^asignacion/eliminar/(?P<id_asignacionDetalle>\d+)/$', viewsAsignacion.Eliminar_asignacion, name='eliminarDetalle'),
+    url(r'^asignacion/guardarAsigOperario', viewsAsignacion.guardarAsignacionOperario, name='saveDetalle'),
+    ##################################################################################################
+    
     url(r'^asignacion/diasLibres', viewsAsignacion.getDiasLibres, name='getDiasLibres'),
     url(r'^asignacion/guardarAsignacion', viewsAsignacion.guardarAsignacion, name='guardarAsignacion'),
     url(r'^asignacion/puntoServicios', viewsAsignacion.getPuntosServicios, name='getPuntosServicios'),

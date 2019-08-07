@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <div class="cuerpo-filtro row">
                         <div class="row filter-row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <p style="margin:0px !important">
 
                                     <label for="">Fecha inicio:</label>
@@ -27,7 +27,20 @@
                                     </div>
                                 </p>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                    <p style="margin:0px !important">
+    
+                                        <label for="">Hora inicio:</label>
+                                        <div class='input-group date' id='datetimepickerhorainicio'>
+                                            <input type='text' class="form-control" name="horaInicio" value="{{horaInicio}}" id="horaInicio"
+                                                required />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-time"></span>
+                                            </span>
+                                        </div>
+                                    </p>
+                            </div>
+                            <div class="col-md-3">
                                 <p style="margin:0px !important">
 
                                     <label for="">Fecha fin:</label>
@@ -40,30 +53,43 @@
                                     </div>
                                 </p>
                             </div>
-                            <div class="col-md-4">
-                                <p>
-                                    <label for="">Punto de servicio:</label>
-                                    <select id="puntoServicio" data-size="5" name="puntoServicio"
-                                        value="{{puntoServicio}}" class="selectpicker form-control"
-                                        data-live-search="true" title="Seleccionar....">
-
-                                        {% for puntosSer in PuntosServicio %}
-                                        {% if puntosSer.id == puntoServicio  %}
-                                        <option data-tokens="{{puntosSer.NombrePServicio}}" selected="selected"
-                                            value="{{puntosSer.id}}"> {{puntosSer.NombrePServicio}}</option>
-                                        {% else %}
-                                        <option data-tokens="{{puntosSer.NombrePServicio}}" value="{{puntosSer.id}}">
-                                            {{puntosSer.NombrePServicio}}</option>
-
-                                        {% endif %}
-                                        {% endfor %}
-                                    </select>
-
-                                </p>
-                            </div>
+                            <div class="col-md-3">
+                                    <p style="margin:0px !important">
+    
+                                        <label for="">Hora fin:</label>
+                                        <div class='input-group date' id='datetimepickerhorafin'>
+                                            <input type='text' class="form-control" name="horaFin" value="{{horaFin}}" id="horaFin"
+                                                required />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-time"></span>
+                                            </span>
+                                        </div>
+                                    </p>
+                                </div>
                         </div>
                         <div class="row filter-row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                <p>
+                                    <label for="">Punto de servicio:</label>
+                                        <select id="puntoServicio" data-size="5" name="puntoServicio"
+                                            value="{{puntoServicio}}" class="selectpicker form-control"
+                                            data-live-search="true" title="Seleccionar....">
+        
+                                            {% for puntosSer in PuntosServicio %}
+                                            {% if puntosSer.id == puntoServicio  %}
+                                            <option data-tokens="{{puntosSer.NombrePServicio}}" selected="selected"
+                                                value="{{puntosSer.id}}"> {{puntosSer.NombrePServicio}}</option>
+                                            {% else %}
+                                            <option data-tokens="{{puntosSer.NombrePServicio}}" value="{{puntosSer.id}}">
+                                            {{puntosSer.NombrePServicio}}</option>
+        
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+        
+                                </p>
+                            </div>
+                            <div class="col-md-3">
                                 <p>
 
                                     <label for="">Estado:</label>
@@ -82,26 +108,28 @@
                                     </select>
                                 </p>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <p>
 
                                     <label for="tipoAlerta">Tipo de alerta:</label>
                                     <select name="tipoAlerta" id="tipoAlerta" class="form-control"
                                         id="exampleFormControlSelect1" name="tipoAlerta" value="{{tipoAlerta}}">
                                         {% if tipoAlerta %}
+                                        <option value="TODOS" {% if tipoAlerta == "TODOS" %} selected {% endif %}>Todos</option>
                                        
                                         <option value="NO-MARC" {% if tipoAlerta == "NO-MARC" %} selected {% endif %}>No marcacion</option>
                                        
                                         <option value="SIN-ASIG" {% if tipoAlerta == "SIN-ASIG" %} selected {% endif %} >Sin asignacion</option>
                                        
                                         {% else %}
+                                        <option value="TODOS" selected>Todos</option>
                                         <option value="NO-MARC" selected>No marcacion</option>
                                         <option value="SIN-ASIG">Sin asignacion</option>
                                         {% endif %}
                                     </select>
                                 </p>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <p>
                                     <label for="">Operario:</label>
                                     <select id="operario" data-size="5" name="operario" value="{{operario}}"
@@ -124,7 +152,7 @@
                             </div>
                         </div>
                     </div>
-                    <div style="    float: right;">
+                    <div style="float: right;">
                         <button type='submit' class='btn btn-success btn-filtrar'>Filtrar</button>
 
                         <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar">Limpiar</a>
@@ -159,11 +187,74 @@
                                 <td>{{alerta.Fecha}}</td>
                                 <td>{{alerta.Estado}}</td>
                                 <td>{{alerta.Tipo}}</td>
-                                <td id="gestionar-{{forloop.counter}}" style="display:flex;justify-content:center"><a href={% url 'Operarios:alertas_gestionar' alerta_id=alerta.id %} class="btn btn-success btn-filtrar">Gestionar</a></td>
+                                {% if alerta.Tipo == "NO-MARC" %}
+                                    <td id="gestionar-{{forloop.counter}}" style="display:flex;justify-content:center"><a href={% url 'Operarios:alertas_gestionar' alerta_id=alerta.id %} class="btn btn-success btn-filtrar">Gestionar</a></td>
+                                {% else %}
+                                    <td id="gestionar-{{forloop.counter}}" style="display:flex;justify-content:center"><a href=# id="{{alerta.id}}"  class="btn btn-success btn-filtrar open-modal" data-url=#>Gestionar</a></td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
                 </tbody>
             </table>
+            <!-- Modal -->
+            <div class="modal fade" id="gestionModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="gestionModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form id="form_modal" action="" method="POST">
+                        {% csrf_token %}
+                        <div class="card-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Gestión sin asignación</h5>
+                        </div>
+                        <div class="modal-body">
+                                <div class="row filter-row">
+                                        <div class="col-md-12" style="display:flex !important; flex-flow:row !important; padding-right: 10px !important;">
+                                           
+                                            
+                                                <label class="text-center titulo-cupo" >Cupo Utilizado:  </label>
+                                                <input id="cupoUtilizado" style="padding-right: 30px !important;" type="text" class="form-control form-bordernone" disabled>
+                                                <input id="cupoTotal" style="padding-left: 30px !important;" type="text" class="form-control form-bordernone" disabled>
+                                            
+                                        </div>
+                                </div>
+                                <div class="row filter-row">
+                                        <div class="col-md-12">
+                                            <p>
+                                                <label class="font-weight-bold" style="padding-left: 10px;" for="">Motivo</label>
+                                                    <select class="selectpicker form-control" id="id_motivo" data-size="5" name="motivo"
+                                                        value="{{motivo}}" 
+                                                        data-live-search="true" title="--Seleccionar--">
+                                                        {% for motivo in motivos %}
+                                                        
+                                                        <option data-tokens="{{motivo.descripcion}}" value="{{motivo.id}}">
+                                                        {{motivo.descripcion}}</option>
+                    
+                                                       
+                                                        {% endfor %}
+                                                    </select>
+                    
+                                            </p>
+                                        </div>
+                                        <div class="col-md-12">
+                                                <p>
+                                                    <label class="font-weight-bold">Observación</label>
+                                                    <textarea name="observacion" class="form-control" id="id_observacion" rows="3"></textarea>
+                                                </p>
+                                            </div>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id='' type="button" class='btn btn-success btn-add guardar'><i class="fa fa-floppy-o fa-lg"></i>
+                                Guardar</button>
+                            <a class='btn btn-primary btn-cancelar' href=# data-dismiss="modal"><i
+                                    class="fa fa-times fa-lg"></i>Cancelar</a>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+
+
+
             <div class="pagination">
                 Página:&nbsp;&nbsp;
                 {% if alertasList.has_previous %}
@@ -222,16 +313,110 @@
             date: date
         })
     });
+    $(function () {
+        var date;
+        var hora;
+        if($('#horaInicio')[0].value !='None')
+        {
+            hora=$('#horaInicio')[0].value;
+        }else{
+            date = new Date();
+            date.setHours(0,0);
+            hora=date.getHours() + ":" + date.getMinutes();
+        }
+        $('#datetimepickerhorainicio').datetimepicker({
+            locale:'es',
+            format: 'LT',
+            date:moment(hora, 'HHmm'),
+        })
+        
+    });
+    $(function () {
+        var date= new Date();
+        var hora;
+        if($('#horaFin')[0].value !='None'){
+            hora=$('#horaFin')[0].value;
+        }else{
+            hora=date.getHours() + ":" + date.getMinutes();
+        }
+        $('#datetimepickerhorafin').datetimepicker({
+            locale: 'es',
+            format: 'LT',
+            date:moment(hora, 'HHmm'),
+            disabledTimeIntervals: [
+            [moment().hour(date.getHours()).minutes(date.getMinutes()), moment().hour(24).minutes(0)]
+            ],
+        })
+    });
     function llamarFiltro() {
         document.getElementById('action').value = 'filter_operario-' + id;
         //hacemos submit
         document.getElementById('formulario').submit();
     }
 
+
+
+
+
+
+
+    $(document).on('click','.open-modal',function(){
+    var alerta_actual = $(this);
+    var id= alerta_actual[0].id;
+    $('.guardar').attr('id',id);
+    $('#gestionModal').modal('show');
+    $.ajax({
+        url:'/reingenieria/alertas/mostrarCupos',
+        type:'GET',
+        data:{
+             'id':id,
+         },
+        success:function(response){
+            $('#cupoUtilizado').val(response.cupoUtilizado + ' h / '+response.cupoTotal + ' h');
+            // $('#cupoTotal').val(response.cupoTotal + ' h');
+           
+        },
+        error:function(){
+            console.log('error')
+            $('#gestionModal').modal('hide');
+        },
+    });
+});
+
+
+$(document).on('click','.guardar',function(){
+    var error=true;
+    var guardar_actual = $(this);
+    var id_alerta= guardar_actual[0].id;
+    var body={}
+    body.motivo=$('#id_motivo').val();
+    body.observacion=$('#id_observacion').val();
+
+    token = '{{csrf_token}}';
+    $.ajax({
+        type: "POST",
+        url: "/reingenieria/alertas/guardarSinAsignacion/"+id_alerta,
+        data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token+"&error="+error,
+        
+        success:function(response){;
+            window.location.href = "/reingenieria/alertas/listar/"
+            console.log("funciono")
+        },
+        error:function(){
+            console.log('error')
+        },
+    });
+
+});
+
+
+
+
 </script>
 
 
 <style>
+
     .card-header {
         background-color: #86273e !important;
         color: white !important;
@@ -296,6 +481,16 @@
         background-color: #c4e2ff !important;
     }
 
+    .titulo-cupo{
+        color:#86273e !important;
+        font-size: 24px !important;
+        border-radius: 0px !important;
+        padding-left: 20px;
+        clear: both;
+        float:left;
+        margin-right:15px;
+    }
+
     .btn-filtrar {
         background-color: #86273e !important;
         border-color: #86273e !important;
@@ -307,6 +502,26 @@
         background-color: gray !important;
         border-color: gray !important;
         padding: 7px 30px;
+    }
+
+    .btn-add {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 7px;
+        cursor: pointer;
+    }
+
+    .btn-cancelar {
+        background-color: gray !important;
+        border-color: gray !important;
+        padding: 7px 7px;
+    }
+
+
+
+    .form-bordernone:disabled {
+        background-color: transparent !important;
+        border: none !important;
     }
 </style>
 {% endblock %}

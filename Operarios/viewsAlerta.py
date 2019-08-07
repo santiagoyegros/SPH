@@ -17,19 +17,21 @@ from django.core import serializers
 from Operarios.models import Alertas
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Operarios.models import OperariosAsignacionDet
-from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones,HorasNoProcesadas, HorariosOperario, RemplazosCab, RemplazosDet, AlertaResp, Parametros
+from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones,HorasNoProcesadas, HorariosOperario, RemplazosCab, RemplazosDet, AlertaResp, Parametros, Motivos, CupoReal, CupoUtilizado,HorasProcesadas,TipoHorario
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import connection, transaction
 from Operarios.models import Motivos
-
 from django.db.models import Q
+import json
 @login_required
 
 def alertasList (request):
     estado="Abierta"
     fechaDesde=request.GET.get('fechaDesde')
     fechaHasta=request.GET.get('fechaHasta')
+    horaInicio=request.GET.get('horaInicio')
+    horaFin=request.GET.get('horaFin')
     puntoServicio=None
     operario=None
     tipoAlerta=None
@@ -40,6 +42,7 @@ def alertasList (request):
     hoyFin=hoyIni.replace(hour=23,minute=59,second=59)
     alertasList=Alertas.objects.filter(FechaHora__gte=hoyIni,FechaHora__lte=hoyFin)
     operarios = Operario.objects.all()
+    motivos = Motivos.objects.all()
     PuntosServicio = PuntoServicio.objects.all()
     alertasList=alertasList.filter(Estado="ABIERTA")
     alertasList=alertasList.order_by("-FechaHora")
@@ -50,22 +53,32 @@ def alertasList (request):
     print (request.GET.get('puntoServicio'))
     print (request.GET.get('fechaDesde'))
     print (request.GET.get('fechaHasta'))
+    print(request.GET.get('horaInicio'))
+    print(request.GET.get('horaFin'))
     print (request.GET.get('estado'))
     print (request.GET.get('tipoAlerta'))
     print (request.GET.get('operario'))
 
 
     
-    if request.GET.get("fechaDesde") and request.GET.get("fechaHasta"):
+    if request.GET.get("fechaDesde") and request.GET.get("fechaHasta") and request.GET.get("horaInicio") and request.GET.get("horaFin"):
         fechaDesdeAux=datetime.datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").replace(hour=0,minute=0,second=0, microsecond=0)
         fechaHastaAux=datetime.datetime.strptime(request.GET.get('fechaHasta'), "%d/%m/%Y").replace(hour=23,minute=59,second=59, microsecond=0)     
-        alertasList=Alertas.objects.filter(FechaHora__gte=fechaDesdeAux,FechaHora__lte=fechaHastaAux)
+        aux1=str(request.GET.get("fechaDesde")).split('/')
+        aux2=str(request.GET.get("fechaHasta")).split('/')
+        fDesdeAux=aux1[2]+'-'+aux1[1]+'-'+aux1[0]+' '+request.GET.get("horaInicio")+':00'
+        fHastaAux=aux2[2]+'-'+aux2[1]+'-'+aux2[0]+' '+request.GET.get("horaFin")+':00'
+        alertasList=Alertas.objects.filter(FechaHora__gte=fDesdeAux,FechaHora__lte=fHastaAux)
 
     if request.GET.get('estado'):
         alertasList=alertasList.filter(Estado__contains=request.GET.get('estado'))
         estado=request.GET.get('estado')
     if request.GET.get('tipoAlerta'):
-        alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))
+        print(request.GET.get('tipoAlerta'))
+        if(request.GET.get('tipoAlerta')=="TODOS"):
+             alertasList=alertasList.all()
+        else:
+            alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))
         tipoAlerta=request.GET.get('tipoAlerta')
     if request.GET.get('operario') :
         alertasList=alertasList.filter(Operario_id=request.GET.get('operario'))
@@ -73,7 +86,7 @@ def alertasList (request):
     if request.GET.get('puntoServicio') :
         alertasList=alertasList.filter(PuntoServicio_id=request.GET.get('puntoServicio'))
         puntoServicio=int(request.GET.get('puntoServicio'))
-    """se procede a obtener la paginacion"""
+    
     pageNumber=request.GET.get("page",1)
     paginar=do_paginate(alertasList.order_by("-FechaHora"), pageNumber)
     alertasList=paginar[0]
@@ -106,9 +119,12 @@ def alertasList (request):
         'alertasList':alertasList,
         'paginator':paginator,
         'operarios':operarios,
+        'motivos':motivos,
         'PuntosServicio':PuntosServicio,
         "fechaDesde":fechaDesde,
-        "fechaHasta":fechaHasta, 
+        "fechaHasta":fechaHasta,
+        "horaInicio":horaInicio,
+        "horaFin":horaFin, 
         "estado":estado,
         "puntoServicio":puntoServicio,
         "operario":operario,
@@ -118,6 +134,75 @@ def alertasList (request):
     }
 
     return render(request, 'alertas/alerta_list.html', context=contexto)
+
+
+def mostrarCupos(request):
+    alerta=Alertas.objects.get(Q(id=request.GET.get("id")))
+    puntoServ_id=alerta.PuntoServicio_id
+    fecha=alerta.FechaHora.strftime("%d/%m/%Y").split('/')
+    mes=fecha[1]
+    mes='07'
+    anho=fecha[2]
+    totalUtilizado=0
+    cuposUtilizados=CupoUtilizado.objects.all()
+    if(CupoReal.objects.filter(Q(puntoServicio_id=puntoServ_id) & Q(mes=mes) & Q(anho=anho) ).exists()):
+        cupo=CupoReal.objects.get(Q(puntoServicio_id=puntoServ_id) & Q(mes=mes) & Q(anho=anho) )
+        cupoTotal=cupo.cupoCalculado
+        for c in cuposUtilizados:
+            if (str(c.mes)==mes and str(c.anho)==anho and c.puntoServicio_id==int(puntoServ_id)):
+                totalUtilizado=totalUtilizado + c.cupoUtilizado
+    else:
+        totalUtilizado=0
+        cupoTotal=0
+    
+    data = {
+        "cupoTotal":cupoTotal,
+        "cupoUtilizado":totalUtilizado
+    }
+    return HttpResponse(json.dumps(data),content_type="application/json")
+
+
+
+def guardarSinAsignacion(request,id_alerta=None):
+    if request.method == 'POST':
+        alerta=Alertas.objects.get(id=id_alerta)
+        motivo=request.POST.get('motivo')
+        observacion=request.POST.get('observacion')
+        puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id))
+        horarios=[]
+        if alerta.Asignacion:
+            horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))        
+        tipoHorarios=TipoHorario.objects.all()
+        horas={'tipoHorario':' ','total':0}
+        start = datetime.datetime.strptime(str(horarios[0].horaEntrada), "%H:%M:%S")
+        end = datetime.datetime.strptime(str(horarios[0].horaSalida), "%H:%M:%S")
+        diferencia=end-start
+        for tipo in tipoHorarios:
+            if(horarios[0].horaEntrada>=tipo.horaInicio and horarios[0].horaSalida<=tipo.horaFin):
+                horas["tipoHorario"]=tipo.tipoHorario
+                horas["total"]=str(diferencia)
+
+        try:
+            """Se cambia el estado de la alerta"""
+            setattr(alerta,"Estado", "CERRADA")
+            alerta.save()
+            """Se guarda la gestion de sin asignacion en respuesta alerta"""
+            respAlerta=AlertaResp.objects.create(accion='SINA-JUSTIFICADO',id_alerta=alerta, motivo_id=motivo, comentarios=observacion, usuario=request.user,fecha_creacion=datetime.datetime.now())
+            respAlerta.save()
+            """Se guarda en respuestas procesadas"""
+            horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=horas["total"],TipoHora=horas["tipoHorario"])
+            horasProcesadas.save()
+        except Exception as err:
+            transaction.rollback()
+            logging.getLogger("error_logger").error('No se pudo gestionar la alerTa: {0}'.format(err))
+            messages.warning(request, 'No se pudo gestionar la alerta') 
+        else:
+            transaction.commit()
+            messages.success(request, 'Alerta gestionada con exito')
+        finally:
+            transaction.set_autocommit(True)
+            return redirect('Operarios:alertas_list')
+
 
 
 def do_paginate(data_list, page_number):
@@ -491,6 +576,9 @@ def gestion_alertas(request,alerta_id=None):
         'alertasSinAsig':alertasSinAsig
     }
     return render(request, 'alertas/alerta_gestionar.html', context=contexto)
+
+
+
 
 def emparejar(request, alerta_id=None, emparejamiento_id=None):
     print ("Hola emparejar")

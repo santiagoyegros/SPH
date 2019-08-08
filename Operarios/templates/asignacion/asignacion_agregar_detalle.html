@@ -265,8 +265,8 @@
                         <div class="col-md-12 container-field">
                             <p class="label-field"> Operario: </p>
                             <div class="buscador-operario">
-                                <input type="text" class="form-control input-operario" value="" name="asignaciondet-nombreOperario"
-                                    id="id_asignaciondet-nombreOperario" readonly>
+                                <input type="text" class="form-control input-operario" value=""
+                                    name="asignaciondet-nombreOperario" id="id_asignaciondet-nombreOperario" readonly>
                                 <input type="hidden" value="" name="asignaciondet-operario"
                                     id="id_asignaciondet-operario">
                             </div>
@@ -283,8 +283,9 @@
         <div class="row" style="margin:20px 0px !important;">
             <div class="col-md-12" style="display:flex !important;justify-content:flex-end;">
                 <button onclick="guardarAsignacion()" class="btn btn-guardar btn-primary" type="button"
-                    style="margin-right:15px !important"> <i class="fa fa-floppy-o fa-lg"></i> Guardar</button>
-                <button class="btn btn-cancelar btn-primary" type="button"> <i class="fa fa-times fa-lg"></i>
+                    style="margin-right:15px !important"> <i class="fa fa-plus fa-lg"></i> Agregar asignación</button>
+                <button class="btn btn-cancelar btn-primary" onclick="salirAgregarAsignacion({{id_puntoServicio}})"
+                    type="button"> <i class="fa fa-times fa-lg"></i>
                     Salir</button>
             </div>
         </div>
@@ -311,7 +312,7 @@
 <script>
     $(document).ready(function () {
         RecalcularHoras();
-        getDetalle();
+        //getDetalle();
     });
     $(document).on("dp.change", ".examTime", function () {
         RecalcularHoras();
@@ -319,11 +320,11 @@
     $(document).on("dp.change", ".examDate", function () {
         RecalcularHoras();
     });
-    function getDetalle(){
+    function getDetalle() {
         $.ajax({
             type: "GET",
             url: "/reingenieria/asignacion/asignacionDetalle",
-            data: {"asignacionDet_id":$('#id_puntoServicio').val(),"tipo":$('').val()}
+            data: { "asignacionDet_id": $('#id_puntoServicio').val(), "tipo": $('').val() }
         }).done(function (result) {
             endLoader();
             if (result.codigo == 0) {
@@ -437,8 +438,28 @@
             habilitarBusqueda();
             total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
         }
-        console.log(total_horas_detalle);
-        $('#sumAll').val(total_horas_detalle.split(':')[0]);
+        console.log("final",total_horas_detalle)
+        //SE FORMATEA PARA MOSTRAR EN DECIMAL
+        // if (total_horas_detalle != '00:00') {
+        //     var horas = total_horas_detalle.split(":")[0];
+        //     var minutos = total_horas_detalle.split(":")[1];
+        //     console.log(horas, minutos);
+        //     if (minutos != '00') {
+        //         minutos = (parseFloat(minutos) / 60).toFixed(2);
+        //         console.log("minutos ", minutos);
+        //         //TIENE HORAS
+        //         if (horas != '0') {
+        //             total_horas_detalle = parseFloat(horas) + parseFloat(minutos);
+        //         } else {
+        //             //NO TIENE HORAS
+        //             total_horas_detalle = parseFloat(minutos).toFixed(2);
+        //         }
+        //     }
+        //     $('#sumAll').val(total_horas_detalle);
+        // }else{
+        //     $('#sumAll').val('00');
+        // }
+        $('#sumAll').val(total_horas_detalle);
 
     }
     function habilitarBusqueda() {
@@ -526,12 +547,17 @@
             endLoader();
             if (result.codigo == 0) {
                 console.log("exito");
-                document.location.href = "/reingenieria/asignacion/asignar/"+puntoServicio_id;
+                localStorage.setItem('eliminar',false);
+                document.location.href = "/reingenieria/asignacion/asignar/" + puntoServicio_id;
             } else if (result.codigo == 1) {
                 setMessageAlert(result.mensaje);
                 $('html, body').animate({ scrollTop: 0 }, 'fast');
             }
         })
+    }
+
+    function salirAgregarAsignacion(puntoServicio_id) {
+        document.location.href = "/reingenieria/asignacion/asignar/" + puntoServicio_id;
     }
 
     //------------------------------------------------------------------------------------//
@@ -562,7 +588,7 @@
                 loadData: function (filter) {
                     var d = $.Deferred();
                     filter.idPunto = $('#id_puntoServicio').val();
-                    filter.totalHorasProc = $('#sumAll').val();
+                    filter.totalHorasProc = ($('#sumAll').val()).split(":")[0];
                     filter.lunEnt = $('#id_asignaciondet-lunEnt').val();
                     filter.lunSal = $('#id_asignaciondet-lunSal').val();
                     filter.marEnt = $('#id_asignaciondet-marEnt').val();
@@ -709,6 +735,7 @@
     .jsgrid-grid-body {
         overflow: auto !important;
     }
+
     .jsgrid-header-sort-asc:before {
         margin: 6px !important;
         border-width: 0 5px 10px !important;
@@ -720,6 +747,5 @@
         margin: 5px !important;
         border-color: #ffffff transparent transparent;
     }
-
 </style>
 {% endblock %}

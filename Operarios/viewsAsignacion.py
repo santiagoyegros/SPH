@@ -15,7 +15,7 @@ from django.db import connection, transaction
 import datetime
 from datetime import date
 from django.core import serializers
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet, DiaLibre, OperariosAsignacionDet, Especializacion, AsignacionesDet
+from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet, DiaLibre, OperariosAsignacionDet, Especializacion, AsignacionesDet, AsignacionDetTemp
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 from ast import literal_eval
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -68,22 +68,23 @@ def Eliminar_asignacion(request,id_asignacionDetalle):
     try:
         response = {}
         tipo = request.POST.get('tipo')
+        asignacion=None
         if tipo.lower() == 'temporal':
-            if  AsignacionDetTmp.objects.filter(id=id_asignacionDetalle).exists():
-                asignacion = AsignacionDetTmp.objects.get(id=id_asignacionDetalle)
+            if  AsignacionDetTemp.objects.filter(id=id_asignacionDetalle).exists():
+                asignacion = AsignacionDetTemp.objects.get(id=id_asignacionDetalle)
         elif tipo.lower() == 'persistido':
             if  AsignacionDet.objects.filter(id=id_asignacionDetalle).exists():
                 asignacion = AsignacionDet.objects.get(id=id_asignacionDetalle)
         if asignacion:
             asignacion.eliminado = True
             asignacion.save()
-        response['codigo']=0
-        response['dato']=[]
-        response['mensaje']="Asignacion eliminada con éxito"
-        return HttpResponse(
-            json.dumps(response),
-            content_type="application/json"
-            )
+            response['codigo']=0
+            response['dato']=[]
+            response['mensaje']="Asignacion eliminada con éxito"
+            return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
     except Exception as err:
         #transaction.rollback()
         logging.getLogger("error_logger").error('Ocurrió un error al eliminar la asignacion: {0}'.format(err))
@@ -656,7 +657,6 @@ def Asignacion_create(request, id_puntoServicio=None):
     asignaciones = asignacionesTmpConf(asignacion.id)
     print("ASIIIIGNACIONES")
     for asig in asignaciones:
-        print(asig.perfil)
         if asig.perfil:
             perfil = Especializacion.objects.get(id = asig.perfil)
             asig.perfil_nombre = perfil.especializacion
@@ -664,6 +664,22 @@ def Asignacion_create(request, id_puntoServicio=None):
             operario = Operario.objects.get(id = asig.operario_id)
             asig.operario_nombre = operario.nombre + " " + operario.apellido
         asig.puntoServicio_id = id_puntoServicio
+        if asig.lunEnt == datetime.time(0,0) and asig.lunSal == datetime.time(0,0):
+            asig.lunEnt = asig.lunSal = None
+        if asig.marEnt == datetime.time(0,0) and asig.marSal == datetime.time(0,0):
+            asig.marEnt = asig.marSal = None
+        if asig.mieEnt == datetime.time(0,0) and asig.mieSal == datetime.time(0,0):
+            asig.mieEnt = asig.mieSal = None
+        if asig.jueEnt == datetime.time(0,0) and asig.jueSal == datetime.time(0,0):
+            asig.jueEnt = asig.jueSal = None
+        if asig.jueEnt == datetime.time(0,0) and asig.jueSal == datetime.time(0,0):
+            asig.jueEnt = asig.jueSal = None
+        if asig.vieEnt == datetime.time(0,0) and asig.vieSal == datetime.time(0,0):
+            asig.vieEnt = asig.vieSal = None
+        if asig.sabEnt == datetime.time(0,0) and asig.sabSal == datetime.time(0,0):
+            asig.sabEnt = asig.sabSal = None
+        if asig.domEnt == datetime.time(0,0) and asig.domSal == datetime.time(0,0):
+            asig.domEnt = asig.domSal = None
     """formDiaLibre = DiaLibreForm(request.POST)"""
 
     if asignacion == None:

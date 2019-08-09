@@ -533,7 +533,9 @@
     //------------------------ GUARDADO -------------------------------//
     function guardarAsignacion() {
         var error = true;
-        if ($('#sumAll').val() >= 0) {
+        cant_horas = String($('#sumAll').val()).split(":")[0];
+        console.log(cant_horas);
+        if (cant_horas >= 0) {
             error = false;
         }
         var puntoServicio_id = $('#id_puntoServicio').val();

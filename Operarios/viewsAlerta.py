@@ -103,6 +103,7 @@ def alertasList (request):
         if a.Operario_id:
             try:
                 operario = Operario.objects.get(id=a.Operario_id)
+                print("operario aca: ",operario)
                 a.Operario_nombre = operario.nombre
             except Operario.DoesNotExist:
                 raise Http404("Operario relacionado a una Alerta no existe")  
@@ -128,10 +129,10 @@ def alertasList (request):
         "estado":estado,
         "puntoServicio":puntoServicio,
         "operario":operario,
-        "tipoAlerta":tipoAlerta
-    
-        
+        "tipoAlerta":tipoAlerta        
     }
+    print("contextoooo: ")
+    print(alertasList)
 
     return render(request, 'alertas/alerta_list.html', context=contexto)
 
@@ -173,14 +174,9 @@ def guardarSinAsignacion(request,id_alerta=None):
         if alerta.Asignacion:
             horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))        
         tipoHorarios=TipoHorario.objects.all()
+        listHoras=[]
         horas={'tipoHorario':' ','total':0}
-        start = datetime.datetime.strptime(str(horarios[0].horaEntrada), "%H:%M:%S")
-        end = datetime.datetime.strptime(str(horarios[0].horaSalida), "%H:%M:%S")
-        diferencia=end-start
-        for tipo in tipoHorarios:
-            if(horarios[0].horaEntrada>=tipo.horaInicio and horarios[0].horaSalida<=tipo.horaFin):
-                horas["tipoHorario"]=tipo.tipoHorario
-                horas["total"]=str(diferencia)
+
 
         try:
             """Se cambia el estado de la alerta"""
@@ -190,8 +186,27 @@ def guardarSinAsignacion(request,id_alerta=None):
             respAlerta=AlertaResp.objects.create(accion='SINA-JUSTIFICADO',id_alerta=alerta, motivo_id=motivo, comentarios=observacion, usuario=request.user,fecha_creacion=datetime.datetime.now())
             respAlerta.save()
             """Se guarda en respuestas procesadas"""
-            horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=horas["total"],TipoHora=horas["tipoHorario"])
-            horasProcesadas.save()
+            for tipo in tipoHorarios:
+                if(horarios[0].horaEntrada>=tipo.horaInicio and horarios[0].horaSalida<=tipo.horaFin):
+                    start = datetime.datetime.strptime(str(horarios[0].horaEntrada), "%H:%M:%S")
+                    end = datetime.datetime.strptime(str(horarios[0].horaSalida), "%H:%M:%S")
+                    diferencia=end-start
+                    horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=str(diferencia),TipoHora=tipo.tipoHorario)
+                    horasProcesadas.save()
+                elif(horarios[0].horaEntrada>=tipo.horaInicio and horarios[0].horaSalida>=tipo.horaFin):
+                    if(tipo.id==1):
+                        tipo2=tipoHorario.get(id=2)
+                    else:
+                        tipo2=tipoHorario.get(id=1)
+                    start1=datetime.datetime.strptime(str(horarios[0].horaEntrada), "%H:%M:%S")
+                    end1=tipo2.horaInicio
+                    start2=tipo2.horaInicio
+                    end2=datetime.datetime.strptime(str(horarios[0].horaSalida), "%H:%M:%S")
+                    diferencia1=end1-start1
+                    diferencia2=end2-start2
+                    horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=tipo.horaFin, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=str(diferencia1),TipoHora=tipo.tipoHorario)
+                    horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=tipo2.horaInicio, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=str(diferencia2),TipoHora=tipo2.tipoHorario)
+                    horasProcesadas.save()
         except Exception as err:
             transaction.rollback()
             logging.getLogger("error_logger").error('No se pudo gestionar la alerTa: {0}'.format(err))
@@ -223,7 +238,7 @@ def getMarcaciones(request):
     alerta_id= request.GET.get('alerta_id')
     alerta=Alertas.objects.get(id=alerta_id)
     operario=Operario.objects.get(id=alerta.Operario.id)
-    ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
+    ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("-fecha")[:10]
 
     return HttpResponse(serializers.serialize("json",ultimasMarcaciones), content_type = 'application/json', status = 200);
 

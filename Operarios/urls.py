@@ -11,7 +11,7 @@ from Operarios.views import Planificacion_list,getPuntosServicios, Planificacion
 from Operarios.views import Fiscales_asig, Fiscales_delete, FiscalAsignar_list
 from Operarios.views import obtenerMarcacion,getMarcaciones,obtenerFeriado,getFeriados,makeFeriados,editFeriados,deleteFeriados,descargarMarcaciones
 from Operarios import viewsAsignacion 
-from Operarios import viewsOperario, viewsAlerta
+from Operarios import viewsOperario, viewsAlerta, viewsReporte
 from Operarios.views import PuntosServicios_update
 from Operarios.views import getClientes
 from Operarios.viewsAsignacion import cargarOperarios
@@ -91,6 +91,7 @@ urlpatterns = [
     url(r'^alertas/mostrarCupos', viewsAlerta.mostrarCupos , name='mostrar_cupos'),
     url(r'^alertas/gestionar/marcaciones', viewsAlerta.getMarcaciones , name='getMarcacines'),
     url(r'^alertas/gestionar/reemplazo', viewsAlerta.getReemplazos , name='getReemplazos'),
-    url(r'^alertas/gestionar/emparejar/(?P<alerta_id>\d+)/(?P<emparejamiento_id>\d+)', viewsAlerta.emparejar , name='alertas_emparejar')
-
+    url(r'^alertas/gestionar/emparejar/(?P<alerta_id>\d+)/(?P<emparejamiento_id>\d+)', viewsAlerta.emparejar , name='alertas_emparejar'),
+    url(r'^reportes/asigsOperario/', viewsReporte.AsigPorOperario , name='asignaciones_por_operario'),
+    url(r'^reportes/datosOperario/', viewsReporte.datosOperario , name='datos_operario'),
 ]   

@@ -393,7 +393,7 @@ def gestion_alertas(request,alerta_id=None):
     print ("Asignacion operario ",asignacionOperario )
     if AsigFiscalPuntoServicio.objects.filter(Q(puntoServicio=puntoServicio)).exists():
         fiscal=AsigFiscalPuntoServicio.objects.get(Q(puntoServicio=puntoServicio))
-    supervisores=AsignacionDet.objects.filter(Q(asignacionCab=asignacionCab) & Q(supervisor=1))
+    supervisores=AsignacionDet.objects.filter(Q(id=alerta.Asignacion.id) & Q(supervisor=1))
     if supervisores:
         supervisor=supervisores[0]
     alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)

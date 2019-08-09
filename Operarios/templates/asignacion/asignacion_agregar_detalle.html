@@ -329,6 +329,17 @@
         //getDetalle();
     });
     $(document).on("dp.change", ".examTime", function () {
+        if($(this)[0]){
+            var id_entrada = $(this)[0].id;
+            var value_entrada = $(this)[0].value;
+            var id_salida = id_entrada.substr(0,id_entrada.length-3)+"Sal";
+            if($('#'+id_salida)){
+                $('#'+id_salida).val(value_entrada);
+            }
+
+        }
+
+        
         RecalcularHoras();
     });
     $(document).on("dp.change", ".examDate", function () {

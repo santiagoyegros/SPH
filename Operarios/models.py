@@ -964,6 +964,35 @@ class CupoUtilizado (models.Model):
     cupoUtilizado=models.IntegerField('Cantidad de horas totales usadas por hora procesada', blank=True, null=True)
     horasProcesadas=models.ForeignKey(HorasProcesadas, blank=True, null=True, on_delete=models.SET_NULL)
 
+class AsignacionesDet (models.Model):
+    id = models.IntegerField(db_column='id_opeario', primary_key=True,verbose_name=' ')
+    lunEnt = models.TimeField(db_column='lunEnt',verbose_name='Lunes entradas' )
+    lunSal = models.TimeField(db_column='lunSal',verbose_name='Lunes salida' )
+    marEnt = models.TimeField(db_column='marEnt',verbose_name='Martes entrada' )
+    marSal = models.TimeField(db_column='marSal',verbose_name='Martes salida' )
+    mieEnt = models.TimeField(db_column='mieEnt',verbose_name='Miercoles entrada' )
+    mieSal = models.TimeField(db_column='mieSal',verbose_name='Miercoles salida' )
+    jueEnt = models.TimeField(db_column='jueEnt',verbose_name='Jueves entrada' )
+    jueSal = models.TimeField(db_column='jueSal',verbose_name='Jueves salida' )
+    vieEnt = models.TimeField(db_column='vieEnt',verbose_name='Viernes entrada' )
+    vieSal = models.TimeField(db_column='vieSal',verbose_name='Viernes salida' )
+    sabEnt = models.TimeField(db_column='sabEnt',verbose_name='Sabado entrada' )
+    sabSal = models.TimeField(db_column='sabSal',verbose_name='Sabado salida' )
+    domEnt = models.TimeField(db_column='domEnt',verbose_name='Domingo entrada' )
+    domSal = models.TimeField(db_column='domSal',verbose_name='Domingo salida' )
+    asignacionCab_id = models.IntegerField(db_column='asignacionCab_id',verbose_name='Cabecera id')
+    operario_id = models.IntegerField(db_column='operario_id',verbose_name='Operario id')
+    fechaInicio = models.DateField(db_column='fechaInicio',verbose_name='Fecha Inicio' )
+    totalHoras = models.CharField(db_column='totalHoras',verbose_name='Total Horas', max_length=8 )
+    fechaFin = models.DateField(db_column='fechaFin',verbose_name='Fecha Fin' )
+    supervisor= models.BooleanField(db_column='supervisor',verbose_name='Supervisor' )
+    perfil = models.IntegerField(db_column='perfil',verbose_name='Perfil')
+    eliminado = models.BooleanField(db_column='eliminado',verbose_name='Eliminado' )
+    tipo = models.CharField(db_column='tipo',verbose_name='Tipo', max_length=12 )
+    managed=False
+    class Meta:
+        verbose_name = _("Asignaciones realizadas")
+        verbose_name_plural = _("Asignaciones realizadas")
 
 class AsignacionDetTemp(models.Model):
     asignacionCab =  models.ForeignKey(AsignacionCab, blank=True, null=True, on_delete=models.SET_NULL)
@@ -992,4 +1021,3 @@ class AsignacionDetTemp(models.Model):
     class Meta:
         verbose_name = _("Asignacion Detalle Temp")
         verbose_name_plural = _("Asignacion Detalles Temp")
-

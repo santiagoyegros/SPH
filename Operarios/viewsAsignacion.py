@@ -15,13 +15,273 @@ from django.db import connection, transaction
 import datetime
 from datetime import date
 from django.core import serializers
-from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet, DiaLibre, OperariosAsignacionDet, Especializacion
+from Operarios.models import PuntoServicio, Operario, RelevamientoCab, RelevamientoDet, RelevamientoEsp, RelevamientoCupoHoras, RelevamientoMensualeros, PlanificacionCab, PlanificacionOpe, PlanificacionEsp, Cargo, CargoAsignado, AsigFiscalPuntoServicio, AsigJefeFiscal, AsignacionCab, AsignacionDet, DiaLibre, OperariosAsignacionDet, Especializacion, AsignacionesDet, AsignacionDetTemp
 from Operarios.forms import PuntoServicioForm, OperarioForm, RelevamientoForm, RelevamientoDetForm, RelevamientoEspForm, RelevamientoCupoHorasForm, RelevamientoMensualerosForm, PlanificacionForm, PlanificacionOpeForm, PlanificacionEspForm, AsignacionCabForm, AsignacionDetForm
 from ast import literal_eval
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import datetime as dt
 import json
 from django.db.models import Q
+
+
+
+@login_required
+@permission_required('Operarios.view_asignacioncab', raise_exception=True)
+def Asignacion_agregar(request,id_puntoServicio=None,id_asignacionDetalle=None):
+    perfiles = Especializacion.objects.all() 
+    if request.method == 'POST':
+        print("ES POST")
+    else:
+        print("NO ES POST",id_puntoServicio)
+        totalHora=totalHoraAsig=None
+        if RelevamientoCab.objects.filter(Q(puntoServicio_id=id_puntoServicio)).exists():
+            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=id_puntoServicio))
+            totalHora = relevamientoCab.cantidadHrTotal
+        if AsignacionCab.objects.filter(puntoServicio_id=id_puntoServicio).exists():
+            print("tiene cabecera")
+            asignacionCab=AsignacionCab.objects.get(puntoServicio_id=id_puntoServicio)
+            if asignacionCab.totalasignado == None:
+                totalHoraAsig = "00:00"
+            else:
+                totalHoraAsig = asignacionCab.totalasignado
+    
+    contexto = {
+        'title': 'Asignación de Operarios',
+        'totalHora':totalHora,
+        'totalHoraAsig':totalHoraAsig,
+        'perfiles':perfiles,
+        'id_puntoServicio':id_puntoServicio,
+        'id_asignacionDetalle':id_asignacionDetalle
+    }
+    return render(request, 'asignacion/asignacion_agregar_detalle.html',context=contexto)
+
+def getAsignacionDetalle(request):
+    try:
+        print(request.GET)
+        response['codigo']=0
+        response['dato']=[]
+        response['mensaje']="Exito"
+        return HttpResponse(
+            json.dumps(response),
+            content_type="application/json"
+        ) 
+    except Exception as err:
+        #transaction.rollback()
+        logging.getLogger("error_logger").error('Ocurrió un error al eliminar la asignacion: {0}'.format(err))
+        response['codigo']=1
+        response['dato']=[]
+        response['mensaje']="Ocurrió un error al eliminar la asignacion"
+        return HttpResponse(
+            json.dumps(response),
+            content_type="application/json"
+        )       
+     
+
+def Eliminar_asignacion(request,id_asignacionDetalle):
+    try:
+        response = {}
+        tipo = request.POST.get('tipo')
+        asignacion=None
+        if tipo.lower() == 'temporal':
+            if  AsignacionDetTemp.objects.filter(id=id_asignacionDetalle).exists():
+                asignacion = AsignacionDetTemp.objects.get(id=id_asignacionDetalle)
+        elif tipo.lower() == 'persistido':
+            if  AsignacionDet.objects.filter(id=id_asignacionDetalle).exists():
+                asignacion = AsignacionDet.objects.get(id=id_asignacionDetalle)
+        if asignacion:
+            asignacion.eliminado = True
+            asignacion.save()
+            response['codigo']=0
+            response['dato']=[]
+            response['mensaje']="Asignacion eliminada con éxito"
+            return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
+    except Exception as err:
+        #transaction.rollback()
+        logging.getLogger("error_logger").error('Ocurrió un error al eliminar la asignacion: {0}'.format(err))
+        response['codigo']=1
+        response['dato']=[]
+        response['mensaje']="Ocurrió un error al eliminar la asignacion"
+        return HttpResponse(
+            json.dumps(response),
+            content_type="application/json"
+        )       
+
+def formateoFecha(fechaIni):
+    if fechaIni:
+        date_time_obj = datetime.datetime.strptime(fechaIni,'%d/%m/%Y')
+        fechaIni=date_time_obj.strftime('%Y-%m-%d')
+        return fechaIni
+    return ""
+def guardarAsignacionOperario(request):
+    request.session['eliminar'] = "false"
+    if request.method == 'POST':
+        try:
+            response={}
+            id_puntoServicio=request.POST.get('puntoServicio')
+                    
+            ''' Obtenemos el punto de servicio'''
+            puntoSer = PuntoServicio.objects.get(Q(pk=id_puntoServicio))
+                
+            ''' Obtenemos la asignacion en caso de que exista una '''
+            asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
+
+            if asignacion == None:
+                asignacion = AsignacionCab()
+
+            if request.POST.get('error') is not None and request.POST.get('error')=='true':
+                response['codigo']=1
+                response['dato']=[]
+                response['mensaje']="No se pudo guardar la asignacion, favor verifique las horas asignadas..."
+                print(request.POST.get('error'))
+                print(request.POST)
+                return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json"
+                    ) 
+            #se crea objeto para el guardado
+            totalHoras =  request.POST.get('asignaciondet-totalHoras')
+            if totalHoras:
+                totalHoras = totalHoras.split(":")[0]
+
+            print("HORAS LUNES ANTES DE GUARDAR",str(request.POST.get('asignaciondet-lunEnt')))
+            lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal=None
+            fechaFin = "None"
+            #SI NO SE INGRESO HORAS O FECHAS, SE ENVIA NONE
+            if request.POST.get('asignaciondet-lunEnt'):
+                lunEnt = request.POST.get('asignaciondet-lunEnt')
+            if request.POST.get('asignaciondet-marEnt'):
+                marEnt = request.POST.get('asignaciondet-marEnt')
+            if request.POST.get('asignaciondet-mieEnt'):
+                mieEnt = request.POST.get('asignaciondet-mieEnt')
+            if request.POST.get('asignaciondet-jueEnt'):
+                jueEnt = request.POST.get('asignaciondet-jueEnt')
+            if request.POST.get('asignaciondet-vieEnt'):
+                vieEnt = request.POST.get('asignaciondet-vieEnt')
+            if request.POST.get('asignaciondet-sabEnt'):
+                sabEnt = request.POST.get('asignaciondet-sabEnt')
+            if request.POST.get('asignaciondet-domEnt'):
+                domEnt = request.POST.get('asignaciondet-domEnt')
+
+            if request.POST.get('asignaciondet-lunSal'):
+                lunSal = request.POST.get('asignaciondet-lunSal')
+            if request.POST.get('asignaciondet-marSal'):
+                marSal = request.POST.get('asignaciondet-marSal')
+            if request.POST.get('asignaciondet-mieSal'):
+                mieSal = request.POST.get('asignaciondet-mieSal')
+            if request.POST.get('asignaciondet-jueSal'):
+                jueSal = request.POST.get('asignaciondet-jueSal')
+            if request.POST.get('asignaciondet-vieSal'):
+                vieSal = request.POST.get('asignaciondet-vieSal')
+            if request.POST.get('asignaciondet-sabSal'):
+                sabSal = request.POST.get('asignaciondet-sabSal')
+            if request.POST.get('asignaciondet-domSal'):
+                domSal = request.POST.get('asignaciondet-domSal')
+            
+            if request.POST.get('asignaciondet-fechaFin'):
+                fechaFin = formateoFecha(str(request.POST.get('asignaciondet-fechaFin')))
+            asg_det=""
+            asg_det+=str({
+                'asignacionCab_id': str(asignacion.id),
+                'operario_id':str(str(request.POST.get('asignaciondet-operario')) if request.POST.get('asignaciondet-operario') is not None else 'None'),
+                'fechaInicio':formateoFecha(str(request.POST.get('asignaciondet-fechaInicio'))),
+                'fechaFin':fechaFin,
+                'lunEnt':str(lunEnt),
+                'lunSal':str(lunSal),
+                'marEnt':str(marEnt),
+                'marSal':str(marSal),
+                'mieEnt':str(mieEnt),
+                'mieSal':str(mieSal),
+                'jueEnt':str(jueEnt),
+                'jueSal':str(jueSal),
+                'vieEnt':str(vieEnt),
+                'vieSal':str(vieSal),
+                'sabEnt':str(sabEnt),
+                'sabSal':str(sabSal),
+                'domEnt':str(domEnt),
+                'domSal':str(domSal),
+                'perfil_id':str(request.POST.get('asignaciondet-perfil')),
+                'supervisor': 'True' if request.POST.get('asignaciondet-supervisor') is not None else 'False',
+                'totalHoras':totalHoras
+            })
+            conn= connection.cursor()
+            params=(asg_det.replace('\'','\"'),0)
+            print("PARAMS",params)
+            conn.execute('asignaciondet_tmptrg %s,%s',params)
+            result = conn.fetchone()[0]
+            conn.close()
+            if result==0:
+                response['codigo']=0
+                response['dato']=[]
+                response['mensaje']="Se guardó correctamente la asignación"
+                messages.success(request, 'Se guardo correctamente la asignacion')
+            else:
+                response['codigo']=0
+                response['dato']=[]
+                response['mensaje']="Ocurrió un error en el procedimiento"
+            return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
+        except Exception as err:
+            #transaction.rollback()
+            logging.getLogger("error_logger").error('Ocurrió un error al guardar la asignación: {0}'.format(err))
+            response['codigo']=1
+            response['dato']=[]
+            response['mensaje']="Ocurrió un error al guardar la asignación"
+            return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
+
+def changeStorage(request): 
+    request.session['eliminar']="true"
+    response=  {}
+    response['codigo']=0
+    response['dato']=[]
+    response['mensaje']="Actualización de temporales realizada correctamente"
+    return HttpResponse(
+        json.dumps(response),
+        content_type="application/json"
+    )
+
+def asignacionesTmpConf(asignacionCab_id):
+    conn= connection.cursor()
+    params=[asignacionCab_id]
+    conn.execute('SELECT * FROM [dbo].[listarasignaciones] (%s)',params)
+    result = conn.fetchall()
+    conn.close()
+    print(result)
+    return [AsignacionesDet(*row) for row in result]
+
+def limpiarTemporales(puntoServicio): 
+    print("punto de servicio",puntoServicio)
+    asignacionCab=AsignacionCab.objects.get(puntoServicio_id=puntoServicio)
+    conn= connection.cursor()
+    params=(asignacionCab.id,0)
+    conn.execute('clean_asignaciondet %s,%s',params)
+    result = conn.fetchone()[0]
+    conn.close()
+    response ={}
+    print("ELIMINADOOOO",result)
+    if result == 0:
+        response['dato']=[]
+        response['codigo']=0
+        response['mensaje']="Temporales eliminados correctamente"
+    else:
+        response['dato']=[]
+        response['codigo']=1
+        response['mensaje']="Ocurrió un error al eliminar los temporales"
+   
+    return HttpResponse(
+        json.dumps(response),
+        content_type="application/json")  
+
+                
+#############################################################################################
+
 @login_required
 @permission_required('Operarios.view_asignacioncab', raise_exception=True)
 def Asignacion_list(request):
@@ -304,58 +564,16 @@ def guardarAsignacion(request):
                     json.dumps(response),
                     content_type="application/json"
                     )
-            asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
-                    
-            """Se le dio click a agregar detalle"""
-            form = AsignacionCabForm(request.POST, instance=asignacion)
-            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
-                    
-            print ("form error",form.errors)
-            print ("asign error",AsigDetFormSet.errors)
-            if form.is_valid() and AsigDetFormSet.is_valid():
-                """Se guarda completo"""
-                emptyvar={}
-                asg_det="[ "
-                print("ENTRE A VALID")
-                for item in  AsigDetFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
-                        asg_det+=str({
-                                'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
-                                'DELETE':str(item.get('DELETE')),
-                                'asignacionCab_id': str(asignacion.id),
-                                'operario':str(item.get('operario')),
-                                'operario_id':str(str(item.get('operario').id) if item.get('operario') is not None else 'None'),
-                                'fechaInicio':str(item.get('fechaInicio')),
-                                'fechaFin':str(item.get('fechaFin')),
-                                'lunEnt':str(item.get('lunEnt')),
-                                'lunSal':str(item.get('lunSal')),
-                                'marEnt':str(item.get('marEnt')),
-                                'marSal':str(item.get('marSal')),
-                                'mieEnt':str(item.get('mieEnt')),
-                                'mieSal':str(item.get('mieSal')),
-                                'jueEnt':str(item.get('jueEnt')),
-                                'jueSal':str(item.get('jueSal')),
-                                'vieEnt':str(item.get('vieEnt')),
-                                'vieSal':str(item.get('vieSal')),
-                                'sabEnt':str(item.get('sabEnt')),
-                                'sabSal':str(item.get('sabSal')),
-                                'domEnt':str(item.get('domEnt')),
-                                'domSal':str(item.get('domSal')),
-                                'perfil':str(item.get('perfil')),
-                                'perfil_id': 0 if item.get('perfil') is None else item.get('perfil').id,
-                                'supervisor':str(item.get('supervisor')),
-                                'totalHoras':str(item.get('totalHoras'))
-                                })
-                        asg_det+=","
-                asg_det=asg_det[:-1]
-                asg_det+="]"
+            else:
                 conn= connection.cursor()
                 params=(
-                    str({'id': str(asignacion.id),'puntoServicio_id':str(puntoSer.id),
-                        'totalasignado':str(form.cleaned_data.get('totalasignado')),
-                        'usuario_id':"None" if request.user is None else str(request.user.id),
-                        'comentario':str(form.cleaned_data.get('comentario'))}).replace('\'','\"'),
-                    asg_det.replace('\'','\"'),
+                    str({
+                        'id': str(asignacion.id),
+                        'puntoServicio_id':str(puntoSer.id),
+                        'totalasignado':str(0 if request.POST.get('totalasignado')is None else request.POST.get('totalasignado')),
+                        'usuario_id':"None" if request.user is None else str(request.user.id)
+                        }).replace('\'','\"'),
+                        asignacion.id,
                     0)
                 print(params)
                 conn.execute('asignacion_manager %s,%s,%s ',params)
@@ -365,60 +583,30 @@ def guardarAsignacion(request):
                 if result==0:
                     messages.success(request, 'Se guardo correctamente la asignacion')
                 else:
-                    messages.warning(request, 'No se pudo guardar los cambios')    
-                """Se guarda dia libre"""
-
-                i=0
-                for form in AsigDetFormSet:
-                    operario=None
-                    if request.POST.get('asignaciondet_set-' + str(i) + '-operario') != '' and request.POST.get('asignaciondet_set-' + str(i) + '-operario') != 'None':
-                        if not DiaLibre.objects.filter(id_operario=request.POST.get('asignaciondet_set-' + str(i) + '-operario')).exists():
-                            operario= Operario.objects.get(id=request.POST.get('asignaciondet_set-' + str(i) + '-operario'))
-                            diaLibre = DiaLibre(fechaCreacion=datetime.datetime.now(),id_operario=operario)
-                            diaLibre = setearEnColumna(diaLibre,request.POST.get('diaInicio-'+str(i)),request.POST.get('horaInicio-'+str(i))) 
-                            diaLibre = setearEnColumna(diaLibre,request.POST.get('diaFin-'+str(i)),request.POST.get('horaFin-'+str(i))) 
-                            
-                            if request.POST.get('diaInicio-'+str(i)) != "''" or request.POST.get('horaInicio-'+str(i))!=''  or request.POST.get('diaFin-'+str(i))!="''"  or request.POST.get('horaFin-'+str(i))!='':
-                                diaLibre.save()
-                                print("GUARDA")
-                                print("DIA LIBRE " + str(i))
-                                print(request.POST.get('diaInicio-'+str(i))!="''")
-                                print(request.POST.get('diaFin-'+str(i))!="''")
-                                print(request.POST.get('horaInicio-'+str(i))!='')
-                                print(request.POST.get('horaFin-'+str(i))!='')
-                        else:
-                            print("ya existe operario con dia ")
-                    i=i+1
-                response['dato']=[]
-                response['codigo']=0
-                response['mensaje']="Asignacion guardada con éxito"
-                return HttpResponse(
-                json.dumps(response),
-                content_type="application/json"
-                )
-            else:
-                print("ENTRE A INVAAALID")
-                print(form.errors)
-                print(AsigDetFormSet.errors)
-                response['dato']=[]
-                response['codigo']=1
-                response['mensaje']="Ocurrió un error al guardar la asignacion, favor verifique los datos"
-                return HttpResponse(
-                json.dumps(response),
-                content_type="application/json"
-                )
+                    messages.warning(request, 'No se pudo guardar los cambios')
+                    response['dato']=[]
+                    response['codigo']=0
+                    response['mensaje']="Asignacion guardada con éxito"
+                    return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json")  
+            response['dato']=[]
+            response['codigo']=0
+            response['mensaje']="Asignacion guardada con éxito"
+            return HttpResponse(
+            json.dumps(response),
+            content_type="application/json")
         except Exception as err:
-            #transaction.rollback()
             logging.getLogger("error_logger").error('Ocurrió un error al listar los dias libres: {0}'.format(err))
             response['codigo']=1
             response['dato']=[]
-            response['mensaje']="Ocurrió un error al guardar la asignacion"
-            messages.warning(request, 'Ocurrió un error al guardar la asignacions')
+            response['mensaje']="Ocurrió un error al listar los dias libres"
+            messages.warning(request, 'Ocurrió un error al listar los dias libres')
             return HttpResponse(
-                json.dumps(response),
-                content_type="application/json"
-                )
-
+            json.dumps(response),
+            content_type="application/json"
+            )
+           
 @login_required
 @permission_required('Operarios.add_asignacioncab', raise_exception=True)
 def Asignacion_create(request, id_puntoServicio=None):
@@ -439,7 +627,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     perfiles = Especializacion.objects.all()
     openModal=False
     idModal = None
-  
+    
     
     logging.getLogger("error_logger").error('Se ingreso en el metodo asignacion_create')
     ''' Obtenemos el punto de servicio, en caso de error se muesta un error 404 '''
@@ -479,11 +667,42 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     ''' Obtenemos la asignacion en caso de que exista una '''
     asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
-    """formDiaLibre = DiaLibreForm(request.POST)"""
-
     if asignacion == None:
         asignacion = AsignacionCab(puntoServicio=puntoSer)
         asignacion.save()
+    print("STORAGEEEEE ",request.session['eliminar'])
+    if request.session['eliminar'] == "true":
+        limpiarTemporales(id_puntoServicio)
+    
+    asignaciones = asignacionesTmpConf(asignacion.id)
+
+    for asig in asignaciones:
+        if asig.perfil:
+            perfil = Especializacion.objects.get(id = asig.perfil)
+            asig.perfil_nombre = perfil.especializacion
+        if asig.operario_id:
+            operario = Operario.objects.get(id = asig.operario_id)
+            asig.operario_nombre = operario.nombre + " " + operario.apellido
+        asig.puntoServicio_id = id_puntoServicio
+        if asig.lunEnt == datetime.time(0,0) and asig.lunSal == datetime.time(0,0):
+            asig.lunEnt = asig.lunSal = None
+        if asig.marEnt == datetime.time(0,0) and asig.marSal == datetime.time(0,0):
+            asig.marEnt = asig.marSal = None
+        if asig.mieEnt == datetime.time(0,0) and asig.mieSal == datetime.time(0,0):
+            asig.mieEnt = asig.mieSal = None
+        if asig.jueEnt == datetime.time(0,0) and asig.jueSal == datetime.time(0,0):
+            asig.jueEnt = asig.jueSal = None
+        if asig.jueEnt == datetime.time(0,0) and asig.jueSal == datetime.time(0,0):
+            asig.jueEnt = asig.jueSal = None
+        if asig.vieEnt == datetime.time(0,0) and asig.vieSal == datetime.time(0,0):
+            asig.vieEnt = asig.vieSal = None
+        if asig.sabEnt == datetime.time(0,0) and asig.sabSal == datetime.time(0,0):
+            asig.sabEnt = asig.sabSal = None
+        if asig.domEnt == datetime.time(0,0) and asig.domSal == datetime.time(0,0):
+            asig.domEnt = asig.domSal = None
+    """formDiaLibre = DiaLibreForm(request.POST)"""
+
+    
     
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
 
@@ -869,7 +1088,7 @@ def Asignacion_create(request, id_puntoServicio=None):
                 conn.close()
                 print(result)
                 if result==0:
-                    messages.success(request, 'Se guardo correctamente la asignacion')
+                    messages.success(request, 'Se guardo correctamente la asignación')
                 else:
                     messages.warning(request, 'No se pudo guardar los cambios')    
                 return redirect('Operarios:asignacion_list')
@@ -890,7 +1109,8 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     #operarios_json = json.dumps(operarios)
     contexto = {
-            'title': 'Nueva Asignación',
+            'title': 'Detalle de Asignaciones',
+            'asignaciones':asignaciones,
             'pservicio': puntoSer,
             'form': form,
             'operarios':operarios,
@@ -1046,14 +1266,13 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
             EXEC [dbo].[operarios_disponibles_v2] @puntoServicio=?, @totalHoras=?, @lunEntReq=?, @lunSalReq=?, @marEntReq=?, @marSalReq=?, @mierEntReq=?, @mierSalReq=?, @juevEntReq=?, @juevSalReq=?, @vieEntReq=?, @vieSlReq=?, @sabEntReq=?, @sabSalReq=?, @domEntReq=?, @domSalReq=?, @fechaInicioOperario=?, @fechaFinOperario=?,@perfil=?, @param_out = @out OUTPUT;
             SELECT @out AS the_output;
         """
-        """conn.callproc('operarios_disponibles_v2', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
-        params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp, fechaFinOp,perfil)
-        conn.execute('operarios_disponibles_v2 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
+        """conn.callproc('operarios_disponibles_v3', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
+        params=(puntoServicio,  '' if totalHoras is None else float(totalHoras), lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp, fechaFinOp,perfil)
+        conn.execute('operarios_disponibles_v3 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
         result = conn.fetchall()
        
         conn.close()
         return [OperariosAsignacionDet(*row) for row in result]
-
 
 def cargarOperarios(request, id_puntoServicio:None):
     try:

@@ -1083,13 +1083,6 @@
 <script>
     $(document).ready(function () {
         RecalcularHorasLunSabADom();
-        //BANDERA ELIMINADO SETEADO AL ENTRAR
-        localStorage.setItem('eliminar', true);
-
-        //Se llama a procedimiento para eliminar temporales
-
-
-
         var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
         setClassAll(cantForm - 1);
         //EVENTO CHANGE PARA TIMES POR DEFECTO
@@ -1551,6 +1544,8 @@
                 if (result.codigo == 0) {
                     console.log("exito");
                     escondeRegistrosBorrados(id);
+                    RecalcularHorasV2();
+                    RecalcularTipoHoras();
                 } else {
                     console.log("error");
                 }
@@ -1602,7 +1597,7 @@
 
     function timeInHours(str) {
         var sp = str.split(":");
-        return parseInt(sp[0]) + parseFloat(sp[1] / 60);
+        return parseInt(sp[0]) + (parseFloat(sp[1] / 60));
     }
 
     function hoursToString(h) {
@@ -1903,45 +1898,46 @@
 
         subTotal = SumHrMin($("#id_totalasignado").val(), subTotal);
         //$('#id_asignaciondet_set-' + i + '-totalHoras').val(total_horas_detalle.split(':')[0]);
-        var total_sem_diurnas = undefined;
-        temp = hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas != undefined ? total_sem_diurnas : '00:00')));
-        if (temp.substring(0, 1) == '-') {
-            document.getElementById("res_sem_diu").style.color = "#ff0000";
-        } else {
-            document.getElementById("res_sem_diu").style.color = "#000000";
-        }
+        // var total_sem_diurnas = undefined;
+        // temp = hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas != undefined ? total_sem_diurnas : '00:00')));
+        // console.log("TEMMMP",temp)
+        // if (temp.substring(0, 1) == '-') {
+        //     document.getElementById("res_sem_diu").style.color = "#ff0000";
+        // } else {
+        //     document.getElementById("res_sem_diu").style.color = "#000000";
+        // }
 
-        var total_sem_nocturnas = undefined;
-        temp = hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas != undefined ? total_sem_nocturnas : '00:00')));
-        if (temp.substring(0, 1) == '-') {
-            document.getElementById("res_sem_noc").style.color = "#ff0000";
-        } else {
-            document.getElementById("res_sem_noc").style.color = "#000000";
-        }
+        // var total_sem_nocturnas = undefined;
+        // temp = hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas != undefined ? total_sem_nocturnas : '00:00')));
+        // if (temp.substring(0, 1) == '-') {
+        //     document.getElementById("res_sem_noc").style.color = "#ff0000";
+        // } else {
+        //     document.getElementById("res_sem_noc").style.color = "#000000";
+        // }
 
-        var total_dom_diurnas = undefined;
-        temp = hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas != undefined ? total_dom_diurnas : '00:00')));
-        if (temp.substring(0, 1) == '-') {
-            document.getElementById("res_dom_diu").style.color = "#ff0000";
-        } else {
-            document.getElementById("res_dom_diu").style.color = "#000000";
-        }
+        // var total_dom_diurnas = undefined;
+        // temp = hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas != undefined ? total_dom_diurnas : '00:00')));
+        // if (temp.substring(0, 1) == '-') {
+        //     document.getElementById("res_dom_diu").style.color = "#ff0000";
+        // } else {
+        //     document.getElementById("res_dom_diu").style.color = "#000000";
+        // }
 
-        var total_dom_nocturnas = undefined;
-        temp = hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas != undefined ? total_dom_nocturnas : '00:00')));
-        if (temp.substring(0, 1) == '-') {
-            document.getElementById("res_dom_noc").style.color = "#ff0000";
-        } else {
-            document.getElementById("res_dom_noc").style.color = "#000000";
-        }
+        // var total_dom_nocturnas = undefined;
+        // temp = hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas != undefined ? total_dom_nocturnas : '00:00')));
+        // if (temp.substring(0, 1) == '-') {
+        //     document.getElementById("res_dom_noc").style.color = "#ff0000";
+        // } else {
+        //     document.getElementById("res_dom_noc").style.color = "#000000";
+        // }
 
-        $('#id_totalasignado').val(subTotal);
-        temp = hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(subTotal));
-        if (temp.substring(0, 1) == '-') {
-            document.getElementById("sumAll_resto").style.color = "#ff0000";
-        } else {
-            document.getElementById("sumAll_resto").style.color = "#000000";
-        }
+        // $('#id_totalasignado').val(subTotal);
+        // temp = hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(subTotal));
+        // if (temp.substring(0, 1) == '-') {
+        //     document.getElementById("sumAll_resto").style.color = "#ff0000";
+        // } else {
+        //     document.getElementById("sumAll_resto").style.color = "#000000";
+        // }
         $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(subTotal)));
         //if($('#sumAll_resto').val()>=0){$('#sumAll_resto').removeClass("text-danger");}else{$('#sumAll_resto').addClass("text-danger");}
 
@@ -1981,11 +1977,10 @@
                 var horarioLunes = (lunes[i].innerText).split(" a ");
                 var lunEnt = String(horarioLunes[0]);
                 var lunSal = String(horarioLunes[1]);
-
                 temp = obtenerNocturnas(lunEnt, lunSal);
-
-                var totalLunes = timeInHours(lunSal) - timeInHours(lunEnt);
-                console.log("totalLune", totalLunes)
+                console.log(lunSal,lunEnt)
+                var totalLunes = Math.round(parseFloat(timeInHours(lunSal)).toFixed(2) - parseFloat(timeInHours(lunEnt)).toFixed(2));
+                
                 if (!(totalLunes == 'NaN:NaN') && !isNaN(totalLunes)) {
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalLunes - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
@@ -2008,13 +2003,15 @@
             }
 
             if (miercoles.length > 0) {
+                console.log("MIERCOLES")
                 //Miercoles
                 var horarioMiercoles = (miercoles[i].innerText).split(" a ");
                 var mieEnt = String(horarioMiercoles[0]);
-                var mieSal = String(horarioMiercoles[0]);
+                var mieSal = String(horarioMiercoles[1]);
                 temp = obtenerNocturnas(mieEnt, mieSal);
 
                 var totalMiercoles = timeInHours(mieSal) - timeInHours(mieEnt);
+                console.log(totalMiercoles)
                 if (!(totalMiercoles == 'NaN:NaN') && !isNaN(totalMiercoles)) {
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMiercoles - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
@@ -2024,7 +2021,7 @@
                 //Jueves
                 var horarioJueves = (jueves[i].innerText).split(" a ");
                 var jueEnt = String(horarioJueves[0]);
-                var jueSal = String(horarioJueves[0]);
+                var jueSal = String(horarioJueves[1]);
                 temp = obtenerNocturnas(jueEnt, jueSal);
 
                 var totalJueves = timeInHours(jueSal) - timeInHours(jueEnt);
@@ -2037,7 +2034,7 @@
                 //Viernes
                 var horarioViernes = (viernes[i].innerText).split(" a ");
                 var vieEnt = String(horarioViernes[0]);
-                var vieSal = String(horarioViernes[0]);
+                var vieSal = String(horarioViernes[1]);
                 temp = obtenerNocturnas(vieEnt, vieSal);
 
                 var totalViernes = timeInHours(vieSal) - timeInHours(vieEnt);
@@ -2050,7 +2047,7 @@
                 //Sabado
                 var horarioSabado = (sabado[i].innerText).split(" a ");
                 var sabEnt = String(horarioSabado[0]);
-                var sabSal = String(horarioSabado[0]);
+                var sabSal = String(horarioSabado[1]);
                 temp = obtenerNocturnas(sabEnt, sabSal);
 
                 var totalSabado = timeInHours(sabSal) - timeInHours(sabEnt);
@@ -2063,7 +2060,7 @@
                 //Domingo
                 var horarioDomingo = (sabado[i].innerText).split(" a ");
                 var domEnt = String(horarioDomingo[0]);
-                var domSal = String(horarioDomingo[0]);
+                var domSal = String(horarioDomingo[1]);
                 temp = obtenerNocturnas(domEnt, domSal);
 
                 var totalDomingo = timeInHours(domSal) - timeInHours(domEnt);
@@ -2080,6 +2077,7 @@
 
         //total_sem_diurnas
         temp = hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas)));
+        console.log("TIPO",temp)
         if (temp.substring(0, 1) == '-') {
             document.getElementById("res_sem_diu").style.color = "#ff0000";
         } else {

@@ -103,6 +103,7 @@ def formateoFecha(fechaIni):
         return fechaIni
     return ""
 def guardarAsignacionOperario(request):
+    request.session['eliminar'] = "false"
     if request.method == 'POST':
         try:
             response={}
@@ -127,30 +128,70 @@ def guardarAsignacionOperario(request):
                     json.dumps(response),
                     content_type="application/json"
                     ) 
-            asg_det=""
+            #se crea objeto para el guardado
+            totalHoras =  request.POST.get('asignaciondet-totalHoras')
+            if totalHoras:
+                totalHoras = totalHoras.split(":")[0]
+
+            print("HORAS LUNES ANTES DE GUARDAR",str(request.POST.get('asignaciondet-lunEnt')))
+            lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal=None
+            fechaFin = "None"
+            #SI NO SE INGRESO HORAS O FECHAS, SE ENVIA NONE
+            if request.POST.get('asignaciondet-lunEnt'):
+                lunEnt = request.POST.get('asignaciondet-lunEnt')
+            if request.POST.get('asignaciondet-marEnt'):
+                marEnt = request.POST.get('asignaciondet-marEnt')
+            if request.POST.get('asignaciondet-mieEnt'):
+                mieEnt = request.POST.get('asignaciondet-mieEnt')
+            if request.POST.get('asignaciondet-jueEnt'):
+                jueEnt = request.POST.get('asignaciondet-jueEnt')
+            if request.POST.get('asignaciondet-vieEnt'):
+                vieEnt = request.POST.get('asignaciondet-vieEnt')
+            if request.POST.get('asignaciondet-sabEnt'):
+                sabEnt = request.POST.get('asignaciondet-sabEnt')
+            if request.POST.get('asignaciondet-domEnt'):
+                domEnt = request.POST.get('asignaciondet-domEnt')
+
+            if request.POST.get('asignaciondet-lunSal'):
+                lunSal = request.POST.get('asignaciondet-lunSal')
+            if request.POST.get('asignaciondet-marSal'):
+                marSal = request.POST.get('asignaciondet-marSal')
+            if request.POST.get('asignaciondet-mieSal'):
+                mieSal = request.POST.get('asignaciondet-mieSal')
+            if request.POST.get('asignaciondet-jueSal'):
+                jueSal = request.POST.get('asignaciondet-jueSal')
+            if request.POST.get('asignaciondet-vieSal'):
+                vieSal = request.POST.get('asignaciondet-vieSal')
+            if request.POST.get('asignaciondet-sabSal'):
+                sabSal = request.POST.get('asignaciondet-sabSal')
+            if request.POST.get('asignaciondet-domSal'):
+                domSal = request.POST.get('asignaciondet-domSal')
             
+            if request.POST.get('asignaciondet-fechaFin'):
+                fechaFin = formateoFecha(str(request.POST.get('asignaciondet-fechaFin')))
+            asg_det=""
             asg_det+=str({
                 'asignacionCab_id': str(asignacion.id),
                 'operario_id':str(str(request.POST.get('asignaciondet-operario')) if request.POST.get('asignaciondet-operario') is not None else 'None'),
                 'fechaInicio':formateoFecha(str(request.POST.get('asignaciondet-fechaInicio'))),
-                'fechaFin':formateoFecha(str(request.POST.get('asignaciondet-fechaFin'))),
-                'lunEnt':str(request.POST.get('asignaciondet-lunEnt')),
-                'lunSal':str(request.POST.get('asignaciondet-lunSal')),
-                'marEnt':str(request.POST.get('asignaciondet-marEnt')),
-                'marSal':str(request.POST.get('asignaciondet-marSal')),
-                'mieEnt':str(request.POST.get('asignaciondet-mieEnt')),
-                'mieSal':str(request.POST.get('asignaciondet-mieSal')),
-                'jueEnt':str(request.POST.get('asignaciondet-jueEnt')),
-                'jueSal':str(request.POST.get('asignaciondet-jueSal')),
-                'vieEnt':str(request.POST.get('asignaciondet-vieEnt')),
-                'vieSal':str(request.POST.get('asignaciondet-vieSal')),
-                'sabEnt':str(request.POST.get('asignaciondet-sabEnt')),
-                'sabSal':str(request.POST.get('asignaciondet-sabSal')),
-                'domEnt':str(request.POST.get('asignaciondet-domEnt')),
-                'domSal':str(request.POST.get('asignaciondet-domSal')),
+                'fechaFin':fechaFin,
+                'lunEnt':str(lunEnt),
+                'lunSal':str(lunSal),
+                'marEnt':str(marEnt),
+                'marSal':str(marSal),
+                'mieEnt':str(mieEnt),
+                'mieSal':str(mieSal),
+                'jueEnt':str(jueEnt),
+                'jueSal':str(jueSal),
+                'vieEnt':str(vieEnt),
+                'vieSal':str(vieSal),
+                'sabEnt':str(sabEnt),
+                'sabSal':str(sabSal),
+                'domEnt':str(domEnt),
+                'domSal':str(domSal),
                 'perfil_id':str(request.POST.get('asignaciondet-perfil')),
                 'supervisor': 'True' if request.POST.get('asignaciondet-supervisor') is not None else 'False',
-                'totalHoras':str(request.POST.get('asignaciondet-totalHoras'))
+                'totalHoras':totalHoras
             })
             conn= connection.cursor()
             params=(asg_det.replace('\'','\"'),0)
@@ -182,17 +223,48 @@ def guardarAsignacionOperario(request):
                 content_type="application/json"
                 )
 
+def changeStorage(request): 
+    request.session['eliminar']="true"
+    response=  {}
+    response['codigo']=0
+    response['dato']=[]
+    response['mensaje']="Actualización de temporales realizada correctamente"
+    return HttpResponse(
+        json.dumps(response),
+        content_type="application/json"
+    )
 
 def asignacionesTmpConf(asignacionCab_id):
-        conn= connection.cursor()
-        params=[asignacionCab_id]
-        conn.execute('SELECT * FROM [dbo].[listarasignaciones] (%s)',params)
-        result = conn.fetchall()
-        conn.close()
-        print(result)
-        return [AsignacionesDet(*row) for row in result]
+    conn= connection.cursor()
+    params=[asignacionCab_id]
+    conn.execute('SELECT * FROM [dbo].[listarasignaciones] (%s)',params)
+    result = conn.fetchall()
+    conn.close()
+    print(result)
+    return [AsignacionesDet(*row) for row in result]
 
-
+def limpiarTemporales(puntoServicio): 
+    print("punto de servicio",puntoServicio)
+    asignacionCab=AsignacionCab.objects.get(puntoServicio_id=puntoServicio)
+    conn= connection.cursor()
+    params=(asignacionCab.id,0)
+    conn.execute('clean_asignaciondet %s,%s',params)
+    result = conn.fetchone()[0]
+    conn.close()
+    response ={}
+    print("ELIMINADOOOO",result)
+    if result == 0:
+        response['dato']=[]
+        response['codigo']=0
+        response['mensaje']="Temporales eliminados correctamente"
+    else:
+        response['dato']=[]
+        response['codigo']=1
+        response['mensaje']="Ocurrió un error al eliminar los temporales"
+   
+    return HttpResponse(
+        json.dumps(response),
+        content_type="application/json")  
 
                 
 #############################################################################################
@@ -585,9 +657,12 @@ def Asignacion_create(request, id_puntoServicio=None):
     if asignacion == None:
         asignacion = AsignacionCab(puntoServicio=puntoSer)
         asignacion.save()
-    #SE LISTA TODAS LAS ASIGNACIONES
+    print("STORAGEEEEE ",request.session['eliminar'])
+    if request.session['eliminar'] == "true":
+        limpiarTemporales(id_puntoServicio)
+    
     asignaciones = asignacionesTmpConf(asignacion.id)
-    print("ASIIIIGNACIONES")
+
     for asig in asignaciones:
         if asig.perfil:
             perfil = Especializacion.objects.get(id = asig.perfil)

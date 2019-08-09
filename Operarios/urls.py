@@ -60,6 +60,8 @@ urlpatterns = [
     #NUEVA VERSION DE ASIGNACION DETALLE
     url(r'^asignacion/agregarDetalle/(?P<id_puntoServicio>\d+)/$', viewsAsignacion.Asignacion_agregar, name='addDetalle'),
     url(r'^asignacion/verDetalle/(?P<id_puntoServicio>\d+)/(?P<id_asignacionDetalle>\d+)/$', viewsAsignacion.Asignacion_agregar, name='verDetalle'),
+    url(r'^asignacion/limpiarTemporales/(?P<puntoServicio>\d+)/$', viewsAsignacion.limpiarTemporales, name='limpiarTemporales'),
+    url(r'^asignacion/changeStorage', viewsAsignacion.changeStorage, name='changeStorage'),
     url(r'^asignacion/asignacionDetalle', viewsAsignacion.getAsignacionDetalle, name='getAsignacionDetalle'),
     url(r'^asignacion/eliminar/(?P<id_asignacionDetalle>\d+)/$', viewsAsignacion.Eliminar_asignacion, name='eliminarDetalle'),
     url(r'^asignacion/guardarAsigOperario', viewsAsignacion.guardarAsignacionOperario, name='saveDetalle'),

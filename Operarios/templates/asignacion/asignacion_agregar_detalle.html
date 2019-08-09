@@ -27,6 +27,20 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6 container-field">
+                                <p class="label-field">Total Hrs</p>
+                                <div class="input-group field-general">
+                                    <input value="{{totalHora}}" class="form-control" disabled>
+                                </div>
+                        </div>
+                        <div class="col-md-6 container-field">
+                                <p class="label-field">Total Hrs Asignadas</p>
+                                <div class="input-group field-general">
+                                    <input value="{{totalHoraAsig}}" class="form-control" disabled>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="row row-2">
+                        <div class="col-md-6 container-field">
                             <p class="label-field">Fecha Inicio</p>
                             <div class="input-group field-general date">
                                 <input type="text" name="asignaciondet-fechaInicio" value="" placeholder="Fecha Inicio"
@@ -315,6 +329,17 @@
         //getDetalle();
     });
     $(document).on("dp.change", ".examTime", function () {
+        if($(this)[0]){
+            var id_entrada = $(this)[0].id;
+            var value_entrada = $(this)[0].value;
+            var id_salida = id_entrada.substr(0,id_entrada.length-3)+"Sal";
+            if($('#'+id_salida)){
+                $('#'+id_salida).val(value_entrada);
+            }
+
+        }
+
+        
         RecalcularHoras();
     });
     $(document).on("dp.change", ".examDate", function () {
@@ -684,7 +709,7 @@
     .label-field {
         margin: 0px !important;
         line-height: 2rem;
-        width: 115px !important;
+        width:170px !important;
     }
 
     .row-2 {

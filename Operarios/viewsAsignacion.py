@@ -121,7 +121,8 @@ def guardarAsignacionOperario(request):
                 response['codigo']=1
                 response['dato']=[]
                 response['mensaje']="No se pudo guardar la asignacion, favor verifique las horas asignadas..."
-                
+                print(request.POST.get('error'))
+                print(request.POST)
                 return HttpResponse(
                     json.dumps(response),
                     content_type="application/json"
@@ -478,58 +479,16 @@ def guardarAsignacion(request):
                     json.dumps(response),
                     content_type="application/json"
                     )
-            asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
-                    
-            """Se le dio click a agregar detalle"""
-            form = AsignacionCabForm(request.POST, instance=asignacion)
-            AsigDetFormSet = asignacionDetFormSet(request.POST, instance=asignacion)
-                    
-            print ("form error",form.errors)
-            print ("asign error",AsigDetFormSet.errors)
-            if form.is_valid() and AsigDetFormSet.is_valid():
-                """Se guarda completo"""
-                emptyvar={}
-                asg_det="[ "
-                print("ENTRE A VALID")
-                for item in  AsigDetFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
-                        asg_det+=str({
-                                'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
-                                'DELETE':str(item.get('DELETE')),
-                                'asignacionCab_id': str(asignacion.id),
-                                'operario':str(item.get('operario')),
-                                'operario_id':str(str(item.get('operario').id) if item.get('operario') is not None else 'None'),
-                                'fechaInicio':str(item.get('fechaInicio')),
-                                'fechaFin':str(item.get('fechaFin')),
-                                'lunEnt':str(item.get('lunEnt')),
-                                'lunSal':str(item.get('lunSal')),
-                                'marEnt':str(item.get('marEnt')),
-                                'marSal':str(item.get('marSal')),
-                                'mieEnt':str(item.get('mieEnt')),
-                                'mieSal':str(item.get('mieSal')),
-                                'jueEnt':str(item.get('jueEnt')),
-                                'jueSal':str(item.get('jueSal')),
-                                'vieEnt':str(item.get('vieEnt')),
-                                'vieSal':str(item.get('vieSal')),
-                                'sabEnt':str(item.get('sabEnt')),
-                                'sabSal':str(item.get('sabSal')),
-                                'domEnt':str(item.get('domEnt')),
-                                'domSal':str(item.get('domSal')),
-                                'perfil':str(item.get('perfil')),
-                                'perfil_id': 0 if item.get('perfil') is None else item.get('perfil').id,
-                                'supervisor':str(item.get('supervisor')),
-                                'totalHoras':str(item.get('totalHoras'))
-                                })
-                        asg_det+=","
-                asg_det=asg_det[:-1]
-                asg_det+="]"
+            else:
                 conn= connection.cursor()
                 params=(
-                    str({'id': str(asignacion.id),'puntoServicio_id':str(puntoSer.id),
-                        'totalasignado':str(form.cleaned_data.get('totalasignado')),
-                        'usuario_id':"None" if request.user is None else str(request.user.id),
-                        'comentario':str(form.cleaned_data.get('comentario'))}).replace('\'','\"'),
-                    asg_det.replace('\'','\"'),
+                    str({
+                        'id': str(asignacion.id),
+                        'puntoServicio_id':str(puntoSer.id),
+                        'totalasignado':str(0 if request.POST.get('totalasignado')is None else request.POST.get('totalasignado')),
+                        'usuario_id':"None" if request.user is None else str(request.user.id)
+                        }).replace('\'','\"'),
+                        asignacion.id,
                     0)
                 print(params)
                 conn.execute('asignacion_manager %s,%s,%s ',params)
@@ -539,60 +498,30 @@ def guardarAsignacion(request):
                 if result==0:
                     messages.success(request, 'Se guardo correctamente la asignacion')
                 else:
-                    messages.warning(request, 'No se pudo guardar los cambios')    
-                """Se guarda dia libre"""
-
-                i=0
-                for form in AsigDetFormSet:
-                    operario=None
-                    if request.POST.get('asignaciondet_set-' + str(i) + '-operario') != '' and request.POST.get('asignaciondet_set-' + str(i) + '-operario') != 'None':
-                        if not DiaLibre.objects.filter(id_operario=request.POST.get('asignaciondet_set-' + str(i) + '-operario')).exists():
-                            operario= Operario.objects.get(id=request.POST.get('asignaciondet_set-' + str(i) + '-operario'))
-                            diaLibre = DiaLibre(fechaCreacion=datetime.datetime.now(),id_operario=operario)
-                            diaLibre = setearEnColumna(diaLibre,request.POST.get('diaInicio-'+str(i)),request.POST.get('horaInicio-'+str(i))) 
-                            diaLibre = setearEnColumna(diaLibre,request.POST.get('diaFin-'+str(i)),request.POST.get('horaFin-'+str(i))) 
-                            
-                            if request.POST.get('diaInicio-'+str(i)) != "''" or request.POST.get('horaInicio-'+str(i))!=''  or request.POST.get('diaFin-'+str(i))!="''"  or request.POST.get('horaFin-'+str(i))!='':
-                                diaLibre.save()
-                                print("GUARDA")
-                                print("DIA LIBRE " + str(i))
-                                print(request.POST.get('diaInicio-'+str(i))!="''")
-                                print(request.POST.get('diaFin-'+str(i))!="''")
-                                print(request.POST.get('horaInicio-'+str(i))!='')
-                                print(request.POST.get('horaFin-'+str(i))!='')
-                        else:
-                            print("ya existe operario con dia ")
-                    i=i+1
-                response['dato']=[]
-                response['codigo']=0
-                response['mensaje']="Asignacion guardada con éxito"
-                return HttpResponse(
-                json.dumps(response),
-                content_type="application/json"
-                )
-            else:
-                print("ENTRE A INVAAALID")
-                print(form.errors)
-                print(AsigDetFormSet.errors)
-                response['dato']=[]
-                response['codigo']=1
-                response['mensaje']="Ocurrió un error al guardar la asignacion, favor verifique los datos"
-                return HttpResponse(
-                json.dumps(response),
-                content_type="application/json"
-                )
+                    messages.warning(request, 'No se pudo guardar los cambios')
+                    response['dato']=[]
+                    response['codigo']=0
+                    response['mensaje']="Asignacion guardada con éxito"
+                    return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json")  
+            response['dato']=[]
+            response['codigo']=0
+            response['mensaje']="Asignacion guardada con éxito"
+            return HttpResponse(
+            json.dumps(response),
+            content_type="application/json")
         except Exception as err:
-            #transaction.rollback()
             logging.getLogger("error_logger").error('Ocurrió un error al listar los dias libres: {0}'.format(err))
             response['codigo']=1
             response['dato']=[]
-            response['mensaje']="Ocurrió un error al guardar la asignacion"
-            messages.warning(request, 'Ocurrió un error al guardar la asignacions')
+            response['mensaje']="Ocurrió un error al listar los dias libres"
+            messages.warning(request, 'Ocurrió un error al listar los dias libres')
             return HttpResponse(
-                json.dumps(response),
-                content_type="application/json"
-                )
-
+            json.dumps(response),
+            content_type="application/json"
+            )
+           
 @login_required
 @permission_required('Operarios.add_asignacioncab', raise_exception=True)
 def Asignacion_create(request, id_puntoServicio=None):
@@ -653,6 +582,9 @@ def Asignacion_create(request, id_puntoServicio=None):
 
     ''' Obtenemos la asignacion en caso de que exista una '''
     asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
+    if asignacion == None:
+        asignacion = AsignacionCab(puntoServicio=puntoSer)
+        asignacion.save()
     #SE LISTA TODAS LAS ASIGNACIONES
     asignaciones = asignacionesTmpConf(asignacion.id)
     print("ASIIIIGNACIONES")
@@ -682,9 +614,7 @@ def Asignacion_create(request, id_puntoServicio=None):
             asig.domEnt = asig.domSal = None
     """formDiaLibre = DiaLibreForm(request.POST)"""
 
-    if asignacion == None:
-        asignacion = AsignacionCab(puntoServicio=puntoSer)
-        asignacion.save()
+    
     
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
 
@@ -1248,9 +1178,9 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
             EXEC [dbo].[operarios_disponibles_v2] @puntoServicio=?, @totalHoras=?, @lunEntReq=?, @lunSalReq=?, @marEntReq=?, @marSalReq=?, @mierEntReq=?, @mierSalReq=?, @juevEntReq=?, @juevSalReq=?, @vieEntReq=?, @vieSlReq=?, @sabEntReq=?, @sabSalReq=?, @domEntReq=?, @domSalReq=?, @fechaInicioOperario=?, @fechaFinOperario=?,@perfil=?, @param_out = @out OUTPUT;
             SELECT @out AS the_output;
         """
-        """conn.callproc('operarios_disponibles_v2', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
-        params=(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp, fechaFinOp,perfil)
-        conn.execute('operarios_disponibles_v2 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
+        """conn.callproc('operarios_disponibles_v3', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
+        params=(puntoServicio,  '' if totalHoras is None else float(totalHoras), lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp, fechaFinOp,perfil)
+        conn.execute('operarios_disponibles_v3 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
         result = conn.fetchall()
        
         conn.close()

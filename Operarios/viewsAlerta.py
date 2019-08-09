@@ -384,8 +384,9 @@ def gestion_alertas(request,alerta_id=None):
     operario=Operario.objects.get(id=alerta.Operario.id)
     puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id))
     """obtener el horario de ese punto de servicio para ese personaje"""
-    asignacionCab=AsignacionCab.objects.get(Q(puntoServicio=puntoServicio))
-    asignacionOperario=AsignacionDet.objects.get(Q(asignacionCab=asignacionCab) & Q(operario=operario))
+    print ("Punto de servicio ", puntoServicio)
+    asignacionOperario=AsignacionDet.objects.get(id=alerta.Asignacion.id)
+    print ("Asignacion operario ",asignacionOperario )
     if AsigFiscalPuntoServicio.objects.filter(Q(puntoServicio=puntoServicio)).exists():
         fiscal=AsigFiscalPuntoServicio.objects.get(Q(puntoServicio=puntoServicio))
     supervisores=AsignacionDet.objects.filter(Q(asignacionCab=asignacionCab) & Q(supervisor=1))

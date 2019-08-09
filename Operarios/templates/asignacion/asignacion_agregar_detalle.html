@@ -27,6 +27,20 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6 container-field">
+                                <p class="label-field">Total Hrs</p>
+                                <div class="input-group field-general">
+                                    <input value="{{totalHora}}" class="form-control" disabled>
+                                </div>
+                        </div>
+                        <div class="col-md-6 container-field">
+                                <p class="label-field">Total Hrs Asignadas</p>
+                                <div class="input-group field-general">
+                                    <input value="{{totalHoraAsig}}" class="form-control" disabled>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="row row-2">
+                        <div class="col-md-6 container-field">
                             <p class="label-field">Fecha Inicio</p>
                             <div class="input-group field-general date">
                                 <input type="text" name="asignaciondet-fechaInicio" value="" placeholder="Fecha Inicio"
@@ -684,7 +698,7 @@
     .label-field {
         margin: 0px !important;
         line-height: 2rem;
-        width: 115px !important;
+        width:170px !important;
     }
 
     .row-2 {

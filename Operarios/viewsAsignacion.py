@@ -33,9 +33,22 @@ def Asignacion_agregar(request,id_puntoServicio=None,id_asignacionDetalle=None):
         print("ES POST")
     else:
         print("NO ES POST",id_puntoServicio)
-
+        totalHora=totalHoraAsig=None
+        if RelevamientoCab.objects.filter(Q(puntoServicio_id=id_puntoServicio)).exists():
+            relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=id_puntoServicio))
+            totalHora = relevamientoCab.cantidadHrTotal
+        if AsignacionCab.objects.filter(puntoServicio_id=id_puntoServicio).exists():
+            print("tiene cabecera")
+            asignacionCab=AsignacionCab.objects.get(puntoServicio_id=id_puntoServicio)
+            if asignacionCab.totalasignado == None:
+                totalHoraAsig = "00:00"
+            else:
+                totalHoraAsig = asignacionCab.totalasignado
+    
     contexto = {
         'title': 'Asignación de Operarios',
+        'totalHora':totalHora,
+        'totalHoraAsig':totalHoraAsig,
         'perfiles':perfiles,
         'id_puntoServicio':id_puntoServicio,
         'id_asignacionDetalle':id_asignacionDetalle

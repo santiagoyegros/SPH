@@ -32,7 +32,7 @@
     
                                         <label for="">Hora inicio:</label>
                                         <div class='input-group date' id='datetimepickerhorainicio'>
-                                            <input type='text' class="form-control" name="horaInicio" value="{{horaInicio}}" id="horaInicio"
+                                            <input onkeydown="return false"  type='text' class="form-control" name="horaInicio" value="{{horaInicio}}" id="horaInicio"
                                                 required />
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-time"></span>
@@ -58,8 +58,8 @@
     
                                         <label for="">Hora fin:</label>
                                         <div class='input-group date' id='datetimepickerhorafin'>
-                                            <input type='text' class="form-control" name="horaFin" value="{{horaFin}}" id="horaFin"
-                                                required />
+                                            <input  type='text' class="form-control" name="horaFin" value="{{horaFin}}" id="horaFin"
+                                            onkeydown="return false" required/>
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-time"></span>
                                             </span>
@@ -123,7 +123,7 @@
                                        
                                         {% else %}
                                         <option value="TODOS" selected>Todos</option>
-                                        <option value="NO-MARC" selected>No marcacion</option>
+                                        <option value="NO-MARC">No marcacion</option>
                                         <option value="SIN-ASIG">Sin asignacion</option>
                                         {% endif %}
                                     </select>
@@ -360,8 +360,6 @@
         //hacemos submit
         document.getElementById('formulario').submit();
     }
-
-
 
 
 

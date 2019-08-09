@@ -102,9 +102,8 @@ def alertasList (request):
 
         if a.Operario_id:
             try:
-                operario = Operario.objects.get(id=a.Operario_id)
-                print("operario aca: ",operario)
-                a.Operario_nombre = operario.nombre
+                op = Operario.objects.get(id=a.Operario_id)
+                a.Operario_nombre = op.nombre
             except Operario.DoesNotExist:
                 raise Http404("Operario relacionado a una Alerta no existe")  
 
@@ -114,7 +113,6 @@ def alertasList (request):
                 a.Punto_nombre = punto.NombrePServicio
             except PuntoServicio.DoesNotExist:
                 raise Http404("Punto de Servicio relacionado a una Alerta no existe")  
-
     contexto = {
         'title': 'Filtrado de Alertas',
         'alertasList':alertasList,
@@ -131,8 +129,6 @@ def alertasList (request):
         "operario":operario,
         "tipoAlerta":tipoAlerta        
     }
-    print("contextoooo: ")
-    print(alertasList)
 
     return render(request, 'alertas/alerta_list.html', context=contexto)
 

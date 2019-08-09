@@ -208,12 +208,19 @@
                         <div class="modal-body">
                                 <div class="row filter-row">
                                         <div class="col-md-12" style="display:flex !important; flex-flow:row !important; padding-right: 10px !important;">
-                                           
-                                            
-                                                <label class="text-center titulo-cupo" >Cupo Utilizado:  </label>
-                                                <input id="cupoUtilizado" style="padding-right: 30px !important;" type="text" class="form-control form-bordernone" disabled>
-                                                <input id="cupoTotal" style="padding-left: 30px !important;" type="text" class="form-control form-bordernone" disabled>
-                                            
+                                                <div class="col-md-6">
+                                                    <label class="titulo-cupo" >Cupo Utilizado:  </label>
+                                                </div>
+                                                <div class="col-md-6" style="display: flex !important;">
+                    
+                                                        <input id="cupoUtilizado" style="padding-right: 30px !important;" type="text"
+                                                            class="form-control form-bordernone estilo-cupo" disabled>
+                                                    
+                                                    
+                                                        <input id="cupoTotal" style="padding-left: 30px !important;" type="text" class="form-control form-bordernone estilo-cupo"
+                                                            disabled>
+                                                    
+                                                </div>
                                         </div>
                                 </div>
                                 <div class="row filter-row">
@@ -372,8 +379,8 @@
              'id':id,
          },
         success:function(response){
-            $('#cupoUtilizado').val(response.cupoUtilizado + ' h / '+response.cupoTotal + ' h');
-            // $('#cupoTotal').val(response.cupoTotal + ' h');
+            $('#cupoUtilizado').val(response.cupoUtilizado + ' h / ');
+            $('#cupoTotal').val(response.cupoTotal + ' h');
            
         },
         error:function(){
@@ -487,8 +494,18 @@ $(document).on('click','.guardar',function(){
         border-radius: 0px !important;
         padding-left: 20px;
         clear: both;
+        float:right;
+        margin-top:15px;
+    }
+
+    .estilo-cupo{
+        color:#86273e !important;
+        font-size: 24px !important;
+        border-radius: 0px !important;
+        padding-left: 0px;
+        clear: both;
         float:left;
-        margin-right:15px;
+        margin-top:6px;
     }
 
     .btn-filtrar {

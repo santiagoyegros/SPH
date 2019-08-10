@@ -38,7 +38,6 @@ def Asignacion_agregar(request,id_puntoServicio=None,id_asignacionDetalle=None):
             relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=id_puntoServicio))
             totalHora = relevamientoCab.cantidadHrTotal
         if AsignacionCab.objects.filter(puntoServicio_id=id_puntoServicio).exists():
-            print("tiene cabecera")
             asignacionCab=AsignacionCab.objects.get(puntoServicio_id=id_puntoServicio)
             if asignacionCab.totalasignado == None:
                 totalHoraAsig = "00:00"
@@ -55,27 +54,101 @@ def Asignacion_agregar(request,id_puntoServicio=None,id_asignacionDetalle=None):
     }
     return render(request, 'asignacion/asignacion_agregar_detalle.html',context=contexto)
 
-def getAsignacionDetalle(request):
+@login_required
+@permission_required('Operarios.view_asignacioncab', raise_exception=True)
+def Asignacion_ver(request,id_puntoServicio=None):
+    perfiles = Especializacion.objects.all() 
+
+    totalHora=totalHoraAsig=None
+    if RelevamientoCab.objects.filter(Q(puntoServicio_id=id_puntoServicio)).exists():
+        relevamientoCab = RelevamientoCab.objects.get(Q(puntoServicio_id=id_puntoServicio))
+        totalHora = relevamientoCab.cantidadHrTotal
+    if AsignacionCab.objects.filter(puntoServicio_id=id_puntoServicio).exists():
+        asignacionCab=AsignacionCab.objects.get(puntoServicio_id=id_puntoServicio)
+        if asignacionCab.totalasignado == None:
+            totalHoraAsig = "00:00"
+        else:
+            totalHoraAsig = asignacionCab.totalasignado
+    
+    contexto = {
+        'title': 'Asignación de Operarios',
+        'totalHora':totalHora,
+        'totalHoraAsig':totalHoraAsig,
+        'perfiles':perfiles,
+        'id_puntoServicio':id_puntoServicio,
+        'id_asignacion':asignacionCab.id
+    }
+    return render(request, 'asignacion/asignacion_ver_detalle.html',context=contexto)
+
+
+def getAsignacionDetalleByTipo(request,id_asignacionDetalle):
     try:
-        print(request.GET)
-        response['codigo']=0
-        response['dato']=[]
-        response['mensaje']="Exito"
-        return HttpResponse(
-            json.dumps(response),
-            content_type="application/json"
-        ) 
+        response = {}
+        tipo = request.POST.get('tipo')
+        asignacion=None
+        if tipo.lower() == 'temporal':
+            if  AsignacionDetTemp.objects.filter(id=id_asignacionDetalle).exists():
+                asignacion = AsignacionDetTemp.objects.get(id=id_asignacionDetalle)
+        elif tipo.lower() == 'persistido':
+            if  AsignacionDet.objects.filter(id=id_asignacionDetalle).exists():
+                asignacion = AsignacionDet.objects.get(id=id_asignacionDetalle)
+        if asignacion:
+            operario = Operario.objects.get(id=asignacion.operario_id)
+            perfil = Especializacion.objects.get(id = asignacion.perfil_id)
+            fechaIni=fechaFin=""
+            if asignacion.fechaInicio:
+                fechaIni=asignacion.fechaInicio.strftime('%d/%m/%Y')
+            if asignacion.fechaFin:
+                fechaFin =asignacion.fechaFin.strftime('%d/%m/%Y') 
+            asignacion_response = {
+                "perfil_id":asignacion.perfil_id,
+                "perfilNombre":perfil.especializacion,
+                "operario_id":asignacion.operario_id,
+                "operarioNombre":operario.nombre + " " + operario.apellido,
+                "lunEnt":"" if str(asignacion.lunEnt) == "None" else str(asignacion.lunEnt),
+                "lunSal":"" if str(asignacion.lunSal) == "None" else str(asignacion.lunSal),
+                "marEnt":"" if str(asignacion.marEnt) == "None" else str(asignacion.marEnt),
+                "marSal":"" if str(asignacion.marSal) == "None" else str(asignacion.marSal),
+                "mieEnt":"" if str(asignacion.mieEnt) == "None" else str(asignacion.mieEnt),
+                "mieSal":"" if str(asignacion.mieSal) == "None" else str(asignacion.mieSal),
+                "jueEnt":"" if str(asignacion.jueEnt) == "None" else str(asignacion.jueEnt),
+                "jueSal":"" if str(asignacion.jueSal) == "None" else str(asignacion.jueSal),
+                "vieEnt":"" if str(asignacion.vieEnt) == "None" else str(asignacion.vieEnt),
+                "vieSal":"" if str(asignacion.vieSal) == "None" else str(asignacion.vieSal),
+                "sabEnt":"" if str(asignacion.sabEnt) == "None" else str(asignacion.sabEnt),
+                "sabSal":"" if str(asignacion.sabSal) == "None" else str(asignacion.sabSal),
+                "domEnt":"" if str(asignacion.domEnt) == "None" else str(asignacion.domEnt),
+                "domSal":"" if str(asignacion.domSal) == "None" else str(asignacion.domSal),
+                "fechaInicio":str(fechaIni),
+                "fechaFin":str(fechaFin),
+                "supervisor": "true" if str(asignacion.supervisor) == "True" else "false"
+            }
+        if asignacion:
+            response['codigo']=0
+            response['dato']=asignacion_response
+            response['mensaje']="Asignación obtenida con éxito"
+            return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
+        else:
+            response['codigo']=1
+            response['dato']=[]
+            response['mensaje']="La asignación detalle no existe"
+            return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+                )
     except Exception as err:
         #transaction.rollback()
-        logging.getLogger("error_logger").error('Ocurrió un error al eliminar la asignacion: {0}'.format(err))
+        logging.getLogger("error_logger").error('Ocurrió un error al listar la asignacion: {0}'.format(err))
         response['codigo']=1
         response['dato']=[]
-        response['mensaje']="Ocurrió un error al eliminar la asignacion"
+        response['mensaje']="Ocurrió un error al listar la asignacion"
         return HttpResponse(
             json.dumps(response),
             content_type="application/json"
         )       
-     
 
 def Eliminar_asignacion(request,id_asignacionDetalle):
     try:
@@ -91,6 +164,7 @@ def Eliminar_asignacion(request,id_asignacionDetalle):
         if asignacion:
             asignacion.eliminado = True
             asignacion.save()
+            request.session['eliminar']="false"
             response['codigo']=0
             response['dato']=[]
             response['mensaje']="Asignacion eliminada con éxito"
@@ -135,8 +209,7 @@ def guardarAsignacionOperario(request):
                 response['codigo']=1
                 response['dato']=[]
                 response['mensaje']="No se pudo guardar la asignacion, favor verifique las horas asignadas..."
-                print(request.POST.get('error'))
-                print(request.POST)
+
                 return HttpResponse(
                     json.dumps(response),
                     content_type="application/json"
@@ -145,8 +218,6 @@ def guardarAsignacionOperario(request):
             totalHoras =  request.POST.get('asignaciondet-totalHoras')
             if totalHoras:
                 totalHoras = totalHoras.split(":")[0]
-
-            print("HORAS LUNES ANTES DE GUARDAR",str(request.POST.get('asignaciondet-lunEnt')))
             lunEnt=lunSal=marEnt=marSal=mieEnt=mieSal=jueEnt=jueSal=vieEnt=vieSal=sabEnt=sabSal=domEnt=domSal=None
             fechaFin = "None"
             #SI NO SE INGRESO HORAS O FECHAS, SE ENVIA NONE
@@ -253,11 +324,9 @@ def asignacionesTmpConf(asignacionCab_id):
     conn.execute('SELECT * FROM [dbo].[listarasignaciones] (%s)',params)
     result = conn.fetchall()
     conn.close()
-    print(result)
     return [AsignacionesDet(*row) for row in result]
 
-def limpiarTemporales(puntoServicio): 
-    print("punto de servicio",puntoServicio)
+def limpiarTemporales(puntoServicio,asignacionCab_id): 
     asignacionCab=AsignacionCab.objects.get(puntoServicio_id=puntoServicio)
     conn= connection.cursor()
     params=(asignacionCab.id,0)
@@ -265,11 +334,16 @@ def limpiarTemporales(puntoServicio):
     result = conn.fetchone()[0]
     conn.close()
     response ={}
-    print("ELIMINADOOOO",result)
     if result == 0:
-        response['dato']=[]
-        response['codigo']=0
-        response['mensaje']="Temporales eliminados correctamente"
+        print("RESULT 0 LISTA LIMPIA DE TEMPORALES")
+        #SE OBTIENEN LAS ASIGNACIONES SIN TEMPORALES
+        conn= connection.cursor()
+        params=[asignacionCab_id]
+        conn.execute('SELECT * FROM [dbo].[listarasignaciones] (%s)',params)
+        result = conn.fetchall()
+        print(result)
+        conn.close()
+        return [AsignacionesDet(*row) for row in result]
     else:
         response['dato']=[]
         response['codigo']=1
@@ -290,11 +364,7 @@ def Asignacion_list(request):
         return redirect('Operarios:asignacion_create', id_puntoServicio=pk_puntoServSeleccionado)
     else:
         asignaciones=AsigFiscalPuntoServicio.objects.filter(userFiscal_id=request.user).only("puntoServicio_id")
-        print (request.user.id)
-        print ("Puntos asignados")
-        print (asignaciones)
         puntoServi = PuntoServicio.objects.all()
-        print(puntoServi)
         contexto = {'PuntosServicio': puntoServi}
         #contexto = {'PuntosServicio': asignaciones}
         return render(request, 'asignacion/asignacion_list.html', context=contexto)
@@ -610,10 +680,10 @@ def guardarAsignacion(request):
 @login_required
 @permission_required('Operarios.add_asignacioncab', raise_exception=True)
 def Asignacion_create(request, id_puntoServicio=None):
-    sem_diurno = '0'
-    sem_nocturno = '0'
-    dom_diurno = '0'
-    dom_nocturno = '0'
+    sem_diurno = '00:00'
+    sem_nocturno = '00:00'
+    dom_diurno = '00:00'
+    dom_nocturno = '00:00'
     operarios = []
     paginator=''
     operariosList=[]
@@ -670,40 +740,43 @@ def Asignacion_create(request, id_puntoServicio=None):
     if asignacion == None:
         asignacion = AsignacionCab(puntoServicio=puntoSer)
         asignacion.save()
-    print("STORAGEEEEE ",request.session['eliminar'])
+    
     if request.session['eliminar'] == "true":
-        limpiarTemporales(id_puntoServicio)
+        print("Se muestra lista limpia")
+        asignaciones = limpiarTemporales(id_puntoServicio,asignacion.id)
+    else:
+        print("SE MUESTRA lista con temporales")
+        asignaciones = asignacionesTmpConf(asignacion.id)
     
-    asignaciones = asignacionesTmpConf(asignacion.id)
+    asignaciones_aux =asignaciones.copy()
+    for asig in asignaciones_aux:
+        if asig.eliminado:
+            asignaciones.remove(asig)
+        else:
+            if asig.perfil:
+                perfil = Especializacion.objects.get(id = asig.perfil)
+                asig.perfil_nombre = perfil.especializacion
+            if asig.operario_id:
+                operario = Operario.objects.get(id = asig.operario_id)
+                asig.operario_nombre = operario.nombre + " " + operario.apellido
+            asig.puntoServicio_id = id_puntoServicio
+            if asig.lunEnt == datetime.time(0,0) and asig.lunSal == datetime.time(0,0):
+                asig.lunEnt = asig.lunSal = None
+            if asig.marEnt == datetime.time(0,0) and asig.marSal == datetime.time(0,0):
+                asig.marEnt = asig.marSal = None
+            if asig.mieEnt == datetime.time(0,0) and asig.mieSal == datetime.time(0,0):
+                asig.mieEnt = asig.mieSal = None
+            if asig.jueEnt == datetime.time(0,0) and asig.jueSal == datetime.time(0,0):
+                asig.jueEnt = asig.jueSal = None
+            if asig.jueEnt == datetime.time(0,0) and asig.jueSal == datetime.time(0,0):
+                asig.jueEnt = asig.jueSal = None
+            if asig.vieEnt == datetime.time(0,0) and asig.vieSal == datetime.time(0,0):
+                asig.vieEnt = asig.vieSal = None
+            if asig.sabEnt == datetime.time(0,0) and asig.sabSal == datetime.time(0,0):
+                asig.sabEnt = asig.sabSal = None
+            if asig.domEnt == datetime.time(0,0) and asig.domSal == datetime.time(0,0):
+                asig.domEnt = asig.domSal = None
 
-    for asig in asignaciones:
-        if asig.perfil:
-            perfil = Especializacion.objects.get(id = asig.perfil)
-            asig.perfil_nombre = perfil.especializacion
-        if asig.operario_id:
-            operario = Operario.objects.get(id = asig.operario_id)
-            asig.operario_nombre = operario.nombre + " " + operario.apellido
-        asig.puntoServicio_id = id_puntoServicio
-        if asig.lunEnt == datetime.time(0,0) and asig.lunSal == datetime.time(0,0):
-            asig.lunEnt = asig.lunSal = None
-        if asig.marEnt == datetime.time(0,0) and asig.marSal == datetime.time(0,0):
-            asig.marEnt = asig.marSal = None
-        if asig.mieEnt == datetime.time(0,0) and asig.mieSal == datetime.time(0,0):
-            asig.mieEnt = asig.mieSal = None
-        if asig.jueEnt == datetime.time(0,0) and asig.jueSal == datetime.time(0,0):
-            asig.jueEnt = asig.jueSal = None
-        if asig.jueEnt == datetime.time(0,0) and asig.jueSal == datetime.time(0,0):
-            asig.jueEnt = asig.jueSal = None
-        if asig.vieEnt == datetime.time(0,0) and asig.vieSal == datetime.time(0,0):
-            asig.vieEnt = asig.vieSal = None
-        if asig.sabEnt == datetime.time(0,0) and asig.sabSal == datetime.time(0,0):
-            asig.sabEnt = asig.sabSal = None
-        if asig.domEnt == datetime.time(0,0) and asig.domSal == datetime.time(0,0):
-            asig.domEnt = asig.domSal = None
-    """formDiaLibre = DiaLibreForm(request.POST)"""
-
-    
-    
     asignacionDetFormSet = inlineformset_factory(AsignacionCab, AsignacionDet, form=AsignacionDetForm, extra=1, can_delete=True)
 
     if request.method == 'POST':

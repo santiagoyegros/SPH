@@ -134,40 +134,44 @@
                                 </thead>
                                 <tbody>
                                     {% for asig in asignaciones %}
-                                    {% if not asig.eliminado %}
-                                    <tr id="{{asig.id}}" class="row-table">
-                                        <td>{{asig.perfil_nombre}}</td>
-                                        <td>{{asig.operario_nombre}} ({{asig.totalHoras}})</td>
-                                        <td class="d-none"><input type="hidden" class="totalHoras-asignaciones"
-                                                id="totalhoras-{{ forloop.counter }}" value="{{asig.totalHoras}}"></td>
-                                        <!-- CONTROL DE EXISTENCIA DE HORAS -->
-                                        <td class="lunes">{% if asig.lunEnt and asig.lunSal %} {{asig.lunEnt}} a
-                                            {{asig.lunSal}} {% endif %}</td>
-                                        <td class="martes">{% if asig.marEnt and asig.marSal %} {{asig.marEnt}} a
-                                            {{asig.marSal}} {% endif %}</td>
-                                        <td class="miercoles"> {% if asig.mieEnt and asig.mieSal %} {{asig.mieEnt}} a
-                                            {{asig.mieSal}} {% endif %}</td>
-                                        <td class="jueves">{% if asig.jueEnt and asig.jueSal %} {{asig.jueEnt}} a
-                                            {{asig.jueSal}}{% endif %}</td>
-                                        <td class="viernes"> {% if asig.vieEnt and asig.vieSal %} {{asig.vieEnt}} a
-                                            {{asig.vieSal}} {% endif %}</td>
-                                        <td class="sabado"> {% if asig.sabEnt and asig.sabSal %} {{asig.sabEnt}} a
-                                            {{asig.sabSal}} {% endif %} </td>
-                                        <td class="domingo"> {% if asig.domEnt and asig.domSal %} {{asig.domEnt}} a
-                                            {{asig.domSal}} {% endif %} </td>
-                                        <td class="d-none"><input type="hidden" id="{{asig.id}}-eliminar"
+                                        <tr id="{{asig.id}}" class="row-table">
+                                            <td>{{asig.perfil_nombre}}</td>
+                                            <td style="width: 40%;">
+                                                {% if asig.supervisor %}
+                                                    <i class="fas fa-user-tie" style="margin:0px 10px !important;color:#86273e;"></i> 
+                                                {% else %}
+                                                    <i class="fas fa-user" style="margin:0px 10px !important;color:gray;"></i> 
+                                                {% endif %}
+                                                {{asig.operario_nombre}} (<span id="cantTotal-{{forloop.counter}}"></span>)</td>
+                                            <td class="d-none td-total"><input type="hidden" class="totalHoras-asignaciones"
+                                                    id="totalhoras-{{ forloop.counter }}" value="{{asig.totalHoras}}"></td>
+                                            <!-- CONTROL DE EXISTENCIA DE HORAS -->
+                                            <td class="lunes">{% if asig.lunEnt and asig.lunSal %} {{asig.lunEnt}} a
+                                                {{asig.lunSal}} {% endif %}</td>
+                                            <td class="martes">{% if asig.marEnt and asig.marSal %} {{asig.marEnt}} a
+                                                {{asig.marSal}} {% endif %}</td>
+                                            <td class="miercoles"> {% if asig.mieEnt and asig.mieSal %} {{asig.mieEnt}} a
+                                                {{asig.mieSal}} {% endif %}</td>
+                                            <td class="jueves">{% if asig.jueEnt and asig.jueSal %} {{asig.jueEnt}} a
+                                                {{asig.jueSal}}{% endif %}</td>
+                                            <td class="viernes"> {% if asig.vieEnt and asig.vieSal %} {{asig.vieEnt}} a
+                                                {{asig.vieSal}} {% endif %}</td>
+                                            <td class="sabado"> {% if asig.sabEnt and asig.sabSal %} {{asig.sabEnt}} a
+                                                {{asig.sabSal}} {% endif %} </td>
+                                            <td class="domingo"> {% if asig.domEnt and asig.domSal %} {{asig.domEnt}} a
+                                                {{asig.domSal}} {% endif %} </td>
+                                            <td class="d-none"><input type="hidden" id="{{asig.id}}-eliminar"
                                                 value="{{asig.tipo}}">
-                                        </td>
-                                        <td>
-                                            <a onclick="verRegistro({{asig.id}})" class="action-table" title="Ver"><i
-                                                    class="fas fa-eye"></i> </a>
-                                            <a class="action-table" title="Eliminar"
-                                                onclick="eliminarRegistro({{asig.id}})"><i class="fas fa-trash"></i>
-                                            </a>
-                                        </td>
+                                            </td>
+                                            <td>
+                                                <a onclick="verRegistro({{asig.id}})" class="action-table" title="Ver"><i
+                                                        class="fas fa-eye"></i> </a>
+                                                <a class="action-table" title="Eliminar"
+                                                    onclick="eliminarRegistro({{asig.id}})"><i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
 
-                                    </tr>
-                                    {% endif %}
+                                        </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
@@ -853,7 +857,7 @@
     /**verifica los eliminados y oculta **/
     $(document).ready(function () {
         RecalcularTipoHoras();
-        RecalcularHorasV2();
+        //RecalcularHorasV2();
         // $('input[type=checkbox]').hide()
         var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
         for (var i = 0; i < cantForm; i++) {
@@ -1010,74 +1014,74 @@
         document.location.href = "/reingenieria/asignacion/agregarDetalle/" + puntoServicio_id;
     }
 
-    $(document).ready(function () {
-        var body = {}
-        var diasLibres = []
-        var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
-        var identificadores = [];
-        for (var i = 0; i < cantForm; i++) {
-            if ($('#id_asignaciondet_set-' + i + '-operario').val()) {
-                identificadores.push(($('#id_asignaciondet_set-' + i + '-operario').val()));
-            }
-        }
-        body.operarios = "[" + identificadores + "]";
-        $.ajax({
-            type: "GET",
-            url: "/reingenieria/asignacion/diasLibres",
-            data: body
-        }).done(function (result) {
-            diasLibres = result;
-            searchDiasLibres(diasLibres.dato)
-        })
+    // $(document).ready(function () {
+    //     var body = {}
+    //     var diasLibres = []
+    //     var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
+    //     var identificadores = [];
+    //     for (var i = 0; i < cantForm; i++) {
+    //         if ($('#id_asignaciondet_set-' + i + '-operario').val()) {
+    //             identificadores.push(($('#id_asignaciondet_set-' + i + '-operario').val()));
+    //         }
+    //     }
+    //     body.operarios = "[" + identificadores + "]";
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "/reingenieria/asignacion/diasLibres",
+    //         data: body
+    //     }).done(function (result) {
+    //         diasLibres = result;
+    //         searchDiasLibres(diasLibres.dato)
+    //     })
 
-        function searchDiasLibres(diasLibres) {
-            for (var i = 0; i < diasLibres.length; i++) {
-                var idOpe = diasLibres[i].operario_id;
-                for (id = 0; id < cantForm; id++) {
-                    if (idOpe == $("#id_asignaciondet_set-" + id + "-operario").val()) {
-                        //Existe operario
-                        var entrada = diasLibres[i].diasLibres.entrada;
-                        var salida = diasLibres[i].diasLibres.salida;
-                        var tieneFechaInicio = setDiasLibres(id, entrada.label, 0);
-                        var tieneDiaFin = setDiasLibres(id, salida.label, 1);
-                        if (entrada.hora != "") {
-                            $("#id_horaInicio-" + id).val(entrada.hora.substr(0, 5));
-                            $('#id_horaInicio-' + id).prop("readonly", true);
-                        }
-                        if (salida.hora != "") {
-                            $("#id_horaFin-" + id).val(salida.hora.substr(0, 5));
-                            $('#id_horaFin-' + id).prop("readonly", true);
-                        }
-                        if (tieneFechaInicio) {
-                            $('#id_diaInicio-' + id).attr("disabled", "disabled");
-                        }
-                        if (tieneDiaFin) {
-                            $('#id_diaFin-' + id).attr("disabled", "disabled");
-                        }
-                    }
-                }
-            }
-        }
-        function setDiasLibres(id, label, mode) {
-            //Mode 0 es para setear dia inicio, mode 1 es para setear dia fin
-            if (mode == 0) {
-                var select = $('#id_diaInicio-' + (id))[0];
-            } else {
-                var select = $('#id_diaFin-' + (id))[0];
-            }
-            for (var j = 0; j < select.length; j++) {
-                if ($(select[j]).val() == label) {
-                    $(select).val(label);
-                    return true;
-                } else {
-                    $(select[j]).removeAttr('selected');
-                }
-            }
-            return false;
-        }
+    //     function searchDiasLibres(diasLibres) {
+    //         for (var i = 0; i < diasLibres.length; i++) {
+    //             var idOpe = diasLibres[i].operario_id;
+    //             for (id = 0; id < cantForm; id++) {
+    //                 if (idOpe == $("#id_asignaciondet_set-" + id + "-operario").val()) {
+    //                     //Existe operario
+    //                     var entrada = diasLibres[i].diasLibres.entrada;
+    //                     var salida = diasLibres[i].diasLibres.salida;
+    //                     var tieneFechaInicio = setDiasLibres(id, entrada.label, 0);
+    //                     var tieneDiaFin = setDiasLibres(id, salida.label, 1);
+    //                     if (entrada.hora != "") {
+    //                         $("#id_horaInicio-" + id).val(entrada.hora.substr(0, 5));
+    //                         $('#id_horaInicio-' + id).prop("readonly", true);
+    //                     }
+    //                     if (salida.hora != "") {
+    //                         $("#id_horaFin-" + id).val(salida.hora.substr(0, 5));
+    //                         $('#id_horaFin-' + id).prop("readonly", true);
+    //                     }
+    //                     if (tieneFechaInicio) {
+    //                         $('#id_diaInicio-' + id).attr("disabled", "disabled");
+    //                     }
+    //                     if (tieneDiaFin) {
+    //                         $('#id_diaFin-' + id).attr("disabled", "disabled");
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     function setDiasLibres(id, label, mode) {
+    //         //Mode 0 es para setear dia inicio, mode 1 es para setear dia fin
+    //         if (mode == 0) {
+    //             var select = $('#id_diaInicio-' + (id))[0];
+    //         } else {
+    //             var select = $('#id_diaFin-' + (id))[0];
+    //         }
+    //         for (var j = 0; j < select.length; j++) {
+    //             if ($(select[j]).val() == label) {
+    //                 $(select).val(label);
+    //                 return true;
+    //             } else {
+    //                 $(select[j]).removeAttr('selected');
+    //             }
+    //         }
+    //         return false;
+    //     }
 
 
-    })
+    // })
 </script>
 
 <script>
@@ -1143,6 +1147,26 @@
             $("#id_asignaciondet_set-" + (id) + "-domEnt").parent('div').addClass('time');
             $("#id_asignaciondet_set-" + (id) + "-domSal").parent('div').addClass('time');
         }
+        // var cant_horas = $('.totalHoras-asignaciones').length;
+        // var total_horas = $('.totalHoras-asignaciones');
+        // var total = 0;
+
+        // for (let index = 0; index < total_horas.length; index++) {
+        //     total = total + parseFloat(total_horas[index].defaultValue);
+        // }
+        // console.log("TOTAL",total)
+        // var horas = "";
+        // if (String(total).includes(".")) {
+        //     horas = (String(total)).split(".")[0];
+        //     minutos = "0." + (String(total)).split(".")[1];
+        //     $('#id_totalasignado').val(horas + ":" + String(parseFloat(minutos) * 60));
+        // } else {
+        //     horas = (String(total)).split(".")[0];
+        //     $('#id_totalasignado').val(horas + ":00");
+        // }
+    });
+    function updateTotalAsignado(){
+      
         var cant_horas = $('.totalHoras-asignaciones').length;
         var total_horas = $('.totalHoras-asignaciones');
         var total = 0;
@@ -1150,21 +1174,18 @@
         for (let index = 0; index < total_horas.length; index++) {
             total = total + parseFloat(total_horas[index].defaultValue);
         }
-
         var horas = "";
         if (String(total).includes(".")) {
             horas = (String(total)).split(".")[0];
             minutos = "0." + (String(total)).split(".")[1];
-            console.log(parseFloat(horas), (parseFloat(minutos) * 60))
             $('#id_totalasignado').val(horas + ":" + String(parseFloat(minutos) * 60));
         } else {
             horas = (String(total)).split(".")[0];
             $('#id_totalasignado').val(horas + ":00");
         }
-        console.log(timeInHours($('#sumAll_total').val()) + " " + timeInHours($('#id_totalasignado').val()))
-        $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours($('#id_totalasignado').val())));
-    });
-
+         $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours($('#id_totalasignado').val())));
+   
+    }
 </script>
 <script>
     function buscarOperario(id) {
@@ -1252,9 +1273,6 @@
                             var domSalAnt = ""
                             var fechaIniAnt = ""
                             var fechaFinAnt = ""
-                            console.log("J= ", j)
-                            console.log("Resultado");
-                            console.log(result)
                             if (result.length > 0) {
                                 var operarios = result;
                                 if (j > 0) {
@@ -1543,9 +1561,7 @@
                 endLoader();
                 if (result.codigo == 0) {
                     console.log("exito");
-                    escondeRegistrosBorrados(id);
-                    RecalcularHorasV2();
-                    RecalcularTipoHoras();
+                    location.reload();
                 } else {
                     console.log("error");
                 }
@@ -1553,19 +1569,17 @@
             });
         }
     }
-    function escondeRegistrosBorrados(id_asig) {
+    function escondeRegistrosBorrados(id_asig,index) {
         $('#' + id_asig).addClass('d-none');
+        $('#totalhoras-'+index);
     }
     //VER UNA ASIGNACION YA SEA TEMPORAL O CONFIRMADA
     function verRegistro(id) {
+        tipo = $('#' + id +"-eliminar").val();
+        localStorage.setItem('tipo-asignacion',tipo); 
+        localStorage.setItem('id-signacion',id);
         id_punto = $('#id_puntoServicio').val();
-        $.ajax({
-            type: "POST",
-            url: "/reingenieria/asignacion/verDetalle/" + id_punto + "/" + id + "/",
-            data: { csrfmiddlewaretoken: '{{csrf_token}}' }
-        }).done(function (result) {
-
-        });
+        document.location.href = "/reingenieria/asignacion/verDetalle/"+id_punto;
     }
 
 </script>
@@ -1606,8 +1620,8 @@
             return "-" + hoursToString(h * -1);
         }
         var hours = Math.floor(h);
-        var minutes = ((h - hours) * 60);
-
+        var minutes = ((h - hours) * 60).toFixed(0);
+        
         return pad(hours) + ":" + pad(minutes);
     }
 
@@ -1693,7 +1707,6 @@
                 var id_clean = id_boton.substring(10);
                 id = id_clean
             }
-            console.log("ID del eliminado ", id)
 
             $("#id_asignaciondet_set-" + id + "-DELETE").prop("checked", true);
 
@@ -1715,13 +1728,11 @@
     function verificarGuardar() {
         var totalDetalle = $('.row-table').length;
         var totalDet = parseInt(totalDetalle, 10);
-        console.log("Total Det ", totalDet)
         var countDelete = 0;
         /**estado inicial**/
         $('#guardar').prop("disabled", false);
         for (var i = 0; i < totalDet; i++) {
             if ($('#leaveForm-' + i).css('display') != 'none') {
-                console.log($('#id_asignaciondet_set-' + i + '-operario').val())
                 if ($('#id_asignaciondet_set-' + i + '-operario').val() == "") {
                     $('#guardar').prop("disabled", true);
                     break;
@@ -1731,7 +1742,6 @@
                 countDelete++;
             }
         }
-        console.log("Total eliminados ", countDelete)
         if (countDelete == totalDet) {
             $('#guardar').prop("disabled", true);
         }
@@ -1962,6 +1972,7 @@
         var total_sem_diurnas = '00:00';
         var total_dom_nocturnas = '00:00';
         var total_dom_diurnas = '00:00';
+        var totalHorasSemanales = '00:00';
         var totalDet = $('.row-table').length;
         var lunes = $(".lunes");
         var martes = $(".martes");
@@ -1970,18 +1981,18 @@
         var viernes = $(".viernes");
         var sabado = $(".sabado");
         var domingo = $(".domingo");
+        console.log("TOTAL DETALLES",totalDet)
         for (i = 0; i < totalDet; i++) {
+            totalHorasSemanales = '00:00';
             //Lunes
             if (lunes.length > 0) {
-                console.log(lunes[i].innerText)
                 var horarioLunes = (lunes[i].innerText).split(" a ");
                 var lunEnt = String(horarioLunes[0]);
                 var lunSal = String(horarioLunes[1]);
                 temp = obtenerNocturnas(lunEnt, lunSal);
-                console.log(lunSal,lunEnt)
-                var totalLunes = Math.round(parseFloat(timeInHours(lunSal)).toFixed(2) - parseFloat(timeInHours(lunEnt)).toFixed(2));
-                
+                totalLunes = parseFloat(timeInHours(lunSal)).toFixed(2) - parseFloat(timeInHours(lunEnt)).toFixed(2);
                 if (!(totalLunes == 'NaN:NaN') && !isNaN(totalLunes)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalLunes))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalLunes - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
@@ -1994,25 +2005,23 @@
                 var marEnt = String(horarioMartes[0]);
                 var marSal = String(horarioMartes[1]);
                 temp = obtenerNocturnas(marEnt, marSal);
-
                 var totalMartes = timeInHours(marSal) - timeInHours(marEnt);
                 if (!(totalMartes == 'NaN:NaN') && !isNaN(totalMartes)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalMartes))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMartes - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
             }
 
             if (miercoles.length > 0) {
-                console.log("MIERCOLES")
                 //Miercoles
                 var horarioMiercoles = (miercoles[i].innerText).split(" a ");
                 var mieEnt = String(horarioMiercoles[0]);
                 var mieSal = String(horarioMiercoles[1]);
                 temp = obtenerNocturnas(mieEnt, mieSal);
-
                 var totalMiercoles = timeInHours(mieSal) - timeInHours(mieEnt);
-                console.log(totalMiercoles)
                 if (!(totalMiercoles == 'NaN:NaN') && !isNaN(totalMiercoles)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalMiercoles))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMiercoles - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
@@ -2023,9 +2032,9 @@
                 var jueEnt = String(horarioJueves[0]);
                 var jueSal = String(horarioJueves[1]);
                 temp = obtenerNocturnas(jueEnt, jueSal);
-
                 var totalJueves = timeInHours(jueSal) - timeInHours(jueEnt);
                 if (!(totalJueves == 'NaN:NaN') && !isNaN(totalJueves)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalJueves))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalJueves - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
@@ -2036,9 +2045,9 @@
                 var vieEnt = String(horarioViernes[0]);
                 var vieSal = String(horarioViernes[1]);
                 temp = obtenerNocturnas(vieEnt, vieSal);
-
                 var totalViernes = timeInHours(vieSal) - timeInHours(vieEnt);
                 if (!(totalViernes == 'NaN:NaN') && !isNaN(totalViernes)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalViernes))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalViernes - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
@@ -2049,9 +2058,9 @@
                 var sabEnt = String(horarioSabado[0]);
                 var sabSal = String(horarioSabado[1]);
                 temp = obtenerNocturnas(sabEnt, sabSal);
-
                 var totalSabado = timeInHours(sabSal) - timeInHours(sabEnt);
                 if (!(totalSabado == 'NaN:NaN') && !isNaN(totalSabado)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalSabado))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalSabado - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
@@ -2062,14 +2071,20 @@
                 var domEnt = String(horarioDomingo[0]);
                 var domSal = String(horarioDomingo[1]);
                 temp = obtenerNocturnas(domEnt, domSal);
-
                 var totalDomingo = timeInHours(domSal) - timeInHours(domEnt);
                 if (!(totalDomingo == 'NaN:NaN') && !isNaN(totalDomingo)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalDomingo))
                     total_dom_diurnas = SumHrMin(total_dom_diurnas, hoursToString(totalDomingo - timeInHours(temp)));
                     total_dom_nocturnas = SumHrMin(total_dom_nocturnas, temp);
                 }
             }
+            $('#cantTotal-'+(i+1)).text(totalHorasSemanales);
         }
+        var total_semanales = SumHrMin(total_sem_diurnas,total_sem_nocturnas);
+        var total_domingos = SumHrMin(total_dom_diurnas,total_dom_nocturnas);
+        console.log(total_semanales,total_domingos)
+        $('#id_totalasignado').val(SumHrMin(total_semanales,total_domingos))
+        $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours($('#id_totalasignado').val())));
         $('#sum_sem_diu').val(total_sem_diurnas);
         $('#sum_sem_noc').val(total_sem_nocturnas);
         $('#sum_dom_diu').val(total_dom_diurnas);
@@ -2077,7 +2092,6 @@
 
         //total_sem_diurnas
         temp = hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas)));
-        console.log("TIPO",temp)
         if (temp.substring(0, 1) == '-') {
             document.getElementById("res_sem_diu").style.color = "#ff0000";
         } else {
@@ -2113,11 +2127,9 @@
         } else {
             document.getElementById("sumAll_resto").style.color = "#000000";
         }
-
-
         $('#res_sem_diu').val(hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas))));
         $('#res_sem_noc').val(hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas))));
-        $('#res_dom_diu').val(hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas))));
+        $('#res_dom_diu').val((hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas)))));
         $('#res_dom_noc').val(hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas))));
     }
 

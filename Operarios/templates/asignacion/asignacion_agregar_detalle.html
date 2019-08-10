@@ -70,7 +70,7 @@
                             <p class="label-field">Perfil</p>
                             <div class="input-group field-general">
                                 <select name="perfil-combo" id="id_perfil-combo" class="form-control perfil-combo">
-                                    <option value="">--------</option>
+                                    <option value="0">--------</option>
                                     {% for per in perfiles %}
                                         <option value="{{per.id}}"> {{per.especializacion}}</option>
                                     {% endfor %}
@@ -406,7 +406,7 @@
             return parseInt(sp[0]) + parseFloat(sp[1] / 60);
         }
     }
-    $(document).on("change", "#id_asignaciondet-perfil", function () {
+    $(document).on("change", "#id_perfil-combo", function () {
         habilitarBusqueda();
     });
     function RecalcularHoras() {
@@ -499,10 +499,17 @@
         var formisValid = false;
         var fechasValid = false;
         var horasValid = false;
+        console.log()
         if ($('#id_asignaciondet-fechaInicio').val()) {
             fechasValid = true;
         }
-        hasPerfil = $('#id_asignaciondet-perfil').val();
+        if($('#id_perfil-combo').val()==0){
+            hasPerfil=false;
+        }else{
+            hasPerfil=true;
+        }
+
+        //hasPerfil = $('#id_asignaciondet-perfil').val();
         //Lunes
         var lunEnt = $('#id_asignaciondet-lunEnt').val();
         var lunSal = $('#id_asignaciondet-lunSal').val();
@@ -554,7 +561,7 @@
             horasValid = true;
         }
         console.log(fechasValid,horasValid,hasPerfil)
-        if (fechasValid && horasValid && (hasPerfil!=undefined || hasPerfil!=null)) {
+        if (fechasValid && horasValid && hasPerfil) {
             $('#buscador').prop("disabled", false);
             console.log("valido");
         } else {

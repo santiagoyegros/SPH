@@ -552,7 +552,8 @@
         if (!(totalDomingo == 'NaN:NaN')) {
             horasValid = true;
         }
-        if (fechasValid && horasValid && hasPerfil) {
+        console.log(fechasValid,horasValid,hasPerfil)
+        if (fechasValid && horasValid && (hasPerfil!=undefined || hasPerfil!=null)) {
             $('#buscador').prop("disabled", false);
             console.log("valido");
         } else {

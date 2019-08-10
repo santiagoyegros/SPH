@@ -70,8 +70,9 @@
                             <p class="label-field">Perfil</p>
                             <div class="input-group field-general">
                                 <select name="perfil-combo" id="id_perfil-combo" class="form-control perfil-combo">
+                                    <option value="">--------</option>
                                     {% for per in perfiles %}
-                                    <option value="{{per.id}}"> {{per.especializacion}}</option>
+                                        <option value="{{per.id}}"> {{per.especializacion}}</option>
                                     {% endfor %}
                                 </select>
                                 <input type="hidden" name="asignaciondet-perfil"  id="id_asignaciondet-perfil" value="">

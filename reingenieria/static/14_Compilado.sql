@@ -1968,12 +1968,12 @@ END
 
 USE [reingenieria]
 GO
-/****** Object:  StoredProcedure [dbo].[operarios_disponibles_v3]    Script Date: 9/8/2019 17:00:25 ******/
+/****** Object:  StoredProcedure [dbo].[operarios_disponibles_v3]    Script Date: 10/8/2019 20:18:47 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[operarios_disponibles_v3]   
+ALTER  PROCEDURE [dbo].[operarios_disponibles_v3]   
     @puntoServicio int,   
     @totalHoras float,
 	@lunEntReq time(7),
@@ -2029,36 +2029,36 @@ AS
 			SET @fechaFin=CONVERT(date, '2099-01-01', 23)
 		END
 		SELECT op.* FROM dbo.detalle_lista_operarios3 op 
-			where op.id_operario NOT IN (
+			where  op.id_operario NOT IN (
 			SELECT op.id_operario FROM dbo.detalle_lista_operarios3 op
 			INNER JOIN Operarios_asignaciondet asd on asd.operario_id=op.id_operario 
-			INNER JOIN Operarios_asignaciondettemp asdt on asdt.operario_id=op.id_operario 
-			inner JOIN Operarios_asignacioncab ac on ac.id=asd.asignacionCab_id or ac.id=asdt.asignacionCab_id
+			inner JOIN Operarios_asignacioncab ac on ac.id=asd.asignacionCab_id
 			inner JOIN Operarios_puntoservicio ps on ps.id=ac.puntoServicio_id
 			inner JOIN Operarios_relevamientocab rc on rc.puntoServicio_id=ps.id AND  rc.estado='Aprobado' 
 			LEFT JOIN Operarios_dialibre dl on dl.id_operario_id=op.id_operario
 			WHERE 
-			   (asd.lunEnt between @lunEntReqTras and @lunSalReq) or (asd.lunSal  between @lunEntReqTras and @lunSalReq) 
-			or (asd.marEnt between @marEntReqTras and @marSalReq) or (asd.marSal   between @marEntReqTras and @marSalReq)
-			or (asd.mieEnt between @mierEntReqTras and @mierSalReq) or (asd.mieSal  between @mierEntReqTras and @mierSalReq)
-			or (asd.jueEnt between @jueEntReqTras and @jueSalReq) or (asd.jueSal between @jueEntReqTras and  @jueSalReq)
-			or (asd.vieEnt between @vieEntReqTras and @vieSalReq) or (asd.vieSal  between  @vieEntReqTras and @vieSalReq)
-			or (asd.sabEnt between @sabEntReqTras and @sabSalReq) or (asd.sabSal  between @sabEntReqTras and @sabSalReq)
-			or (asd.domEnt between @domEntReqTras and @domSalReq) or (asd.domSal  between @domEntReqTras and @domSalReq)	
-			or (asdt.lunEnt between @lunEntReqTras and @lunSalReq) or (asdt.lunSal  between @lunEntReqTras and @lunSalReq) 
-			or (asdt.marEnt between @marEntReqTras and @marSalReq) or (asdt.marSal   between @marEntReqTras and @marSalReq)
-			or (asdt.mieEnt between @mierEntReqTras and @mierSalReq) or (asdt.mieSal  between @mierEntReqTras and @mierSalReq)
-			or (asdt.jueEnt between @jueEntReqTras and @jueSalReq) or (asdt.jueSal between @jueEntReqTras and  @jueSalReq)
-			or (asdt.vieEnt between @vieEntReqTras and @vieSalReq) or (asdt.vieSal  between  @vieEntReqTras and @vieSalReq)
-			or (asdt.sabEnt between @sabEntReqTras and @sabSalReq) or (asdt.sabSal  between @sabEntReqTras and @sabSalReq)
-			or (asdt.domEnt between @domEntReqTras and @domSalReq) or (asdt.domSal  between @domEntReqTras and @domSalReq)
-			or cast(isnull(op.totalHoras,0) as float)+@totalConverted>cast(@horasMaximas as float)
-			or (@fechaFin>=asd.fechaInicio and (@fechaFin <=asd.fechaFin or asd.fechaFin is null))
-			or (convert(date, @fechaInicioOperario, 23)>=asd.fechaInicio and (convert(date, @fechaInicioOperario)<=asd.fechaFin or asd.fechaFin is null))
-			or (convert(date, @fechaInicioOperario, 23) <=asd.fechaInicio and (@fechaFin>=asd.fechaFin or asd.fechaFin is NULL))
-			or (@fechaFin>=asdt.fechaInicio and (@fechaFin <=asdt.fechaFin or asdt.fechaFin is null))
-			or (convert(date, @fechaInicioOperario, 23)>=asdt.fechaInicio and (convert(date, @fechaInicioOperario)<=asdt.fechaFin or asdt.fechaFin is null))
-			or (convert(date, @fechaInicioOperario, 23) <=asdt.fechaInicio and (@fechaFin>=asdt.fechaFin or asdt.fechaFin is NULL))
+			(
+			
+			op.totalHoras+cast(isnull(@totalHoras,0)  as float)>@horasMaximas
+			
+			
+			or(
+				(@fechaFin>=asd.fechaInicio and (@fechaFin <=asd.fechaFin or asd.fechaFin is null))
+				or (convert(date, @fechaInicioOperario, 23)>=asd.fechaInicio and (convert(date, @fechaInicioOperario)<=asd.fechaFin or asd.fechaFin is null))
+				or (convert(date, @fechaInicioOperario, 23) <=asd.fechaInicio and (@fechaFin>=asd.fechaFin or asd.fechaFin is NULL))
+				)
+			AND(
+				(asd.lunEnt between @lunEntReqTras and @lunSalReq) or (asd.lunSal  between @lunEntReqTras and @lunSalReq) 
+				or (asd.marEnt between @marEntReqTras and @marSalReq) or (asd.marSal   between @marEntReqTras and @marSalReq)
+				or (asd.mieEnt between @mierEntReqTras and @mierSalReq) or (asd.mieSal  between @mierEntReqTras and @mierSalReq)
+				or (asd.jueEnt between @jueEntReqTras and @jueSalReq) or (asd.jueSal between @jueEntReqTras and  @jueSalReq)
+				or (asd.vieEnt between @vieEntReqTras and @vieSalReq) or (asd.vieSal  between  @vieEntReqTras and @vieSalReq)
+				or (asd.sabEnt between @sabEntReqTras and @sabSalReq) or (asd.sabSal  between @sabEntReqTras and @sabSalReq)
+				or (asd.domEnt between @domEntReqTras and @domSalReq) or (asd.domSal  between @domEntReqTras and @domSalReq)
+			
+			)
+			
+			
 			/**traemos los que tienen dia libre en ese dia del requerimiento**/
 			or (dl.lunEnt between @lunEntReq and @lunSalReq) or (dl.lunSal between @lunEntReq and @lunSalReq)
 			or (dl.marEnt between @marEntReq and @marSalReq) or (dl.marSal between @marEntReqTras and @marSalReq)
@@ -2068,8 +2068,44 @@ AS
 			or (dl.vieEnt between  @vieEntReq and @vieSalReq)  
 			or (dl.sabEnt between @sabEntReq and @sabSalReq) or (dl.sabSal  between @sabEntReq and @sabSalReq)
 			or (dl.domEnt  between @domEntReq and @domSalReq) or (dl.domSal  between @domEntReq and @domSalReq)
+			)) AND op.id_operario NOT IN (
+			SELECT op.id_operario FROM dbo.detalle_lista_operarios3 op
+			INNER JOIN Operarios_asignaciondettemp asd on asd.operario_id=op.id_operario 
+			inner JOIN Operarios_asignacioncab ac on ac.id=asd.asignacionCab_id
+			inner JOIN Operarios_puntoservicio ps on ps.id=ac.puntoServicio_id
+			inner JOIN Operarios_relevamientocab rc on rc.puntoServicio_id=ps.id AND  rc.estado='Aprobado' 
+			LEFT JOIN Operarios_dialibre dl on dl.id_operario_id=op.id_operario
+			WHERE 
+			(op.totalHoras+cast(isnull(@totalHoras,0)  as float)>@horasMaximas
 			
-			) 
+			
+			or(
+				(@fechaFin>=asd.fechaInicio and (@fechaFin <=asd.fechaFin or asd.fechaFin is null))
+				or (convert(date, @fechaInicioOperario, 23)>=asd.fechaInicio and (convert(date, @fechaInicioOperario)<=asd.fechaFin or asd.fechaFin is null))
+				or (convert(date, @fechaInicioOperario, 23) <=asd.fechaInicio and (@fechaFin>=asd.fechaFin or asd.fechaFin is NULL))
+				)
+			AND(
+				(asd.lunEnt between @lunEntReqTras and @lunSalReq) or (asd.lunSal  between @lunEntReqTras and @lunSalReq) 
+				or (asd.marEnt between @marEntReqTras and @marSalReq) or (asd.marSal   between @marEntReqTras and @marSalReq)
+				or (asd.mieEnt between @mierEntReqTras and @mierSalReq) or (asd.mieSal  between @mierEntReqTras and @mierSalReq)
+				or (asd.jueEnt between @jueEntReqTras and @jueSalReq) or (asd.jueSal between @jueEntReqTras and  @jueSalReq)
+				or (asd.vieEnt between @vieEntReqTras and @vieSalReq) or (asd.vieSal  between  @vieEntReqTras and @vieSalReq)
+				or (asd.sabEnt between @sabEntReqTras and @sabSalReq) or (asd.sabSal  between @sabEntReqTras and @sabSalReq)
+				or (asd.domEnt between @domEntReqTras and @domSalReq) or (asd.domSal  between @domEntReqTras and @domSalReq)
+			
+			)
+			
+			/**traemos los que tienen dia libre en ese dia del requerimiento**/
+			or (dl.lunEnt between @lunEntReq and @lunSalReq) or (dl.lunSal between @lunEntReq and @lunSalReq)
+			or (dl.marEnt between @marEntReq and @marSalReq) or (dl.marSal between @marEntReqTras and @marSalReq)
+			or (dl.mieEnt between @mierEntReq and @mierSalReq) or (dl.mieSal  between @mierEntReq and @mierSalReq)
+			or (dl.jueEnt between  @jueEntReq and @jueSalReq)
+			or (dl.jueSal between  @jueEntReq and @jueSalReq)
+			or (dl.vieEnt between  @vieEntReq and @vieSalReq)  
+			or (dl.sabEnt between @sabEntReq and @sabSalReq) or (dl.sabSal  between @sabEntReq and @sabSalReq)
+			or (dl.domEnt  between @domEntReq and @domSalReq) or (dl.domSal  between @domEntReq and @domSalReq)
+			)
+			)
 		AND ((LEN(@perfil)>0 and op.ids_perfil like '%'+@perfil+'%') or LEN(@perfil)=0)
 		ORDER BY op.totalHoras asc, op.nombres asc
 	END
@@ -2126,14 +2162,14 @@ END
 USE [reingenieria]
 GO
 
-/****** Object:  View [dbo].[detalle_lista_operarios]    Script Date: 9/8/2019 17:39:30 ******/
+/****** Object:  View [dbo].[detalle_lista_operarios3]    Script Date: 10/8/2019 20:18:33 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-create or ALTER VIEW [dbo].[detalle_lista_operarios3]
+create or ALTER   VIEW [dbo].[detalle_lista_operarios3]
 AS
 SELECT        id_operario, nombres, nroLegajo, nombres_puntoServicio, ids_puntoServicio, totalHoras,
                              (SELECT DISTINCT STRING_AGG(esp.especializacion, ', ') AS Expr1
@@ -2152,5 +2188,4 @@ FROM            (SELECT        op.id AS id_operario, { fn CONCAT({ fn CONCAT(op.
                                                     dbo.Operarios_puntoservicio AS ps ON ps.id = aoc.puntoServicio_id
                           GROUP BY op.id, op.nombre, op.apellido, op.nroLegajo, op.fechaInicio) AS op_1
 GO
-
 

@@ -393,7 +393,7 @@ $(document).on('click','.guardar',function(){
     var body={}
     body.motivo=$('#id_motivo').val();
     body.observacion=$('#id_observacion').val();
-
+    console.log("a ver: "+$('#id_motivo').val());
     token = '{{csrf_token}}';
     $.ajax({
         type: "POST",

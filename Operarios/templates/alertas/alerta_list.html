@@ -202,8 +202,11 @@
                     <div class="modal-content">
                         <form id="form_modal" action="" method="POST">
                         {% csrf_token %}
-                        <div class="card-header">
+                        <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Gestión sin asignación</h5>
+                            <button type="button" style="color: white !important; cursor:pointer;" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
                         <div class="modal-body">
                                 <div class="row filter-row">
@@ -212,14 +215,8 @@
                                                     <label class="titulo-cupo" >Cupo Utilizado:  </label>
                                                 </div>
                                                 <div class="col-md-6" style="display: flex !important;">
-                    
-                                                        <input id="cupoUtilizado" style="padding-right: 30px !important;" type="text"
-                                                            class="form-control form-bordernone estilo-cupo" disabled>
-                                                    
-                                                    
-                                                        <input id="cupoTotal" style="padding-left: 30px !important;" type="text" class="form-control form-bordernone estilo-cupo"
-                                                            disabled>
-                                                    
+                                                        <input id="cupos" style="padding-right: 30px !important;" type="text"
+                                                            class="form-control form-bordernone estilo-cupo" disabled>                                                    
                                                 </div>
                                         </div>
                                 </div>
@@ -227,7 +224,7 @@
                                         <div class="col-md-12">
                                             <p>
                                                 <label class="font-weight-bold" style="padding-left: 10px;" for="">Motivo</label>
-                                                    <select class="selectpicker form-control" id="id_motivo" data-size="5" name="motivo"
+                                                    <select class="selectpicker form-control motivo" id="id_motivo" data-size="5" name="motivo"
                                                         value="{{motivo}}" 
                                                         data-live-search="true" title="--Seleccionar--">
                                                         {% for motivo in motivos %}
@@ -244,7 +241,7 @@
                                         <div class="col-md-12">
                                                 <p>
                                                     <label class="font-weight-bold">Observación</label>
-                                                    <textarea name="observacion" class="form-control" id="id_observacion" rows="3"></textarea>
+                                                    <textarea style="resize: none !important; min-height: 150px;" name="observacion" class="form-control" id="id_observacion" rows="3"></textarea>
                                                 </p>
                                             </div>
                                 </div>
@@ -377,8 +374,8 @@
              'id':id,
          },
         success:function(response){
-            $('#cupoUtilizado').val(response.cupoUtilizado + ' h / ');
-            $('#cupoTotal').val(response.cupoTotal + ' h');
+            $('#cupos').val(response.cupoUtilizado + ' h / '+response.cupoTotal + ' h');
+            
            
         },
         error:function(){
@@ -404,8 +401,12 @@ $(document).on('click','.guardar',function(){
         data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token+"&error="+error,
         
         success:function(response){;
-            window.location.href = "/reingenieria/alertas/listar/"
+            $('#gestionModal').modal('hide');
+            $('id_observacion,textarea').val('');
+            console.log($('#id_motivo').val());
+            // $(".motivo").append('<option value="foo">foo</option>')
             console.log("funciono")
+            
         },
         error:function(){
             console.log('error')
@@ -433,6 +434,20 @@ $(document).on('click','.guardar',function(){
     .card {
         border-radius: 0px !important;
     }
+
+    .modal-header {
+    background-color: #86273e !important;
+    color: white !important;
+    font-size: 20px !important;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
 
     .cuerpo-filtro .row div p {
         width: 100% !important;

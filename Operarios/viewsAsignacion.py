@@ -286,8 +286,8 @@ def guardarAsignacionOperario(request):
             if result==0:
                 response['codigo']=0
                 response['dato']=[]
-                response['mensaje']="Se guardó correctamente la asignación"
-                messages.success(request, 'Se guardo correctamente la asignacion')
+                response['mensaje']="Se agregó correctamente la asignación"
+                messages.success(request, 'Se agregó correctamente la asignacion')
             else:
                 response['codigo']=0
                 response['dato']=[]

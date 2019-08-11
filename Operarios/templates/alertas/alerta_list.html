@@ -218,14 +218,14 @@
                 {% endif %}
                 {% for num in alertasList.paginator.page_range %}
                 {% if alertasList.number == num %}
-                <li class="active"><a href="#!">{{ num }}</a></li>
+                <li class="active padding-number"><a href="#!">{{ num }} </a></li>
                 {% else %}
-                <li class="waves-effect"><a
+                <li class="waves-effect padding-number"><a
                         href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li>
                 {% endif %}
                 {% endfor %}
                 {% if alertasList.has_next %}
-                <a href="?page={{alertasList.next_page_number}}">Anterior</a>
+                <a href="?page={{alertasList.next_page_number}}">Siguiente</a>
                 {% else %}
                 <span class="disabled">Siguiente</span>
                 {% endif %}

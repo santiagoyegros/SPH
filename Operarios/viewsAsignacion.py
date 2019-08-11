@@ -286,8 +286,8 @@ def guardarAsignacionOperario(request):
             if result==0:
                 response['codigo']=0
                 response['dato']=[]
-                response['mensaje']="Se guardó correctamente la asignación"
-                messages.success(request, 'Se guardo correctamente la asignacion')
+                response['mensaje']="Se agregó correctamente la asignación"
+                messages.success(request, 'Se agregó correctamente la asignacion')
             else:
                 response['codigo']=0
                 response['dato']=[]
@@ -1340,7 +1340,22 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
             SELECT @out AS the_output;
         """
         """conn.callproc('operarios_disponibles_v3', [puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp])"""
-        params=(puntoServicio,  '' if totalHoras is None else float(totalHoras), lunEntReq, lunSalReq, marEntReq, marSalReq, mierEntReq, mierSalReq, juevEntReq, juevSalReq, vieEntReq, vieSlReq, sabEntReq, sabSalReq, domEntReq, domSalReq, fechaInicioOp, fechaFinOp,perfil)
+        params=(puntoServicio,  '' if totalHoras is None else float(totalHoras), 
+        None if lunEntReq  is None or lunEntReq  == '' else lunEntReq,
+        None if lunSalReq  is None or lunSalReq  == '' else lunSalReq,
+        None if marEntReq  is None or marEntReq  == '' else marEntReq,
+        None if marSalReq  is None or marSalReq  == '' else marSalReq,
+        None if mierEntReq is None or mierEntReq == '' else mierEntReq,
+        None if mierSalReq is None or mierSalReq == '' else mierSalReq,
+        None if juevEntReq is None or juevEntReq == '' else juevEntReq,
+        None if juevSalReq is None or juevSalReq == '' else juevSalReq,
+        None if vieEntReq  is None or vieEntReq  == '' else vieEntReq,
+        None if vieSlReq   is None or vieSlReq   == '' else vieSlReq,
+        None if sabEntReq  is None or sabEntReq  == '' else sabEntReq,
+        None if sabSalReq  is None or sabSalReq  == '' else sabSalReq,
+        None if domEntReq  is None or domEntReq  == '' else domEntReq,
+        None if domSalReq  is None or domSalReq  == '' else domSalReq,
+        fechaInicioOp, fechaFinOp,perfil)
         conn.execute('operarios_disponibles_v3 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
         result = conn.fetchall()
        

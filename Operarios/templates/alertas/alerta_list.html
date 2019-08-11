@@ -158,9 +158,9 @@
                         </div>
                     </div>
                     <div style="float: right;">
-                        <button type='submit' class='btn btn-success btn-filtrar'>Filtrar</button>
+                        <button type='submit' class='btn btn-success btn-filtrar'><i class="fa fa-search"></i> Filtrar</button>
 
-                        <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar">Limpiar</a>
+                        <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar"><i class="fa fa-trash"></i> Limpiar</a>
                     </div>
 
                 </div>
@@ -221,11 +221,11 @@
                 <li class="active padding-number"><a href="#!">{{ num }} </a></li>
                 {% else %}
                 <li class="waves-effect padding-number"><a
-                        href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li>
+                        href="?page={{ num }}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">{{ num }}</a></li>
                 {% endif %}
                 {% endfor %}
                 {% if alertasList.has_next %}
-                <a href="?page={{alertasList.next_page_number}}">Siguiente</a>
+                <a href="?page={{alertasList.next_page_number}}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">Siguiente</a>
                 {% else %}
                 <span class="disabled">Siguiente</span>
                 {% endif %}

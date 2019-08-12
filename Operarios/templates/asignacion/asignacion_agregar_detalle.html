@@ -692,6 +692,7 @@
     //------------------------------- BUSCADOR DE OPERARIOS ------------------------------//
     function buscarOperario() {
         $('#modalFiltro').modal('show');
+        
         $("#jsGrid").jsGrid({
             width: "100%",
             filtering: true,
@@ -700,6 +701,7 @@
             sorting: true,
             paging: true,
             autoload: true,
+            pageIndex:1,
             pageSize: 5,
             pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
             pageButtonCount: 1,
@@ -713,6 +715,7 @@
             invalidMessage: "Datos no válidos",
             controller: {
                 loadData: function (filter) {
+                    
                     var d = $.Deferred();
                     filter.idPunto = $('#id_puntoServicio').val();
                     filter.totalHorasProc = ($('#sumAll').val()).split(":")[0];
@@ -739,6 +742,7 @@
                         url: "/reingenieria/asignacion/asignar/operarios",
                         data: filter
                     }).done(function (result) {
+                        console.log(result)
                         d.resolve($.map(result, function (item) {
                             return $.extend(item.fields, { id: item.pk });
                         }));
@@ -765,6 +769,7 @@
                 { name: "perfil", type: "text", width: 150, title: "Perfil" }
             ]
         });
+        
     }
 </script>
 <style>

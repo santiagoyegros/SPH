@@ -198,7 +198,7 @@
                                 class="btn btn-success btn-filtrar">Gestionar</a></td>
                         {% else %}
                         <td id="gestionar-{{forloop.counter}}" style="display:flex;justify-content:center"><a href=#
-                                id="{{alerta.id}}" class="btn btn-success btn-filtrar open-modal"
+                                id="{{alerta.id}}" name="{{alerta.Operario.nombre}} {{alerta.Operario.apellido}}" class="btn btn-success btn-filtrar open-modal"
                                 data-url=#>Gestionar</a></td>
                         {% endif %}
                     </tr>
@@ -216,7 +216,7 @@
                         <form id="form_modal" action="" method="POST">
                             {% csrf_token %}
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Gestión sin asignación</h5>
+                                <h5 class="modal-title" id="modal-title">Gestión sin asignación</h5>
                                 <button type="button" id="id_cerrar" style="color: white !important; cursor:pointer;" class="close"
                                     data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
@@ -287,7 +287,7 @@
             <div class="pagination">
                 Página:&nbsp;&nbsp;
                 {% if alertasList.has_previous %}
-                <a href="?page={{alertasList.previous_page_number}}">Anterior</a>
+                <a href="?page={{alertasList.previous_page_number}}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">Anterior</a>
                 {% else %}
                 <span class="disabled">Anterior</span>
                 {% endif %}
@@ -388,9 +388,12 @@
 
     $(document).on('click', '.open-modal', function () {
         var alerta_actual = $(this);
-        var id = alerta_actual[0].id;
+        var id =alerta_actual[0].id;
+        var operario =alerta_actual[0].name;
+        console.log(alerta_actual)
         $('.guardar').attr('id', id);
         $('#gestionModal').modal('show');
+        $('#gestionModal').find("h5#modal-title").text("Gestion sin Asignación- "+operario);
         $.ajax({
             url: '/reingenieria/alertas/mostrarCupos',
             type: 'GET',

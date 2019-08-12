@@ -706,7 +706,7 @@ def Planificacion_create(request, id_puntoServicio=None):
 
                 pln_esp="[ "
                 for item in  planifEspFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
+                    if item != emptyvar and not (item.get('id') is None and( item.get('DELETE') is True or item.get('DELETE')=='True') ):
                         pln_esp+=str({
                                 'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
                                 'DELETE':str(item.get('DELETE')),  

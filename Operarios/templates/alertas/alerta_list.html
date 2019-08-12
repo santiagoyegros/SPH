@@ -413,8 +413,6 @@
     });
 
     $(function () {
-
-        var original = $("#id_modalBody").clone()
         $(document).on('click', '.guardar', function () {
             var error = true;
             var guardar_actual = $(this);
@@ -424,6 +422,7 @@
             body.observacion = $('#id_observacion').val();
             console.log("a ver: " + $('#id_motivo').val());
             token = '{{csrf_token}}';
+            startLoader();
             $.ajax({
                 type: "POST",
                 url: "/reingenieria/alertas/guardarSinAsignacion/" + id_alerta,
@@ -435,6 +434,7 @@
                 },
                 error: function () {
                     console.log('error')
+                    endLoader();
                 },
             });
 

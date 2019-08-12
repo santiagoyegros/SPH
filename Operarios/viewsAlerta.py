@@ -160,15 +160,15 @@ def guardarSinAsignacion(request,id_alerta=None):
     print("request aca: ",request.POST)
 
     if request.POST.get('motivo'):
-        alerta=Alertas.objects.get(id=id_alerta)
+        exito=0
         motivo=request.POST.get('motivo')            
         observacion=request.POST.get('observacion')
-        puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id))
-        horarios=[]
-        if alerta.Asignacion:
-            horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))        
-        tipoHorarios=TipoHorario.objects.all()
         try:
+            alerta=Alertas.objects.get(id=id_alerta)
+            puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id))
+            horarios=[]
+            if alerta.Asignacion:
+                horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
             """Se cambia el estado de la alerta"""
             setattr(alerta,"Estado", "CERRADA")
             alerta.save()
@@ -208,16 +208,20 @@ def guardarSinAsignacion(request,id_alerta=None):
                     horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date())
                     horasProcesadas.save()
         except Exception as err:
-            print("en el except")
+            exito=1
             transaction.rollback()
             logging.getLogger("error_logger").error('No se pudo gestionar la alerTa: {0}'.format(err))
-            messages.warning(request, 'No se pudo gestionar la alerta') 
+
         else:
             transaction.commit()
         finally:
-            m=messages.success(request, 'Alerta gestionada con exito')
-            transaction.set_autocommit(True)
-            return HttpResponse(m)
+            if exito==0:
+                m=messages.success(request, 'Alerta gestionada con exito')
+                transaction.set_autocommit(True)
+                return HttpResponse(m)
+            else:                
+                m=messages.warning(request, 'No se pudo gestionar la alerta')
+                return HttpResponse(m) 
 
 
 

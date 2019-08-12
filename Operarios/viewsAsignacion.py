@@ -628,8 +628,7 @@ def guardarAsignacion(request):
             if request.POST.get('error') is not None and request.POST.get('error')=='true':
                 response['codigo']=1
                 response['dato']=[]
-                response['mensaje']="No se pudo guardar la asignacion, favor verifique las horas asignadas..."
-                #messages.warning(request, 'Las horas asignadas son inválidas')
+                response['mensaje']="No se pudo guardar la asignación, favor verifique las horas asignadas..."
                 return HttpResponse(
                     json.dumps(response),
                     content_type="application/json"
@@ -649,14 +648,12 @@ def guardarAsignacion(request):
                 conn.execute('asignacion_manager %s,%s,%s ',params)
                 result = conn.fetchone()[0]
                 conn.close()
-                print(result)
                 if result==0:
-                    messages.success(request, 'Se guardo correctamente la asignacion')
+                    messages.success(request, 'Se guardó correctamente la asignacion')
                 else:
-                    messages.warning(request, 'No se pudo guardar los cambios')
                     response['dato']=[]
-                    response['codigo']=0
-                    response['mensaje']="Asignacion guardada con éxito"
+                    response['codigo']=1
+                    response['mensaje']="No se pudo guardar los cambios"
                     return HttpResponse(
                     json.dumps(response),
                     content_type="application/json")  

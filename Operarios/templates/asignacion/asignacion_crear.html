@@ -925,6 +925,7 @@
 
 <script>
     function guardarAsignacion() {
+        $(".alert-success").addClass("d-none");
         var error = true;
         if (
 
@@ -946,7 +947,7 @@
             endLoader();
             if (result.codigo == 0) {
                 document.location.href = "/reingenieria/asignacion/listar";
-                setMessageAlert("No se pudo guardar la Asignación");
+                setMessageAlert(result.mensaje);
             } else if (result.codigo == 1) {
                 setMessageAlert(result.mensaje);
                 $('html, body').animate({ scrollTop: 0 }, 'fast');

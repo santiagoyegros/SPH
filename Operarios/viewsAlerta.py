@@ -58,8 +58,6 @@ def alertasList (request):
     print (request.GET.get('estado'))
     print (request.GET.get('tipoAlerta'))
     print (request.GET.get('operario'))
-
-
     
     if request.GET.get("fechaDesde") and request.GET.get("fechaHasta") and request.GET.get("horaInicio") and request.GET.get("horaFin"):
         fechaDesdeAux=datetime.datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").replace(hour=0,minute=0,second=0, microsecond=0)
@@ -129,7 +127,6 @@ def alertasList (request):
         "operario":operario,
         "tipoAlerta":tipoAlerta        
     }
-
     return render(request, 'alertas/alerta_list.html', context=contexto)
 
 
@@ -156,11 +153,14 @@ def mostrarCupos(request):
         "cupoTotal":cupoTotal,
         "cupoUtilizado":totalUtilizado
     }
+    
     return HttpResponse(json.dumps(data),content_type="application/json")
 
 
 
 def guardarSinAsignacion(request,id_alerta=None):
+    print("request aca: ",request.POST)
+
     if request.POST.get('motivo'):
         alerta=Alertas.objects.get(id=id_alerta)
         motivo=request.POST.get('motivo')            
@@ -209,17 +209,17 @@ def guardarSinAsignacion(request,id_alerta=None):
             else:
                     horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date())
                     horasProcesadas.save()
-
         except Exception as err:
+            print("en el except")
             transaction.rollback()
             logging.getLogger("error_logger").error('No se pudo gestionar la alerTa: {0}'.format(err))
             messages.warning(request, 'No se pudo gestionar la alerta') 
         else:
             transaction.commit()
-            messages.success(request, 'Alerta gestionada con exito')
         finally:
+            m=messages.success(request, 'Alerta gestionada con exito')
             transaction.set_autocommit(True)
-            return redirect('Operarios:alertas_list')
+            return HttpResponse(m)
 
 
 

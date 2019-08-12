@@ -38,7 +38,7 @@ def alertasList (request):
     """query por defecto con fecha del dia"""
     hoy= datetime.datetime.now()
     hoyIni=hoy.replace(hour=0,minute=0,second=0, microsecond=0)
-
+    print ("Entra nuevamente en alertasList")
     hoyFin=hoyIni.replace(hour=23,minute=59,second=59)
     alertasList=Alertas.objects.filter(FechaHora__gte=hoyIni,FechaHora__lte=hoyFin)
     operarios = Operario.objects.all()
@@ -73,10 +73,8 @@ def alertasList (request):
         estado=request.GET.get('estado')
     if request.GET.get('tipoAlerta'):
         print(request.GET.get('tipoAlerta'))
-        if(request.GET.get('tipoAlerta')=="TODOS"):
-             alertasList=alertasList.all()
-        else:
-            alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))
+        if(request.GET.get('tipoAlerta')!="TODOS" ):
+            alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))            
         tipoAlerta=request.GET.get('tipoAlerta')
     if request.GET.get('operario') :
         alertasList=alertasList.filter(Operario_id=request.GET.get('operario'))

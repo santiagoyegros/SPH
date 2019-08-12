@@ -185,8 +185,8 @@
         <div class="col-lg-12 col-md-12" style="text-align: right;margin:15px 0px;">
             <button type='button' id="guardar" onclick="guardarAsignacion()" class='btn btn-primary btn-guardar'> <i
                     class="fa fa-check"></i>&nbsp;&nbsp; Confirmar</button>
-            <a class='btn btn-primary btn-cancelar' href={% url 'Operarios:asignacion_list' %}> <i
-                    class="fa fa-times"></i> &nbsp;&nbsp; Cancelar</a>
+            <button type="button" class='btn btn-primary btn-cancelar' onclick="cancelarConfirmacion()"> <i
+                    class="fa fa-times"></i> &nbsp;&nbsp; Cancelar</button>
         </div>
 
         <!--VERSION ANTERIOR DE ASIGNACION, CONJUNTO DE FORMULARIOS-->
@@ -925,6 +925,7 @@
 
 <script>
     function guardarAsignacion() {
+        $(".alert-success").addClass("d-none");
         var error = true;
         if (
 
@@ -946,7 +947,7 @@
             endLoader();
             if (result.codigo == 0) {
                 document.location.href = "/reingenieria/asignacion/listar";
-                setMessageAlert("No se pudo guardar la Asignación");
+                setMessageAlert(result.mensaje);
             } else if (result.codigo == 1) {
                 setMessageAlert(result.mensaje);
                 $('html, body').animate({ scrollTop: 0 }, 'fast');
@@ -1009,7 +1010,6 @@
 
 <script>
     function goToAddDetalle() {
-        console.log("se va a add detalle");
         var puntoServicio_id = $('#id_puntoServicio').val()
         document.location.href = "/reingenieria/asignacion/agregarDetalle/" + puntoServicio_id;
     }
@@ -1550,7 +1550,7 @@
 
     //ELIMINA UNA ASIGNACION YA SEA TEMPORAL O CONFIRMADA
     function eliminarRegistro(id) {
-        if (confirm("Estas seguro que desea borrar el registro?")) {
+        if (confirm("Estás seguro que desea borrar el registro?")) {
             startLoader();
             tipo = $('#' + id).val();
             $.ajax({
@@ -1580,6 +1580,12 @@
         localStorage.setItem('id-signacion',id);
         id_punto = $('#id_puntoServicio').val();
         document.location.href = "/reingenieria/asignacion/verDetalle/"+id_punto;
+    }
+    //CANCELAR ASIGNACION
+    function cancelarConfirmacion(id) {
+        if (confirm("¿Estás seguro que desea cancelar? Todas las asignaciones que no fueron confirmadas se perderán")) {
+            document.location.href = "/reingenieria/asignacion/listar/";
+        } 
     }
 
 </script>
@@ -2067,11 +2073,12 @@
             }
             if (domingo.length > 0) {
                 //Domingo
-                var horarioDomingo = (sabado[i].innerText).split(" a ");
+                var horarioDomingo = (domingo[i].innerText).split(" a ");
                 var domEnt = String(horarioDomingo[0]);
                 var domSal = String(horarioDomingo[1]);
                 temp = obtenerNocturnas(domEnt, domSal);
                 var totalDomingo = timeInHours(domSal) - timeInHours(domEnt);
+                console.log("domingos",totalDomingo)
                 if (!(totalDomingo == 'NaN:NaN') && !isNaN(totalDomingo)) {
                     totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalDomingo))
                     total_dom_diurnas = SumHrMin(total_dom_diurnas, hoursToString(totalDomingo - timeInHours(temp)));
@@ -2082,8 +2089,8 @@
         }
         var total_semanales = SumHrMin(total_sem_diurnas,total_sem_nocturnas);
         var total_domingos = SumHrMin(total_dom_diurnas,total_dom_nocturnas);
-        console.log(total_semanales,total_domingos)
         $('#id_totalasignado').val(SumHrMin(total_semanales,total_domingos))
+        localStorage.setItem("total_asignado",SumHrMin(total_semanales,total_domingos));
         $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours($('#id_totalasignado').val())));
         $('#sum_sem_diu').val(total_sem_diurnas);
         $('#sum_sem_noc').val(total_sem_nocturnas);

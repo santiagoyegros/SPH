@@ -19,8 +19,8 @@
 
                                     <label for="">Fecha inicio:</label>
                                     <div class='input-group date' id='datetimepickerfechaDesde'>
-                                        <input type='text' class="form-control" name="fechaDesde" value="{{fechaDesde}}" id="fechaDesde"
-                                            required />
+                                        <input type='text' class="form-control" name="fechaDesde" value="{{fechaDesde}}"
+                                            id="fechaDesde" required />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -28,25 +28,25 @@
                                 </p>
                             </div>
                             <div class="col-md-3">
-                                    <p style="margin:0px !important">
-    
-                                        <label for="">Hora inicio:</label>
-                                        <div class='input-group date' id='datetimepickerhorainicio'>
-                                            <input onkeydown="return false"  type='text' class="form-control" name="horaInicio" value="{{horaInicio}}" id="horaInicio"
-                                                required />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-time"></span>
-                                            </span>
-                                        </div>
-                                    </p>
+                                <p style="margin:0px !important">
+
+                                    <label for="">Hora inicio:</label>
+                                    <div class='input-group date' id='datetimepickerhorainicio'>
+                                        <input onkeydown="return false" type='text' class="form-control"
+                                            name="horaInicio" value="{{horaInicio}}" id="horaInicio" required />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                    </div>
+                                </p>
                             </div>
                             <div class="col-md-3">
                                 <p style="margin:0px !important">
 
                                     <label for="">Fecha fin:</label>
                                     <div class='input-group date' id='datetimepickerfechaHasta'>
-                                        <input type='text' class="form-control" name="fechaHasta" value="{{fechaHasta}}" id="fechaHasta"
-                                            required />
+                                        <input type='text' class="form-control" name="fechaHasta" value="{{fechaHasta}}"
+                                            id="fechaHasta" required />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -54,39 +54,39 @@
                                 </p>
                             </div>
                             <div class="col-md-3">
-                                    <p style="margin:0px !important">
-    
-                                        <label for="">Hora fin:</label>
-                                        <div class='input-group date' id='datetimepickerhorafin'>
-                                            <input  type='text' class="form-control" name="horaFin" value="{{horaFin}}" id="horaFin"
-                                            onkeydown="return false" required/>
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-time"></span>
-                                            </span>
-                                        </div>
-                                    </p>
-                                </div>
+                                <p style="margin:0px !important">
+
+                                    <label for="">Hora fin:</label>
+                                    <div class='input-group date' id='datetimepickerhorafin'>
+                                        <input type='text' class="form-control" name="horaFin" value="{{horaFin}}"
+                                            id="horaFin" onkeydown="return false" required />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                    </div>
+                                </p>
+                            </div>
                         </div>
                         <div class="row filter-row">
                             <div class="col-md-3">
                                 <p>
                                     <label for="">Punto de servicio:</label>
-                                        <select id="puntoServicio" data-size="5" name="puntoServicio"
-                                            value="{{puntoServicio}}" class="selectpicker form-control"
-                                            data-live-search="true" title="Seleccionar....">
-        
-                                            {% for puntosSer in PuntosServicio %}
-                                            {% if puntosSer.id == puntoServicio  %}
-                                            <option data-tokens="{{puntosSer.NombrePServicio}}" selected="selected"
-                                                value="{{puntosSer.id}}"> {{puntosSer.NombrePServicio}}</option>
-                                            {% else %}
-                                            <option data-tokens="{{puntosSer.NombrePServicio}}" value="{{puntosSer.id}}">
+                                    <select id="puntoServicio" data-size="5" name="puntoServicio"
+                                        value="{{puntoServicio}}" class="selectpicker form-control"
+                                        data-live-search="true" title="Seleccionar....">
+
+                                        {% for puntosSer in PuntosServicio %}
+                                        {% if puntosSer.id == puntoServicio  %}
+                                        <option data-tokens="{{puntosSer.NombrePServicio}}" selected="selected"
+                                            value="{{puntosSer.id}}"> {{puntosSer.NombrePServicio}}</option>
+                                        {% else %}
+                                        <option data-tokens="{{puntosSer.NombrePServicio}}" value="{{puntosSer.id}}">
                                             {{puntosSer.NombrePServicio}}</option>
-        
-                                            {% endif %}
-                                            {% endfor %}
-                                        </select>
-        
+
+                                        {% endif %}
+                                        {% endfor %}
+                                    </select>
+
                                 </p>
                             </div>
                             <div class="col-md-3">
@@ -96,14 +96,16 @@
                                     <select class="form-control" id="exampleFormControlSelect1" name="estado"
                                         value="{{estado}}">
                                         {%if estado %}
-                                        <option value="ABIERTA" {% if estado == "ABIERTA" %} selected {% endif %}>Abierta</option>
-                                       
-                                        <option value="EN GESTION" {% if estado == "EN GESTION" %} selected {% endif %} >En Gestión</option>
+                                        <option value="ABIERTA" {% if estado == "ABIERTA" %} selected {% endif %}>
+                                            Abierta</option>
+
+                                        <option value="EN GESTION" {% if estado == "EN GESTION" %} selected {% endif %}>
+                                            En Gestión</option>
                                         {%else%}
                                         <option value="ABIERTA" selected>Abierta </option>
                                         <option value="EN GESTION">En Gestión</option>
                                         {% endif %}
-                                        
+
 
                                     </select>
                                 </p>
@@ -115,12 +117,15 @@
                                     <select name="tipoAlerta" id="tipoAlerta" class="form-control"
                                         id="exampleFormControlSelect1" name="tipoAlerta" value="{{tipoAlerta}}">
                                         {% if tipoAlerta %}
-                                        <option value="TODOS" {% if tipoAlerta == "TODOS" %} selected {% endif %}>Todos</option>
-                                       
-                                        <option value="NO-MARC" {% if tipoAlerta == "NO-MARC" %} selected {% endif %}>No marcacion</option>
-                                       
-                                        <option value="SIN-ASIG" {% if tipoAlerta == "SIN-ASIG" %} selected {% endif %} >Sin asignacion</option>
-                                       
+                                        <option value="TODOS" {% if tipoAlerta == "TODOS" %} selected {% endif %}>Todos
+                                        </option>
+
+                                        <option value="NO-MARC" {% if tipoAlerta == "NO-MARC" %} selected {% endif %}>No
+                                            marcacion</option>
+
+                                        <option value="SIN-ASIG" {% if tipoAlerta == "SIN-ASIG" %} selected {% endif %}>
+                                            Sin asignacion</option>
+
                                         {% else %}
                                         <option value="TODOS" selected>Todos</option>
                                         <option value="NO-MARC">No marcacion</option>
@@ -142,7 +147,7 @@
                                             {{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
                                         {% else %}
                                         <option data-tokens="{{ope.nombre}}" value="{{ope.id}}">
-                                                {{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
+                                            {{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
 
                                         {% endif %}
                                         {% endfor %}
@@ -153,9 +158,9 @@
                         </div>
                     </div>
                     <div style="float: right;">
-                        <button type='submit' class='btn btn-success btn-filtrar'>Filtrar</button>
+                        <button type='submit' class='btn btn-success btn-filtrar'><i class="fa fa-search"></i> Filtrar</button>
 
-                        <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar">Limpiar</a>
+                        <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar"><i class="fa fa-trash"></i> Limpiar</a>
                     </div>
 
                 </div>
@@ -176,89 +181,106 @@
                     </tr>
                 </thead>
                 <tbody>
-                        {% for alerta in alertasList %}
-                            <tr>
-                                <td>{{forloop.counter}}</td>
-                                <td>{{alerta.Punto_nombre}}</td>
-                                <td>{{alerta.Operario.nombre}} {{alerta.Operario.apellido}}</td>
-                                <td></td>
-                                <td>{{alerta.Hora}}</td>
-                                <td></td>
-                                <td>{{alerta.Fecha}}</td>
-                                <td>{{alerta.Estado}}</td>
-                                <td>{{alerta.Tipo}}</td>
-                                {% if alerta.Tipo == "NO-MARC" %}
-                                    <td id="gestionar-{{forloop.counter}}" style="display:flex;justify-content:center"><a href={% url 'Operarios:alertas_gestionar' alerta_id=alerta.id %} class="btn btn-success btn-filtrar">Gestionar</a></td>
-                                {% else %}
-                                    <td id="gestionar-{{forloop.counter}}" style="display:flex;justify-content:center"><a href=# id="{{alerta.id}}"  class="btn btn-success btn-filtrar open-modal" data-url=#>Gestionar</a></td>
-                                {% endif %}
-                            </tr>
-                        {% endfor %}
+                    {% for alerta in alertasList %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{alerta.Punto_nombre}}</td>
+                        <td>{{alerta.Operario.nombre}} {{alerta.Operario.apellido}}</td>
+                        <td></td>
+                        <td>{{alerta.Hora}}</td>
+                        <td></td>
+                        <td>{{alerta.Fecha}}</td>
+                        <td>{{alerta.Estado}}</td>
+                        <td>{{alerta.Tipo}}</td>
+                        {% if alerta.Tipo == "NO-MARC" %}
+                        <td id="gestionar-{{forloop.counter}}" style="display:flex;justify-content:center"><a
+                                href={% url 'Operarios:alertas_gestionar' alerta_id=alerta.id %}
+                                class="btn btn-success btn-filtrar">Gestionar</a></td>
+                        {% else %}
+                        <td id="gestionar-{{forloop.counter}}" style="display:flex;justify-content:center"><a href=#
+                                id="{{alerta.id}}" class="btn btn-success btn-filtrar open-modal"
+                                data-url=#>Gestionar</a></td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
+
+
+
             <!-- Modal -->
-            <div class="modal fade" id="gestionModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="gestionModalLabel" aria-hidden="true">
+            <div class="modal fade" id="gestionModal" tabindex="-1" role="dialog" data-backdrop="static"
+                data-keyboard="false" aria-labelledby="gestionModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <form id="form_modal" action="" method="POST">
-                        {% csrf_token %}
-                        <div class="card-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Gestión sin asignación</h5>
-                        </div>
-                        <div class="modal-body">
+                            {% csrf_token %}
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Gestión sin asignación</h5>
+                                <button type="button" id="id_cerrar" style="color: white !important; cursor:pointer;" class="close"
+                                    data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div id="id_modalBody" class="modal-body">
                                 <div class="row filter-row">
-                                        <div class="col-md-12" style="display:flex !important; flex-flow:row !important; padding-right: 10px !important;">
-                                                <div class="col-md-6">
-                                                    <label class="titulo-cupo" >Cupo Utilizado:  </label>
-                                                </div>
-                                                <div class="col-md-6" style="display: flex !important;">
-                    
-                                                        <input id="cupoUtilizado" style="padding-right: 30px !important;" type="text"
-                                                            class="form-control form-bordernone estilo-cupo" disabled>
-                                                    
-                                                    
-                                                        <input id="cupoTotal" style="padding-left: 30px !important;" type="text" class="form-control form-bordernone estilo-cupo"
-                                                            disabled>
-                                                    
-                                                </div>
+                                    <div class="col-md-12"
+                                        style="display:flex !important; flex-flow:row !important; padding-right: 10px !important;">
+                                        <div class="col-md-6">
+                                            <label class="titulo-cupo">Cupo Utilizado: </label>
                                         </div>
+                                        <div class="col-md-6" style="display: flex !important;">
+                                            <input id="cupos" style="padding-right: 30px !important;" type="text"
+                                                class="form-control form-bordernone estilo-cupo" disabled>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row filter-row">
-                                        <div class="col-md-12">
-                                            <p>
-                                                <label class="font-weight-bold" style="padding-left: 10px;" for="">Motivo</label>
-                                                    <select class="selectpicker form-control" id="id_motivo" data-size="5" name="motivo"
-                                                        value="{{motivo}}" 
-                                                        data-live-search="true" title="--Seleccionar--">
-                                                        {% for motivo in motivos %}
-                                                        
-                                                        <option data-tokens="{{motivo.descripcion}}" value="{{motivo.id}}">
-                                                        {{motivo.descripcion}}</option>
-                    
-                                                       
-                                                        {% endfor %}
-                                                    </select>
-                    
-                                            </p>
-                                        </div>
-                                        <div class="col-md-12">
-                                                <p>
-                                                    <label class="font-weight-bold">Observación</label>
-                                                    <textarea name="observacion" class="form-control" id="id_observacion" rows="3"></textarea>
-                                                </p>
-                                            </div>
+                                    <div id="id_select" class="col-md-12 divMotivos">
+                                        <p>
+                                            <label class="font-weight-bold" style="padding-left: 10px;"
+                                                for="">Motivo</label>
+                                            <select class="selectpicker form-control motivo" id="id_motivo"
+                                                data-size="5" name="motivo" value="0" data-live-search="true"
+                                                title="--Seleccionar--">
+                                                {% for motivo in motivos %}
+
+                                                <option id="id_motivos" data-tokens="{{motivo.descripcion}}"
+                                                    value="{{motivo.id}}">
+                                                    {{motivo.descripcion}}</option>
+
+
+                                                {% endfor %}
+                                            </select>
+
+
+
+
+
+                                        </p>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <p>
+                                            <label class="font-weight-bold">Observación</label>
+                                            <textarea style="resize: none !important; min-height: 150px;"
+                                                name="observacion" class="form-control" id="id_observacion"
+                                                rows="3"></textarea>
+                                        </p>
+                                    </div>
                                 </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button id='' type="button" class='btn btn-success btn-add guardar'><i class="fa fa-floppy-o fa-lg"></i>
-                                Guardar</button>
-                            <a class='btn btn-primary btn-cancelar' href=# data-dismiss="modal"><i
-                                    class="fa fa-times fa-lg"></i>Cancelar</a>
-                        </div>
-                    </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button id='' type="button" class='btn btn-success btn-add guardar'><i
+                                        class="fa fa-floppy-o fa-lg"></i>
+                                    Guardar</button>
+                                <a class='btn btn-primary btn-cancelar cancelar' href=# data-dismiss="modal"><i
+                                        class="fa fa-times fa-lg"></i>Cancelar</a>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
+
 
 
 
@@ -271,31 +293,31 @@
                 {% endif %}
                 {% for num in alertasList.paginator.page_range %}
                 {% if alertasList.number == num %}
-                <li class="active"><a href="#!">{{ num }}</a></li>
+                <li class="active padding-number"><a href="#!">{{ num }} </a></li>
                 {% else %}
-                <li class="waves-effect"><a
-                        href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li>
+                <li class="waves-effect padding-number"><a
+                        href="?page={{ num }}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">{{ num }}</a></li>
                 {% endif %}
                 {% endfor %}
                 {% if alertasList.has_next %}
-                <a href="?page={{alertasList.next_page_number}}">Anterior</a>
+                <a href="?page={{alertasList.next_page_number}}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">Siguiente</a>
                 {% else %}
                 <span class="disabled">Siguiente</span>
                 {% endif %}
             </div>
+
         </div>
     </form>
-
-
 </div>
+
 <script type="text/javascript">
     $(function () {
-        var fechaDesde=$('#fechaDesde')[0].value;
-        var datos = fechaDesde.split('/');     
+        var fechaDesde = $('#fechaDesde')[0].value;
+        var datos = fechaDesde.split('/');
         var date;
-        if(datos.length>1){
-            date = new Date(datos[2],datos[1]-1,datos[0])
-        }else{
+        if (datos.length > 1) {
+            date = new Date(datos[2], datos[1] - 1, datos[0])
+        } else {
             date = new Date()
         }
         console.log(datos);
@@ -306,12 +328,12 @@
         })
     });
     $(function () {
-        var fechaHasta=$('#fechaHasta')[0].value;
+        var fechaHasta = $('#fechaHasta')[0].value;
         var datos = fechaHasta.split('/');
         var date;
-        if(datos.length>1){
-            date = new Date(datos[2],datos[1]-1,datos[0])
-        }else{
+        if (datos.length > 1) {
+            date = new Date(datos[2], datos[1] - 1, datos[0])
+        } else {
             date = new Date()
         }
         $('#datetimepickerfechaHasta').datetimepicker({
@@ -323,35 +345,34 @@
     $(function () {
         var date;
         var hora;
-        if($('#horaInicio')[0].value !='None')
-        {
-            hora=$('#horaInicio')[0].value;
-        }else{
+        if ($('#horaInicio')[0].value != 'None') {
+            hora = $('#horaInicio')[0].value;
+        } else {
             date = new Date();
-            date.setHours(0,0);
-            hora=date.getHours() + ":" + date.getMinutes();
+            date.setHours(0, 0);
+            hora = date.getHours() + ":" + date.getMinutes();
         }
         $('#datetimepickerhorainicio').datetimepicker({
-            locale:'es',
+            locale: 'es',
             format: 'LT',
-            date:moment(hora, 'HHmm'),
+            date: moment(hora, 'HHmm'),
         })
-        
+
     });
     $(function () {
-        var date= new Date();
+        var date = new Date();
         var hora;
-        if($('#horaFin')[0].value !='None'){
-            hora=$('#horaFin')[0].value;
-        }else{
-            hora=date.getHours() + ":" + date.getMinutes();
+        if ($('#horaFin')[0].value != 'None') {
+            hora = $('#horaFin')[0].value;
+        } else {
+            hora = date.getHours() + ":" + date.getMinutes();
         }
         $('#datetimepickerhorafin').datetimepicker({
             locale: 'es',
             format: 'LT',
-            date:moment(hora, 'HHmm'),
+            date: moment(hora, 'HHmm'),
             disabledTimeIntervals: [
-            [moment().hour(date.getHours()).minutes(date.getMinutes()), moment().hour(24).minutes(0)]
+                [moment().hour(date.getHours()).minutes(date.getMinutes()), moment().hour(24).minutes(0)]
             ],
         })
     });
@@ -365,63 +386,85 @@
 
 
 
-    $(document).on('click','.open-modal',function(){
-    var alerta_actual = $(this);
-    var id= alerta_actual[0].id;
-    $('.guardar').attr('id',id);
-    $('#gestionModal').modal('show');
-    $.ajax({
-        url:'/reingenieria/alertas/mostrarCupos',
-        type:'GET',
-        data:{
-             'id':id,
-         },
-        success:function(response){
-            $('#cupoUtilizado').val(response.cupoUtilizado + ' h / ');
-            $('#cupoTotal').val(response.cupoTotal + ' h');
-           
-        },
-        error:function(){
-            console.log('error')
-            $('#gestionModal').modal('hide');
-        },
-    });
-});
+    $(document).on('click', '.open-modal', function () {
+        var alerta_actual = $(this);
+        var id = alerta_actual[0].id;
+        $('.guardar').attr('id', id);
+        $('#gestionModal').modal('show');
+        $.ajax({
+            url: '/reingenieria/alertas/mostrarCupos',
+            type: 'GET',
+            data: {
+                'id': id,
+            },
+            success: function (response) {
+                $('#cupos').val(response.cupoUtilizado + ' h / ' + response.cupoTotal + ' h');
 
 
-$(document).on('click','.guardar',function(){
-    var error=true;
-    var guardar_actual = $(this);
-    var id_alerta= guardar_actual[0].id;
-    var body={}
-    body.motivo=$('#id_motivo').val();
-    body.observacion=$('#id_observacion').val();
-
-    token = '{{csrf_token}}';
-    $.ajax({
-        type: "POST",
-        url: "/reingenieria/alertas/guardarSinAsignacion/"+id_alerta,
-        data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token+"&error="+error,
-        
-        success:function(response){;
-            window.location.href = "/reingenieria/alertas/listar/"
-            console.log("funciono")
-        },
-        error:function(){
-            console.log('error')
-        },
+            },
+            error: function () {
+                console.log('error')
+                $('#gestionModal').modal('hide');
+            },
+        });
     });
 
+    $(function () {
+
+        var original = $("#id_modalBody").clone()
+        $(document).on('click', '.guardar', function () {
+            var error = true;
+            var guardar_actual = $(this);
+            var id_alerta = guardar_actual[0].id;
+            var body = {}
+            body.motivo = $('#id_motivo').val();
+            body.observacion = $('#id_observacion').val();
+            console.log("a ver: " + $('#id_motivo').val());
+            token = '{{csrf_token}}';
+            $.ajax({
+                type: "POST",
+                url: "/reingenieria/alertas/guardarSinAsignacion/" + id_alerta,
+                data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token + "&error=" + error,
+
+                success: function (response) {
+                    $('#gestionModal').modal('hide');
+                    location.reload();
+                },
+                error: function () {
+                    console.log('error')
+                },
+            });
+
+        });
+
+    });
+
+    $(function () {
+
+    var original = $("#id_modalBody").clone()
+
+    $(document).on('click', '.cancelar', function () {
+        $('#gestionModal').modal('hide');
+        $('id_observacion,textarea').val('');
+        $('#id_motivo').val("");
+        $('#id_motivo').selectpicker("refresh");
+        console.log($('#id_motivo'));
+    });
+
+    $(document).on('click', '.close', function () {
+        $('#gestionModal').modal('hide');
+        $('id_observacion,textarea').val('');
+        $('#id_motivo').val("");
+        $('#id_motivo').selectpicker("refresh");
+        console.log($('#id_motivo'));
+    });
+
 });
-
-
-
 
 </script>
 
 
 <style>
-
     .card-header {
         background-color: #86273e !important;
         color: white !important;
@@ -432,6 +475,20 @@ $(document).on('click','.guardar',function(){
 
     .card {
         border-radius: 0px !important;
+    }
+
+    .modal-header {
+        background-color: #86273e !important;
+        color: white !important;
+        font-size: 20px !important;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
     }
 
     .cuerpo-filtro .row div p {
@@ -486,24 +543,24 @@ $(document).on('click','.guardar',function(){
         background-color: #c4e2ff !important;
     }
 
-    .titulo-cupo{
-        color:#86273e !important;
+    .titulo-cupo {
+        color: #86273e !important;
         font-size: 24px !important;
         border-radius: 0px !important;
         padding-left: 20px;
         clear: both;
-        float:right;
-        margin-top:15px;
+        float: right;
+        margin-top: 15px;
     }
 
-    .estilo-cupo{
-        color:#86273e !important;
+    .estilo-cupo {
+        color: #86273e !important;
         font-size: 24px !important;
         border-radius: 0px !important;
         padding-left: 0px;
         clear: both;
-        float:left;
-        margin-top:6px;
+        float: left;
+        margin-top: 6px;
     }
 
     .btn-filtrar {

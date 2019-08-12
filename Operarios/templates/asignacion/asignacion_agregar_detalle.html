@@ -27,16 +27,16 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6 container-field">
-                                <p class="label-field">Total Hrs</p>
-                                <div class="input-group field-general">
-                                    <input value="{{totalHora}}" class="form-control" disabled>
-                                </div>
+                            <p class="label-field">Total Hrs</p>
+                            <div class="input-group field-general">
+                                <input value="{{totalHora}}" class="form-control" disabled>
+                            </div>
                         </div>
                         <div class="col-md-6 container-field">
-                                <p class="label-field">Total Hrs Asignadas</p>
-                                <div class="input-group field-general">
-                                    <input value="{{totalHoraAsig}}" class="form-control" disabled>
-                                </div>
+                            <p class="label-field">Total Hrs Asignadas</p>
+                            <div class="input-group field-general">
+                                <input id="totalAsignado" class="form-control" disabled>
+                            </div>
                         </div>
                     </div>
                     <div class="row row-2">
@@ -72,18 +72,19 @@
                                 <select name="perfil-combo" id="id_perfil-combo" class="form-control perfil-combo">
                                     <option value="0">--------</option>
                                     {% for per in perfiles %}
-                                        <option value="{{per.id}}"> {{per.especializacion}}</option>
+                                    <option value="{{per.id}}"> {{per.especializacion}}</option>
                                     {% endfor %}
                                 </select>
-                                <input type="hidden" name="asignaciondet-perfil"  id="id_asignaciondet-perfil" value="">
+                                <input type="hidden" name="asignaciondet-perfil" id="id_asignaciondet-perfil" value="">
                             </div>
                         </div>
                         <div class="col-md-6 container-field">
                             <p class="label-field">Supervisor</p>
                             <div class="input-group field-general">
-                                <input type="checkbox" name="supervisor-chec" class="checkbox-supervisor supervisor-check"
-                                    id="id_supervisor-check">
-                                <input type="checkbox" name="asignaciondet-supervisor" id="id_asignaciondet-supervisor" class="d-none"lue="">
+                                <input type="checkbox" name="supervisor-chec"
+                                    class="checkbox-supervisor supervisor-check" id="id_supervisor-check">
+                                <input type="checkbox" name="asignaciondet-supervisor" id="id_asignaciondet-supervisor"
+                                    class="d-none" lue="">
                             </div>
                         </div>
                     </div>
@@ -134,9 +135,9 @@
                             </div>
                             <div class="input-group date">
                                 <input type="text" value="" name="asignaciondet-lunSal"
-                                    class="form-control form-control-sm examTime" id="id_asignaciondet-lunSal"
-                                    dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-lunSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-1" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
@@ -154,9 +155,9 @@
                             </div>
                             <div class="input-group date">
                                 <input type="text" value="" name="asignaciondet-marSal"
-                                    class="form-control form-control-sm examTime" id="id_asignaciondet-marSal"
-                                    dp_config="{&quot;id&quot;: &quot;dp_23&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_22&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-marSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-2" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
@@ -174,9 +175,9 @@
                             </div>
                             <div class="input-group date">
                                 <input type="text" value="" name="asignaciondet-mieSal"
-                                    class="form-control form-control-sm examTime" id="id_asignaciondet-mieSal"
-                                    dp_config="{&quot;id&quot;: &quot;dp_25&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_24&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-mieSal"
+                                   >
+                                <div class="input-group-addon input-group-append icon-focus-3" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
@@ -194,9 +195,9 @@
                             </div>
                             <div class="input-group date">
                                 <input type="text" value="" name="asignaciondet-jueSal"
-                                    class="form-control form-control-sm examTime" id="id_asignaciondet-jueSal"
-                                    dp_config="{&quot;id&quot;: &quot;dp_27&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_26&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-jueSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-4" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
@@ -214,9 +215,9 @@
                             </div>
                             <div class="input-group date">
                                 <input type="text" value="" name="asignaciondet-vieSal"
-                                    class="form-control form-control-sm examTime" id="id_asignaciondet-vieSal"
-                                    dp_config="{&quot;id&quot;: &quot;dp_29&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_28&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-vieSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-5" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
@@ -234,9 +235,9 @@
                             </div>
                             <div class="input-group date">
                                 <input type="text" value="" name="asignaciondet-sabSal"
-                                    class="form-control form-control-sm examTime" id="id_asignaciondet-sabSal"
-                                    dp_config="{&quot;id&quot;: &quot;dp_31&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_30&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-sabSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-6" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
@@ -254,9 +255,9 @@
                             </div>
                             <div class="input-group date">
                                 <input type="text" value="" name="asignaciondet-domSal"
-                                    class="form-control form-control-sm examTime" id="id_asignaciondet-domSal"
-                                    dp_config="{&quot;id&quot;: &quot;dp_33&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_32&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
-                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-domSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-7" data-target="#datetimepicker1"
                                     data-toggle="datetimepickerv">
                                     <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
                                 </div>
@@ -293,10 +294,10 @@
                                     Buscar</button>
                             </div>
                             <div class="container-btn-buscar">
-                                    <button type="button" class="btn btn-buscar" style="margin: 0px !important;" id="limpiador" onclick="limpiarFiltro()"
-                                        > <i class="fa fa-trash"></i>
-                                        Limpiar</button>
-                                </div>
+                                <button type="button" class="btn btn-buscar" style="margin: 0px !important;"
+                                    id="limpiador" onclick="limpiarFiltro()"> <i class="fa fa-trash"></i>
+                                    Limpiar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -334,20 +335,55 @@
 <script>
     $(document).ready(function () {
         RecalcularHoras();
-        //getDetalle();
+        var totalAsignado = localStorage.getItem("total_asignado");
+        $("#totalAsignado").val(totalAsignado);
+    });
+    $(document).on("click", ".icon-focus-1", function () {
+        $("#id_asignaciondet-lunSal").focus();
+    });
+    $(document).on("click", ".icon-focus-2", function () {
+        $("#id_asignaciondet-marSal").focus();
+    });
+    $(document).on("click", ".icon-focus-3", function () {
+        $("#id_asignaciondet-mieSal").focus();
+    });
+    $(document).on("click", ".icon-focus-4", function () {
+        $("#id_asignaciondet-jueSal").focus();
+    });
+    $(document).on("click", ".icon-focus-5", function () {
+        $("#id_asignaciondet-vieSal").focus();
+    });
+    $(document).on("click", ".icon-focus-6", function () {
+        $("#id_asignaciondet-sabSal").focus();
+    });
+    $(document).on("click", ".icon-focus-7", function () {
+        $("#id_asignaciondet-domSal").focus();
+    });
+    $(document).on("focus", ".salida", function () {
+        var id_salida = $(this)[0].id;
+        var value_salida = $(this)[0].value;
+        var id_entrada = id_salida.substr(0, id_salida.length - 3) + "Ent";
+        var d = new Date();
+        if ($('#' + id_entrada)) {
+            d.setHours($('#' + id_entrada).val().substr(0,2),$('#' + id_entrada).val().substr(3,2))
+            $(this).datetimepicker({
+                useCurrent:false,
+                format:'HH:mm',
+                defaultDate: d,
+            })
+            $(this).val($('#' + id_entrada).val())
+        }
     });
     $(document).on("dp.change", ".examTime", function () {
-        if($(this)[0]){
-            var id_entrada = $(this)[0].id;
-            var value_entrada = $(this)[0].value;
-            var id_salida = id_entrada.substr(0,id_entrada.length-3)+"Sal";
-            if($('#'+id_salida)){
-                $('#'+id_salida).val(value_entrada);
-            }
+        // if ($(this)[0]) {
+        //     var id_entrada = $(this)[0].id;
+        //     var value_entrada = $(this)[0].value;
+        //     var id_salida = id_entrada.substr(0, id_entrada.length - 3) + "Sal";
+        //     if ($('#' + id_salida)) {
+        //         $('#' + id_salida).val(value_entrada);
+        //     }
 
-        }
-
-        
+        // }
         RecalcularHoras();
     });
     $(document).on("dp.change", ".examDate", function () {
@@ -409,15 +445,14 @@
     $(document).on("change", "#id_perfil-combo", function () {
         habilitarBusqueda();
     });
+
     function RecalcularHoras() {
         habilitarBusqueda();
         var total_horas_detalle = '00:00';
-        console.log(total_horas_detalle);
         //Lunes
         var lunEnt = $('#id_asignaciondet-lunEnt').val();
         var lunSal = $('#id_asignaciondet-lunSal').val();
         var totalLunes = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
-        console.log("total lunes", totalLunes)
         if (!(totalLunes == 'NaN:NaN')) {
             habilitarBusqueda();
             total_horas_detalle = SumHrMin(total_horas_detalle, totalLunes);
@@ -471,7 +506,6 @@
             habilitarBusqueda();
             total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
         }
-        console.log("final",total_horas_detalle)
         //SE FORMATEA PARA MOSTRAR EN DECIMAL
         // if (total_horas_detalle != '00:00') {
         //     var horas = total_horas_detalle.split(":")[0];
@@ -499,14 +533,13 @@
         var formisValid = false;
         var fechasValid = false;
         var horasValid = false;
-        console.log()
         if ($('#id_asignaciondet-fechaInicio').val()) {
             fechasValid = true;
         }
-        if($('#id_perfil-combo').val()==0){
-            hasPerfil=false;
-        }else{
-            hasPerfil=true;
+        if ($('#id_perfil-combo').val() == 0) {
+            hasPerfil = false;
+        } else {
+            hasPerfil = true;
         }
 
         //hasPerfil = $('#id_asignaciondet-perfil').val();
@@ -560,13 +593,10 @@
         if (!(totalDomingo == 'NaN:NaN')) {
             horasValid = true;
         }
-        console.log(fechasValid,horasValid,hasPerfil)
         if (fechasValid && horasValid && hasPerfil) {
             $('#buscador').prop("disabled", false);
-            console.log("valido");
         } else {
             $('#buscador').prop("disabled", true);
-            console.log("no valido");
         }
 
     }
@@ -575,44 +605,49 @@
     function guardarAsignacion() {
         var error = true;
         cant_horas = String($('#sumAll').val()).split(":")[0];
-        console.log(cant_horas);
+        operario = String($("#id_asignaciondet-nombreOperario").val())
+
         if (cant_horas >= 0) {
             error = false;
         }
-        var puntoServicio_id = $('#id_puntoServicio').val();
-        token = '{{csrf_token}}';
-        startLoader();
-        $.ajax({
-            type: "POST",
-            url: "/reingenieria/asignacion/guardarAsigOperario",
-            data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token + "&error=" + error
-        }).done(function (result) {
-            endLoader();
-            if (result.codigo == 0) {
-                console.log("exito");
-                localStorage.setItem('eliminar',false);
-                document.location.href = "/reingenieria/asignacion/asignar/" + puntoServicio_id;
-            } else if (result.codigo == 1) {
-                setMessageAlert(result.mensaje);
-                $('html, body').animate({ scrollTop: 0 }, 'fast');
-            }
-        })
+        if (operario) {
+            var puntoServicio_id = $('#id_puntoServicio').val();
+            token = '{{csrf_token}}';
+            startLoader();
+            $.ajax({
+                type: "POST",
+                url: "/reingenieria/asignacion/guardarAsigOperario",
+                data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token + "&error=" + error
+            }).done(function (result) {
+                endLoader();
+                if (result.codigo == 0) {
+                    localStorage.setItem('eliminar', false);
+                    document.location.href = "/reingenieria/asignacion/asignar/" + puntoServicio_id;
+                } else if (result.codigo == 1) {
+                    setMessageAlert(result.mensaje);
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                }
+            })
+        } else {
+            setMessageAlert("Debe seleccionar un Operario para está asignación");
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
+        }
+        debugger;
+
     }
 
     function salirAgregarAsignacion(puntoServicio_id) {
         document.location.href = "/reingenieria/asignacion/asignar/" + puntoServicio_id;
     }
     $(document).on("change", ".perfil-combo", function () {
-       console.log("changee perfil");
-       $("#id_asignaciondet-perfil").val($(this).val());
+        $("#id_asignaciondet-perfil").val($(this).val());
     });
     $(document).on("change", ".supervisor-check", function () {
-       console.log("changee supervisor",$(this));
-       $("#id_asignaciondet-supervisor")[0].checked=$(this)[0].checked;
+        $("#id_asignaciondet-supervisor")[0].checked = $(this)[0].checked;
 
     });
-    function deshabilitarCampos(){
-        $('#id_asignaciondet-fechaInicio').prop("readonly", true);  
+    function deshabilitarCampos() {
+        $('#id_asignaciondet-fechaInicio').prop("readonly", true);
         $('#id_asignaciondet-fechaFin').prop("readonly", true);
         $('#id_perfil-combo').attr("disabled", "disabled");
         $('#id_supervisor-check').attr("disabled", "disabled");
@@ -631,9 +666,9 @@
         $('#id_asignaciondet-domEnt').prop("readonly", true);
         $('#id_asignaciondet-domSal').prop("readonly", true);
     }
-    function limpiarFiltro(){
+    function limpiarFiltro() {
         $("#id_asignaciondet-nombreOperario").val("");
-        $('#id_asignaciondet-fechaInicio').prop("readonly", false);  
+        $('#id_asignaciondet-fechaInicio').prop("readonly", false);
         $('#id_asignaciondet-fechaFin').prop("readonly", false);
         $('#id_perfil-combo').prop("disabled", false);
         $('#id_supervisor-check').prop("disabled", false);
@@ -657,6 +692,7 @@
     //------------------------------- BUSCADOR DE OPERARIOS ------------------------------//
     function buscarOperario() {
         $('#modalFiltro').modal('show');
+        
         $("#jsGrid").jsGrid({
             width: "100%",
             filtering: true,
@@ -665,6 +701,7 @@
             sorting: true,
             paging: true,
             autoload: true,
+            pageIndex:1,
             pageSize: 5,
             pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
             pageButtonCount: 1,
@@ -678,6 +715,7 @@
             invalidMessage: "Datos no válidos",
             controller: {
                 loadData: function (filter) {
+                    
                     var d = $.Deferred();
                     filter.idPunto = $('#id_puntoServicio').val();
                     filter.totalHorasProc = ($('#sumAll').val()).split(":")[0];
@@ -704,7 +742,7 @@
                         url: "/reingenieria/asignacion/asignar/operarios",
                         data: filter
                     }).done(function (result) {
-                        console.log(result);
+                        console.log(result)
                         d.resolve($.map(result, function (item) {
                             return $.extend(item.fields, { id: item.pk });
                         }));
@@ -716,7 +754,6 @@
             },
             rowClick: function (e) {
                 var ope = e.item.id;
-                console.log(e)
                 $('#id_asignaciondet-nombreOperario').val(e.item.nombres);
                 $('#id_asignaciondet-operario').val(ope);
                 $('#modalFiltro').modal('hide');
@@ -732,6 +769,7 @@
                 { name: "perfil", type: "text", width: 150, title: "Perfil" }
             ]
         });
+        
     }
 </script>
 <style>
@@ -775,7 +813,7 @@
     .label-field {
         margin: 0px !important;
         line-height: 2rem;
-        width:170px !important;
+        width: 170px !important;
     }
 
     .row-2 {

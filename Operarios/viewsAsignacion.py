@@ -286,8 +286,8 @@ def guardarAsignacionOperario(request):
             if result==0:
                 response['codigo']=0
                 response['dato']=[]
-                response['mensaje']="Se guardó correctamente la asignación"
-                messages.success(request, 'Se guardo correctamente la asignacion')
+                response['mensaje']="Se agregó correctamente la asignación"
+                messages.success(request, 'Se agregó correctamente la asignacion')
             else:
                 response['codigo']=0
                 response['dato']=[]
@@ -628,8 +628,7 @@ def guardarAsignacion(request):
             if request.POST.get('error') is not None and request.POST.get('error')=='true':
                 response['codigo']=1
                 response['dato']=[]
-                response['mensaje']="No se pudo guardar la asignacion, favor verifique las horas asignadas..."
-                #messages.warning(request, 'Las horas asignadas son inválidas')
+                response['mensaje']="No se pudo guardar la asignación, favor verifique las horas asignadas..."
                 return HttpResponse(
                     json.dumps(response),
                     content_type="application/json"
@@ -649,14 +648,12 @@ def guardarAsignacion(request):
                 conn.execute('asignacion_manager %s,%s,%s ',params)
                 result = conn.fetchone()[0]
                 conn.close()
-                print(result)
                 if result==0:
-                    messages.success(request, 'Se guardo correctamente la asignacion')
+                    messages.success(request, 'Se guardó correctamente la asignacion')
                 else:
-                    messages.warning(request, 'No se pudo guardar los cambios')
                     response['dato']=[]
-                    response['codigo']=0
-                    response['mensaje']="Asignacion guardada con éxito"
+                    response['codigo']=1
+                    response['mensaje']="No se pudo guardar los cambios"
                     return HttpResponse(
                     json.dumps(response),
                     content_type="application/json")  
@@ -1302,6 +1299,7 @@ def getOperarios(request):
         diaInicio,
         diaFin,
         )
+        
     #Se filtra el resultado
 
     if request.GET.get('nombres')  is not None and request.GET.get('nombres')!='':
@@ -1316,7 +1314,7 @@ def getOperarios(request):
         operarios = [x for x in operarios if str(request.GET.get('totalHoras')) in str(x.totalHoras)]
     if request.GET.get('perfil')  is not None and request.GET.get('perfil')!='':
         operarios = [x for x in operarios if (request.GET.get('perfil')).lower() in (x.perfil).lower()]
-    
+
     return HttpResponse(serializers.serialize("json",operarios ), content_type = 'application/json', status = 200);
 
 
@@ -1358,7 +1356,6 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
         fechaInicioOp, fechaFinOp,perfil)
         conn.execute('operarios_disponibles_v3 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
         result = conn.fetchall()
-       
         conn.close()
         return [OperariosAsignacionDet(*row) for row in result]
 

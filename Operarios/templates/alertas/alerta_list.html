@@ -217,7 +217,7 @@
                             {% csrf_token %}
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Gestión sin asignación</h5>
-                                <button type="button" style="color: white !important; cursor:pointer;" class="close"
+                                <button type="button" id="id_cerrar" style="color: white !important; cursor:pointer;" class="close"
                                     data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -241,7 +241,7 @@
                                             <label class="font-weight-bold" style="padding-left: 10px;"
                                                 for="">Motivo</label>
                                             <select class="selectpicker form-control motivo" id="id_motivo"
-                                                data-size="5" name="motivo" value="{{motivo}}" data-live-search="true"
+                                                data-size="5" name="motivo" value="0" data-live-search="true"
                                                 title="--Seleccionar--">
                                                 {% for motivo in motivos %}
 
@@ -427,8 +427,6 @@
                 data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token + "&error=" + error,
 
                 success: function (response) {
-                    $('id_observacion,textarea').val('');
-                    console.log("funciono")
                     $('#gestionModal').modal('hide');
                     location.reload();
                 },
@@ -441,13 +439,27 @@
 
     });
 
+    $(function () {
+
+    var original = $("#id_modalBody").clone()
+
     $(document).on('click', '.cancelar', function () {
-        $('id_observacion,textarea').val('');
-        console.log("funciono")
         $('#gestionModal').modal('hide');
+        $('id_observacion,textarea').val('');
+        $('#id_motivo').val("");
+        $('#id_motivo').selectpicker("refresh");
+        console.log($('#id_motivo'));
     });
 
+    $(document).on('click', '.close', function () {
+        $('#gestionModal').modal('hide');
+        $('id_observacion,textarea').val('');
+        $('#id_motivo').val("");
+        $('#id_motivo').selectpicker("refresh");
+        console.log($('#id_motivo'));
+    });
 
+});
 
 </script>
 

@@ -212,7 +212,7 @@
             <div class="pagination">
                 Página:&nbsp;&nbsp;
                 {% if alertasList.has_previous %}
-                <a href="?page={{alertasList.previous_page_number}}">Anterior</a>
+                <a href="?page={{alertasList.previous_page_number}}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">Anterior</a>
                 {% else %}
                 <span class="disabled">Anterior</span>
                 {% endif %}

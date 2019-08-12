@@ -1299,6 +1299,7 @@ def getOperarios(request):
         diaInicio,
         diaFin,
         )
+        
     #Se filtra el resultado
 
     if request.GET.get('nombres')  is not None and request.GET.get('nombres')!='':
@@ -1313,7 +1314,7 @@ def getOperarios(request):
         operarios = [x for x in operarios if str(request.GET.get('totalHoras')) in str(x.totalHoras)]
     if request.GET.get('perfil')  is not None and request.GET.get('perfil')!='':
         operarios = [x for x in operarios if (request.GET.get('perfil')).lower() in (x.perfil).lower()]
-    
+
     return HttpResponse(serializers.serialize("json",operarios ), content_type = 'application/json', status = 200);
 
 
@@ -1355,7 +1356,6 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
         fechaInicioOp, fechaFinOp,perfil)
         conn.execute('operarios_disponibles_v3 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s',params)
         result = conn.fetchall()
-       
         conn.close()
         return [OperariosAsignacionDet(*row) for row in result]
 

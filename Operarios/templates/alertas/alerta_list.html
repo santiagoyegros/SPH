@@ -208,6 +208,81 @@
 
 
 
+            <!-- Modal -->
+            <div class="modal fade" id="gestionModal" tabindex="-1" role="dialog" data-backdrop="static"
+                data-keyboard="false" aria-labelledby="gestionModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form id="form_modal" action="" method="POST">
+                            {% csrf_token %}
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Gestión sin asignación</h5>
+                                <button type="button" style="color: white !important; cursor:pointer;" class="close"
+                                    data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div id="id_modalBody" class="modal-body">
+                                <div class="row filter-row">
+                                    <div class="col-md-12"
+                                        style="display:flex !important; flex-flow:row !important; padding-right: 10px !important;">
+                                        <div class="col-md-6">
+                                            <label class="titulo-cupo">Cupo Utilizado: </label>
+                                        </div>
+                                        <div class="col-md-6" style="display: flex !important;">
+                                            <input id="cupos" style="padding-right: 30px !important;" type="text"
+                                                class="form-control form-bordernone estilo-cupo" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row filter-row">
+                                    <div id="id_select" class="col-md-12 divMotivos">
+                                        <p>
+                                            <label class="font-weight-bold" style="padding-left: 10px;"
+                                                for="">Motivo</label>
+                                            <select class="selectpicker form-control motivo" id="id_motivo"
+                                                data-size="5" name="motivo" value="{{motivo}}" data-live-search="true"
+                                                title="--Seleccionar--">
+                                                {% for motivo in motivos %}
+
+                                                <option id="id_motivos" data-tokens="{{motivo.descripcion}}"
+                                                    value="{{motivo.id}}">
+                                                    {{motivo.descripcion}}</option>
+
+
+                                                {% endfor %}
+                                            </select>
+
+
+
+
+
+                                        </p>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <p>
+                                            <label class="font-weight-bold">Observación</label>
+                                            <textarea style="resize: none !important; min-height: 150px;"
+                                                name="observacion" class="form-control" id="id_observacion"
+                                                rows="3"></textarea>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id='' type="button" class='btn btn-success btn-add guardar'><i
+                                        class="fa fa-floppy-o fa-lg"></i>
+                                    Guardar</button>
+                                <a class='btn btn-primary btn-cancelar cancelar' href=# data-dismiss="modal"><i
+                                        class="fa fa-times fa-lg"></i>Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+
 
             <div class="pagination">
                 Página:&nbsp;&nbsp;
@@ -235,70 +310,6 @@
     </form>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="gestionModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"
-    aria-labelledby="gestionModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="form_modal" action="" method="POST">
-                {% csrf_token %}
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Gestión sin asignación</h5>
-                    <button type="button" style="color: white !important; cursor:pointer;" class="close"
-                        data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div id="id_modalBody" class="modal-body">
-                    <div class="row filter-row">
-                        <div class="col-md-12"
-                            style="display:flex !important; flex-flow:row !important; padding-right: 10px !important;">
-                            <div class="col-md-6">
-                                <label class="titulo-cupo">Cupo Utilizado: </label>
-                            </div>
-                            <div class="col-md-6" style="display: flex !important;">
-                                <input id="cupos" style="padding-right: 30px !important;" type="text"
-                                    class="form-control form-bordernone estilo-cupo" disabled>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row filter-row">
-                        <div id="id_select" class="col-md-12 divMotivos">
-                            <p>
-                                <label class="font-weight-bold" style="padding-left: 10px;" for="">Motivo</label>
-                                <select class="selectpicker form-control motivo" id="id_motivo" data-size="5"
-                                    name="motivo" value="{{motivo}}" data-live-search="true" title="--Seleccionar--">
-                                    {% for motivo in motivos %}
-
-                                    <option id="id_motivos" data-tokens="{{motivo.descripcion}}" value="{{motivo.id}}">
-                                        {{motivo.descripcion}}</option>
-
-
-                                    {% endfor %}
-                                </select>
-
-                            </p>
-                        </div>
-                        <div class="col-md-12">
-                            <p>
-                                <label class="font-weight-bold">Observación</label>
-                                <textarea style="resize: none !important; min-height: 150px;" name="observacion"
-                                    class="form-control" id="id_observacion" rows="3"></textarea>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button id='' type="button" class='btn btn-success btn-add guardar'><i
-                            class="fa fa-floppy-o fa-lg"></i>
-                        Guardar</button>
-                    <a class='btn btn-primary btn-cancelar cancelar' href=# data-dismiss="modal"><i
-                            class="fa fa-times fa-lg"></i>Cancelar</a>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 <script type="text/javascript">
     $(function () {
         var fechaDesde = $('#fechaDesde')[0].value;
@@ -400,42 +411,40 @@
 
     $(function () {
 
-    var original =  $("#id_modalBody").clone()
-    $(document).on('click', '.guardar', function () {
-        var error = true;
-        var guardar_actual = $(this);
-        var id_alerta = guardar_actual[0].id;
-        var body = {}
-        body.motivo = $('#id_motivo').val();
-        body.observacion = $('#id_observacion').val();
-        console.log("a ver: " + $('#id_motivo').val());
-        token = '{{csrf_token}}';
-        $.ajax({
-            type: "POST",
-            url: "/reingenieria/alertas/guardarSinAsignacion/" + id_alerta,
-            data: $("#form_modal").serialize() + "&csrfmiddlewaretoken=" + token + "&error=" + error,
+        var original = $("#id_modalBody").clone()
+        $(document).on('click', '.guardar', function () {
+            var error = true;
+            var guardar_actual = $(this);
+            var id_alerta = guardar_actual[0].id;
+            var body = {}
+            body.motivo = $('#id_motivo').val();
+            body.observacion = $('#id_observacion').val();
+            console.log("a ver: " + $('#id_motivo').val());
+            token = '{{csrf_token}}';
+            $.ajax({
+                type: "POST",
+                url: "/reingenieria/alertas/guardarSinAsignacion/" + id_alerta,
+                data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token + "&error=" + error,
 
-            success: function (response) {
-                
-                $('id_observacion,textarea').val('');
-                console.log("funciono")
-                $('#gestionModal').modal('hide');
-                
+                success: function (response) {
+                    $('id_observacion,textarea').val('');
+                    console.log("funciono")
+                    $('#gestionModal').modal('hide');
+                    location.reload();
+                },
+                error: function () {
+                    console.log('error')
+                },
+            });
 
-            },
-            error: function () {
-                console.log('error')
-            },
         });
 
     });
 
-    });
-
     $(document).on('click', '.cancelar', function () {
-                $('id_observacion,textarea').val('');
-                console.log("funciono")
-                $('#gestionModal').modal('hide');
+        $('id_observacion,textarea').val('');
+        console.log("funciono")
+        $('#gestionModal').modal('hide');
     });
 
 

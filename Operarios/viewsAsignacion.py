@@ -735,7 +735,7 @@ def Asignacion_create(request, id_puntoServicio=None):
     ''' Obtenemos la asignacion en caso de que exista una '''
     asignacion = AsignacionCab.objects.filter(Q(puntoServicio_id = puntoSer.id)).first()
     if asignacion == None:
-        asignacion = AsignacionCab(puntoServicio=puntoSer)
+        asignacion = AsignacionCab(puntoServicio=puntoSer,usuario=request.user)
         asignacion.save()
     
     if request.session['eliminar'] == "true":

@@ -1,12 +1,12 @@
-ALTER DATABASE reingenieria SET COMPATIBILITY_LEVEL =  130 go
-USE [aireinegnier]
+CREATE OR ALTER DATABASE reingenieria SET COMPATIBILITY_LEVEL =  130 go
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 25/7/2019 22:23:01 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[relevamientomensualeros_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[relevamientomensualeros_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -75,14 +75,14 @@ END
 
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamientoesp_trg]    Script Date: 25/7/2019 22:23:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[relevamientoesp_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[relevamientoesp_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -166,14 +166,14 @@ END
 GO
 
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamientodet_trg]    Script Date: 25/7/2019 22:23:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[relevamientodet_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[relevamientodet_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -282,14 +282,14 @@ END
 
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamientocupohoras_trg]    Script Date: 25/7/2019 22:24:18 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[relevamientocupohoras_trg]   
+CREATE OR ALTER PROCEDURE [dbo].[relevamientocupohoras_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -373,130 +373,14 @@ END
 
 GO
 
-USE [aireinegnier]
-GO
-/****** Object:  StoredProcedure [dbo].[relevamiento_manager]    Script Date: 25/7/2019 21:36:41 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-ALTER PROCEDURE [dbo].[relevamiento_manager]   
-	@json_cab nvarchar(max),
-	@json_det nvarchar(max),
-	@json_men nvarchar(max),
-	@json_cup nvarchar(max),
-	@json_esp nvarchar(max),
-	@retorno int OUTPUT
-	--@operario int
-AS   
-	
-  BEGIN
-  SET NOCOUNT ON;
-	DECLARE @TransactionName varchar(20) = 'Transactional';
-	Declare @err_msg nvarchar(max);
-	BEGIN TRAN @TransactionName 
-	BEGIN TRY
-		DECLARE @fechaCambio datetime;
-		SET @fechaCambio=CURRENT_TIMESTAMP;
-			DECLARE @RC int;
-			DECLARE @cab int;
-			DECLARE @tmp nvarchar(max);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_men);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cup);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_esp);
-			EXECUTE @RC = [dbo].[relevamiento_cab_trg] @json_cab,@fechaCambio,0
-			/*det*/
-			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_det)
-			OPEN cursorIt
-			FETCH NEXT FROM cursorIt INTO @tmp
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				IF @tmp is not NULL and @tmp!='{}'
-				begin
-					EXECUTE @RC = [dbo].[relevamientodet_trg] @tmp,@fechaCambio,@retorno
-				end
-
-
-
-			FETCH NEXT FROM cursorIt INTO @tmp
-			END
-			CLOSE cursorIt
-			DEALLOCATE cursorIt
-			/*ESP*/
-			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_esp)
-			OPEN cursorIt
-			FETCH NEXT FROM cursorIt INTO @tmp
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				IF @tmp is not NULL and @tmp!='{}'
-				begin
-					EXECUTE @RC = [dbo].[relevamientoesp_trg] @tmp,@fechaCambio,@retorno
-				end
-			FETCH NEXT FROM cursorIt INTO @tmp
-			END
-			CLOSE cursorIt
-			DEALLOCATE cursorIt
-			/*MENSUALEROS*/
-			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_men)
-			OPEN cursorIt
-			FETCH NEXT FROM cursorIt INTO @tmp
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				IF @tmp is not NULL and @tmp!='{}'
-				begin
-					EXECUTE @RC = [dbo].[relevamientomensualeros_trg] @tmp,@fechaCambio,@retorno
-				end
-			FETCH NEXT FROM cursorIt INTO @tmp
-			END
-			CLOSE cursorIt
-			DEALLOCATE cursorIt
-
-
-			/*CUPO HORAS*/
-			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_cup)
-			OPEN cursorIt
-			FETCH NEXT FROM cursorIt INTO @tmp
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				IF @tmp is not NULL and @tmp!='{}'
-				begin
-					EXECUTE @RC = [dbo].[relevamientocupohoras_trg] @tmp,@fechaCambio,@retorno
-				end
-			FETCH NEXT FROM cursorIt INTO @tmp
-			END
-			CLOSE cursorIt
-			DEALLOCATE cursorIt
-			SET @retorno=0;
-		COMMIT TRANSACTION @TransactionName;
-		SET @retorno=0;
-	END TRY 
-	BEGIN CATCH
-		set @err_msg=ERROR_MESSAGE();
-		ROLLBACK TRAN @TransactionName; 
-		SET @retorno=1;
-		insert into dbo.infolog(fechaHora,info) values(current_timestamp, @err_msg);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_men);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_cup);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_esp);
-	END CATCH
-	Select @retorno as resultado;
-
-END		
-
-GO
-
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamiento_cab_trg]    Script Date: 31/7/2019 11:53:17 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[relevamiento_cab_trg]   
+CREATE OR CREATE OR ALTER PROCEDURE [dbo].[relevamiento_cab_trg]   
   
 
 	@json nvarchar(max),
@@ -613,6 +497,124 @@ AS
 
 END		
 
+
+USE [reingenieria]
+GO
+/****** Object:  StoredProcedure [dbo].[relevamiento_manager]    Script Date: 25/7/2019 21:36:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER PROCEDURE [dbo].[relevamiento_manager]   
+	@json_cab nvarchar(max),
+	@json_det nvarchar(max),
+	@json_men nvarchar(max),
+	@json_cup nvarchar(max),
+	@json_esp nvarchar(max),
+	@retorno int OUTPUT
+	--@operario int
+AS   
+	
+  BEGIN
+  SET NOCOUNT ON;
+	DECLARE @TransactionName varchar(20) = 'Transactional';
+	Declare @err_msg nvarchar(max);
+	BEGIN TRAN @TransactionName 
+	BEGIN TRY
+		DECLARE @fechaCambio datetime;
+		SET @fechaCambio=CURRENT_TIMESTAMP;
+			DECLARE @RC int;
+			DECLARE @cab int;
+			DECLARE @tmp nvarchar(max);
+			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
+			insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
+			insert into infolog(fechaHora,info) values(@fechaCambio,@json_men);
+			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cup);
+			insert into infolog(fechaHora,info) values(@fechaCambio,@json_esp);
+			EXECUTE @RC = [dbo].[relevamiento_cab_trg] @json_cab,@fechaCambio,0
+			/*det*/
+			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_det)
+			OPEN cursorIt
+			FETCH NEXT FROM cursorIt INTO @tmp
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				IF @tmp is not NULL and @tmp!='{}'
+				begin
+					EXECUTE @RC = [dbo].[relevamientodet_trg] @tmp,@fechaCambio,@retorno
+				end
+
+
+
+			FETCH NEXT FROM cursorIt INTO @tmp
+			END
+			CLOSE cursorIt
+			DEALLOCATE cursorIt
+			/*ESP*/
+			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_esp)
+			OPEN cursorIt
+			FETCH NEXT FROM cursorIt INTO @tmp
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				IF @tmp is not NULL and @tmp!='{}'
+				begin
+					EXECUTE @RC = [dbo].[relevamientoesp_trg] @tmp,@fechaCambio,@retorno
+				end
+			FETCH NEXT FROM cursorIt INTO @tmp
+			END
+			CLOSE cursorIt
+			DEALLOCATE cursorIt
+			/*MENSUALEROS*/
+			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_men)
+			OPEN cursorIt
+			FETCH NEXT FROM cursorIt INTO @tmp
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				IF @tmp is not NULL and @tmp!='{}'
+				begin
+					EXECUTE @RC = [dbo].[relevamientomensualeros_trg] @tmp,@fechaCambio,@retorno
+				end
+			FETCH NEXT FROM cursorIt INTO @tmp
+			END
+			CLOSE cursorIt
+			DEALLOCATE cursorIt
+
+
+			/*CUPO HORAS*/
+			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_cup)
+			OPEN cursorIt
+			FETCH NEXT FROM cursorIt INTO @tmp
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				IF @tmp is not NULL and @tmp!='{}'
+				begin
+					EXECUTE @RC = [dbo].[relevamientocupohoras_trg] @tmp,@fechaCambio,@retorno
+				end
+			FETCH NEXT FROM cursorIt INTO @tmp
+			END
+			CLOSE cursorIt
+			DEALLOCATE cursorIt
+			SET @retorno=0;
+		COMMIT TRANSACTION @TransactionName;
+		SET @retorno=0;
+	END TRY 
+	BEGIN CATCH
+		set @err_msg=ERROR_MESSAGE();
+		ROLLBACK TRAN @TransactionName; 
+		SET @retorno=1;
+		insert into dbo.infolog(fechaHora,info) values(current_timestamp, @err_msg);
+		insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
+		insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
+		insert into infolog(fechaHora,info) values(@fechaCambio,@json_men);
+		insert into infolog(fechaHora,info) values(@fechaCambio,@json_cup);
+		insert into infolog(fechaHora,info) values(@fechaCambio,@json_esp);
+	END CATCH
+	Select @retorno as resultado;
+
+END		
+
+GO
+
+
 GO
 
 USE [reingenieria]
@@ -622,7 +624,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[puntoServicio_trigger]   
+CREATE OR CREATE OR ALTER  PROCEDURE [dbo].[puntoServicio_trigger]   
   
 
 	@p_id int,
@@ -731,7 +733,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[planificacionope_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[planificacionope_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -841,7 +843,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[planificacionesp_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[planificacionesp_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -934,14 +936,14 @@ AS
 END
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[planificacioncab_trg]    Script Date: 31/7/2019 11:53:14 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[planificacioncab_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[planificacioncab_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -1022,7 +1024,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER  PROCEDURE [dbo].[planificacion_manager]   
+CREATE OR CREATE OR ALTER  PROCEDURE [dbo].[planificacion_manager]   
 	@json_cab nvarchar(max),
 	@json_ope nvarchar(max),
 	@json_esp nvarchar(max),
@@ -1102,7 +1104,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER PROCEDURE [dbo].[asig_jefeyfiscal_trigger]   
+CREATE OR CREATE OR ALTER PROCEDURE [dbo].[asig_jefeyfiscal_trigger]   
   
 
 	@p_userJefe_id int,
@@ -1152,7 +1154,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[asignaciondet_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[asignaciondet_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -1268,7 +1270,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[asignacioncab_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[asignacioncab_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -1339,7 +1341,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-create or ALTER PROCEDURE [dbo].[asignacion_manager]   
+create or CREATE OR ALTER PROCEDURE [dbo].[asignacion_manager]   
 	@json_cab nvarchar(max),
 	@asig_cab int,
 	@retorno int OUTPUT
@@ -1443,7 +1445,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[asigjefefiscal_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[asigjefefiscal_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -1508,7 +1510,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[asigjefefisc_des_trigger]   
+CREATE OR CREATE OR ALTER  PROCEDURE [dbo].[asigjefefisc_des_trigger]   
   
 
 	@p_userJefe_id int,
@@ -1549,7 +1551,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[asigfiscalpuntoservicio_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[asigfiscalpuntoservicio_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -1614,7 +1616,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[asig_psfiscal_trigger]   
+CREATE OR CREATE OR ALTER  PROCEDURE [dbo].[asig_psfiscal_trigger]   
   
 
 	@p_userFiscal_id int,
@@ -1665,7 +1667,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[asigpsfisc_des_trigger]   
+CREATE OR CREATE OR ALTER  PROCEDURE [dbo].[asigpsfisc_des_trigger]   
   
 
 	@p_userFiscal_id int,
@@ -1698,7 +1700,7 @@ AS
 END	
 go
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  Trigger [dbo].[trg_vrs_Operarios_hd_asignacioncab]    Script Date: 25/7/2019 19:46:55 ******/
 SET ANSI_NULLS ON
@@ -1706,7 +1708,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER TRIGGER [dbo].[trg_vrs_Operarios_hd_asignacioncab]
+CREATE OR ALTER TRIGGER [dbo].[trg_vrs_Operarios_hd_asignacioncab]
 ON [dbo].[Operarios_asignacioncab]
 AFTER UPDATE
 AS
@@ -1752,7 +1754,7 @@ END
 
 
 go
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  Trigger [dbo].[trg_vrs_Operarios_hd_planificacioncab]    Script Date: 25/7/2019 19:46:40 ******/
 SET ANSI_NULLS ON
@@ -1760,7 +1762,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER TRIGGER [dbo].[trg_vrs_Operarios_hd_planificacioncab]
+CREATE OR ALTER TRIGGER [dbo].[trg_vrs_Operarios_hd_planificacioncab]
 ON [dbo].[Operarios_planificacioncab]
 AFTER UPDATE
 AS
@@ -1806,7 +1808,7 @@ END
 
 go
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  Trigger [dbo].[trg_header_relevamientocab]    Script Date: 25/7/2019 19:46:30 ******/
 SET ANSI_NULLS ON
@@ -1814,7 +1816,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER TRIGGER [dbo].[trg_header_relevamientocab]
+CREATE OR ALTER TRIGGER [dbo].[trg_header_relevamientocab]
 ON [dbo].[Operarios_relevamientocab]
 AFTER UPDATE
 AS
@@ -1841,12 +1843,12 @@ AS
                 if(@dp1_cantidadHrTotal!=@dp0_cantidadHrTotal)
                 BEGIN
 				
-					ALTER  TABLE [dbo].[Operarios_planificacioncab] DISABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
-					ALTER  TABLE [dbo].[Operarios_asignacioncab]    DISABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
+					CREATE OR ALTER  TABLE [dbo].[Operarios_planificacioncab] DISABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
+					CREATE OR ALTER  TABLE [dbo].[Operarios_asignacioncab]    DISABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
                     UPDATE [dbo].[Operarios_planificacioncab] set rePlanificar='True' where puntoServicio_id=@dp0_puntoServicio_id;
                     UPDATE [dbo].[Operarios_asignacioncab] set reAsignar='True' where puntoServicio_id=@dp0_puntoServicio_id;
-					ALTER  TABLE [dbo].[Operarios_planificacioncab] ENABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
-					ALTER  TABLE [dbo].[Operarios_asignacioncab]    ENABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
+					CREATE OR ALTER  TABLE [dbo].[Operarios_planificacioncab] ENABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
+					CREATE OR ALTER  TABLE [dbo].[Operarios_asignacioncab]    ENABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
                 END
             FETCH NEXT FROM cursorDt INTO @dp1_cantidadHrTotal
             END		
@@ -1863,7 +1865,7 @@ AS
 	CLOSE cursorIt
 	DEALLOCATE cursorIt
 END	
-
+GO
 
 USE [reingenieria]
 GO
@@ -1872,7 +1874,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-create or alter PROCEDURE [dbo].[asignaciondet_tmptrg]   
+create or CREATE OR ALTER PROCEDURE [dbo].[asignaciondet_tmptrg]   
 	@json nvarchar(max),
 	@retorno int OUTPUT
 	--@operario int
@@ -1940,7 +1942,7 @@ AS
 		SET @retorno=0;
 		Select @retorno as resultado;
 END
-
+GO
 
 USE [reingenieria]
 GO
@@ -1949,7 +1951,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-create or ALTER   PROCEDURE [dbo].[clean_asignaciondet]
+create or CREATE OR ALTER   PROCEDURE [dbo].[clean_asignaciondet]
 	@p_asignacionCab_id int,
 	@retorno int OUTPUT
 	--@operario int
@@ -1964,7 +1966,7 @@ AS
 		SET @retorno=0;
 		Select @retorno as resultado;
 END
-
+GO
 
 USE [reingenieria]
 GO
@@ -1973,7 +1975,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER  PROCEDURE [dbo].[operarios_disponibles_v3]   
+CREATE OR ALTER  PROCEDURE [dbo].[operarios_disponibles_v3]   
     @puntoServicio int,   
     @totalHoras float,
 	@lunEntReq time(7),
@@ -2119,7 +2121,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-create or ALTER FUNCTION [dbo].[listarasignaciones](@asigcab integer)
+create or CREATE OR ALTER FUNCTION [dbo].[listarasignaciones](@asigcab integer)
 RETURNS @query TABLE (
 	 id int,
 	lunEnt time,
@@ -2157,7 +2159,7 @@ BEGIN
 	FROM [dbo].[Operarios_asignaciondettemp] where  asignacionCab_id=@asigcab
 	RETURN
 END
-
+Go
 
 USE [reingenieria]
 GO
@@ -2169,7 +2171,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-create or ALTER   VIEW [dbo].[detalle_lista_operarios3]
+create or CREATE OR ALTER   VIEW [dbo].[detalle_lista_operarios3]
 AS
 SELECT        id_operario, nombres, nroLegajo, nombres_puntoServicio, ids_puntoServicio, totalHoras,
                              (SELECT DISTINCT STRING_AGG(esp.especializacion, ', ') AS Expr1

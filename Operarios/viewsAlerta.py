@@ -603,15 +603,18 @@ def gestion_alertas(request,alerta_id=None):
                 
                     asignacion_reemp = None
                     if alerta.Asignacion_id: 
-                        asignacion_reemp =  AsignacionDet.objects.get(id=alerta.Asignacion_id) 
-                        asignacion_reempActualizada =  AsignacionDet.objects.get(Q(vregistro=asignacion_reemp.vregistro)) 
-                    operario_reemp  =Operario.objects.get(id=request.POST.get('idreemplazante'))
-                    remplazoDet=RemplazosDet.objects.create(Asignacion=asignacion_reempActualizada, remplazo=operario_reemp, fecha=alerta.FechaHora.date(), remplazoCab=remplazoCab)
+                        asignacion_reemp =  AsignacionDet.objects.get(id=alerta.Asignacion_id)     
+                        operario_reemp  =Operario.objects.get(id=request.POST.get('idreemplazante'))
+                    remplazoDet=RemplazosDet.objects.create(Asignacion=asignacion_reemp, remplazo=operario_reemp, fecha=alerta.FechaHora.date(), remplazoCab=remplazoCab)
                 
                 
                     """guardamos la respuesta a la alerta"""
-                    if request.POST.get('escalable'):
-                        escalar=request.POST.get('escalable')
+                    if request.POST.get('escalar'):
+                        if request.POST.get('escalar')=="on":
+
+                            escalar=True
+                        else:
+                             escalar=False
                     print("REEMPLAZO ID",remplazoCab.id) 
                     if request.POST.get("motivo"):
                         motivoObj =Motivos.objects.get(id=request.POST.get("motivo"))

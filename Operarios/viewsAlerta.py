@@ -133,16 +133,16 @@ def mostrarCupos(request):
     puntoServ_id=alerta.PuntoServicio_id
     fecha=alerta.FechaHora.strftime("%d/%m/%Y").split('/')
     mes=fecha[1]
-    mes='07'
     anho=fecha[2]
     totalUtilizado=0
-    cuposUtilizados=CupoUtilizado.objects.all()
+    cuposUtilizados=CupoUtilizado.objects.filter(Q(puntoServicio_id=puntoServ_id) & Q(mes__contains=mes) & Q(anho=anho))
+   
     if(CupoReal.objects.filter(Q(puntoServicio_id=puntoServ_id) & Q(mes=mes) & Q(anho=anho) ).exists()):
         cupo=CupoReal.objects.get(Q(puntoServicio_id=puntoServ_id) & Q(mes=mes) & Q(anho=anho) )
         cupoTotal=cupo.cupoCalculado
         for c in cuposUtilizados:
-            if (str(c.mes)==mes and str(c.anho)==anho and c.puntoServicio_id==int(puntoServ_id)):
-                totalUtilizado=totalUtilizado + c.cupoUtilizado
+            
+            totalUtilizado=totalUtilizado + c.cupoUtilizado
     else:
         totalUtilizado=0
         cupoTotal=0

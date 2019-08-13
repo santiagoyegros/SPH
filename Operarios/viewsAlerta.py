@@ -160,15 +160,15 @@ def guardarSinAsignacion(request,id_alerta=None):
     print("request aca: ",request.POST)
 
     if request.POST.get('motivo'):
-        alerta=Alertas.objects.get(id=id_alerta)
+        exito=0
         motivo=request.POST.get('motivo')            
         observacion=request.POST.get('observacion')
-        puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id))
-        horarios=[]
-        if alerta.Asignacion:
-            horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))        
-        tipoHorarios=TipoHorario.objects.all()
         try:
+            alerta=Alertas.objects.get(id=id_alerta)
+            puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id))
+            horarios=[]
+            if alerta.Asignacion:
+                horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
             """Se cambia el estado de la alerta"""
             setattr(alerta,"Estado", "CERRADA")
             alerta.save()
@@ -208,16 +208,20 @@ def guardarSinAsignacion(request,id_alerta=None):
                     horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date())
                     horasProcesadas.save()
         except Exception as err:
-            print("en el except")
+            exito=1
             transaction.rollback()
             logging.getLogger("error_logger").error('No se pudo gestionar la alerTa: {0}'.format(err))
-            messages.warning(request, 'No se pudo gestionar la alerta') 
+
         else:
             transaction.commit()
         finally:
-            m=messages.success(request, 'Alerta gestionada con exito')
-            transaction.set_autocommit(True)
-            return HttpResponse(m)
+            if exito==0:
+                m=messages.success(request, 'Alerta gestionada con exito')
+                transaction.set_autocommit(True)
+                return HttpResponse(m)
+            else:                
+                m=messages.warning(request, 'No se pudo gestionar la alerta')
+                return HttpResponse(m) 
 
 
 
@@ -599,15 +603,18 @@ def gestion_alertas(request,alerta_id=None):
                 
                     asignacion_reemp = None
                     if alerta.Asignacion_id: 
-                        asignacion_reemp =  AsignacionDet.objects.get(id=alerta.Asignacion_id) 
-                        asignacion_reempActualizada =  AsignacionDet.objects.get(Q(vregistro=asignacion_reemp.vregistro)) 
-                    operario_reemp  =Operario.objects.get(id=request.POST.get('idreemplazante'))
-                    remplazoDet=RemplazosDet.objects.create(Asignacion=asignacion_reempActualizada, remplazo=operario_reemp, fecha=alerta.FechaHora.date(), remplazoCab=remplazoCab)
+                        asignacion_reemp =  AsignacionDet.objects.get(id=alerta.Asignacion_id)     
+                        operario_reemp  =Operario.objects.get(id=request.POST.get('idreemplazante'))
+                    remplazoDet=RemplazosDet.objects.create(Asignacion=asignacion_reemp, remplazo=operario_reemp, fecha=alerta.FechaHora.date(), remplazoCab=remplazoCab)
                 
                 
                     """guardamos la respuesta a la alerta"""
-                    if request.POST.get('escalable'):
-                        escalar=request.POST.get('escalable')
+                    if request.POST.get('escalar'):
+                        if request.POST.get('escalar')=="on":
+
+                            escalar=True
+                        else:
+                             escalar=False
                     print("REEMPLAZO ID",remplazoCab.id) 
                     if request.POST.get("motivo"):
                         motivoObj =Motivos.objects.get(id=request.POST.get("motivo"))

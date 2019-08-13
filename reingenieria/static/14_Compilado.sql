@@ -2189,3 +2189,16 @@ FROM            (SELECT        op.id AS id_operario, { fn CONCAT({ fn CONCAT(op.
                           GROUP BY op.id, op.nombre, op.apellido, op.nroLegajo, op.fechaInicio) AS op_1
 GO
 
+USE [reingenieria]
+GO
+
+SET ANSI_PADDING ON
+GO
+
+/****** Object:  Index [ClusteredIndex-20190813-093028]    Script Date: 13/8/2019 09:33:49 ******/
+CREATE CLUSTERED INDEX [ClusteredIndex-20190813-093028] ON [dbo].[ESME_EM_Marcaciones]
+(
+	[CodPersona] ASC,
+	[CodUbicacion] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO

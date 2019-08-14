@@ -290,7 +290,7 @@ def Relevamiento(request, id_puntoServicio=None):
     cabeceraNueva=False
     if relevamiento == None:
         primeraVez = 1
-        relevamiento = RelevamientoCab(puntoServicio=puntoSer,cantAprendices=0,cantidad=0)
+        relevamiento = RelevamientoCab(puntoServicio=puntoSer,cantAprendices=0,cantidad=0,usuario=request.user)
         cabeceraNueva=True
         relevamiento.save()
 
@@ -637,7 +637,7 @@ def Planificacion_create(request, id_puntoServicio=None):
     CantlimpiezaProf = 1
     if planificacion == None:
         planificacion = PlanificacionCab(puntoServicio=puntoSer,cantidad=0,
-            cantHoras = "00:00",cantHorasNoc="00:00",cantHorasEsp="00:00")
+            cantHoras = "00:00",cantHorasNoc="00:00",cantHorasEsp="00:00",usuario=request.user)
         planificacion.save()
         '''ULTIMA VERSION DE RELEVAMIENTO ESP'''
 
@@ -706,7 +706,7 @@ def Planificacion_create(request, id_puntoServicio=None):
 
                 pln_esp="[ "
                 for item in  planifEspFormSet.cleaned_data:
-                    if item != emptyvar and not (item.get('id') is None and item.get('DELETE') is True ):
+                    if item != emptyvar and not (item.get('id') is None and( item.get('DELETE') is True or item.get('DELETE')=='True') ):
                         pln_esp+=str({
                                 'id':str(str(item.get('id').id) if item.get('id') is not None else 'None'),
                                 'DELETE':str(item.get('DELETE')),  

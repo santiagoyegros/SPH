@@ -94,5 +94,6 @@ urlpatterns = [
     url(r'^alertas/gestionar/emparejar/(?P<alerta_id>\d+)/(?P<emparejamiento_id>\d+)', viewsAlerta.emparejar , name='alertas_emparejar'),
     url(r'^reportes/asigsOperario/', viewsReporte.AsigPorOperario , name='asignaciones_por_operario'),
     url(r'^reportes/datosOperario/', viewsReporte.datosOperario , name='datos_operario'),
-     url(r'^reportes/descargarAsignacionesXls/', viewsReporte.getAsignacionesExcel , name='asignaciones_xls'),
+    url(r'^reportes/descargarAsignacionesXls/(?P<id_operario>\d+)', viewsReporte.getAsignacionesExcel , name='asignaciones_xls'),
+    url(r'^reportes/descargarAsignacionesPDF/(?P<id_operario>\d+)', viewsReporte.getAsignacionesPDF , name='asignaciones_pdf'),
 ]   

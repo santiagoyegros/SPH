@@ -223,11 +223,10 @@
 
     $(document).on('click', '#id_excel', function () {
         id_operario=$('#id_operarios').val();
-        console.log(".... "+id_operario);
-        token = '{{csrf_token}}';
-        var error = true;
-        startLoader();
-        window.open("/reingenieria/reportes/descargarAsignacionesXls/"+id_operario);
+        if(id_operario){
+            startLoader();
+            window.open("/reingenieria/reportes/descargarAsignacionesXls/"+id_operario);
+        }     
         $.ajax({
                 url: '/reingenieria/reportes/descargarAsignacionesXls/'+id_operario,
                 type: 'GET',
@@ -243,9 +242,12 @@
 
     $(document).on('click', '#id_pdf', function () {
         id_operario=$('#id_operarios').val();
-        var error = true;
-        startLoader();
-        window.open("/reingenieria/reportes/descargarAsignacionesPDF/"+id_operario);  
+        if(id_operario){
+            startLoader();
+            window.open("/reingenieria/reportes/descargarAsignacionesPDF/"+id_operario); 
+        }else{
+            id_operario=0;
+        }     
         $.ajax({
                 url: '/reingenieria/reportes/descargarAsignacionesPDF/'+id_operario,
                 type: 'GET',

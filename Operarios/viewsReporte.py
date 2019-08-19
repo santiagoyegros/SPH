@@ -10,12 +10,15 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required, permission_required
 from Operarios.models import Operario, DiaLibre, AsignacionDet, AsignacionCab
 from django.db.models import Q
+import openpyxl
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill
+from openpyxl.styles.borders import Border, Side
+from openpyxl.drawing.image import Image
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm,inch
+from reportlab.lib.units import cm,inch,mm
 from reportlab.lib.colors import HexColor
 from reportlab.lib import colors
 from reportlab.platypus import Table, TableStyle, Paragraph
@@ -23,11 +26,12 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.utils import ImageReader
 import json
+from datetime import datetime
+from PIL import Image
 
 @login_required
 def AsigPorOperario(request):
     operarios=Operario.objects.all()
-    print("ACA ES UN: ",request.method)
     contexto={
         'operarios':operarios
     }
@@ -84,7 +88,6 @@ def datosOperario(request):
         listaAsignaciones.append(asigAux)
         asigAux=asigAux.copy()
         total=total+int(a.totalHoras)
-    print("lista asignaciones: ",listaAsignaciones)
 
 
 
@@ -139,7 +142,6 @@ def datosOperario(request):
         listaAsigs=[i,puntoServ,a.totalHoras,lunes,martes,miercoles,jueves,viernes,sabado,domingo]
         data.append(listaAsigs)
         i+=1
-    print("data es: ",data)
 
     diaLibre1=diasLibres[0]["nombre"]
     hora=diasLibres[0]["hEntrada"].split(':')
@@ -162,194 +164,254 @@ def datosOperario(request):
 
 
 def getAsignacionesExcel(request,id_operario=None):
-    operario=Operario.objects.get(Q(id=id_operario))
-    asignaciones=AsignacionDet.objects.filter(operario_id=operario.id)
-    asigAux={}
-    listaAsignaciones=[]
-    total=0
-    diasLibres=getDiaLibre(id_operario)
-    cantAsignaciones=0
-    for a in asignaciones:
-        cantAsignaciones+=1
-        total=total+int(a.totalHoras)
+    if(id_operario!='0'):
+        operario=Operario.objects.get(Q(id=id_operario))
+        asignaciones=AsignacionDet.objects.filter(operario_id=operario.id)
+        asigAux={}
+        listaAsignaciones=[]
+        total=0
+        diasLibres=getDiaLibre(id_operario)
+        cantAsignaciones=0
+        for a in asignaciones:
+            cantAsignaciones+=1
+            total=total+int(a.totalHoras)
 
  
-    diaLibre1=diasLibres[0]["nombre"]
-    hora=diasLibres[0]["hEntrada"].split(':')
-    hora1=hora[0]+':'+hora[1]
-    diaLibre2=diasLibres[len(diasLibres)-1]["nombre"]
-    hora=diasLibres[len(diasLibres)-1]["hSalida"].split(':')
-    hora2=hora[0]+':'+hora[1]
+        diaLibre1=diasLibres[0]["nombre"]
+        hora=diasLibres[0]["hEntrada"].split(':')
+        hora1=hora[0]+':'+hora[1]
+        diaLibre2=diasLibres[len(diasLibres)-1]["nombre"]
+        hora=diasLibres[len(diasLibres)-1]["hSalida"].split(':')
+        hora2=hora[0]+':'+hora[1]
 
 
-    response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    )
-    response['Content-Disposition'] = 'attachment; filename={operario}-asignaciones.xlsx'.format(
-        operario=str(operario.nombre)+" "+str(operario.apellido) + " - "+str(operario.nroLegajo)
-    )
-    workbook = Workbook()
-    worksheet = workbook.active
-    worksheet.title = 'Asignaciones operario - ' + operario.nombre + ' '+operario.apellido+' - '+operario.nroLegajo
-    worksheet.row_dimensions[1].height=20
-    worksheet.column_dimensions['A'].width=25
-    worksheet.column_dimensions['B'].width=20
-    worksheet.column_dimensions['C'].width=20
-    worksheet.column_dimensions['D'].width=20
-    worksheet.column_dimensions['E'].width=25
-    worksheet.column_dimensions['F'].width=20
-    worksheet.column_dimensions['G'].width=20
-    worksheet.column_dimensions['H'].width=20
-    worksheet.column_dimensions['I'].width=20
-    worksheet.column_dimensions['J'].width=20
-    color=PatternFill(start_color='86273e',end_color='86273e',fill_type='solid')
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = 'attachment; filename={operario}-asignaciones.xlsx'.format(
+            operario=str(operario.nombre)+" "+str(operario.apellido) + " - "+str(operario.nroLegajo)
+        )
+        workbook = Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Asignaciones operario - ' + operario.nombre + ' '+operario.apellido+' - '+operario.nroLegajo
+        worksheet.row_dimensions[1].height=20
+        worksheet.column_dimensions['A'].width=25
+        worksheet.column_dimensions['B'].width=20
+        worksheet.column_dimensions['C'].width=20
+        worksheet.column_dimensions['D'].width=20
+        worksheet.column_dimensions['E'].width=25
+        worksheet.column_dimensions['F'].width=20
+        worksheet.column_dimensions['G'].width=20
+        worksheet.column_dimensions['H'].width=20
+        worksheet.column_dimensions['I'].width=20
+        worksheet.column_dimensions['J'].width=20
+        color=PatternFill(start_color='86273e',end_color='86273e',fill_type='solid')
 
-    columns = [
-    'Reporte de operario'
-    ]
-    row_num = 1
-    worksheet.row_dimensions[row_num].font=Font(bold=True,color='FFFFFF',size=18)
-    worksheet.row_dimensions[row_num].fill=color
-    for col_num, column_title in enumerate(columns, 1):
-        cell = worksheet.cell(row=row_num, column=col_num)
-        cell.value = column_title
-    # Define the titles for columns
-    columns = [
-        'Nombre',
-        'Apellido',
-        'Legajo',
+        columns = [
+        'Reporte de operario'
+        ]
+        row_num = 1
+        worksheet.row_dimensions[row_num].font=Font(bold=True,color='86273e',size=22)
+        worksheet.merge_cells('A1:B2')
+        
+        for col_num, column_title in enumerate(columns, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = column_title
+        row_num = 2
+
+        worksheet.merge_cells('F1:G3')
+        png = r'C:\Users\fabricasw04\Desktop\reingenieria\Operarios\static\logo.png'
+        img = Image.open(png)
+        img = img.resize((220,65),Image.NEAREST)
+        img.save(png)        
+        img = openpyxl.drawing.image.Image(png)
+        worksheet.add_image(img, 'F1')
+        worksheet.merge_cells('F4:G4')
+        worksheet["F4"]=datetime.today().strftime('%d/%m/%Y')
+        worksheet["F4"].font=Font(bold=True)
+        worksheet["F4"].alignment=Alignment(horizontal='center')
+        
+        columns = [
+            'Nombre',
+            'Apellido',
+            'Legajo'
+        ]
+        row_num += 1
+
+        worksheet.row_dimensions[row_num].font=Font(bold=True,color='86273e')
+        worksheet.row_dimensions[row_num].alignment=Alignment(horizontal='center')
+        # Assign the titles for each cell of the header
+        for col_num, column_title in enumerate(columns, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = column_title
+
+        row = [
+            operario.nombre,
+            operario.apellido,
+            operario.nroLegajo,
+        ]
+        row_num += 1
+        worksheet.row_dimensions[row_num].alignment=Alignment(horizontal='center')
+        for col_num, cell_value in enumerate(row, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = cell_value
+
+
+        columns = [
         'Día libre inicio',
         'hora',
         'Día libre fin',
         'hora'
-    ]
-    row_num += 1
-
-    worksheet.row_dimensions[row_num].font=Font(bold=True,color='FFFFFF')
-    worksheet.row_dimensions[row_num].alignment=Alignment(horizontal='center')
-    worksheet.row_dimensions[row_num].fill=color
-    # Assign the titles for each cell of the header
-    for col_num, column_title in enumerate(columns, 1):
-        cell = worksheet.cell(row=row_num, column=col_num)
-        cell.value = column_title
-
-    row = [
-        operario.nombre,
-        operario.apellido,
-        operario.nroLegajo,
-        diaLibre1,
-        hora1,
-        diaLibre2,
-        hora2
-    ]
-    row_num += 1
-    worksheet.row_dimensions[row_num].alignment=Alignment(horizontal='center')
-    for col_num, cell_value in enumerate(row, 1):
-        cell = worksheet.cell(row=row_num, column=col_num)
-        cell.value = cell_value
-
-            
-    # Define the data for each cell in the row 
-
-    columns = []
-    row_num += 1
-    for col_num, column_title in enumerate(columns, 1):
-        cell = worksheet.cell(row=row_num, column=col_num)
-        cell.value = column_title
-    total=str(total)+" hrs"
-    columns = [
-        'Total horas asignadas',
-        total
-    ]
-    row_num += 1
-    worksheet["A5"].font=Font(bold=True,size=12,color='FFFFFF')
-    worksheet["A5"].fill=color
-    worksheet["B5"].font=Font(size=12,color='FFFFFF')
-    worksheet["B5"].alignment=Alignment(horizontal='left')
-    worksheet["B5"].fill=color
-
-    for col_num, column_title in enumerate(columns, 1):
-        cell = worksheet.cell(row=row_num, column=col_num)
-        cell.value = column_title
-
-    #Titulos para la tabla
-    columns = [
-        'Nro',
-        'Punto de servicio',
-        'Total Horas',
-        'Lunes',
-        'Martes',
-        'Miércoles',
-        'Jueves',
-        'Viernes',
-        'Sábado',
-        'Domingo'
-    ]
-    row_num += 1
-    worksheet.row_dimensions[row_num].font=Font(bold=True,color='FFFFFF')
-    worksheet.row_dimensions[row_num].alignment=Alignment(horizontal='center')
-    worksheet.row_dimensions[row_num].fill=color
-    for col_num, column_title in enumerate(columns, 1):
-        cell = worksheet.cell(row=row_num, column=col_num)
-        cell.value = column_title
-
-    i=1
-    for a in asignaciones:
-        cab=AsignacionCab.objects.get(id=a.asignacionCab_id)
-        puntoServ=cab.puntoServicio.NombrePServicio
-        if(a.lunEnt and a.lunSal):
-            lunes=str(a.lunEnt)+" a "+str(a.lunSal)
-        else:
-            lunes=""
-        if(a.marEnt and a.marSal):
-            martes=str(a.marEnt)+" a "+str(a.marSal)
-        else:
-            martes=""
-        if(a.mieEnt and a.mieSal):
-            miercoles=str(a.mieEnt)+" a "+str(a.mieSal)
-        else:
-            miercoles=""
-        if(a.jueEnt and a.jueSal):
-            jueves=str(a.jueEnt)+" a "+str(a.jueSal)
-        else:
-            jueves=""
-        if(a.vieEnt and a.vieSal):
-            viernes=str(a.vieEnt)+" a "+str(a.vieSal)
-        else:
-            viernes=""
-        if(a.sabEnt and a.sabSal):
-            sabado=str(a.sabEnt)+" a "+str(a.sabSal)
-        else:
-            sabado=""
-        if(a.domEnt and a.domSal):
-            domingo=str(a.domEnt)+" a "+str(a.domSal)
-        else:
-            domingo=""
-        row = [
-            i,
-            puntoServ,
-            a.totalHoras,
-            lunes,
-            martes,
-            miercoles,
-            jueves,
-            viernes,
-            sabado,
-            domingo
         ]
         row_num += 1
-
+        worksheet.row_dimensions[row_num].font=Font(bold=True,color='86273e')
+        worksheet.row_dimensions[row_num].alignment=Alignment(horizontal='center')
+        
+        for col_num, column_title in enumerate(columns, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = column_title
+        
+        row = [
+            diaLibre1,
+            hora1,
+            diaLibre2,
+            hora2
+        ]
+        row_num += 1
+        worksheet.row_dimensions[row_num].alignment=Alignment(horizontal='center')
         for col_num, cell_value in enumerate(row, 1):
             cell = worksheet.cell(row=row_num, column=col_num)
             cell.value = cell_value
-        worksheet.row_dimensions[row_num].alignment=Alignment(horizontal='center')
-        i=i+1
+        
+        thin_border = Border(left=Side(style='thin'), 
+                     right=Side(style='thin'), 
+                     top=Side(style='thin'), 
+                     bottom=Side(style='thin'))
+
+            
+        for j in range(3,7):
+            for i in range(1,5):
+                worksheet.cell(row=j, column=i).border = thin_border
+                worksheet.cell(row=j, column=i).alignment=Alignment(horizontal='center')
+                if(j==3 or j==5):
+                    worksheet.cell(row=j, column=i).font=Font(bold=True,color='86273e')
+        
+        worksheet.cell(row=3, column=4).border = None
+        worksheet.cell(row=4, column=4).border = None
 
 
-    workbook.save(response)
-    print("Lista de asignaciiones: ")
-    print(listaAsignaciones)
-    return response
+        columns = []
+        row_num += 1
+        for col_num, column_title in enumerate(columns, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = column_title
+        
+        columns = []
+        row_num += 1
+        for col_num, column_title in enumerate(columns, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = column_title
+
+        total=str(total)+" hrs"
+        columns = [
+            'Total horas asignadas:',
+            total
+        ]
+        row_num += 1
+        worksheet["A9"].font=Font(bold=True,size=12,color='86273e')
+        worksheet["B9"].font=Font(bold=True,size=12,color='000000')
+        worksheet["B9"].alignment=Alignment(horizontal='left')
+
+        for col_num, column_title in enumerate(columns, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = column_title
+
+        thin_border = Border(left=Side(style='thin'), 
+                     right=Side(style='thin'), 
+                     top=Side(style='thin'), 
+                     bottom=Side(style='thin'))
+
+        
+
+        #Titulos para la tabla
+        columns = [
+            'Nro',
+            'Punto de servicio',
+            'Total Horas',
+            'Lunes',
+            'Martes',
+            'Miércoles',
+            'Jueves',
+            'Viernes',
+            'Sábado',
+            'Domingo'
+        ]
+        row_num += 1
+        for i in range(1,len(columns)+1):
+            worksheet.cell(row=row_num, column=i).border = thin_border
+            worksheet.cell(row=row_num, column=i).alignment=Alignment(horizontal='center')
+            worksheet.cell(row=row_num, column=i).font=Font(bold=True,color='86273e') 
+        for col_num, column_title in enumerate(columns, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = column_title
+
+        i=1
+        for a in asignaciones:
+            cab=AsignacionCab.objects.get(id=a.asignacionCab_id)
+            puntoServ=cab.puntoServicio.NombrePServicio
+            if(a.lunEnt and a.lunSal):
+                lunes=str(a.lunEnt)+" a "+str(a.lunSal)
+            else:
+                lunes=""
+            if(a.marEnt and a.marSal):
+                martes=str(a.marEnt)+" a "+str(a.marSal)
+            else:
+                martes=""
+            if(a.mieEnt and a.mieSal):
+                miercoles=str(a.mieEnt)+" a "+str(a.mieSal)
+            else:
+                miercoles=""
+            if(a.jueEnt and a.jueSal):
+                jueves=str(a.jueEnt)+" a "+str(a.jueSal)
+            else:
+                jueves=""
+            if(a.vieEnt and a.vieSal):
+                viernes=str(a.vieEnt)+" a "+str(a.vieSal)
+            else:
+                viernes=""
+            if(a.sabEnt and a.sabSal):
+                sabado=str(a.sabEnt)+" a "+str(a.sabSal)
+            else:
+                sabado=""
+            if(a.domEnt and a.domSal):
+                domingo=str(a.domEnt)+" a "+str(a.domSal)
+            else:
+                domingo=""
+            row = [
+                i,
+                puntoServ,
+                a.totalHoras,
+                lunes,
+                martes,
+                miercoles,
+                jueves,
+                viernes,
+                sabado,
+                domingo
+            ]
+            row_num += 1
+            
+
+            for col_num, cell_value in enumerate(row, 1):
+                cell = worksheet.cell(row=row_num, column=col_num)
+                cell.value = cell_value
+            i=i+1
+            for j in range(1,len(columns)+1):
+                worksheet.cell(row=row_num, column=j).border = thin_border
+                worksheet.cell(row=row_num, column=j).alignment=Alignment(horizontal='center')    
+
+        workbook.save(response)
+        return response
 
 
 def getAsignacionesPDF(request,id_operario=None):
@@ -382,34 +444,50 @@ def getAsignacionesPDF(request,id_operario=None):
     c.setFillColor(HexColor('#86273e'))
     c.drawString(30,750,'Reporte de Operario')
     c.setFont('Helvetica',12)
-    c.drawString(30,700,'Nombre')
-    c.drawString(150,700,'Apellido')
-    c.drawString(300,700,'Legajo')
-    c.drawString(30,650,'Dia Libre Inicio')
-    c.drawString(140,650,'Hora')
-    c.drawString(220,650,'Dia Libre Fin')
-    c.drawString(300,650,'Hora')
+    c.drawString(50,700,'Nombre')
+    c.drawString(200,700,'Apellido')
+    c.drawString(350,700,'Legajo')
+    c.drawString(50,650,'Dia Libre Inicio')
+    c.drawString(200,650,'Hora')
+    c.drawString(350,650,'Dia Libre Fin')
+    c.drawString(470,650,'Hora')
     c.setFillColor(HexColor('#000000'))
-    c.drawString(30,680,operario.nombre)
-    c.drawString(150,680,operario.apellido)
-    c.drawString(300,680,operario.nroLegajo)
-    c.drawString(30,630,diaLibre1)
-    c.drawString(140,630,hora1)
-    c.drawString(220,630,diaLibre2)
-    c.drawString(300,630,hora2)
+    c.drawString(50,680,operario.nombre)
+    c.drawString(200,680,operario.apellido)
+    c.drawString(350,680,operario.nroLegajo)
+    c.drawString(50,630,diaLibre1)
+    c.drawString(200,630,hora1)
+    c.drawString(350,630,diaLibre2)
+    c.drawString(470,630,hora2)
     c.setFont('Helvetica-Bold',14)
     c.setFillColor(HexColor('#86273e'))
     c.drawString(30,580,'Total Horas Asignadas:')
     c.setFillColor(HexColor('#000000'))
-    total=str(total)+" hrs."
-    c.drawString(200,580,total) 
-    logo=ImageReader('http://www.elmejor.com.py/images/logo@2x.png')
-    c.drawImage(logo,450,750,width=100,height=70,mask='auto')
+    totalAux=str(total)+" hrs."
+    c.drawString(200,580,totalAux) 
+    png = r'C:\Users\fabricasw04\Desktop\reingenieria\Operarios\static\logo1.png'
+    logo=ImageReader(png)
+    c.drawImage(logo,480,770,width=90,height=60,mask='auto')
+    c.line(30,720,580,720)
+    c.line(30,720,30,620)    
+    c.line(30,620,580,620)
+    c.line(580,720,580,620)   
+
+    date=datetime.today().strftime('%d/%m/%Y')
+    c.setFont('Helvetica',14)
+    c.drawString(490,750,date)
+
+    page=c.getPageNumber()
+    text="%s" %page
+    c.drawRightString(100*mm,20*mm,text)
+
+    width,height=A4
 
     styles=getSampleStyleSheet()
     styleBH=styles["Normal"]
     styleBH.alignment=TA_CENTER
     styleBH.fontSize=10
+    styleBH.textColor=HexColor('#86273e')  
 
     nro=Paragraph('''Nro''',styleBH)
     pSer=Paragraph('''Punto Servicio''',styleBH)
@@ -426,13 +504,16 @@ def getAsignacionesPDF(request,id_operario=None):
     encabezados=[nro,pSer,totalHrs,lns,mrts,mrcls,jvs,vrns,sbd,dmg]
     data.append(encabezados)
 
+    
+
     styleN=styles["BodyText"]
     styleN.alignment=TA_CENTER
-    styleN.fontSize=7
+    styleN.fontSize=8
 
     i=1
     l=[]
-    high=530
+    high=510
+    
     for a in asignaciones:
         listaAsigs=[]
         cab=AsignacionCab.objects.get(id=a.asignacionCab_id)
@@ -494,16 +575,17 @@ def getAsignacionesPDF(request,id_operario=None):
         i+=1
         high-=18
 
-    width,height=A4
     table=Table(data,colWidths=[1 * cm, 2.5 * cm, 2 * cm, 2 * cm, 2 * cm, 2 * cm, 2 * cm, 2 * cm, 2 * cm, 2 * cm])
     table.setStyle(TableStyle([
-        ('INNEGRID',(0,0),(-1,-1),0.25,colors.black),
         ('BOX',(0,0),(-1,-1),0.25,colors.black),
+        ('GRID',(0,0),(-1,-1),0.3*mm,(0,0,0)),
     ]))
 
-    table.wrapOn(c,width,height)
-    table.drawOn(c,30,high)
-    c.showPage()
+    if(total>0):
+        table.wrapOn(c,width,height)
+        table.drawOn(c,30,high)
+
+        c.showPage()
 
 
     c.save()

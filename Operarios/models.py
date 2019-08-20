@@ -578,6 +578,7 @@ class Alertas(models.Model):
     PuntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
     Estado = models.CharField(_("Estado"), max_length=15)
     Tipo = models.CharField(_('Tipo de Alerta'), max_length=10)
+    Nivel=models.IntegerField('Nivel Alerta', blank=True, null=True)
 
 
 class DiaLibre(models.Model):

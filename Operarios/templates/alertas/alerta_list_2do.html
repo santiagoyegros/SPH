@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class='my-3'>Alertas - 1er Nivel</h1>
+<h1 class='my-3'>Alertas - 2do Nivel</h1>
 <div class="container-fluid pl-0 pr-1">
     <form method="GET" role="form" id="formulario">
 
@@ -28,139 +28,83 @@
                                 </p>
                             </div>
                             <div class="col-md-3">
-                                <p style="margin:0px !important">
+                                    <p style="margin:0px !important">
 
-                                    <label for="">Hora inicio:</label>
-                                    <div class='input-group date' id='datetimepickerhorainicio'>
-                                        <input onkeydown="return false" type='text' class="form-control"
-                                            name="horaInicio" value="{{horaInicio}}" id="horaInicio" required />
-                                        <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-time"></span>
-                                        </span>
-                                    </div>
-                                </p>
+                                            <label for="">Fecha fin:</label>
+                                            <div class='input-group date' id='datetimepickerfechaHasta'>
+                                                <input type='text' class="form-control" name="fechaHasta" value="{{fechaHasta}}"
+                                                    id="fechaHasta" required />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </p>
+                            </div>
+                            <div class="col-md-6">
+                                    <p>
+                                            <label for="">Operario:</label>
+                                            <select id="operario" data-size="5" name="operario" value="{{operario}}"
+                                                class="selectpicker form-control" data-live-search="true"
+                                                title="Seleccionar....">
+        
+                                                {% for ope in operarios %}
+                                                {% if ope.id == operario  %}
+                                                <option data-tokens="{{ope.nombre}}" selected="selected" value="{{ope.id}}">
+                                                    {{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
+                                                {% else %}
+                                                <option data-tokens="{{ope.nombre}}" value="{{ope.id}}">
+                                                    {{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
+        
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select>
+        
+                                        </p>
                             </div>
                             <div class="col-md-3">
-                                <p style="margin:0px !important">
+                                    
+                                        <p>
 
-                                    <label for="">Fecha fin:</label>
-                                    <div class='input-group date' id='datetimepickerfechaHasta'>
-                                        <input type='text' class="form-control" name="fechaHasta" value="{{fechaHasta}}"
-                                            id="fechaHasta" required />
-                                        <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                    </div>
-                                </p>
-                            </div>
-                            <div class="col-md-3">
-                                <p style="margin:0px !important">
-
-                                    <label for="">Hora fin:</label>
-                                    <div class='input-group date' id='datetimepickerhorafin'>
-                                        <input type='text' class="form-control" name="horaFin" value="{{horaFin}}"
-                                            id="horaFin" onkeydown="return false" required />
-                                        <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-time"></span>
-                                        </span>
-                                    </div>
-                                </p>
+                                                <label for="">Estado:</label>
+                                                <select class="form-control" id="exampleFormControlSelect1" name="estado"
+                                                    value="{{estado}}">
+                                                    {%if estado %}
+                                                    <option value="ABIERTA" {% if estado == "ABIERTA" %} selected {% endif %}>
+                                                        Abierta</option>
+            
+                                                    <option value="EN GESTION" {% if estado == "EN GESTION" %} selected {% endif %}>
+                                                        En Gestión</option>
+                                                    {%else%}
+                                                    <option value="ABIERTA" selected>Abierta </option>
+                                                    <option value="EN GESTION">En Gestión</option>
+                                                    {% endif %}
+            
+            
+                                                </select>
+                                            </p>
                             </div>
                         </div>
                         <div class="row filter-row">
                             <div class="col-md-3">
-                                <p>
-                                    <label for="">Punto de servicio:</label>
-                                    <select id="puntoServicio" data-size="5" name="puntoServicio"
-                                        value="{{puntoServicio}}" class="selectpicker form-control"
-                                        data-live-search="true" title="Seleccionar....">
 
-                                        {% for puntosSer in PuntosServicio %}
-                                        {% if puntosSer.id == puntoServicio  %}
-                                        <option data-tokens="{{puntosSer.NombrePServicio}}" selected="selected"
-                                            value="{{puntosSer.id}}"> {{puntosSer.NombrePServicio}}</option>
-                                        {% else %}
-                                        <option data-tokens="{{puntosSer.NombrePServicio}}" value="{{puntosSer.id}}">
-                                            {{puntosSer.NombrePServicio}}</option>
-
-                                        {% endif %}
-                                        {% endfor %}
-                                    </select>
-
-                                </p>
                             </div>
                             <div class="col-md-3">
-                                <p>
-
-                                    <label for="">Estado:</label>
-                                    <select class="form-control" id="exampleFormControlSelect1" name="estado"
-                                        value="{{estado}}">
-                                        {%if estado %}
-                                        <option value="ABIERTA" {% if estado == "ABIERTA" %} selected {% endif %}>
-                                            Abierta</option>
-
-                                        <option value="EN GESTION" {% if estado == "EN GESTION" %} selected {% endif %}>
-                                            En Gestión</option>
-                                        {%else%}
-                                        <option value="ABIERTA" selected>Abierta </option>
-                                        <option value="EN GESTION">En Gestión</option>
-                                        {% endif %}
-
-
-                                    </select>
-                                </p>
+                              
                             </div>
                             <div class="col-md-3">
-                                <p>
 
-                                    <label for="tipoAlerta">Tipo de alerta:</label>
-                                    <select name="tipoAlerta" id="tipoAlerta" class="form-control"
-                                        id="exampleFormControlSelect1" name="tipoAlerta" value="{{tipoAlerta}}">
-                                        {% if tipoAlerta %}
-                                        <option value="TODOS" {% if tipoAlerta == "TODOS" %} selected {% endif %}>Todos
-                                        </option>
-
-                                        <option value="NO-MARC" {% if tipoAlerta == "NO-MARC" %} selected {% endif %}>No
-                                            marcacion</option>
-
-                                        <option value="SIN-ASIG" {% if tipoAlerta == "SIN-ASIG" %} selected {% endif %}>
-                                            Sin asignacion</option>
-
-                                        {% else %}
-                                        <option value="TODOS" selected>Todos</option>
-                                        <option value="NO-MARC">No marcacion</option>
-                                        <option value="SIN-ASIG">Sin asignacion</option>
-                                        {% endif %}
-                                    </select>
-                                </p>
                             </div>
                             <div class="col-md-3">
-                                <p>
-                                    <label for="">Operario:</label>
-                                    <select id="operario" data-size="5" name="operario" value="{{operario}}"
-                                        class="selectpicker form-control" data-live-search="true"
-                                        title="Seleccionar....">
-
-                                        {% for ope in operarios %}
-                                        {% if ope.id == operario  %}
-                                        <option data-tokens="{{ope.nombre}}" selected="selected" value="{{ope.id}}">
-                                            {{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
-                                        {% else %}
-                                        <option data-tokens="{{ope.nombre}}" value="{{ope.id}}">
-                                            {{ope.nombre}} {{ope.apellido}} - {{ope.nroLegajo}}</option>
-
-                                        {% endif %}
-                                        {% endfor %}
-                                    </select>
-
-                                </p>
+                                
                             </div>
                         </div>
                     </div>
                     <div style="float: right;">
-                        <button type='submit' class='btn btn-success btn-filtrar'><i class="fa fa-search"></i> Filtrar</button>
+                        <button type='submit' class='btn btn-success btn-filtrar'><i class="fa fa-search"></i>
+                            Filtrar</button>
 
-                        <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar"><i class="fa fa-trash"></i> Limpiar</a>
+                        <a href={% url 'Operarios:alertas_list' %} class="btn btn-success btn-limpiar"><i
+                                class="fa fa-trash"></i> Limpiar</a>
                     </div>
 
                 </div>
@@ -198,8 +142,8 @@
                                 class="btn btn-success btn-filtrar">Gestionar</a></td>
                         {% else %}
                         <td id="gestionar-{{forloop.counter}}" style="display:flex;justify-content:center"><a href=#
-                                id="{{alerta.id}}" name="{{alerta.Operario.nombre}} {{alerta.Operario.apellido}}" class="btn btn-success btn-filtrar open-modal"
-                                data-url=#>Gestionar</a></td>
+                                id="{{alerta.id}}" name="{{alerta.Operario.nombre}} {{alerta.Operario.apellido}}"
+                                class="btn btn-success btn-filtrar open-modal" data-url=#>Gestionar</a></td>
                         {% endif %}
                     </tr>
                     {% endfor %}
@@ -217,8 +161,8 @@
                             {% csrf_token %}
                             <div class="modal-header">
                                 <h5 class="modal-title" id="modal-title">Gestión sin asignación</h5>
-                                <button type="button" id="id_cerrar" style="color: white !important; cursor:pointer;" class="close"
-                                    data-dismiss="modal" aria-label="Close">
+                                <button type="button" id="id_cerrar" style="color: white !important; cursor:pointer;"
+                                    class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
@@ -287,7 +231,8 @@
             <div class="pagination">
                 Página:&nbsp;&nbsp;
                 {% if alertasList.has_previous %}
-                <a href="?page={{alertasList.previous_page_number}}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">Anterior</a>
+                <a
+                    href="?page={{alertasList.previous_page_number}}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">Anterior</a>
                 {% else %}
                 <span class="disabled">Anterior</span>
                 {% endif %}
@@ -296,11 +241,13 @@
                 <li class="active padding-number"><a href="#!">{{ num }} </a></li>
                 {% else %}
                 <li class="waves-effect padding-number"><a
-                        href="?page={{ num }}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">{{ num }}</a></li>
+                        href="?page={{ num }}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">{{ num }}</a>
+                </li>
                 {% endif %}
                 {% endfor %}
                 {% if alertasList.has_next %}
-                <a href="?page={{alertasList.next_page_number}}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">Siguiente</a>
+                <a
+                    href="?page={{alertasList.next_page_number}}{% if request.GET %}&fechaDesde={{ request.GET.fechaDesde }}&fechaHasta={{ request.GET.fechaHasta }}&horaInicio={{ request.GET.horaInicio }}&horaFin={{ request.GET.horaFin }}&puntoServicio={{ request.GET.puntoServicio }}&estado={{ request.GET.estado }}&tipoAlerta={{ request.GET.tipoAlerta }}&operario={{ request.GET.operario }}{% endif %}">Siguiente</a>
                 {% else %}
                 <span class="disabled">Siguiente</span>
                 {% endif %}
@@ -342,40 +289,7 @@
             date: date
         })
     });
-    $(function () {
-        var date;
-        var hora;
-        if ($('#horaInicio')[0].value != 'None') {
-            hora = $('#horaInicio')[0].value;
-        } else {
-            date = new Date();
-            date.setHours(0, 0);
-            hora = date.getHours() + ":" + date.getMinutes();
-        }
-        $('#datetimepickerhorainicio').datetimepicker({
-            locale: 'es',
-            format: 'LT',
-            date: moment(hora, 'HHmm'),
-        })
 
-    });
-    $(function () {
-        var date = new Date();
-        var hora;
-        if ($('#horaFin')[0].value != 'None') {
-            hora = $('#horaFin')[0].value;
-        } else {
-            hora = date.getHours() + ":" + date.getMinutes();
-        }
-        $('#datetimepickerhorafin').datetimepicker({
-            locale: 'es',
-            format: 'LT',
-            date: moment(hora, 'HHmm'),
-            disabledTimeIntervals: [
-                [moment().hour(date.getHours()).minutes(date.getMinutes()), moment().hour(24).minutes(0)]
-            ],
-        })
-    });
     function llamarFiltro() {
         document.getElementById('action').value = 'filter_operario-' + id;
         //hacemos submit
@@ -388,12 +302,12 @@
 
     $(document).on('click', '.open-modal', function () {
         var alerta_actual = $(this);
-        var id =alerta_actual[0].id;
-        var operario =alerta_actual[0].name;
+        var id = alerta_actual[0].id;
+        var operario = alerta_actual[0].name;
         console.log(alerta_actual)
         $('.guardar').attr('id', id);
         $('#gestionModal').modal('show');
-        $('#gestionModal').find("h5#modal-title").text("Gestion sin Asignación- "+operario);
+        $('#gestionModal').find("h5#modal-title").text("Gestion sin Asignación- " + operario);
         $.ajax({
             url: '/reingenieria/alertas/mostrarCupos',
             type: 'GET',
@@ -444,25 +358,25 @@
 
     $(function () {
 
-    var original = $("#id_modalBody").clone()
+        var original = $("#id_modalBody").clone()
 
-    $(document).on('click', '.cancelar', function () {
-        $('#gestionModal').modal('hide');
-        $('id_observacion,textarea').val('');
-        $('#id_motivo').val("");
-        $('#id_motivo').selectpicker("refresh");
-        console.log($('#id_motivo'));
+        $(document).on('click', '.cancelar', function () {
+            $('#gestionModal').modal('hide');
+            $('id_observacion,textarea').val('');
+            $('#id_motivo').val("");
+            $('#id_motivo').selectpicker("refresh");
+            console.log($('#id_motivo'));
+        });
+
+        $(document).on('click', '.close', function () {
+            $('#gestionModal').modal('hide');
+            $('id_observacion,textarea').val('');
+            $('#id_motivo').val("");
+            $('#id_motivo').selectpicker("refresh");
+            console.log($('#id_motivo'));
+        });
+
     });
-
-    $(document).on('click', '.close', function () {
-        $('#gestionModal').modal('hide');
-        $('id_observacion,textarea').val('');
-        $('#id_motivo').val("");
-        $('#id_motivo').selectpicker("refresh");
-        console.log($('#id_motivo'));
-    });
-
-});
 
 </script>
 
@@ -498,7 +412,10 @@
         width: 100% !important;
         padding: 0px 10px;
     }
+    .cuerpo-filtro{
+        margin-bottom:15px !important;
 
+    }
     .filter-row {
         width: 100%;
     }

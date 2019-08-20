@@ -86,7 +86,9 @@ urlpatterns = [
     url(r'^feriados/eliminar/(?P<feriado_id>\d+)', deleteFeriados , name='feriados_delete'),
     url(r'^operaciones/operarios/vista/', viewsOperario.getOperariosVista , name='operarios_vista'),
     url(r'^alertas/listar/', viewsAlerta.alertasList , name='alertas_list'),
+    url(r'^alertas/seg-nivel/listar/', viewsAlerta.alertas2doList , name='alertas_2dolist'),
     url(r'^alertas/gestionar/(?P<alerta_id>\d+)', viewsAlerta.gestion_alertas , name='alertas_gestionar'),
+    url(r'^alertas/seg-nivel/gestionar/(?P<alerta_id>\d+)', viewsAlerta.gestion_alertas2do , name='alertas_2dogestionar'),
     url(r'^alertas/guardarSinAsignacion/(?P<id_alerta>\d+)', viewsAlerta.guardarSinAsignacion , name='guardar_sin_asignacion'),
     url(r'^alertas/mostrarCupos', viewsAlerta.mostrarCupos , name='mostrar_cupos'),
     url(r'^alertas/gestionar/marcaciones', viewsAlerta.getMarcaciones , name='getMarcacines'),
@@ -94,5 +96,6 @@ urlpatterns = [
     url(r'^alertas/gestionar/emparejar/(?P<alerta_id>\d+)/(?P<emparejamiento_id>\d+)', viewsAlerta.emparejar , name='alertas_emparejar'),
     url(r'^reportes/asigsOperario/', viewsReporte.AsigPorOperario , name='asignaciones_por_operario'),
     url(r'^reportes/datosOperario/', viewsReporte.datosOperario , name='datos_operario'),
-     url(r'^reportes/descargarAsignacionesXls/', viewsReporte.getAsignacionesExcel , name='asignaciones_xls'),
+    url(r'^reportes/descargarAsignacionesXls/(?P<id_operario>\d+)', viewsReporte.getAsignacionesExcel , name='asignaciones_xls'),
+    url(r'^reportes/descargarAsignacionesPDF/(?P<id_operario>\d+)', viewsReporte.getAsignacionesPDF , name='asignaciones_pdf'),
 ]   

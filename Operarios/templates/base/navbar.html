@@ -9,7 +9,7 @@
 {% url 'Operarios:marcaciones_url' as marcaciones_url %}
 {% url 'Operarios:feriados_url' as feriados_url %}
 {% url 'Operarios:fiscales_list' as fiscales_url %} 
-{% url 'remplazos' as remplazos_url %}
+{% url 'Operarios:alertas_2dolist' as remplazos_url %} 
 {% url 'Operarios:alertas_list' as alertas_url %}
 {% url 'Operarios:asignaciones_por_operario' as asignaciones_operario_url %}
 
@@ -61,7 +61,7 @@ $("#salir").on('click',"a[data-window='external']", function() {
                         </a>
                         <div class="dropdown-menu dropdown-menu-left submenu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item submenu-a" href="{{ alertas_url }}">1er Nivel</a>
-                            <a class="dropdown-item submenu-a" href="{{ remplazos_url }">2do Nivel</a>
+                            <a class="dropdown-item submenu-a" href="{{ remplazos_url }}">2do Nivel</a> 
                             <a class="dropdown-item submenu-a" href="{{marcaciones_url}}">Marcaciones</a>
                             <a class="dropdown-item submenu-a" href="{{ feriados_url}}">Asig. Feriados</a>
                             <a class="dropdown-item submenu-a" href="#">Horas sin Asig</a>

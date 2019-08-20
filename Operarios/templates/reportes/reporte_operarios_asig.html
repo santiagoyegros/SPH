@@ -6,6 +6,7 @@
 
 
 <div class="col-md-12 pl-0 pr-1">
+    <form method="GET" role="form" id="formulario">
     <div class="card" style="margin-bottom:15px !important;">
         <div class="card-header">
             Operario
@@ -115,8 +116,8 @@
             </a>
 
             <div id="id_dropdown" class="dropdown-menu estilo-exportar" aria-labelledby="dropdownMenuLink">
-                <a id="id_excel" class="dropdown-item estilo-opcion" href="#">EXCEL</a>
-                <a id="id_pdf" class="dropdown-item estilo-opcion" href="#">PDF</a>
+                <a id="id_excel" class="dropdown-item estilo-opcion" href=#>EXCEL</a>
+                <a id="id_pdf" class="dropdown-item estilo-opcion" href=#>PDF</a>
             </div>
         </div>
     </div>
@@ -150,13 +151,13 @@
             </div>
         </div>
     </div>
+</form>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
         $("#id_operarios").change(function () {
             console.log("aca entro");
             var id = $('#id_operarios').val();
-            console.log("this: ", id);
             $.ajax({
                 url: '/reingenieria/reportes/datosOperario/',
                 type: 'GET',
@@ -164,6 +165,7 @@
                     'id': id,
                 },
                 success: function (response) {
+                    $("#tabla tbody").empty();
                     $('#id_nombreOperario').val(response.nombre);
                     $('#id_apellidoOperario').val(response.apellido);
                     $('#id_legajoOperario').val(response.legajo);
@@ -175,45 +177,19 @@
                     console.log(response.asignaciones)
                     if (response.asignaciones.length > 0) {
                         console.log("ento aca")
-                        var i = 1
-                        $.each(response.asignaciones, function (index, value) {
-                            console.log("--- ", value.vieSal)
-                            console.log('undefined' == typeof (value.vieSal));
-                            var NewRow = '<tr><td">' + value.totalHoras + '</td>';
-                            NewRow = '<tr><td">' + value.lunEnt + '</td>';
-                            NewRow = '<tr><td">' + value.marEnt + '</td>';
-                            NewRow = '<tr><td">' + value.mieEnt + '</td>';
-                            NewRow = '<tr><td">' + value.jueEnt + '</td>';
-                            NewRow = '<tr><td">' + value.vieEnt + '</td>';
-                            NewRow = '<tr><td">' + value.sabEnt + '</td>';
-                            NewRow = '<tr><td">' + value.domEnt + '</td>';
-                            NewRow += '</tr>';
-                            var NewRow = '<tr><td">' + value.totalHoras + '</td>';
-                            $("#tabla tbody").append($('<td>').text(i));
-                            $("#tabla tbody").append($('<td>'));
-                            $("#tabla tbody").append($('<td>').text(value.totalHoras));
-                            if (typeof (value.lunEnt) != 'undefined' & typeof (value.lunSal) != 'undefined') {
-                                $("#tabla tbody").append($('<td>').text(value.lunEnt + " a " + value.lunSal));
-                            }
-                            if (typeof (value.marEnt) != 'undefined' || typeof (value.marSal) != 'undefined') {
-                                $("#tabla tbody").append($('<td>').text(value.marEnt + " a " + value.marSal));
-                            }
-                            if (typeof (value.mieEnt) != 'undefined' || typeof (value.mieSal) != 'undefined') {
-                                $("#tabla tbody").append($('<td>').text(value.mieEnt + " a " + value.mieSal));
-                            }
-                            if (typeof (value.jueEnt) != 'undefined' || typeof (value.jueSal) != 'undefined') {
-                                $("#tabla tbody").append($('<td>').text(value.jueEnt + " a " + value.jueSal));
-                            }
-                            if (typeof (value.vieEnt) != 'undefined' || typeof (value.vieSal) != 'undefined') {
-                                $("#tabla tbody").append($('<td>').text(value.vieEnt + " a " + value.vieSal));
-                            }
-                            if (typeof (value.sabEnt) != 'undefined' || typeof (value.sabSal) != 'undefined') {
-                                $("#tabla tbody").append($('<td>').text(value.sabEnt + " a " + value.sabSal));
-                            }
-                            if (typeof (value.domEnt) != 'undefined' || typeof (value.domSal) != 'undefined') {
-                                $("#tabla tbody").append($('<td>').text(value.domEnt + " a " + value.domSal));
-                            }
-                            i = i + 1;
+                        $.each(response.asignaciones, function (index, value) {                            
+                            $("#tabla tbody").append($('<tr>'))
+                            $("#tabla tbody").append($('<td>').text(value[0]));
+                            $("#tabla tbody").append($('<td>').text(value[1]));
+                            $("#tabla tbody").append($('<td>').text(value[2]));
+                            $("#tabla tbody").append($('<td>').text(value[3]));
+                            $("#tabla tbody").append($('<td>').text(value[4]));
+                            $("#tabla tbody").append($('<td>').text(value[5]));
+                            $("#tabla tbody").append($('<td>').text(value[6]));
+                            $("#tabla tbody").append($('<td>').text(value[7]));
+                            $("#tabla tbody").append($('<td>').text(value[8]));
+                            $("#tabla tbody").append($('<td>').text(value[9]));
+                            $("#tabla tbody").append($('<tr>'))
                         });
                     } else {
                         console.log("empty")
@@ -242,28 +218,46 @@
         $('#id_horaFinOperario').val("");
         $('#id_operarios').val("");
         $('#id_operarios').selectpicker("refresh");
+        $("#tabla tbody").empty();
     });
 
     $(document).on('click', '#id_excel', function () {
         id_operario=$('#id_operarios').val();
-        console.log(".... "+id_operario);
-        startLoader();
+        if(id_operario){
+            startLoader();
+            window.open("/reingenieria/reportes/descargarAsignacionesXls/"+id_operario);
+        }     
         $.ajax({
-                url: "/reingenieria/reportes/descargarAsignacionesXls/",
-                type: "GET",
-                data: {
-                    'id': id_operario,
-                },
+                url: '/reingenieria/reportes/descargarAsignacionesXls/'+id_operario,
+                type: 'GET',
                 success: function (response) {
-                    console.log("funciona");
                     endLoader();
                 },
                 error: function () {
-                    console.log('error')
-                    endLoader();
+                    console.log('error');
                 },
         });
-        
+
+    });
+
+    $(document).on('click', '#id_pdf', function () {
+        id_operario=$('#id_operarios').val();
+        if(id_operario){
+            startLoader();
+            window.open("/reingenieria/reportes/descargarAsignacionesPDF/"+id_operario); 
+        }else{
+            id_operario=0;
+        }     
+        $.ajax({
+                url: '/reingenieria/reportes/descargarAsignacionesPDF/'+id_operario,
+                type: 'GET',
+                success: function (response) {
+                    endLoader();
+                },
+                error: function () {
+                    console.log('error');
+                },
+        });  
     });
 </script>
 

@@ -44,30 +44,23 @@ def registrar_ausencia():
             dateAlerta= datetime.datetime.strptime(a.FechaHora.strftime("%Y-%mm-%dd %H:%M:%S"),"%Y-%mm-%dd %H:%M:%S")
             if a.Estado == 'ABIERTA':
                 if dateAlerta <= dateParametro:
-                    print("ALERTA ABIERTA ACTUAL",a.id)
                     """Si existe un registro de la asignacion de la alerta"""
                     if AsignacionDet.objects.filter(id=a.Asignacion_id).exists():
                         """SI LA ASIGNACION DE LA ALERTA NO FUE PROCESADA"""
                         if not AsignacionesProcesadas.objects.filter(asignacionDet_id=a.Asignacion_id).exists():
-                            print("Asignacion actual", a.Asignacion_id)
                             """Corroboramos la consistencia de los datos"""
                             if Operario.objects.filter(id=a.Operario_id).exists():
                                 operario = Operario.objects.get(id=a.Operario_id)
-                                print("Operario actual",operario.numCedula)
                                 """Se obtiene el horario de la Alerta"""
                                 entrada, salida = getHoraDia(dateAlerta.weekday(),a.Asignacion_id)
                                 if entrada and salida:
-                                    print("Horario de entrada y salida", entrada,salida)
                                     """Obtiene total horas de la Alerta"""
                                     tentrada = timedelta(hours = entrada.hour, minutes= entrada.minute)
                                     tsalida = timedelta(hours = salida.hour, minutes= salida.minute)
                                     totalHoras = tsalida - tentrada
-                                    print("Total horas", totalHoras)
-                                    print("Fecha de la alerta", dateAlerta)
                                     
                                     """ Se otiene el tipo de horario """
                                     tipoHorario = getTipoHorario(entrada,salida)
-                                    print("Tipo horario",tipoHorario)
                                     noProcesada = HorasNoProcesadas(
                                         NumCedulaOperario = operario.numCedula, 
                                         Hentrada = str(entrada), 
@@ -79,11 +72,9 @@ def registrar_ausencia():
                                         comentario="AUSENCIA")
                                     """Se guarda el registro de hora no procesada"""
                                     noProcesada.save() 
-                                    print("------>HORA NO PROCESADA GUARDADA")
                                     """Se cierra la alerta"""
                                     a.Estado = "CERRADA"
                                     a.save()
-                                    print("------> ALERTA CERRADA")
                                     """Se guarda la respuesta de la alerta"""
                                     user_parametrico = settings.GLOBAL_SETTINGS['USER_CALLCENTER']
                                     if Parametros.objects.filter(parametro = 'USER_CALLCENTER').exists():
@@ -103,7 +94,6 @@ def registrar_ausencia():
                                         id_alerta = a
                                     )
                                     alerta_respuesta.save()
-                                    print("------> RESPUESTA ALERTA GUARDADA")
     except Exception as err:
                 transaction.rollback()
                 logging.getLogger("error_logger").error('Ocurrió un error al generar la ausencia automática: {0}'.format(err))

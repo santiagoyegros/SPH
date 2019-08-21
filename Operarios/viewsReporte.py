@@ -10,6 +10,8 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required, permission_required
 from Operarios.models import Operario, DiaLibre, AsignacionDet, AsignacionCab
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required, permission_required
+from django.utils.decorators import method_decorator
 import openpyxl
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill
@@ -28,8 +30,24 @@ from reportlab.lib.utils import ImageReader
 import json
 from datetime import datetime
 from PIL import Image
+from django.contrib.auth.models import Permission
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.staticfiles.templatetags.staticfiles import static
+
+
+decorator_with_arguments = lambda decorator: lambda *args, **kwargs: lambda func: decorator(func, *args, **kwargs)
+
+@decorator_with_arguments
+def permiso_requerido(function, perm):
+    def _function(request, *args, **kwargs):
+        if request.user.has_perm(perm):
+            return function(request, *args, **kwargs)
+        else:
+            return render(request,'forbidden.html')
+    return _function
 
 @login_required
+@permiso_requerido('Operarios.view_AsigsPorOperario')
 def AsigPorOperario(request):
     operarios=Operario.objects.all()
     contexto={
@@ -163,6 +181,10 @@ def datosOperario(request):
     return HttpResponse(json.dumps(data),content_type="application/json")
 
 
+
+
+@login_required
+@permiso_requerido('Operarios.view_AsigsPorOperarioExcel')
 def getAsignacionesExcel(request,id_operario=None):
     if(id_operario!='0'):
         operario=Operario.objects.get(Q(id=id_operario))
@@ -176,7 +198,7 @@ def getAsignacionesExcel(request,id_operario=None):
             cantAsignaciones+=1
             total=total+int(a.totalHoras)
 
- 
+
         diaLibre1=diasLibres[0]["nombre"]
         hora=diasLibres[0]["hEntrada"].split(':')
         hora1=hora[0]+':'+hora[1]
@@ -220,7 +242,7 @@ def getAsignacionesExcel(request,id_operario=None):
         row_num = 2
 
         worksheet.merge_cells('F1:G3')
-        png = r'C:\Users\fabricasw04\Desktop\reingenieria\Operarios\static\logo.png'
+        png = r'.\Operarios\static\logo.png'
         img = Image.open(png)
         img = img.resize((220,65),Image.NEAREST)
         img.save(png)        
@@ -284,9 +306,9 @@ def getAsignacionesExcel(request,id_operario=None):
             cell.value = cell_value
         
         thin_border = Border(left=Side(style='thin'), 
-                     right=Side(style='thin'), 
-                     top=Side(style='thin'), 
-                     bottom=Side(style='thin'))
+                    right=Side(style='thin'), 
+                    top=Side(style='thin'), 
+                    bottom=Side(style='thin'))
 
             
         for j in range(3,7):
@@ -327,9 +349,9 @@ def getAsignacionesExcel(request,id_operario=None):
             cell.value = column_title
 
         thin_border = Border(left=Side(style='thin'), 
-                     right=Side(style='thin'), 
-                     top=Side(style='thin'), 
-                     bottom=Side(style='thin'))
+                    right=Side(style='thin'), 
+                    top=Side(style='thin'), 
+                    bottom=Side(style='thin'))
 
         
 
@@ -414,6 +436,9 @@ def getAsignacionesExcel(request,id_operario=None):
         return response
 
 
+
+@login_required
+@permiso_requerido('Operarios.view_AsigsPorOperarioPdf')
 def getAsignacionesPDF(request,id_operario=None):
     operario=Operario.objects.get(Q(id=id_operario))
     asignaciones=AsignacionDet.objects.filter(operario_id=operario.id)
@@ -465,7 +490,7 @@ def getAsignacionesPDF(request,id_operario=None):
     c.setFillColor(HexColor('#000000'))
     totalAux=str(total)+" hrs."
     c.drawString(200,580,totalAux) 
-    png = r'C:\Users\fabricasw04\Desktop\reingenieria\Operarios\static\logo1.png'
+    png = r'.\static\logo1.png'
     logo=ImageReader(png)
     c.drawImage(logo,480,770,width=90,height=60,mask='auto')
     c.line(30,720,580,720)

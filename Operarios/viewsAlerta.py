@@ -127,6 +127,92 @@ def alertasList (request):
     }
     return render(request, 'alertas/alerta_list.html', context=contexto)
 
+def alertas2doList(request):
+    estado="Abierta"
+    fechaDesde=request.GET.get('fechaDesde')
+    fechaHasta=request.GET.get('fechaHasta')
+    operario=None
+    tipoAlerta=None
+    #SOLO ALERTAS DE NIVEL 2
+    Nivel = 2
+    """query por defecto con fecha del dia"""
+    hoy= datetime.datetime.now()
+    hoyIni=hoy.replace(hour=0,minute=0,second=0, microsecond=0)
+    print ("Entra nuevamente en alertasList")
+    hoyFin=hoyIni.replace(hour=23,minute=59,second=59)
+    alertasList=Alertas.objects.filter(FechaHora__gte=hoyIni,FechaHora__lte=hoyFin)
+    operarios = Operario.objects.all()
+    motivos = Motivos.objects.all()
+    alertasList=alertasList.filter(Estado="ABIERTA")
+    alertasList=alertasList.order_by("-FechaHora")
+   
+
+    """query por filtro segun el usuario"""
+    print (request.GET.get('fechaDesde'))
+    print (request.GET.get('fechaHasta'))
+    print (request.GET.get('estado'))
+    print (request.GET.get('operario'))
+    
+    if request.GET.get("fechaDesde") and request.GET.get("fechaHasta"):
+        fechaDesdeAux=datetime.datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").replace(hour=0,minute=0,second=0, microsecond=0)
+        fechaHastaAux=datetime.datetime.strptime(request.GET.get('fechaHasta'), "%d/%m/%Y").replace(hour=23,minute=59,second=59, microsecond=0)     
+        aux1=str(request.GET.get("fechaDesde")).split('/')
+        aux2=str(request.GET.get("fechaHasta")).split('/')
+        fDesdeAux=aux1[2]+'-'+aux1[1]+'-'+aux1[0]
+        fHastaAux=aux2[2]+'-'+aux2[1]+'-'+aux2[0]
+        alertasList=Alertas.objects.filter(FechaHora__gte=fDesdeAux,FechaHora__lte=fHastaAux)
+
+    if request.GET.get('estado'):
+        alertasList=alertasList.filter(Estado__contains=request.GET.get('estado'))
+        estado=request.GET.get('estado')
+    if request.GET.get('tipoAlerta'):
+        if(request.GET.get('tipoAlerta')!="TODOS" ):
+            alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))            
+        tipoAlerta=request.GET.get('tipoAlerta')
+    if request.GET.get('operario') :
+        alertasList=alertasList.filter(Operario_id=request.GET.get('operario'))
+        operario=int(request.GET.get('operario'))
+    #Finalmente solo mostramos las alertas de nivel 2
+    alertasList = alertasList.filter(Nivel=Nivel)
+    pageNumber=request.GET.get("page",1)
+    paginar=do_paginate(alertasList.order_by("-FechaHora"), pageNumber)
+    alertasList=paginar[0]
+    paginator=paginar[1]
+    print ("LONG ",len(alertasList))
+
+    for a in alertasList:
+        if a.FechaHora:
+            fecha = (a.FechaHora).strftime("%d/%m/%Y")
+            a.Fecha = fecha
+            hora = (a.FechaHora).strftime("%H:%M:%S")
+            a.Hora = hora
+
+        if a.Operario_id:
+            try:
+                op = Operario.objects.get(id=a.Operario_id)
+                a.Operario_nombre = op.nombre
+            except Operario.DoesNotExist:
+                raise Http404("Operario relacionado a una Alerta no existe")  
+
+        if a.PuntoServicio_id:
+            try:
+                punto = PuntoServicio.objects.get(Q(id=a.PuntoServicio_id))
+                a.Punto_nombre = punto.NombrePServicio
+            except PuntoServicio.DoesNotExist:
+                raise Http404("Punto de Servicio relacionado a una Alerta no existe")  
+    contexto = {
+        'title': 'Filtrado de Alertas',
+        'alertasList':alertasList,
+        'paginator':paginator,
+        'operarios':operarios,
+        'motivos':motivos,
+        "fechaDesde":fechaDesde,
+        "fechaHasta":fechaHasta,
+        "estado":estado,
+        "operario":operario      
+    }
+    return render(request, 'alertas/alerta_list_2do.html', context=contexto)
+
 
 def mostrarCupos(request):
     alerta=Alertas.objects.get(Q(id=request.GET.get("id")))
@@ -357,6 +443,17 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
        
         conn.close()
         return [OperariosAsignacionDet(*row) for row in result]
+
+@login_required
+def gestion_alertas2do(request,alerta_id=None):
+    motivos = Motivos.objects.all()
+    contexto = {
+        'title': 'Gestión de Alertas 2do Nivel',
+        'motivos':motivos
+    }
+    return render(request, 'alertas/alerta_gestionar2do.html', context=contexto)
+
+
 
 @login_required
 def gestion_alertas(request,alerta_id=None):

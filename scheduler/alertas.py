@@ -45,8 +45,6 @@ def registrar_alerta():
         existeAlerta=Alertas.objects.filter(FechaHora__gt=desdeMod,FechaHora__lt=ahoraMod,Asignacion=asig)
         cuentaAlerta=existeAlerta.count()
         cuenta=existeMarcacion.count()
-        print(cuenta)
-        print(cuentaAlerta)
         if cuenta == 0 and cuentaAlerta==0:
             alerta = Alertas(FechaHora=ahoraMod,Operario=operario,Asignacion=asig,PuntoServicio=cabecera.puntoServicio,Estado='ABIERTA',Tipo='NO-MARC' )
             print("Cree una alerta")

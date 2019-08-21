@@ -17,29 +17,32 @@ from django.core import serializers
 from Operarios.models import Alertas
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Operarios.models import OperariosAsignacionDet
-from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones,HorasNoProcesadas, HorariosOperario, RemplazosCab, RemplazosDet, AlertaResp, Parametros
+from Operarios.models import PuntoServicio, Operario, AsignacionCab, AsignacionDet, AsigFiscalPuntoServicio, EsmeEmMarcaciones,HorasNoProcesadas, HorariosOperario, RemplazosCab, RemplazosDet, AlertaResp, Parametros, Motivos, CupoReal, CupoUtilizado,HorasProcesadas,TipoHorario
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import connection, transaction
 from Operarios.models import Motivos
-
 from django.db.models import Q
+import json
 @login_required
 
 def alertasList (request):
     estado="Abierta"
     fechaDesde=request.GET.get('fechaDesde')
     fechaHasta=request.GET.get('fechaHasta')
+    horaInicio=request.GET.get('horaInicio')
+    horaFin=request.GET.get('horaFin')
     puntoServicio=None
     operario=None
     tipoAlerta=None
     """query por defecto con fecha del dia"""
     hoy= datetime.datetime.now()
     hoyIni=hoy.replace(hour=0,minute=0,second=0, microsecond=0)
-
+    print ("Entra nuevamente en alertasList")
     hoyFin=hoyIni.replace(hour=23,minute=59,second=59)
     alertasList=Alertas.objects.filter(FechaHora__gte=hoyIni,FechaHora__lte=hoyFin)
     operarios = Operario.objects.all()
+    motivos = Motivos.objects.all()
     PuntosServicio = PuntoServicio.objects.all()
     alertasList=alertasList.filter(Estado="ABIERTA")
     alertasList=alertasList.order_by("-FechaHora")
@@ -50,22 +53,28 @@ def alertasList (request):
     print (request.GET.get('puntoServicio'))
     print (request.GET.get('fechaDesde'))
     print (request.GET.get('fechaHasta'))
+    print(request.GET.get('horaInicio'))
+    print(request.GET.get('horaFin'))
     print (request.GET.get('estado'))
     print (request.GET.get('tipoAlerta'))
     print (request.GET.get('operario'))
-
-
     
-    if request.GET.get("fechaDesde") and request.GET.get("fechaHasta"):
+    if request.GET.get("fechaDesde") and request.GET.get("fechaHasta") and request.GET.get("horaInicio") and request.GET.get("horaFin"):
         fechaDesdeAux=datetime.datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").replace(hour=0,minute=0,second=0, microsecond=0)
         fechaHastaAux=datetime.datetime.strptime(request.GET.get('fechaHasta'), "%d/%m/%Y").replace(hour=23,minute=59,second=59, microsecond=0)     
-        alertasList=Alertas.objects.filter(FechaHora__gte=fechaDesdeAux,FechaHora__lte=fechaHastaAux)
+        aux1=str(request.GET.get("fechaDesde")).split('/')
+        aux2=str(request.GET.get("fechaHasta")).split('/')
+        fDesdeAux=aux1[2]+'-'+aux1[1]+'-'+aux1[0]+' '+request.GET.get("horaInicio")+':00'
+        fHastaAux=aux2[2]+'-'+aux2[1]+'-'+aux2[0]+' '+request.GET.get("horaFin")+':00'
+        alertasList=Alertas.objects.filter(FechaHora__gte=fDesdeAux,FechaHora__lte=fHastaAux)
 
     if request.GET.get('estado'):
         alertasList=alertasList.filter(Estado__contains=request.GET.get('estado'))
         estado=request.GET.get('estado')
     if request.GET.get('tipoAlerta'):
-        alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))
+        print(request.GET.get('tipoAlerta'))
+        if(request.GET.get('tipoAlerta')!="TODOS" ):
+            alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))            
         tipoAlerta=request.GET.get('tipoAlerta')
     if request.GET.get('operario') :
         alertasList=alertasList.filter(Operario_id=request.GET.get('operario'))
@@ -73,7 +82,7 @@ def alertasList (request):
     if request.GET.get('puntoServicio') :
         alertasList=alertasList.filter(PuntoServicio_id=request.GET.get('puntoServicio'))
         puntoServicio=int(request.GET.get('puntoServicio'))
-    """se procede a obtener la paginacion"""
+    
     pageNumber=request.GET.get("page",1)
     paginar=do_paginate(alertasList.order_by("-FechaHora"), pageNumber)
     alertasList=paginar[0]
@@ -89,8 +98,8 @@ def alertasList (request):
 
         if a.Operario_id:
             try:
-                operario = Operario.objects.get(id=a.Operario_id)
-                a.Operario_nombre = operario.nombre
+                op = Operario.objects.get(id=a.Operario_id)
+                a.Operario_nombre = op.nombre
             except Operario.DoesNotExist:
                 raise Http404("Operario relacionado a una Alerta no existe")  
 
@@ -100,24 +109,213 @@ def alertasList (request):
                 a.Punto_nombre = punto.NombrePServicio
             except PuntoServicio.DoesNotExist:
                 raise Http404("Punto de Servicio relacionado a una Alerta no existe")  
-
     contexto = {
         'title': 'Filtrado de Alertas',
         'alertasList':alertasList,
         'paginator':paginator,
         'operarios':operarios,
+        'motivos':motivos,
         'PuntosServicio':PuntosServicio,
         "fechaDesde":fechaDesde,
-        "fechaHasta":fechaHasta, 
+        "fechaHasta":fechaHasta,
+        "horaInicio":horaInicio,
+        "horaFin":horaFin, 
         "estado":estado,
         "puntoServicio":puntoServicio,
         "operario":operario,
-        "tipoAlerta":tipoAlerta
-    
-        
+        "tipoAlerta":tipoAlerta        
     }
-
     return render(request, 'alertas/alerta_list.html', context=contexto)
+
+def alertas2doList(request):
+    estado="Abierta"
+    fechaDesde=request.GET.get('fechaDesde')
+    fechaHasta=request.GET.get('fechaHasta')
+    operario=None
+    tipoAlerta=None
+    #SOLO ALERTAS DE NIVEL 2
+    Nivel = 2
+    """query por defecto con fecha del dia"""
+    hoy= datetime.datetime.now()
+    hoyIni=hoy.replace(hour=0,minute=0,second=0, microsecond=0)
+    print ("Entra nuevamente en alertasList")
+    hoyFin=hoyIni.replace(hour=23,minute=59,second=59)
+    alertasList=Alertas.objects.filter(FechaHora__gte=hoyIni,FechaHora__lte=hoyFin)
+    operarios = Operario.objects.all()
+    motivos = Motivos.objects.all()
+    alertasList=alertasList.filter(Estado="ABIERTA")
+    alertasList=alertasList.order_by("-FechaHora")
+   
+
+    """query por filtro segun el usuario"""
+    print (request.GET.get('fechaDesde'))
+    print (request.GET.get('fechaHasta'))
+    print (request.GET.get('estado'))
+    print (request.GET.get('operario'))
+    
+    if request.GET.get("fechaDesde") and request.GET.get("fechaHasta"):
+        fechaDesdeAux=datetime.datetime.strptime(request.GET.get('fechaDesde'), "%d/%m/%Y").replace(hour=0,minute=0,second=0, microsecond=0)
+        fechaHastaAux=datetime.datetime.strptime(request.GET.get('fechaHasta'), "%d/%m/%Y").replace(hour=23,minute=59,second=59, microsecond=0)     
+        aux1=str(request.GET.get("fechaDesde")).split('/')
+        aux2=str(request.GET.get("fechaHasta")).split('/')
+        fDesdeAux=aux1[2]+'-'+aux1[1]+'-'+aux1[0]
+        fHastaAux=aux2[2]+'-'+aux2[1]+'-'+aux2[0]
+        alertasList=Alertas.objects.filter(FechaHora__gte=fDesdeAux,FechaHora__lte=fHastaAux)
+
+    if request.GET.get('estado'):
+        alertasList=alertasList.filter(Estado__contains=request.GET.get('estado'))
+        estado=request.GET.get('estado')
+    if request.GET.get('tipoAlerta'):
+        if(request.GET.get('tipoAlerta')!="TODOS" ):
+            alertasList=alertasList.filter(Tipo__contains=request.GET.get('tipoAlerta'))            
+        tipoAlerta=request.GET.get('tipoAlerta')
+    if request.GET.get('operario') :
+        alertasList=alertasList.filter(Operario_id=request.GET.get('operario'))
+        operario=int(request.GET.get('operario'))
+    #Finalmente solo mostramos las alertas de nivel 2
+    alertasList = alertasList.filter(Nivel=Nivel)
+    pageNumber=request.GET.get("page",1)
+    paginar=do_paginate(alertasList.order_by("-FechaHora"), pageNumber)
+    alertasList=paginar[0]
+    paginator=paginar[1]
+    print ("LONG ",len(alertasList))
+
+    for a in alertasList:
+        if a.FechaHora:
+            fecha = (a.FechaHora).strftime("%d/%m/%Y")
+            a.Fecha = fecha
+            hora = (a.FechaHora).strftime("%H:%M:%S")
+            a.Hora = hora
+
+        if a.Operario_id:
+            try:
+                op = Operario.objects.get(id=a.Operario_id)
+                a.Operario_nombre = op.nombre
+            except Operario.DoesNotExist:
+                raise Http404("Operario relacionado a una Alerta no existe")  
+
+        if a.PuntoServicio_id:
+            try:
+                punto = PuntoServicio.objects.get(Q(id=a.PuntoServicio_id))
+                a.Punto_nombre = punto.NombrePServicio
+            except PuntoServicio.DoesNotExist:
+                raise Http404("Punto de Servicio relacionado a una Alerta no existe")  
+    contexto = {
+        'title': 'Filtrado de Alertas',
+        'alertasList':alertasList,
+        'paginator':paginator,
+        'operarios':operarios,
+        'motivos':motivos,
+        "fechaDesde":fechaDesde,
+        "fechaHasta":fechaHasta,
+        "estado":estado,
+        "operario":operario      
+    }
+    return render(request, 'alertas/alerta_list_2do.html', context=contexto)
+
+
+def mostrarCupos(request):
+    alerta=Alertas.objects.get(Q(id=request.GET.get("id")))
+    puntoServ_id=alerta.PuntoServicio_id
+    fecha=alerta.FechaHora.strftime("%d/%m/%Y").split('/')
+    mes=fecha[1]
+    anho=fecha[2]
+    totalUtilizado=0
+    if(CupoReal.objects.filter(Q(puntoServicio_id=puntoServ_id) & Q(mes=mes) & Q(anho=anho) ).exists()):
+        cupo=CupoReal.objects.get(Q(puntoServicio_id=puntoServ_id) & Q(mes=mes) & Q(anho=anho) )
+        cupoTotal=cupo.cupoCalculado
+    elif(CupoReal.objects.filter(Q(puntoServicio_id=puntoServ_id) & Q(mes=int(mes)) & Q(anho=anho) ).exists()):
+        cupo=CupoReal.objects.get(Q(puntoServicio_id=puntoServ_id) & Q(mes=int(mes)) & Q(anho=anho) )
+        cupoTotal=cupo.cupoCalculado
+
+    else:
+        cupoTotal=0
+    if(CupoUtilizado.objects.filter(Q(puntoServicio_id=puntoServ_id) & Q(mes=mes) & Q(anho=anho)).exists()):
+        cuposUtilizados=CupoUtilizado.objects.filter(Q(puntoServicio_id=puntoServ_id) & Q(mes=mes) & Q(anho=anho))
+        for c in cuposUtilizados:
+            totalUtilizado=totalUtilizado + c.cupoUtilizado
+    if(CupoUtilizado.objects.filter(Q(puntoServicio_id=puntoServ_id) & Q(mes=int(mes)) & Q(anho=anho)).exists()):
+        cuposUtilizados=CupoUtilizado.objects.filter(Q(puntoServicio_id=puntoServ_id) & Q(mes=int(mes)) & Q(anho=anho))
+        for c in cuposUtilizados:
+            totalUtilizado=totalUtilizado + c.cupoUtilizado
+    
+    data = {
+        "cupoTotal":cupoTotal,
+        "cupoUtilizado":totalUtilizado
+    }
+    
+    return HttpResponse(json.dumps(data),content_type="application/json")
+
+
+
+def guardarSinAsignacion(request,id_alerta=None):
+    print("request aca: ",request.POST)
+
+    if request.POST.get('motivo'):
+        exito=0
+        motivo=request.POST.get('motivo')            
+        observacion=request.POST.get('observacion')
+        try:
+            alerta=Alertas.objects.get(id=id_alerta)
+            puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id))
+            horarios=[]
+            if alerta.Asignacion:
+                horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
+            """Se cambia el estado de la alerta"""
+            setattr(alerta,"Estado", "CERRADA")
+            alerta.save()
+            """Se guarda la gestion de sin asignacion en respuesta alerta"""
+            respAlerta=AlertaResp.objects.create(accion='SINA-JUSTIFICADO',id_alerta=alerta, motivo_id=motivo, comentarios=observacion, usuario=request.user,fecha_creacion=datetime.datetime.now())
+            respAlerta.save()
+            """Se guarda en respuestas procesadas"""
+            if horarios:
+                if(horarios[0].horaEntrada!=None and horarios[0].horaSalida!=None):
+                    limiteDiurnoSuperior = datetime.time(20, 0)
+                    limiteDiurnoInferior = datetime.time(6, 0)
+                    start = datetime.datetime.strptime(str(horarios[0].horaEntrada), "%H:%M:%S")
+                    end = datetime.datetime.strptime(str(horarios[0].horaSalida), "%H:%M:%S")
+                    diferencia=end-start
+                    lDiurnoInferior=datetime.datetime.strptime(str(limiteDiurnoInferior),"%H:%M:%S")
+                    lDiurnoSuperior=datetime.datetime.strptime(str(limiteDiurnoSuperior),"%H:%M:%S")
+                    if (horarios[0].horaEntrada >= limiteDiurnoInferior and horarios[0].horaSalida <= limiteDiurnoSuperior):
+                        horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=str(diferencia),TipoHora="Diurno")
+                        horasProcesadas.save()
+                    elif (horarios[0].horaEntrada < limiteDiurnoInferior and horarios[0].horaSalida <= limiteDiurnoInferior) or (horarios[0].horaEntrada > limiteDiurnoSuperior and horarios[0].horaSalida >= limiteDiurnoSuperior):
+                        horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=str(diferencia),TipoHora="Nocturno")
+                        horasProcesadas.save()
+                    elif (limiteDiurnoInferior > horarios[0].horaEntrada and limiteDiurnoInferior < horarios[0].horaSalida):
+                        diferencia1=lDiurnoInferior - start
+                        horasProcesadasNoc=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=limiteDiurnoInferior, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=str(diferencia1),TipoHora="Nocturno")
+                        horasProcesadasNoc.save()
+                        diferencia2=end - lDiurnoInferior
+                        horasProcesadasDiu=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=limiteDiurnoInferior, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=str(diferencia2),TipoHora="Diurno")
+                        horasProcesadasDiu.save()
+                    elif (limiteDiurnoSuperior > horarios[0].horaEntrada and limiteDiurnoSuperior < horarios[0].horaSalida):
+                        diferencia1=lDiurnoSuperior - start
+                        horasProcesadasDiu=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=limiteDiurnoSuperior, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=str(diferencia1),TipoHora="Diurno")
+                        horasProcesadasDiu.save()
+                        diferencia2=end - lDiurnoSuperior
+                        horasProcesadasNoc=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=limiteDiurnoSuperior, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date(), total=str(diferencia2),TipoHora="Nocturno")
+                        horasProcesadasNoc.save()
+                else:
+                        horasProcesadas=HorasProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=alerta.PuntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'Hora Procesada - SinA', fecha=alerta.FechaHora.date())
+                        horasProcesadas.save()
+        except Exception as err:
+            exito=1
+            transaction.rollback()
+            logging.getLogger("error_logger").error('No se pudo gestionar la alerTa: {0}'.format(err))
+
+        else:
+            transaction.commit()
+        finally:
+            if exito==0:
+                m=messages.success(request, 'Alerta gestionada con exito')
+                transaction.set_autocommit(True)
+                return HttpResponse(m)
+            else:                
+                m=messages.warning(request, 'No se pudo gestionar la alerta')
+                return HttpResponse(m) 
+
 
 
 def do_paginate(data_list, page_number):
@@ -138,7 +336,7 @@ def getMarcaciones(request):
     alerta_id= request.GET.get('alerta_id')
     alerta=Alertas.objects.get(id=alerta_id)
     operario=Operario.objects.get(id=alerta.Operario.id)
-    ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
+    ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("-fecha")[:10]
 
     return HttpResponse(serializers.serialize("json",ultimasMarcaciones), content_type = 'application/json', status = 200);
 
@@ -247,6 +445,17 @@ def buscar_operarios(puntoServicio, totalHoras, lunEntReq, lunSalReq, marEntReq,
         return [OperariosAsignacionDet(*row) for row in result]
 
 @login_required
+def gestion_alertas2do(request,alerta_id=None):
+    motivos = Motivos.objects.all()
+    contexto = {
+        'title': 'Gestión de Alertas 2do Nivel',
+        'motivos':motivos
+    }
+    return render(request, 'alertas/alerta_gestionar2do.html', context=contexto)
+
+
+
+@login_required
 def gestion_alertas(request,alerta_id=None):
     alerta=Alertas.objects.get(id=alerta_id)
     horario = ""
@@ -257,127 +466,160 @@ def gestion_alertas(request,alerta_id=None):
     motivos=[]
     motivos = Motivos.objects.all()
     supervisor=None
-    if alerta.FechaHora:
+    asignacionOperario=""
+    alertasSinAsig=""
+    try:
+        if alerta.FechaHora:
             fecha = (alerta.FechaHora).strftime("%d/%m/%Y")
             alerta.Fecha = fecha 
             hora = (alerta.FechaHora).strftime("%H:%M:%S")
             alerta.Hora = hora
-    """Se obtiene el horario del operario"""
-    horarios=[]
-    print("ALERTA ASIGNACION", alerta.Asignacion)
-    if alerta.Asignacion:
-        horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
-        penalizacionFinal=Parametros.objects.get(tipo__contains="ALERTAS", parametro__contains="PENALIZACION")
-        if horarios:
-            if horarios[0]:
-                if horarios[0].horaEntrada:
-                    horario = horarios[0].horaEntrada.strftime("%H:%M:%S")
-                    horaFinal=datetime.datetime.strptime(horarios[0].horaEntrada.strftime("%H:%M:%S"), "%H:%M:%S") 
-                    horaConPenalizacion=horaFinal+datetime.timedelta(minutes=int(penalizacionFinal.valor))
-                    horaConPenalizacion = horaConPenalizacion.strftime("%H:%M:%S")
-                if horarios[0].horaSalida:
-                    horario = horario + " - " + horarios[0].horaSalida.strftime("%H:%M:%S")
-            
-                diaRequerido = horarios[0].diaEntrada
-            if len(horarios)>1:
-                if horarios[1].horaEntrada:
-                    prox_marcacion = horarios[1].horaEntrada.strftime("%H:%M:%S") 
-                if horarios[1].horaSalida:
-                    prox_marcacion = prox_marcacion + " - " + horarios[1].horaSalida.strftime("%H:%M:%S")
-    """obtener operario"""
-    operario=Operario.objects.get(id=alerta.Operario.id)
-    puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id))
-    """obtener el horario de ese punto de servicio para ese personaje"""
-    asignacionCab=AsignacionCab.objects.get(Q(puntoServicio=puntoServicio))
-    asignacionOperario=AsignacionDet.objects.get(Q(asignacionCab=asignacionCab) & Q(operario=operario))
-    if AsigFiscalPuntoServicio.objects.filter(Q(puntoServicio=puntoServicio)).exists():
-        fiscal=AsigFiscalPuntoServicio.objects.get(Q(puntoServicio=puntoServicio))
-    supervisores=AsignacionDet.objects.filter(Q(asignacionCab=asignacionCab) & Q(supervisor=1))
-    if supervisores:
-        supervisor=supervisores[0]
-    alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)
-    ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
-    """CAMBIAMOS EL ESTADO DE LA ALERTA"""
-    if request.method == 'GET':
-        setattr(alerta,"Estado", "EN GESTION")
-        alerta.save()
-        
-    else: 
-        print ("Es POST")
-        print(request.POST)
-        """En el lugar"""
-        if request.POST.get('accion')=='1': 
-            try:
-                if horaConPenalizacion ==None or horaConPenalizacion=='':
-                    messages.warning(request,"El operario no posee hora de entrada")
+        """Se obtiene el horario del operario"""
+        horarios=[]
 
+        if alerta.Asignacion:
+            horarios=horasOperario(alerta.Asignacion.id, alerta.FechaHora.strftime("%Y-%m-%d %H:%M:%S"))
+            penalizacionFinal=Parametros.objects.get(tipo__contains="ALERTAS", parametro__contains="PENALIZACION")
+            if horarios:
+                if horarios[0]:
+                    if horarios[0].horaEntrada:
+                        horario = horarios[0].horaEntrada.strftime("%H:%M:%S")
+                        horaFinal=datetime.datetime.strptime(horarios[0].horaEntrada.strftime("%H:%M:%S"), "%H:%M:%S") 
+                        horaConPenalizacion=horaFinal+datetime.timedelta(minutes=int(penalizacionFinal.valor))
+                        horaConPenalizacion = horaConPenalizacion.strftime("%H:%M:%S")
+                    if horarios[0].horaSalida:
+                        horario = horario + " - " + horarios[0].horaSalida.strftime("%H:%M:%S")
+            
+                    diaRequerido = horarios[0].diaEntrada
+                if len(horarios)>1:
+                    if horarios[1].horaEntrada:
+                        prox_marcacion = horarios[1].horaEntrada.strftime("%H:%M:%S") 
+                    if horarios[1].horaSalida:
+                        prox_marcacion = prox_marcacion + " - " + horarios[1].horaSalida.strftime("%H:%M:%S")
+        """obtener operario"""
+        operario=Operario.objects.get(id=alerta.Operario.id)
+        puntoServicio=PuntoServicio.objects.get(Q(id=alerta.PuntoServicio.id))
+        """obtener el horario de ese punto de servicio para ese personaje"""
+        print ("Punto de servicio ", puntoServicio)
+        asignacionOperario=AsignacionDet.objects.get(id=alerta.Asignacion.id)
+        print ("Asignacion operario ",asignacionOperario )
+        if AsigFiscalPuntoServicio.objects.filter(Q(puntoServicio=puntoServicio)).exists():
+            fiscal=AsigFiscalPuntoServicio.objects.get(Q(puntoServicio=puntoServicio))
+            supervisores=AsignacionDet.objects.filter(Q(id=alerta.Asignacion.id) & Q(supervisor=1))
+        if supervisores:
+            supervisor=supervisores[0]
+        alertasSinAsig=Alertas.objects.filter(Tipo__contains="SIN-ASIG",Estado__contains="ABIERTA", PuntoServicio=puntoServicio)
+        ultimasMarcaciones=EsmeEmMarcaciones.objects.filter(codpersona__contains=operario.numCedula).order_by("fecha")[:10]
+        """CAMBIAMOS EL ESTADO DE LA ALERTA"""
+        if request.method == 'GET':
+            setattr(alerta,"Estado", "EN GESTION")
+            alerta.save()
+        
+        else: 
+            print ("Es POST")
+            print(request.POST)
+            """En el lugar"""
+            if request.POST.get('accion')=='1': 
+                try:
+                    if horaConPenalizacion ==None or horaConPenalizacion=='':
+                        messages.warning(request,"El operario no posee hora de entrada")
+
+                    else:
+                        #horaNueva=datetime.datetime.strptime(request.POST.get('horaEntrada'), "%H:%M")
+                        """procedemos a cerrar el alerta"""
+                        setattr(alerta,"Estado", "CERRADA")
+                        alerta.save()
+                        """obtenemos la penalizacion"""
+                        penalizacion=Parametros.objects.get(tipo__contains="ALERTAS", parametro__contains="PENALIZACION")
+                        horaEntrada=datetime.datetime.strptime(horaConPenalizacion, "%H:%M:%S")
+                        print("horaPenalizacion",horaEntrada)
+                        nuevaFecha=datetime.datetime.combine(alerta.FechaHora.date(), datetime.datetime.strptime(horaConPenalizacion, "%H:%M:%S").time())
+                        """generamos la marcacion"""
+                        nuevaMarcacion=EsmeEmMarcaciones.objects.create(codpersona=alerta.Operario.numCedula,codoperacion="HE",fecha=nuevaFecha,codcategoria="EM",codubicacion=puntoServicio.CodPuntoServicio)
+                        nuevaMarcacion.save()
+                        """guardamos la respuesta a la alerta"""
+                        respAlerta=AlertaResp.objects.create(accion='En el lugar',id_alerta=alerta, usuario=request.user, hora=horaEntrada)
+                        respAlerta.save()
+               
+                except Exception as err:
+                    transaction.rollback()
+                    logging.getLogger("error_logger").error('No se pudo gestionar el alerta: {0}'.format(err))
+                    messages.warning(request, 'No se pudo gestionar el alerta') 
                 else:
-                    #horaNueva=datetime.datetime.strptime(request.POST.get('horaEntrada'), "%H:%M")
+                    if horaConPenalizacion !=None and horaConPenalizacion!='':
+                        transaction.commit()
+                        messages.success(request, 'Alerta gestionada con exito')
+                finally:
+                    if horaConPenalizacion !=None and horaConPenalizacion!='':
+                        transaction.set_autocommit(True)
+                        return redirect('Operarios:alertas_list')
+            """Si va a asistir"""
+            if request.POST.get('accion')=='2': 
+                try:
                     """procedemos a cerrar el alerta"""
                     setattr(alerta,"Estado", "CERRADA")
                     alerta.save()
-                    """obtenemos la penalizacion"""
-                    penalizacion=Parametros.objects.get(tipo__contains="ALERTAS", parametro__contains="PENALIZACION")
-                    horaEntrada=datetime.datetime.strptime(horaConPenalizacion, "%H:%M:%S")
-                    print("horaPenalizacion",horaEntrada)
-                    nuevaFecha=datetime.datetime.combine(alerta.FechaHora.date(), datetime.datetime.strptime(horaConPenalizacion, "%H:%M:%S").time())
-                    """generamos la marcacion"""
-                    nuevaMarcacion=EsmeEmMarcaciones.objects.create(codpersona=alerta.Operario.numCedula,codoperacion="HE",fecha=nuevaFecha,codcategoria="EM",codubicacion=puntoServicio.CodPuntoServicio)
-                    nuevaMarcacion.save()
-                    """guardamos la respuesta a la alerta"""
-                    respAlerta=AlertaResp.objects.create(accion='En el lugar',id_alerta=alerta, usuario=request.user, hora=horaEntrada)
-                    respAlerta.save()
+                    """procedemos a crear una nueva alerta, con estado reprogramacion"""
+                    if request.POST.get('horaAprox') == None or request.POST.get('horaAprox') =='':
+                        messages.error(request,"Favor ingrese la hora aproximada")
+
+
+                    else:
+                        horaNueva=datetime.datetime.strptime(request.POST.get('horaAprox'), "%H:%M")
+                        nuevaFecha=datetime.datetime.combine(alerta.FechaHora.date(), horaNueva.time())
+                        newAlerta=Alertas.objects.create(Estado="RE PROGRAMACION", Asignacion=alerta.Asignacion, PuntoServicio=puntoServicio, Tipo="NO-MARC",FechaHora=nuevaFecha, Operario=alerta.Operario)
+                        newAlerta.save()
+                        """guardamos la respuesta a la alerta"""
+                        respAlerta=AlertaResp.objects.create(accion='Va a asistir',id_alerta=alerta, usuario=request.user, hora=horaNueva.time())
+                        respAlerta.save()
                
-            except Exception as err:
-                transaction.rollback()
-                logging.getLogger("error_logger").error('No se pudo gestionar el alerta: {0}'.format(err))
-                messages.warning(request, 'No se pudo gestionar el alerta') 
-            else:
-                if horaConPenalizacion !=None and horaConPenalizacion!='':
-                    transaction.commit()
-                    messages.success(request, 'Alerta gestionada con exito')
-            finally:
-                if horaConPenalizacion !=None and horaConPenalizacion!='':
-                    transaction.set_autocommit(True)
-                    return redirect('Operarios:alertas_list')
-        """Si va a asistir"""
-        if request.POST.get('accion')=='2': 
-            try:
-                """procedemos a cerrar el alerta"""
-                setattr(alerta,"Estado", "CERRADA")
-                alerta.save()
-                """procedemos a crear una nueva alerta, con estado reprogramacion"""
-                if request.POST.get('horaAprox') == None or request.POST.get('horaAprox') =='':
-                    messages.error(request,"Favor ingrese la hora aproximada")
-
-
+                except Exception as err:
+                    transaction.rollback()
+                    logging.getLogger("error_logger").error('No se pudo gestionar el alera: {0}'.format(err))
+                    messages.warning(request, 'No se pudo gestionar el alerta') 
                 else:
-                    horaNueva=datetime.datetime.strptime(request.POST.get('horaAprox'), "%H:%M")
-                    nuevaFecha=datetime.datetime.combine(alerta.FechaHora.date(), horaNueva.time())
-                    newAlerta=Alertas.objects.create(Estado="RE PROGRAMACION", Asignacion=alerta.Asignacion, PuntoServicio=puntoServicio, Tipo="NO-MARC",FechaHora=nuevaFecha, Operario=alerta.Operario)
-                    newAlerta.save()
-                    """guardamos la respuesta a la alerta"""
-                    respAlerta=AlertaResp.objects.create(accion='Va a asistir',id_alerta=alerta, usuario=request.user, hora=horaNueva.time())
-                    respAlerta.save()
-               
-            except Exception as err:
-                transaction.rollback()
-                logging.getLogger("error_logger").error('No se pudo gestionar el alera: {0}'.format(err))
-                messages.warning(request, 'No se pudo gestionar el alerta') 
-            else:
-                if request.POST.get('horaAprox') != None and request.POST.get('horaAprox') !='':
-                    transaction.commit()
-                    messages.success(request, 'Alerta gestionada con exito')
-            finally:
-                if request.POST.get('horaAprox') != None and request.POST.get('horaAprox') !='':
-                    transaction.set_autocommit(True)
-                    return redirect('Operarios:alertas_list')
-        """No se va a cubrir"""
+                    if request.POST.get('horaAprox') != None and request.POST.get('horaAprox') !='':
+                        transaction.commit()
+                        messages.success(request, 'Alerta gestionada con exito')
+                finally:
+                    if request.POST.get('horaAprox') != None and request.POST.get('horaAprox') !='':
+                        transaction.set_autocommit(True)
+                        return redirect('Operarios:alertas_list')
+            """No se va a cubrir"""
         if request.POST.get('accion')=='3':
             try:
-                """guardamos las horas no procesadas"""
-                horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
-                horasNoProcesadas.save()
+                if(horarios[0].horaEntrada!=None and horarios[0].horaSalida!=None):
+                    start = datetime.datetime.strptime(str(horarios[0].horaEntrada), "%H:%M:%S")
+                    end = datetime.datetime.strptime(str(horarios[0].horaSalida), "%H:%M:%S")
+                    diferencia=end-start
+                    limiteDiurnoSuperior = datetime.time(20, 0)
+                    limiteDiurnoInferior = datetime.time(6, 0)
+                    lDiurnoInferior=datetime.datetime.strptime(str(limiteDiurnoInferior),"%H:%M:%S")
+                    lDiurnoSuperior=datetime.datetime.strptime(str(limiteDiurnoSuperior),"%H:%M:%S")
+                    """guardamos las horas no procesadas"""                
+                    if (horarios[0].horaEntrada >= limiteDiurnoInferior and horarios[0].horaSalida <= limiteDiurnoSuperior):
+                        horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia),TipoHora="Diurno")
+                        horasNoProcesadas.save()
+                    elif (horarios[0].horaEntrada < limiteDiurnoInferior and horarios[0].horaSalida <= limiteDiurnoInferior) or (horarios[0].horaEntrada > limiteDiurnoSuperior and horarios[0].horaSalida >= limiteDiurnoSuperior):
+                        horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia),TipoHora="Nocturno")
+                        horasNoProcesadas.save()
+                    elif (limiteDiurnoInferior > horarios[0].horaEntrada and limiteDiurnoInferior < horarios[0].horaSalida):
+                        diferencia1=lDiurnoInferior - start
+                        horasNoProcesadasNoc=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=limiteDiurnoInferior, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia1),TipoHora="Nocturno")
+                        horasNoProcesadasNoc.save()
+                        diferencia2=end - lDiurnoInferior
+                        horasNoProcesadasDiu=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=limiteDiurnoInferior, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia2),TipoHora="Diurno")
+                        horasNoProcesadasDiu.save()
+                    elif (limiteDiurnoSuperior > horarios[0].horaEntrada and limiteDiurnoSuperior < horarios[0].horaSalida):
+                        diferencia1=lDiurnoSuperior - start
+                        horasNoProcesadasDiu=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=limiteDiurnoSuperior, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia1),TipoHora="Diurno")
+                        horasNoProcesadasDiu.save()
+                        diferencia2=end - lDiurnoSuperior
+                        horasNoProcesadasNoc=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=limiteDiurnoSuperior, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia2),TipoHora="Nocturno")
+                        horasNoProcesadasNoc.save()
+                else:
+                        horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
+                        horasNoProcesadas.save()
                 """procedemos a cerrar el alerta"""
                 setattr(alerta,"Estado", "CERRADA")
                 alerta.save()
@@ -396,6 +638,8 @@ def gestion_alertas(request,alerta_id=None):
             finally:
                 transaction.set_autocommit(True)
                 return redirect('Operarios:alertas_list')
+
+        
         """REMPLAZO"""
         if request.POST.get('accion')=='4': 
             escalar=False
@@ -404,20 +648,43 @@ def gestion_alertas(request,alerta_id=None):
                 if request.POST.get('idreemplazante') != None and request.POST.get('idreemplazante')!='':
                     """procedemos a cerrar el alerta"""
                     setattr(alerta,"Estado", "CERRADA")
-                    
                     """guardamos las horas no procesadas"""
-                    entradaHora=None
-                    salidaHora=None
-                    horasTotales=None
-                    if len(horarios)>1:
-                        if horarios[0].horaEntrada:
-                            entradaHora = horarios[0].horaEntrada
-                        if horarios[0].horaSalida:
-                            salidaHora = horarios[0].horaSalida
-                        if horarios[0].totalHoras:
-                            horasTotales = horarios[0].totalHoras
-                    horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=entradaHora, Hsalida=salidaHora, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horasTotales)
-                    horasNoProcesadas.save()
+
+
+                    
+
+                    if(horarios[0].horaEntrada!=None and horarios[0].horaSalida!=None):
+                        start = datetime.datetime.strptime(str(horarios[0].horaEntrada), "%H:%M:%S")
+                        end = datetime.datetime.strptime(str(horarios[0].horaSalida), "%H:%M:%S")
+                        diferencia=end-start
+                        limiteDiurnoSuperior = datetime.time(20, 0)
+                        limiteDiurnoInferior = datetime.time(6, 0)
+                        lDiurnoInferior=datetime.datetime.strptime(str(limiteDiurnoInferior),"%H:%M:%S")
+                        lDiurnoSuperior=datetime.datetime.strptime(str(limiteDiurnoSuperior),"%H:%M:%S")
+                        """guardamos las horas no procesadas"""                
+                        if (horarios[0].horaEntrada >= limiteDiurnoInferior and horarios[0].horaSalida <= limiteDiurnoSuperior):
+                            horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia),TipoHora="Diurno")
+                            horasNoProcesadas.save()
+                        elif (horarios[0].horaEntrada < limiteDiurnoInferior and horarios[0].horaSalida <= limiteDiurnoInferior) or (horarios[0].horaEntrada > limiteDiurnoSuperior and horarios[0].horaSalida >= limiteDiurnoSuperior):
+                            horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia),TipoHora="Nocturno")
+                            horasNoProcesadas.save()
+                        elif (limiteDiurnoInferior > horarios[0].horaEntrada and limiteDiurnoInferior < horarios[0].horaSalida):
+                            diferencia1=lDiurnoInferior - start
+                            horasNoProcesadasNoc=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=limiteDiurnoInferior, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia1),TipoHora="Nocturno")
+                            horasNoProcesadasNoc.save()
+                            diferencia2=end - lDiurnoInferior
+                            horasNoProcesadasDiu=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=limiteDiurnoInferior, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia2),TipoHora="Diurno")
+                            horasNoProcesadasDiu.save()
+                        elif (limiteDiurnoSuperior > horarios[0].horaEntrada and limiteDiurnoSuperior < horarios[0].horaSalida):
+                            diferencia1=lDiurnoSuperior - start
+                            horasNoProcesadasDiu=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=limiteDiurnoSuperior, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia1),TipoHora="Diurno")
+                            horasNoProcesadasDiu.save()
+                            diferencia2=end - lDiurnoSuperior
+                            horasNoProcesadasNoc=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=limiteDiurnoSuperior, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia2),TipoHora="Nocturno")
+                            horasNoProcesadasNoc.save()
+                    else:
+                        horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
+                        horasNoProcesadas.save()
                     """"procedemos a guardar el remplazo"""
 
                     hora=""
@@ -426,7 +693,7 @@ def gestion_alertas(request,alerta_id=None):
                     fechaRetorno=""
                     if request.POST.get('fechaRetorno'):
                         fechaRetorno=datetime.datetime.strptime(request.POST.get('fechaRetorno'), "%d/%m/%Y")
-                    
+                
                     """se guarda el reemplazo"""
                     horarioOperario=""
                     date_time_obj =  datetime.datetime.now().replace(hour=0,minute=0,second=0)
@@ -437,23 +704,26 @@ def gestion_alertas(request,alerta_id=None):
                         date_time_obj = datetime.datetime.strptime(horarioOperario,'%H:%M:%S')
 
                     remplazoCab=RemplazosCab.objects.create(fechaInicio=alerta.FechaHora.date(),fechaFin=alerta.FechaHora.date(), tipoRemplazo='REEMPLAZO-1', FechaHoraRemplazo=datetime.datetime.strptime(fechaAlerta, "%d/%m/%Y").replace(hour=date_time_obj.hour,minute=date_time_obj.minute,second=date_time_obj.second, microsecond=0), usuario=request.user)
-                    
+                
                     asignacion_reemp = None
                     if alerta.Asignacion_id: 
-                      asignacion_reemp =  AsignacionDet.objects.get(id=alerta.Asignacion_id) 
-                      asignacion_reempActualizada =  AsignacionDet.objects.get(Q(vregistro=asignacion_reemp.vregistro)) 
-                    operario_reemp  =Operario.objects.get(id=request.POST.get('idreemplazante'))
-                    remplazoDet=RemplazosDet.objects.create(Asignacion=asignacion_reempActualizada, remplazo=operario_reemp, fecha=alerta.FechaHora.date(), remplazoCab=remplazoCab)
-                    
-                    
+                        asignacion_reemp =  AsignacionDet.objects.get(id=alerta.Asignacion_id)     
+                        operario_reemp  =Operario.objects.get(id=request.POST.get('idreemplazante'))
+                    remplazoDet=RemplazosDet.objects.create(Asignacion=asignacion_reemp, remplazo=operario_reemp, fecha=alerta.FechaHora.date(), remplazoCab=remplazoCab)
+                
+                
                     """guardamos la respuesta a la alerta"""
-                    if request.POST.get('escalable'):
-                        escalar=request.POST.get('escalable')
+                    if request.POST.get('escalar'):
+                        if request.POST.get('escalar')=="on":
+
+                            escalar=True
+                        else:
+                             escalar=False
                     print("REEMPLAZO ID",remplazoCab.id) 
                     if request.POST.get("motivo"):
                         motivoObj =Motivos.objects.get(id=request.POST.get("motivo"))
                     respAlerta=AlertaResp.objects.create(accion='Reemplazo',id_alerta=alerta,id_reemplazo=remplazoCab, usuario=request.user, hora=hora,fechaRetorno=fechaRetorno, motivo=motivoObj,comentarios=request.POST.get("comentarios"), escalado=escalar)
-                    
+                
                     alerta.save()
                     remplazoCab.save()
                     remplazoDet.save()
@@ -472,8 +742,10 @@ def gestion_alertas(request,alerta_id=None):
                 if request.POST.get('idreemplazante') != None and request.POST.get('idreemplazante')!='':
                     transaction.set_autocommit(True)
                     return redirect('Operarios:alertas_list')
-
-    
+    except Exception as err:
+        print ("El error es", err)
+        messages.warning(request, 'Ocurrio un error al obtener los datos') 
+        return redirect('Operarios:alertas_list')
     contexto = {
         'title': 'Gestion de Alertas',
         'operario':operario,
@@ -491,6 +763,9 @@ def gestion_alertas(request,alerta_id=None):
         'alertasSinAsig':alertasSinAsig
     }
     return render(request, 'alertas/alerta_gestionar.html', context=contexto)
+
+
+
 
 def emparejar(request, alerta_id=None, emparejamiento_id=None):
     print ("Hola emparejar")
@@ -513,8 +788,39 @@ def emparejar(request, alerta_id=None, emparejamiento_id=None):
         print (alerta.FechaHora.date())
         print (alerta.Operario.numCedula)
         
-        horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
-        horasNoProcesadas.save()
+        if(horarios[0].horaEntrada!=None and horarios[0].horaSalida!=None):
+            start = datetime.datetime.strptime(str(horarios[0].horaEntrada), "%H:%M:%S")
+            end = datetime.datetime.strptime(str(horarios[0].horaSalida), "%H:%M:%S")
+            diferencia=end-start
+            limiteDiurnoSuperior = datetime.time(20, 0)
+            limiteDiurnoInferior = datetime.time(6, 0)
+            lDiurnoInferior=datetime.datetime.strptime(str(limiteDiurnoInferior),"%H:%M:%S")
+            lDiurnoSuperior=datetime.datetime.strptime(str(limiteDiurnoSuperior),"%H:%M:%S")
+            """guardamos las horas no procesadas"""                
+            if (horarios[0].horaEntrada >= limiteDiurnoInferior and horarios[0].horaSalida <= limiteDiurnoSuperior):
+                horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia),TipoHora="Diurno")
+                horasNoProcesadas.save()
+            elif (horarios[0].horaEntrada < limiteDiurnoInferior and horarios[0].horaSalida <= limiteDiurnoInferior) or (horarios[0].horaEntrada > limiteDiurnoSuperior and horarios[0].horaSalida >= limiteDiurnoSuperior):
+                horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia),TipoHora="Nocturno")
+                horasNoProcesadas.save()
+            elif (limiteDiurnoInferior > horarios[0].horaEntrada and limiteDiurnoInferior < horarios[0].horaSalida):
+                diferencia1=lDiurnoInferior - start
+                horasNoProcesadasNoc=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=limiteDiurnoInferior, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia1),TipoHora="Nocturno")
+                horasNoProcesadasNoc.save()
+                diferencia2=end - lDiurnoInferior
+                horasNoProcesadasDiu=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=limiteDiurnoInferior, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia2),TipoHora="Diurno")
+                horasNoProcesadasDiu.save()
+            elif (limiteDiurnoSuperior > horarios[0].horaEntrada and limiteDiurnoSuperior < horarios[0].horaSalida):
+                diferencia1=lDiurnoSuperior - start
+                horasNoProcesadasDiu=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=horarios[0].horaEntrada, Hsalida=limiteDiurnoSuperior, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia1),TipoHora="Diurno")
+                horasNoProcesadasDiu.save()
+                diferencia2=end - lDiurnoSuperior
+                horasNoProcesadasNoc=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio ,Hentrada=limiteDiurnoSuperior, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=str(diferencia2),TipoHora="Nocturno")
+                horasNoProcesadasNoc.save()
+        else:
+            horasNoProcesadas=HorasNoProcesadas.objects.create(NumCedulaOperario=alerta.Operario.numCedula, puntoServicio=puntoServicio,Hentrada=horarios[0].horaEntrada, Hsalida=horarios[0].horaSalida, comentario= 'AUSENCIA', fecha=alerta.FechaHora.date(), total=horarios[0].totalHoras)
+            horasNoProcesadas.save()
+
         """procedemos a guardar el reemplazo"""
         remplazoCab=RemplazosCab.objects.create(fechaInicio=alerta.FechaHora.date(),fechaFin=alerta.FechaHora.date(), tipoRemplazo='Emparejar', FechaHoraRemplazo=alerta.FechaHora, usuario=request.user)
         remplazoCab.save()

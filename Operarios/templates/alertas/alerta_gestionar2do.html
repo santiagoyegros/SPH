@@ -1,0 +1,809 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class='my-3'>Imprevistos y Licencias</h1>
+<div class="container-fluid pl-0 pr-1">
+    <form method="GET" role="form" id="formulario">
+
+
+        <div class="col-md-12 pl-0 pr-1">
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    Gestión de Alertas
+                </div>
+                <div class="card-body">
+                    <div class="cuerpo-filtro row">
+                        <p class="title-datosOperario">Datos del Operario</p>
+                        <div class="row filter-row datos-operario">
+                            <div class="col-md-6">
+                                <p style="margin:0px !important">
+                                    <label for="">Operario:</label>
+                                    <input type="text" name="operarioNombre" id="id_operarioNombre"
+                                        class="form-control" disabled>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="margin:0px !important">
+                                    <label for="">Legajo:</label>
+                                    <input type="text" name="legajoOperario" id="id_legajoOperario"
+                                        class="form-control" disabled>
+                                </p>
+                            </div>
+
+                        </div>
+                        <p class="title-datosAlerta">Datos del Reemplazo</p>
+                        <div class="row filter-row datos-alerta">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p style="margin:0px !important">
+                                            <label for="">Motivo:</label>
+                                            <select name="motivoReemplazo" id="id_motivoReemplazo" class="form-control">
+                                                <option value="">--------</option>
+                                                {% for m in motivos %}
+                                                    <option value="{{m.id}}">{{m.descripcion}}</option>
+                                                {% endfor  %}
+                                            </select>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p style="margin:0px !important">
+                                            <label for="">Fecha y Hora de retorno:</label>
+                                            <input type="text" name="fechaHoraRetorno" id="id_fechaHoraRetorno"
+                                                class="form-control">
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top: 15px !important;">
+                                    <div class="col-md-6">
+                                        <p style="margin:0px !important">
+                                            <label for="">Fecha desde:</label>
+                                            <div class='input-group date' id='datetimepickerfechaDesde'>
+                                                <input type='text' class="form-control" name="fechaDesde" value=""
+                                                    id="id_fechaDesde" required />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p style="margin:0px !important">
+                                            <label for="">Fecha hasta:</label>
+                                            <div class='input-group date' id='datetimepickerfechaHasta'>
+                                                <input type='text' class="form-control" name="fechaHasta" value=""
+                                                    id="id_fechaHasta" required />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top: 15px !important;">
+                                    <div class="col-md-12">
+                                        <p style="margin:0px !important">
+                                            <label for="">Tipo de Reemplazo:</label> <br> <br>
+                                            <div class="tipos-gestion">
+                                                <label for="" class="radio-inline tipos-check"><input type="radio"
+                                                        name="tipogestion" value="" class="tipoGestion" id="0-tipo">
+                                                    Única</label>
+                                                <label for="" class="radio-inline tipos-check"><input type="radio"
+                                                        name="tipogestion" value="" class="tipoGestion" id="1-tipo">
+                                                    Punto de Servicio </label>
+                                                <label for="" class="radio-inline tipos-check"><input type="radio"
+                                                        name="tipogestion" value="" class="tipoGestion" id="2-tipo" disabled>
+                                                    Granular</label>
+                                            </div>
+
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="margin:0px !important">
+                                    <label for="">Comentarios:</label>
+                                    <textarea style="resize: none !important;" name="comentarios" class="form-control"
+                                        id="id_comentarios" rows="5"></textarea>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="seccion-gestionar">
+                        <div class="gestion-unica d-none" id="0-seccion">
+                            <div id="jsGrid-unica"></div>
+                        </div>
+                        <div class="gestion-byPS d-none" id="1-seccion">
+                            <div id="jsGrid-ps"></div>
+                        </div>
+                        <div class="gestion-granular d-none" id="2-seccion">
+                                <div id="jsGrid-granular"></div>
+                        </div>
+                    </div>
+                    <div style="float: right;">
+                        <button type='submit' class='btn btn-success btn-filtrar' disabled><i class="fa fa-check"></i>
+                            Confirmar</button>
+
+                        <a href={% url 'Operarios:alertas_2dolist' %} class="btn btn-success btn-limpiar"><i
+                                class="fa fa-times"></i> Cancelar</a>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="modalFiltro" tabindex="-1" role="dialog" aria-labelledby="modalFiltro"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Operarios Disponibles </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="jsGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<style>
+   table th p {
+        margin: 10px 0px !important;
+    }
+
+    table tr {
+        cursor: pointer !important;
+    }
+.jsgrid-nodata-row {
+        height: 273px !important;
+    }
+
+.jsgrid-grid-header,
+    .jsgrid-grid-body {
+        overflow: auto !important;
+    }
+
+    .jsgrid-header-sort-asc:before {
+        margin: 6px !important;
+        border-width: 0 5px 10px !important;
+        border-color: transparent transparent #ffffff !important;
+    }
+
+    .jsgrid-header-sort-desc:before {
+        border-width: 10px 5px 0;
+        margin: 5px !important;
+        border-color: #ffffff transparent transparent;
+    }
+    .head {
+        background-color: #86273e !important;
+        color: white !important;
+    } 
+
+</style>
+<script>
+    $(document).on("change", ".tipoGestion", function () {
+        console.log($(this));
+        var checkradio = $(this)[0].id;
+        if (checkradio.includes("0")) {
+            busquedaUnica();
+            $("#0-seccion").removeClass("d-none")
+            $("#1-seccion").addClass("d-none")
+            $("#2-seccion").addClass("d-none")
+        } else if (checkradio.includes("1")) {
+            busquedaByPS();
+            $("#1-seccion").removeClass("d-none")
+            $("#2-seccion").addClass("d-none")
+            $("#0-seccion").addClass("d-none")
+        } else if (checkradio.includes("2")) {
+            busquedaGranular();
+            $("#2-seccion").removeClass("d-none")
+            $("#1-seccion").addClass("d-none")
+            $("#0-seccion").addClass("d-none")
+        } else {
+            return;
+        }
+    });
+    //------------------------------- BUSCADOR DE OPERARIOS ------------------------------//
+    function busquedaUnica(){
+        $("#jsGrid-unica").jsGrid({
+            width: "100%",
+            filtering: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            pageIndex: 1,
+            pageSize: 5,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "No se han encontrado registros que coincidan con la busqueda",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+
+                    var d = $.Deferred();
+                    filter.idPunto = $('#id_puntoServicio').val();
+                    filter.totalHorasProc ="";
+                    filter.lunEnt = $('#id_asignaciondet-lunEnt').val();
+                    filter.lunSal = $('#id_asignaciondet-lunSal').val();
+                    filter.marEnt = $('#id_asignaciondet-marEnt').val();
+                    filter.marSal = $('#id_asignaciondet-marSal').val();
+                    filter.mieEnt = $('#id_asignaciondet-mieEnt').val();
+                    filter.mieSal = $('#id_asignaciondet-mieSal').val();
+                    filter.jueEnt = $('#id_asignaciondet-jueEnt').val();
+                    filter.jueSal = $('#id_asignaciondet-jueSal').val();
+                    filter.vieEnt = $('#id_asignaciondet-vieEnt').val();
+                    filter.vieSal = $('#id_asignaciondet-vieSal').val();
+                    filter.sabEnt = $('#id_asignaciondet-sabEnt').val();
+                    filter.sabSal = $('#id_asignaciondet-sabSal').val();
+                    filter.domEnt = $('#id_asignaciondet-domEnt').val();
+                    filter.domSal = $('#id_asignaciondet-domSal').val();
+                    filter.perfilproc = $('#id_asignaciondet-perfil').val();
+                    filter.supervisor = $('#id_asignaciondet-supervisor').val();
+                    filter.fechaIni = $('#id_asignaciondet-fechaInicio').val();
+                    filter.fechaFin = $('#id_asignaciondet-fechaFin').val();
+                    $.ajax({
+                        type: "GET",
+                        url: "/reingenieria/asignacion/asignar/operarios",
+                        data: filter
+                    }).done(function (result) {
+                        console.log(result)
+                        d.resolve($.map(result, function (item) {
+                            return $.extend(item.fields, { id: item.pk });
+                        }));
+                    });
+
+                    return d.promise();
+                }
+
+            },
+            rowClick: function (e) {
+                var ope = e.item.id;
+                $('#id_asignaciondet-nombreOperario').val(e.item.nombres);
+                $('#id_asignaciondet-operario').val(ope);
+                deshabilitarCampos();
+            },
+
+            fields: [
+                { name: "nombres", type: "text", width: 150, title: "Nombre" },
+                { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
+                { name: "antiguedad", type: "text", width: 150, title: "Antiguedad (años)" },
+                { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
+                { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
+                { name: "perfil", type: "text", width: 150, title: "Perfil" }
+            ]
+        });
+    }
+    function busquedaByPS(){
+        $("#jsGrid-ps").jsGrid({
+            width: "100%",
+            filtering: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            pageIndex: 1,
+            pageSize: 5,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "No se han encontrado registros que coincidan con la busqueda",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+
+                    var d = $.Deferred();
+                    filter.idPunto = $('#id_puntoServicio').val();
+                    filter.totalHorasProc ="";
+                    filter.lunEnt = $('#id_asignaciondet-lunEnt').val();
+                    filter.lunSal = $('#id_asignaciondet-lunSal').val();
+                    filter.marEnt = $('#id_asignaciondet-marEnt').val();
+                    filter.marSal = $('#id_asignaciondet-marSal').val();
+                    filter.mieEnt = $('#id_asignaciondet-mieEnt').val();
+                    filter.mieSal = $('#id_asignaciondet-mieSal').val();
+                    filter.jueEnt = $('#id_asignaciondet-jueEnt').val();
+                    filter.jueSal = $('#id_asignaciondet-jueSal').val();
+                    filter.vieEnt = $('#id_asignaciondet-vieEnt').val();
+                    filter.vieSal = $('#id_asignaciondet-vieSal').val();
+                    filter.sabEnt = $('#id_asignaciondet-sabEnt').val();
+                    filter.sabSal = $('#id_asignaciondet-sabSal').val();
+                    filter.domEnt = $('#id_asignaciondet-domEnt').val();
+                    filter.domSal = $('#id_asignaciondet-domSal').val();
+                    filter.perfilproc = $('#id_asignaciondet-perfil').val();
+                    filter.supervisor = $('#id_asignaciondet-supervisor').val();
+                    filter.fechaIni = $('#id_asignaciondet-fechaInicio').val();
+                    filter.fechaFin = $('#id_asignaciondet-fechaFin').val();
+                    $.ajax({
+                        type: "GET",
+                        url: "/reingenieria/asignacion/asignar/operarios",
+                        data: filter
+                    }).done(function (result) {
+                        d.resolve($.map(result, function (item) {
+                            return $.extend(item.fields, { id: item.pk });
+                        }));
+                    });
+
+                    return d.promise();
+                }
+
+            },
+            fields: [
+                { name: "puntoServicio", type: "text", width: 150, title: "Punto de Servicio" },
+                { name: "Lunes", type: "text", width: 150, title: "Lunes" },
+                { name: "Martes", type: "text", width: 150, title: "Martes" },
+                { name: "Miercoles", type: "text", width: 150, title: "Miercoles" },
+                { name: "Jueves", type: "text", width: 150, title: "Jueves" },
+                { name: "Viernes", type: "text", width: 150, title: "Viernes" },
+                { name: "Sábado", type: "text", width: 150, title: "Sábado" },
+                { name: "Domingo", type: "text", width: 150, title: "Domingo" }
+            ]
+        });
+    }
+    function busquedaGranular(){
+        $("#jsGrid-granular").jsGrid({
+            width: "100%",
+            filtering: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            pageIndex: 1,
+            pageSize: 5,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "No se han encontrado registros que coincidan con la busqueda",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+
+                    var d = $.Deferred();
+                    filter.idPunto = $('#id_puntoServicio').val();
+                    filter.totalHorasProc ="";
+                    filter.lunEnt = $('#id_asignaciondet-lunEnt').val();
+                    filter.lunSal = $('#id_asignaciondet-lunSal').val();
+                    filter.marEnt = $('#id_asignaciondet-marEnt').val();
+                    filter.marSal = $('#id_asignaciondet-marSal').val();
+                    filter.mieEnt = $('#id_asignaciondet-mieEnt').val();
+                    filter.mieSal = $('#id_asignaciondet-mieSal').val();
+                    filter.jueEnt = $('#id_asignaciondet-jueEnt').val();
+                    filter.jueSal = $('#id_asignaciondet-jueSal').val();
+                    filter.vieEnt = $('#id_asignaciondet-vieEnt').val();
+                    filter.vieSal = $('#id_asignaciondet-vieSal').val();
+                    filter.sabEnt = $('#id_asignaciondet-sabEnt').val();
+                    filter.sabSal = $('#id_asignaciondet-sabSal').val();
+                    filter.domEnt = $('#id_asignaciondet-domEnt').val();
+                    filter.domSal = $('#id_asignaciondet-domSal').val();
+                    filter.perfilproc = $('#id_asignaciondet-perfil').val();
+                    filter.supervisor = $('#id_asignaciondet-supervisor').val();
+                    filter.fechaIni = $('#id_asignaciondet-fechaInicio').val();
+                    filter.fechaFin = $('#id_asignaciondet-fechaFin').val();
+                    $.ajax({
+                        type: "GET",
+                        url: "/reingenieria/asignacion/asignar/operarios",
+                        data: filter
+                    }).done(function (result) {
+                        console.log(result)
+                        d.resolve($.map(result, function (item) {
+                            return $.extend(item.fields, { id: item.pk });
+                        }));
+                    });
+
+                    return d.promise();
+                }
+
+            },
+            rowClick: function (e) {
+                var ope = e.item.id;
+                $('#id_asignaciondet-nombreOperario').val(e.item.nombres);
+                $('#id_asignaciondet-operario').val(ope);
+                deshabilitarCampos();
+            },
+
+            fields: [
+                { name: "nombres", type: "text", width: 150, title: "Nombre" },
+                { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
+                { name: "antiguedad", type: "text", width: 150, title: "Antiguedad (años)" },
+                { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
+                { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
+                { name: "perfil", type: "text", width: 150, title: "Perfil" }
+            ]
+        });
+    }
+    function buscarOperario() {
+
+        $("#jsGrid-operarios").jsGrid({
+            width: "100%",
+            filtering: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            pageIndex: 1,
+            pageSize: 5,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "No se han encontrado registros que coincidan con la busqueda",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+
+                    var d = $.Deferred();
+                    filter.idPunto = $('#id_puntoServicio').val();
+                    filter.totalHorasProc ="";
+                    filter.lunEnt = $('#id_asignaciondet-lunEnt').val();
+                    filter.lunSal = $('#id_asignaciondet-lunSal').val();
+                    filter.marEnt = $('#id_asignaciondet-marEnt').val();
+                    filter.marSal = $('#id_asignaciondet-marSal').val();
+                    filter.mieEnt = $('#id_asignaciondet-mieEnt').val();
+                    filter.mieSal = $('#id_asignaciondet-mieSal').val();
+                    filter.jueEnt = $('#id_asignaciondet-jueEnt').val();
+                    filter.jueSal = $('#id_asignaciondet-jueSal').val();
+                    filter.vieEnt = $('#id_asignaciondet-vieEnt').val();
+                    filter.vieSal = $('#id_asignaciondet-vieSal').val();
+                    filter.sabEnt = $('#id_asignaciondet-sabEnt').val();
+                    filter.sabSal = $('#id_asignaciondet-sabSal').val();
+                    filter.domEnt = $('#id_asignaciondet-domEnt').val();
+                    filter.domSal = $('#id_asignaciondet-domSal').val();
+                    filter.perfilproc = $('#id_asignaciondet-perfil').val();
+                    filter.supervisor = $('#id_asignaciondet-supervisor').val();
+                    filter.fechaIni = $('#id_asignaciondet-fechaInicio').val();
+                    filter.fechaFin = $('#id_asignaciondet-fechaFin').val();
+                    $.ajax({
+                        type: "GET",
+                        url: "/reingenieria/asignacion/asignar/operarios",
+                        data: filter
+                    }).done(function (result) {
+                        console.log(result)
+                        d.resolve($.map(result, function (item) {
+                            return $.extend(item.fields, { id: item.pk });
+                        }));
+                    });
+
+                    return d.promise();
+                }
+
+            },
+            rowClick: function (e) {
+                var ope = e.item.id;
+                $('#id_asignaciondet-nombreOperario').val(e.item.nombres);
+                $('#id_asignaciondet-operario').val(ope);
+                deshabilitarCampos();
+            },
+
+            fields: [
+                { name: "nombres", type: "text", width: 150, title: "Nombre" },
+                { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
+                { name: "antiguedad", type: "text", width: 150, title: "Antiguedad (años)" },
+                { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
+                { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
+                { name: "perfil", type: "text", width: 150, title: "Perfil" }
+            ]
+        });
+
+    }
+
+</script>
+<script type="text/javascript">
+    $(function () {
+        var fechaDesde = $('#id_fechaDesde')[0].value;
+        var datos = fechaDesde.split('/');
+        var date;
+        if (datos.length > 1) {
+            date = new Date(datos[2], datos[1] - 1, datos[0])
+        } else {
+            date = new Date()
+        }
+        console.log(datos);
+        $('#datetimepickerfechaDesde').datetimepicker({
+            locale: 'es',
+            format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
+            date: date
+        })
+    });
+    $(function () {
+        var fechaHasta = $('#id_fechaHasta')[0].value;
+        var datos = fechaHasta.split('/');
+        var date;
+        if (datos.length > 1) {
+            date = new Date(datos[2], datos[1] - 1, datos[0])
+        } else {
+            date = new Date()
+        }
+        $('#datetimepickerfechaHasta').datetimepicker({
+            locale: 'es',
+            format: 'DD/MM/YYYY', //This is the default date format Django will accept, it also disables the time in the datepicker.
+            date: date
+        })
+    });
+
+    function llamarFiltro() {
+        document.getElementById('action').value = 'filter_operario-' + id;
+        //hacemos submit
+        document.getElementById('formulario').submit();
+    }
+
+
+
+
+
+    $(document).on('click', '.open-modal', function () {
+        var alerta_actual = $(this);
+        var id = alerta_actual[0].id;
+        var operario = alerta_actual[0].name;
+        console.log(alerta_actual)
+        $('.guardar').attr('id', id);
+        $('#gestionModal').modal('show');
+        $('#gestionModal').find("h5#modal-title").text("Gestion sin Asignación- " + operario);
+        $.ajax({
+            url: '/reingenieria/alertas/mostrarCupos',
+            type: 'GET',
+            data: {
+                'id': id,
+            },
+            success: function (response) {
+                $('#cupos').val(response.cupoUtilizado + ' h / ' + response.cupoTotal + ' h');
+
+
+            },
+            error: function () {
+                console.log('error')
+                $('#gestionModal').modal('hide');
+            },
+        });
+    });
+
+    $(function () {
+        $(document).on('click', '.guardar', function () {
+            var error = true;
+            var guardar_actual = $(this);
+            var id_alerta = guardar_actual[0].id;
+            var body = {}
+            body.motivo = $('#id_motivo').val();
+            body.observacion = $('#id_observacion').val();
+            console.log("a ver: " + $('#id_motivo').val());
+            token = '{{csrf_token}}';
+            startLoader();
+            $.ajax({
+                type: "POST",
+                url: "/reingenieria/alertas/guardarSinAsignacion/" + id_alerta,
+                data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token + "&error=" + error,
+
+                success: function (response) {
+                    $('#gestionModal').modal('hide');
+                    location.reload();
+                },
+                error: function () {
+                    console.log('error')
+                    endLoader();
+                },
+            });
+
+        });
+
+    });
+
+    $(function () {
+
+        var original = $("#id_modalBody").clone()
+
+        $(document).on('click', '.cancelar', function () {
+            $('#gestionModal').modal('hide');
+            $('id_observacion,textarea').val('');
+            $('#id_motivo').val("");
+            $('#id_motivo').selectpicker("refresh");
+            console.log($('#id_motivo'));
+        });
+
+        $(document).on('click', '.close', function () {
+            $('#gestionModal').modal('hide');
+            $('id_observacion,textarea').val('');
+            $('#id_motivo').val("");
+            $('#id_motivo').selectpicker("refresh");
+            console.log($('#id_motivo'));
+        });
+
+    });
+
+</script>
+
+
+<style>
+    .card-header {
+        background-color: #86273e !important;
+        color: white !important;
+        font-size: 20px !important;
+        border-radius: 0px !important;
+        border-bottom: 1px solid gray !important;
+    }
+
+    .card {
+        border-radius: 0px !important;
+    }
+
+    .modal-header {
+        background-color: #86273e !important;
+        color: white !important;
+        font-size: 20px !important;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .cuerpo-filtro .row div p {
+        width: 100% !important;
+        padding: 0px 10px;
+    }
+
+    .cuerpo-filtro {
+        margin-bottom: 15px !important;
+
+    }
+
+    .filter-row {
+        width: 100%;
+        margin-bottom: 10px !important;
+    }
+
+    .title-datosOperario {
+        margin: 0px 50px 10px 50px !important;
+        font-size: 20px;
+    }
+
+    .title-datosAlerta {
+        margin: 0px 50px 10px 50px !important;
+        font-size: 20px;
+    }
+
+    .datos-operario {
+        margin: 0% 5% 3% 5% !important;
+    }
+
+    .datos-alerta {
+        margin: 0% 5% 3% 5% !important;
+    }
+
+    .tipos-gestion {
+        margin: 0px 50px !important;
+    }
+
+    .tipos-check {
+        margin-left: 30px !important;
+    }
+
+    .input-group {
+        padding: 0px 10px;
+
+    }
+
+    .btn-light.active,
+    .btn-light:active,
+    .show>.btn-light.dropdown-toggle {
+        background-color: #ffffff !important;
+        color: black !important;
+        background-image: none;
+        border-color: #d9d9d9 !important;
+    }
+
+    .btn-light {
+        background-color: #ffffff !important;
+        color: black !important;
+        background-image: none;
+        border-color: #d9d9d9 !important;
+    }
+
+    .bootstrap-select>.dropdown-toggle.bs-placeholder,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:active,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:focus,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:hover {
+        color: black !important;
+    }
+
+    .table th {
+        background-color: #86273e !important;
+        color: white !important;
+    }
+
+    .table th {
+        padding: .5em !important;
+        border-left: 1px solid white !important;
+        border-right: 2px solid white !important;
+    }
+
+    .table tr:hover {
+        background-color: #c4e2ff !important;
+    }
+
+    .titulo-cupo {
+        color: #86273e !important;
+        font-size: 24px !important;
+        border-radius: 0px !important;
+        padding-left: 20px;
+        clear: both;
+        float: right;
+        margin-top: 15px;
+    }
+
+    .estilo-cupo {
+        color: #86273e !important;
+        font-size: 24px !important;
+        border-radius: 0px !important;
+        padding-left: 0px;
+        clear: both;
+        float: left;
+        margin-top: 6px;
+    }
+
+    .btn-filtrar {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 30px;
+        cursor: pointer;
+    }
+
+    .btn-limpiar {
+        background-color: gray !important;
+        border-color: gray !important;
+        padding: 7px 30px;
+    }
+
+    .btn-add {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 7px;
+        cursor: pointer;
+    }
+
+    .btn-cancelar {
+        background-color: gray !important;
+        border-color: gray !important;
+        padding: 7px 7px;
+    }
+
+
+
+    .form-bordernone:disabled {
+        background-color: transparent !important;
+        border: none !important;
+    }
+</style>
+{% endblock %}

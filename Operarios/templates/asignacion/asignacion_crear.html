@@ -7,7 +7,7 @@
 {% block content %}
 
 <div class="container-fluid">
-    
+
     {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
     <form method='POST' action='#' name='formulario' id='formulario'>
         <input type="hidden" id="action" name="action" value="">
@@ -88,12 +88,110 @@
                         readonly /> </div>
             </div>
         </div>
+        <div class="container-main col-lg-12 col-md-12">
 
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <h4>
+                        Asignación de Horas
+                    </h4>
+                </div>
 
+            </div>
+
+            <div class="row container-main">
+                <div class="col-lg-12 col-md-12" style="text-align: right;margin-bottom: 15px;">
+                    <button type='button' id='addDetalle' class="btn btn-primary btn-guardar" onclick="goToAddDetalle()"
+                        name='add_det'>
+                        <i class="fa fa-plus"></i> &nbsp;&nbsp;Agregar Detalle</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card" style="margin-bottom:15px !important;">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Detalles
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead class="header-table">
+                                    <tr>
+                                        <th>Perfil</th>
+                                        <th>Operario</th>
+                                        <th>Lun</th>
+                                        <th>Mar</th>
+                                        <th>Mier</th>
+                                        <th>Jue</th>
+                                        <th>Vie</th>
+                                        <th>Sab</th>
+                                        <th>Dom</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for asig in asignaciones %}
+                                        <tr id="{{asig.id}}" class="row-table">
+                                            <td>{{asig.perfil_nombre}}</td>
+                                            <td style="width: 40%;">
+                                                {% if asig.supervisor %}
+                                                    <i class="fas fa-user-tie" style="margin:0px 10px !important;color:#86273e;"></i> 
+                                                {% else %}
+                                                    <i class="fas fa-user" style="margin:0px 10px !important;color:gray;"></i> 
+                                                {% endif %}
+                                                {{asig.operario_nombre}} (<span id="cantTotal-{{forloop.counter}}"></span>)</td>
+                                            <td class="d-none td-total"><input type="hidden" class="totalHoras-asignaciones"
+                                                    id="totalhoras-{{ forloop.counter }}" value="{{asig.totalHoras}}"></td>
+                                            <!-- CONTROL DE EXISTENCIA DE HORAS -->
+                                            <td class="lunes">{% if asig.lunEnt and asig.lunSal %} {{asig.lunEnt}} a
+                                                {{asig.lunSal}} {% endif %}</td>
+                                            <td class="martes">{% if asig.marEnt and asig.marSal %} {{asig.marEnt}} a
+                                                {{asig.marSal}} {% endif %}</td>
+                                            <td class="miercoles"> {% if asig.mieEnt and asig.mieSal %} {{asig.mieEnt}} a
+                                                {{asig.mieSal}} {% endif %}</td>
+                                            <td class="jueves">{% if asig.jueEnt and asig.jueSal %} {{asig.jueEnt}} a
+                                                {{asig.jueSal}}{% endif %}</td>
+                                            <td class="viernes"> {% if asig.vieEnt and asig.vieSal %} {{asig.vieEnt}} a
+                                                {{asig.vieSal}} {% endif %}</td>
+                                            <td class="sabado"> {% if asig.sabEnt and asig.sabSal %} {{asig.sabEnt}} a
+                                                {{asig.sabSal}} {% endif %} </td>
+                                            <td class="domingo"> {% if asig.domEnt and asig.domSal %} {{asig.domEnt}} a
+                                                {{asig.domSal}} {% endif %} </td>
+                                            <td class="d-none"><input type="hidden" id="{{asig.id}}-eliminar"
+                                                value="{{asig.tipo}}">
+                                            </td>
+                                            <td>
+                                                <a onclick="verRegistro({{asig.id}})" class="action-table" title="Ver"><i
+                                                        class="fas fa-eye"></i> </a>
+                                                <a class="action-table" title="Eliminar"
+                                                    onclick="eliminarRegistro({{asig.id}})"><i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-12 col-md-12" style="text-align: right;margin:15px 0px;">
+            <button type='button' id="guardar" onclick="guardarAsignacion()" class='btn btn-primary btn-guardar'> <i
+                    class="fa fa-check"></i>&nbsp;&nbsp; Confirmar</button>
+            <button type="button" class='btn btn-primary btn-cancelar' onclick="cancelarConfirmacion()"> <i
+                    class="fa fa-times"></i> &nbsp;&nbsp; Cancelar</button>
+        </div>
+
+        <!--VERSION ANTERIOR DE ASIGNACION, CONJUNTO DE FORMULARIOS-->
+        <!-- 
         {{ asigDetFormSet.management_form }}
-
-        <!--Formulario de Servicios Particulares-->
-
         <div class="container-main col-lg-12 col-md-12" id='formset-det'>
 
             <div class="row">
@@ -123,7 +221,6 @@
                 <div class="col p-0 text-center"> Domingo </div>
                 <div class="col-1 p-0 text-center"> Eliminar? </div>
             </div>
-            <!-- data-toggle="modal" data-target="#modalFiltro" -->
 
             {% for form in asigDetFormSet %}
 
@@ -141,11 +238,9 @@
                                         class="fa fa-search"></i></button>
                             </div>
 
-                            <!-- <input type="text" name="asignaciondet_set-{{ forloop.counter0 }}-id" id="id_asignaciondet_set-{{ forloop.counter0 }}-id" value="{{ forloop.counter0 }}" class="d-none"> -->
                             {{form.id}}
                             <input type="hidden" id="openModal" value="{{openModal}}">
                             <input type="hidden" id="idModal" value="{{idModal}}">
-                            <!-- {{ form.id }} -->
                             <div class="col-md-8 p-0">
                                 {{form.operario}}
                                 <select name="operario-{{forloop.counter0}}" class="form-control form-control-sm "
@@ -157,7 +252,6 @@
                                     </option>
                                     {% endfor %}
                                 </select>
-                                <!-- <input type="text" id="nombres-{{ forloop.counter0 }}-operario" class="form-control form-control-sm" style="height:39px !important" disabled> -->
                             </div>
                         </div>
 
@@ -166,26 +260,12 @@
 
                                 <div class="input-group date">
                                     {{form.fechaInicio}}
-                                    <!-- <input type="text" value="{{form.fechaInicio.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaInicio" placeholder="Fecha Inicio"
-        
-                                            class="form-control" id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaInicio"
-                                            dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;YYYY-MM-DD&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
-                                        </div>   -->
+                              
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="input-group date">
-                                    <!--input type="text" value="{{form.fechaFin.value}}" name="asignaciondet_set-{{ forloop.counter0 }}-fechaFin" placeholder="Fecha Fin"
-        
-                                            class="form-control" id="id_asignaciondet_set-{{ forloop.counter0 }}-fechaFin"
-                                            dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;YYYY-MM-DD&quot;}}">
-                                        <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
-                                            data-toggle="datetimepickerv">
-                                            <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
-                                        </div!-->
+                                   
                                     {{form.fechaFin}}
                                 </div>
                             </div>
@@ -500,8 +580,6 @@
 
             </div>
 
-
-            <!-- Modal -->
             <div class="modal fade" id="modalFiltro{{forloop.counter0}}" tabindex="-1" role="dialog"
                 aria-labelledby="modalFiltro" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -520,11 +598,8 @@
             </div>
             {% endfor %}
 
-        </div>
-        <div class="col-lg-12 col-md-12" style="text-align: right;margin:15px 0px;">
-            <button type='button' id="guardar" onclick="guardarAsignacion()" class='btn btn-success'>Guardar</button>
-            <a class='btn btn-danger' href={% url 'Operarios:asignacion_list' %}>Cancelar</a>
-        </div>
+        </div> -->
+
 
 
 
@@ -776,8 +851,13 @@
             </div>
 </script>
 <script>
+    function formatearFecha(date) {
+        console.log(date)
+    }
     /**verifica los eliminados y oculta **/
     $(document).ready(function () {
+        RecalcularTipoHoras();
+        //RecalcularHorasV2();
         // $('input[type=checkbox]').hide()
         var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
         for (var i = 0; i < cantForm; i++) {
@@ -822,8 +902,7 @@
                 $('#guardar').prop("disabled", false);
                 //Los siguientes campos seràn deshabilitados solo si tienen datos               
             }
-            else
-            {
+            else {
                 $('#guardar').prop("disabled", true);
             }
         }
@@ -831,30 +910,31 @@
 </script>
 <script>
     $(document).on("change", ".perfil-combo", function () {
-        RecalcularHorasV2();
+        //RecalcularHorasV2();
         RecalcularTipoHoras();
     });
     $(document).on("dp.change", ".examDate", function () {
-        RecalcularHorasV2();
+        //RecalcularHorasV2();
         RecalcularTipoHoras();
     });
     $(document).on("dp.change", ".examTime", function () {
-        RecalcularHorasV2();
+        //RecalcularHorasV2();
         RecalcularTipoHoras();
     });
 </script>
 
 <script>
     function guardarAsignacion() {
-        var error=true;
-        if(
-            
-            (timeInHours( $('#sumAll_resto').val())>=0) &&
-            (timeInHours($('#res_sem_diu').val())>=0 || isNaN(timeInHours($('#res_sem_diu').val()))) &&
-            (timeInHours($('#res_sem_noc').val())>=0 || isNaN(timeInHours($('#res_sem_noc').val()))) &&
-            (timeInHours($('#res_dom_diu').val())>=0 || isNaN(timeInHours($('#res_dom_diu').val()))) &&
-            (timeInHours($('#res_dom_noc').val())>=0 || isNaN(timeInHours($('#res_dom_noc').val()))) 
-        ){error=false;}
+        $(".alert-success").addClass("d-none");
+        var error = true;
+        if (
+
+            (timeInHours($('#sumAll_resto').val()) >= 0) &&
+            (timeInHours($('#res_sem_diu').val()) >= 0 || isNaN(timeInHours($('#res_sem_diu').val()))) &&
+            (timeInHours($('#res_sem_noc').val()) >= 0 || isNaN(timeInHours($('#res_sem_noc').val()))) &&
+            (timeInHours($('#res_dom_diu').val()) >= 0 || isNaN(timeInHours($('#res_dom_diu').val()))) &&
+            (timeInHours($('#res_dom_noc').val()) >= 0 || isNaN(timeInHours($('#res_dom_noc').val())))
+        ) { error = false; }
         debugger;
 
         token = '{{csrf_token}}';
@@ -862,33 +942,33 @@
         $.ajax({
             type: "POST",
             url: "/reingenieria/asignacion/guardarAsignacion",
-            data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token+"&error="+error
+            data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token + "&error=" + error
         }).done(function (result) {
             endLoader();
-            if(result.codigo==0){
-                document.location.href="/reingenieria/asignacion/listar";
-                setMessageAlert("No se pudo guardar la Asignación");
-            }else if(result.codigo==1){
+            if (result.codigo == 0) {
+                document.location.href = "/reingenieria/asignacion/listar";
                 setMessageAlert(result.mensaje);
-                $('html, body').animate({scrollTop:0},'fast');
+            } else if (result.codigo == 1) {
+                setMessageAlert(result.mensaje);
+                $('html, body').animate({ scrollTop: 0 }, 'fast');
             }
         })
     }
-    function verificarDiaLibre(idOperario,id){
+    function verificarDiaLibre(idOperario, id) {
         var body = {}
-        body.operarios="["+idOperario+"]";
+        body.operarios = "[" + idOperario + "]";
         $.ajax({
             type: "GET",
             url: "/reingenieria/asignacion/diasLibres",
             data: body
         }).done(function (result) {
             diasLibres = result.dato;
-            if(diasLibres){
-                if(diasLibres.length>0){
+            if (diasLibres) {
+                if (diasLibres.length > 0) {
                     var entrada = diasLibres[0].diasLibres.entrada;
                     var salida = diasLibres[0].diasLibres.salida;
-                    var tieneFechaInicio=setDiasLibres(id, entrada.label, 0);
-                    var tieneDiaFin=setDiasLibres(id, salida.label, 1);
+                    var tieneFechaInicio = setDiasLibres(id, entrada.label, 0);
+                    var tieneDiaFin = setDiasLibres(id, salida.label, 1);
                     if (entrada.hora != "") {
                         $("#id_horaInicio-" + id).val(entrada.hora.substr(0, 5));
                         $('#id_horaInicio-' + id).prop("readonly", true);
@@ -897,123 +977,128 @@
                         $("#id_horaFin-" + id).val(salida.hora.substr(0, 5));
                         $('#id_horaFin-' + id).prop("readonly", true);
                     }
-                    if(tieneFechaInicio){
+                    if (tieneFechaInicio) {
                         $('#id_diaInicio-' + id).attr("disabled", "disabled");
                     }
-                    if(tieneDiaFin){
+                    if (tieneDiaFin) {
                         $('#id_diaFin-' + id).attr("disabled", "disabled");
                     }
                 }
-                
+
             }
-            
+
         })
     }
     function setDiasLibres(id, label, mode) {
-            //Mode 0 es para setear dia inicio, mode 1 es para setear dia fin
-            if (mode == 0) {
-                var select = $('#id_diaInicio-' + (id))[0];
-            } else {
-                var select = $('#id_diaFin-' + (id))[0];
-            }
-            for (var j = 0; j < select.length; j++) {
-                if ($(select[j]).val() == label) {
-                    $(select).val(label);
-                    return true;
-                } else {
-                    $(select[j]).removeAttr('selected');
-                }
-            }
-            return false;
+        //Mode 0 es para setear dia inicio, mode 1 es para setear dia fin
+        if (mode == 0) {
+            var select = $('#id_diaInicio-' + (id))[0];
+        } else {
+            var select = $('#id_diaFin-' + (id))[0];
         }
+        for (var j = 0; j < select.length; j++) {
+            if ($(select[j]).val() == label) {
+                $(select).val(label);
+                return true;
+            } else {
+                $(select[j]).removeAttr('selected');
+            }
+        }
+        return false;
+    }
 </script>
 
 <script>
-   
-    $(document).ready(function () {
-        var body = {}
-        var diasLibres = []
-        var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
-        var identificadores=[];
-        for(var i=0;i<cantForm;i++){
-            if($('#id_asignaciondet_set-'+i+'-operario').val()){
-                identificadores.push(($('#id_asignaciondet_set-'+i+'-operario').val()));
-            }
-        }
-        body.operarios="["+identificadores+"]";
-        $.ajax({
-            type: "GET",
-            url: "/reingenieria/asignacion/diasLibres",
-            data: body
-        }).done(function (result) {
-            diasLibres = result;
-            searchDiasLibres(diasLibres.dato)
-        })
+    function goToAddDetalle() {
+        var puntoServicio_id = $('#id_puntoServicio').val()
+        document.location.href = "/reingenieria/asignacion/agregarDetalle/" + puntoServicio_id;
+    }
 
-        function searchDiasLibres(diasLibres) {
-            for (var i = 0; i < diasLibres.length; i++) {
-                var idOpe = diasLibres[i].operario_id;
-                for (id = 0; id < cantForm; id++) {
-                    if (idOpe == $("#id_asignaciondet_set-" + id + "-operario").val()) {
-                        //Existe operario
-                        var entrada = diasLibres[i].diasLibres.entrada;
-                        var salida = diasLibres[i].diasLibres.salida;
-                        var tieneFechaInicio=setDiasLibres(id, entrada.label, 0);
-                        var tieneDiaFin=setDiasLibres(id, salida.label, 1);
-                        if (entrada.hora != "") {
-                            $("#id_horaInicio-" + id).val(entrada.hora.substr(0, 5));
-                            $('#id_horaInicio-' + id).prop("readonly", true);
-                        }
-                        if (salida.hora != "") {
-                            $("#id_horaFin-" + id).val(salida.hora.substr(0, 5));
-                            $('#id_horaFin-' + id).prop("readonly", true);
-                        }
-                        if(tieneFechaInicio){
-                            $('#id_diaInicio-' + id).attr("disabled", "disabled");
-                        }
-                        if(tieneDiaFin){
-                            $('#id_diaFin-' + id).attr("disabled", "disabled");
-                        }
-                    }
-                }
-            }
-        }
-        function setDiasLibres(id, label, mode) {
-            //Mode 0 es para setear dia inicio, mode 1 es para setear dia fin
-            if (mode == 0) {
-                var select = $('#id_diaInicio-' + (id))[0];
-            } else {
-                var select = $('#id_diaFin-' + (id))[0];
-            }
-            for (var j = 0; j < select.length; j++) {
-                if ($(select[j]).val() == label) {
-                    $(select).val(label);
-                    return true;
-                } else {
-                    $(select[j]).removeAttr('selected');
-                }
-            }
-            return false;
-        }
-       
+    // $(document).ready(function () {
+    //     var body = {}
+    //     var diasLibres = []
+    //     var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
+    //     var identificadores = [];
+    //     for (var i = 0; i < cantForm; i++) {
+    //         if ($('#id_asignaciondet_set-' + i + '-operario').val()) {
+    //             identificadores.push(($('#id_asignaciondet_set-' + i + '-operario').val()));
+    //         }
+    //     }
+    //     body.operarios = "[" + identificadores + "]";
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "/reingenieria/asignacion/diasLibres",
+    //         data: body
+    //     }).done(function (result) {
+    //         diasLibres = result;
+    //         searchDiasLibres(diasLibres.dato)
+    //     })
 
-    })
+    //     function searchDiasLibres(diasLibres) {
+    //         for (var i = 0; i < diasLibres.length; i++) {
+    //             var idOpe = diasLibres[i].operario_id;
+    //             for (id = 0; id < cantForm; id++) {
+    //                 if (idOpe == $("#id_asignaciondet_set-" + id + "-operario").val()) {
+    //                     //Existe operario
+    //                     var entrada = diasLibres[i].diasLibres.entrada;
+    //                     var salida = diasLibres[i].diasLibres.salida;
+    //                     var tieneFechaInicio = setDiasLibres(id, entrada.label, 0);
+    //                     var tieneDiaFin = setDiasLibres(id, salida.label, 1);
+    //                     if (entrada.hora != "") {
+    //                         $("#id_horaInicio-" + id).val(entrada.hora.substr(0, 5));
+    //                         $('#id_horaInicio-' + id).prop("readonly", true);
+    //                     }
+    //                     if (salida.hora != "") {
+    //                         $("#id_horaFin-" + id).val(salida.hora.substr(0, 5));
+    //                         $('#id_horaFin-' + id).prop("readonly", true);
+    //                     }
+    //                     if (tieneFechaInicio) {
+    //                         $('#id_diaInicio-' + id).attr("disabled", "disabled");
+    //                     }
+    //                     if (tieneDiaFin) {
+    //                         $('#id_diaFin-' + id).attr("disabled", "disabled");
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     function setDiasLibres(id, label, mode) {
+    //         //Mode 0 es para setear dia inicio, mode 1 es para setear dia fin
+    //         if (mode == 0) {
+    //             var select = $('#id_diaInicio-' + (id))[0];
+    //         } else {
+    //             var select = $('#id_diaFin-' + (id))[0];
+    //         }
+    //         for (var j = 0; j < select.length; j++) {
+    //             if ($(select[j]).val() == label) {
+    //                 $(select).val(label);
+    //                 return true;
+    //             } else {
+    //                 $(select[j]).removeAttr('selected');
+    //             }
+    //         }
+    //         return false;
+    //     }
+
+
+    // })
 </script>
 
 <script>
     $(document).ready(function () {
+        RecalcularHorasLunSabADom();
         var cantForm = $('#id_asignaciondet_set-TOTAL_FORMS').val();
         setClassAll(cantForm - 1);
         //EVENTO CHANGE PARA TIMES POR DEFECTO
         $('.input-group.time').each(function () {
             $(this).datetimepicker().on('dp.change', function (e) {
-                RecalcularHorasV2();
+                //RecalcularHorasV2();
                 RecalcularTipoHoras();
             })
         });
         $('.input-group.time').each(function () {
             $(this).datetimepicker().on('dp.change', function (e) {
-                RecalcularHorasV2();
+                //RecalcularHorasV2();
                 RecalcularTipoHoras();
             })
         });
@@ -1062,8 +1147,45 @@
             $("#id_asignaciondet_set-" + (id) + "-domEnt").parent('div').addClass('time');
             $("#id_asignaciondet_set-" + (id) + "-domSal").parent('div').addClass('time');
         }
-    });
+        // var cant_horas = $('.totalHoras-asignaciones').length;
+        // var total_horas = $('.totalHoras-asignaciones');
+        // var total = 0;
 
+        // for (let index = 0; index < total_horas.length; index++) {
+        //     total = total + parseFloat(total_horas[index].defaultValue);
+        // }
+        // console.log("TOTAL",total)
+        // var horas = "";
+        // if (String(total).includes(".")) {
+        //     horas = (String(total)).split(".")[0];
+        //     minutos = "0." + (String(total)).split(".")[1];
+        //     $('#id_totalasignado').val(horas + ":" + String(parseFloat(minutos) * 60));
+        // } else {
+        //     horas = (String(total)).split(".")[0];
+        //     $('#id_totalasignado').val(horas + ":00");
+        // }
+    });
+    function updateTotalAsignado(){
+      
+        var cant_horas = $('.totalHoras-asignaciones').length;
+        var total_horas = $('.totalHoras-asignaciones');
+        var total = 0;
+
+        for (let index = 0; index < total_horas.length; index++) {
+            total = total + parseFloat(total_horas[index].defaultValue);
+        }
+        var horas = "";
+        if (String(total).includes(".")) {
+            horas = (String(total)).split(".")[0];
+            minutos = "0." + (String(total)).split(".")[1];
+            $('#id_totalasignado').val(horas + ":" + String(parseFloat(minutos) * 60));
+        } else {
+            horas = (String(total)).split(".")[0];
+            $('#id_totalasignado').val(horas + ":00");
+        }
+         $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours($('#id_totalasignado').val())));
+   
+    }
 </script>
 <script>
     function buscarOperario(id) {
@@ -1134,7 +1256,7 @@
                         }).done(function (result) {
 
                             var j = id;
-                            var index=1;
+                            var index = 1;
                             var lunEntAnt = ""
                             var lunSalAnt = ""
                             var marEntAnt = ""
@@ -1151,9 +1273,6 @@
                             var domSalAnt = ""
                             var fechaIniAnt = ""
                             var fechaFinAnt = ""
-                            console.log("J= ",j)
-                            console.log("Resultado");
-                            console.log(result)
                             if (result.length > 0) {
                                 var operarios = result;
                                 if (j > 0) {
@@ -1342,9 +1461,9 @@
                     var perfilSelect = $('#perfil-' + id)[0];
                     var idPerfil = $('#id_asignaciondet_set-' + (id) + '-perfil').val();
                     var selectPerfil = $('#perfil-' + (id))[0];
-                    verificarDiaLibre(ope,id);
+                    verificarDiaLibre(ope, id);
                     $('#guardar').prop("disabled", false);
-                    
+
                     $('#id_asignaciondet_set-' + id + '-operario').val(ope);
                     for (var i = 0; i < select.length; i++) {
 
@@ -1395,16 +1514,16 @@
                     $('#supervisor-' + id).attr("style", "display:block;margin: 8px 25px;");
                     $('#supervisor-' + id).attr("disabled", "disabled");
                     //Los siguientes campos seràn deshabilitados solo si tienen datos
-                    if($('#id_diaInicio-' + id).val()!="''"){
+                    if ($('#id_diaInicio-' + id).val() != "''") {
                         $('#id_diaInicio-' + id).attr("disabled", "disabled");
                     }
-                    if($('#id_horaInicio-' + id).val()){
+                    if ($('#id_horaInicio-' + id).val()) {
                         $('#id_horaInicio-' + id).prop("readonly", true);
                     }
-                    if($('#id_diaFin-' + id).val()!="''"){
+                    if ($('#id_diaFin-' + id).val() != "''") {
                         $('#id_diaFin-' + id).attr("disabled", "disabled");
                     }
-                    if($('#id_horaFin-' + id).val()){
+                    if ($('#id_horaFin-' + id).val()) {
                         $('#id_horaFin-' + id).prop("readonly", true);
                     }
                     $('#modalFiltro' + id).modal('hide');
@@ -1428,6 +1547,47 @@
         id = $(this)[0].id;
         buscarOperario(id[16]);
     })
+
+    //ELIMINA UNA ASIGNACION YA SEA TEMPORAL O CONFIRMADA
+    function eliminarRegistro(id) {
+        if (confirm("Estás seguro que desea borrar el registro?")) {
+            startLoader();
+            tipo = $('#' + id).val();
+            $.ajax({
+                type: "POST",
+                url: "/reingenieria/asignacion/eliminar/" + id + "/",
+                data: { "tipo": $('#' + id + '-eliminar').val(), csrfmiddlewaretoken: '{{csrf_token}}' }
+            }).done(function (result) {
+                endLoader();
+                if (result.codigo == 0) {
+                    console.log("exito");
+                    location.reload();
+                } else {
+                    console.log("error");
+                }
+
+            });
+        }
+    }
+    function escondeRegistrosBorrados(id_asig,index) {
+        $('#' + id_asig).addClass('d-none');
+        $('#totalhoras-'+index);
+    }
+    //VER UNA ASIGNACION YA SEA TEMPORAL O CONFIRMADA
+    function verRegistro(id) {
+        tipo = $('#' + id +"-eliminar").val();
+        localStorage.setItem('tipo-asignacion',tipo); 
+        localStorage.setItem('id-signacion',id);
+        id_punto = $('#id_puntoServicio').val();
+        document.location.href = "/reingenieria/asignacion/verDetalle/"+id_punto;
+    }
+    //CANCELAR ASIGNACION
+    function cancelarConfirmacion(id) {
+        if (confirm("¿Estás seguro que desea cancelar? Todas las asignaciones que no fueron confirmadas se perderán")) {
+            document.location.href = "/reingenieria/asignacion/listar/";
+        } 
+    }
+
 </script>
 
 </div>
@@ -1457,7 +1617,7 @@
 
     function timeInHours(str) {
         var sp = str.split(":");
-        return parseInt(sp[0]) + parseFloat(sp[1] / 60);
+        return parseInt(sp[0]) + (parseFloat(sp[1] / 60));
     }
 
     function hoursToString(h) {
@@ -1466,8 +1626,8 @@
             return "-" + hoursToString(h * -1);
         }
         var hours = Math.floor(h);
-        var minutes = ((h - hours) * 60).toFixed(2);
-
+        var minutes = ((h - hours) * 60).toFixed(0);
+        
         return pad(hours) + ":" + pad(minutes);
     }
 
@@ -1488,7 +1648,6 @@
         var min_total = (min_pre - (horas_adicionales * 60));
 
         return hora_total + ":" + pad(min_total);
-
     }
 
     function obtenerNumeroId(id) {
@@ -1549,13 +1708,11 @@
         // $("#leaveForm-" + id).remove();
         if (confirm("Estas seguro que desea borrar el registro?")) {
             $(deleteLink).closest('.leaveForm').hide();
-            if (typeof id =='undefined')
-            {
-                var id_boton=deleteLink.id;
-                var id_clean=id_boton.substring(10);
-                id=id_clean
+            if (typeof id == 'undefined') {
+                var id_boton = deleteLink.id;
+                var id_clean = id_boton.substring(10);
+                id = id_clean
             }
-            console.log("ID del eliminado ", id)
 
             $("#id_asignaciondet_set-" + id + "-DELETE").prop("checked", true);
 
@@ -1566,39 +1723,32 @@
             $('#leaveForm-' + id).css('display:none !important')
             /**se verifica en caso que haya sido el primer elemento eliminado y ya no queda nada**/
             verificarGuardar();
-            
-            RecalcularHorasV2();
+
+            //RecalcularHorasV2();
             RecalcularTipoHoras();
 
         }
 
 
     }
-    function verificarGuardar()
-    {
-        var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
-        var totalDet = parseInt($totalDetalle.val(), 10);
-        console.log("Total Det ", totalDet)
-        var countDelete=0;
+    function verificarGuardar() {
+        var totalDetalle = $('.row-table').length;
+        var totalDet = parseInt(totalDetalle, 10);
+        var countDelete = 0;
         /**estado inicial**/
         $('#guardar').prop("disabled", false);
-        for (var i=0; i< totalDet; i++)
-        {
-            if ($('#leaveForm-' + i).css('display')!='none') {
-                console.log($('#id_asignaciondet_set-' + i + '-operario').val())
-                if ($('#id_asignaciondet_set-' + i + '-operario').val()=="") {
+        for (var i = 0; i < totalDet; i++) {
+            if ($('#leaveForm-' + i).css('display') != 'none') {
+                if ($('#id_asignaciondet_set-' + i + '-operario').val() == "") {
                     $('#guardar').prop("disabled", true);
                     break;
                 }
             }
-            else
-            {
+            else {
                 countDelete++;
             }
         }
-        console.log("Total eliminados ", countDelete)
-        if (countDelete==totalDet)
-        {
+        if (countDelete == totalDet) {
             $('#guardar').prop("disabled", true);
         }
     }
@@ -1661,18 +1811,23 @@
             horasValid = true;
         }
         if (fechasValid && horasValid && hasPerfil) {
-            var operario=$('#id_asignaciondet_set-' + i + '-operario').val();
-            if (operario=="")
-            {
+            var operario = $('#id_asignaciondet_set-' + i + '-operario').val();
+            if (operario == "") {
                 $('#filter_operario-' + id).prop("disabled", false);
             }
-            else
-            {
+            else {
                 $('#filter_operario-' + id).prop("disabled", true);
             }
         } else {
             $('#filter_operario-' + id).prop("disabled", true);
         }
+
+    }
+    function RecalcularHorasLunSabADom() {
+        var diurnas = "00:00";
+        var nocturnas = "00:00";
+        var diurnas_dom = "00:00";
+        var nocturnas_dom = "00:00";
 
     }
     function RecalcularHoras() {
@@ -1747,136 +1902,70 @@
 
         $('#id_totalasignado').val(total_horas_detalle);
         $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(total_horas_detalle)));
+
     }
 
 
     function RecalcularHorasV2() {
         //aqui empieza el calculo del total de horas normales
-        debugger;
-        var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
-        var totalDet = parseInt($totalDetalle.val(), 10);
-        var subTotal= '00:00';
-        console.log("Detalles: "+totalDet);
-        for (i = 0; i < totalDet; i++) {
-            var total_horas_detalle = '00:00';
-            if (!($('#leaveForm-' + i).css('display') == 'none')) {
-                habilitarBusqueda(i);
 
-                //Lunes
-                var lunEnt = $('#id_asignaciondet_set-' + i + '-lunEnt').val();
-                var lunSal = $('#id_asignaciondet_set-' + i + '-lunSal').val();
-                var totalLunes = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
-                if (!(totalLunes == 'NaN:NaN')) {
-                    habilitarBusqueda(i);
-                    total_horas_detalle = SumHrMin(total_horas_detalle, totalLunes);
-                }
-                
-                //Martes
-                var marEnt = $('#id_asignaciondet_set-' + i + '-marEnt').val();
-                var marSal = $('#id_asignaciondet_set-' + i + '-marSal').val();
-                var totalMartes = hoursToString(timeInHours(marSal) - timeInHours(marEnt));
-                if (!(totalMartes == 'NaN:NaN')) {
-                    habilitarBusqueda(i);
-                    total_horas_detalle = SumHrMin(total_horas_detalle, totalMartes);
-                }
-                //Miercoles
-                var mieEnt = $('#id_asignaciondet_set-' + i + '-mieEnt').val();
-                var mieSal = $('#id_asignaciondet_set-' + i + '-mieSal').val();
-                var totalMiercoles = hoursToString(timeInHours(mieSal) - timeInHours(mieEnt));
-                if (!(totalMiercoles == 'NaN:NaN')) {
-                    habilitarBusqueda(i);
-                    total_horas_detalle = SumHrMin(total_horas_detalle, totalMiercoles);
-                }
-                //Jueves
-                var jueEnt = $('#id_asignaciondet_set-' + i + '-jueEnt').val();
-                var jueSal = $('#id_asignaciondet_set-' + i + '-jueSal').val();
-                var totalJueves = hoursToString(timeInHours(jueSal) - timeInHours(jueEnt));
-                if (!(totalJueves == 'NaN:NaN')) {
-                    habilitarBusqueda(i);
-                    total_horas_detalle = SumHrMin(total_horas_detalle, totalJueves);
-                }
-                //Viernes
-                var vieEnt = $('#id_asignaciondet_set-' + i + '-vieEnt').val();
-                var vieSal = $('#id_asignaciondet_set-' + i + '-vieSal').val();
-                var totalViernes = hoursToString(timeInHours(vieSal) - timeInHours(vieEnt));
-                if (!(totalViernes == 'NaN:NaN')) {
-                    habilitarBusqueda(i);
-                    total_horas_detalle = SumHrMin(total_horas_detalle, totalViernes);
-                }
-                //Sabado
-                var sabEnt = $('#id_asignaciondet_set-' + i + '-sabEnt').val();
-                var sabSal = $('#id_asignaciondet_set-' + i + '-sabSal').val();
-                var totalSabado = hoursToString(timeInHours(sabSal) - timeInHours(sabEnt));
-                if (!(totalSabado == 'NaN:NaN')) {
-                    habilitarBusqueda(i);
-                    total_horas_detalle = SumHrMin(total_horas_detalle, totalSabado);
-                }
-                //Domingo
-                var domEnt = $('#id_asignaciondet_set-' + i + '-domEnt').val();
-                var domSal = $('#id_asignaciondet_set-' + i + '-domSal').val();
-                var totalDomingo = hoursToString(timeInHours(domSal) - timeInHours(domEnt));
-                if (!(totalDomingo == 'NaN:NaN')) {
-                    habilitarBusqueda(i);
-                    total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
-                }
-                subTotal=SumHrMin(total_horas_detalle, subTotal);
-            }
-           
-            $('#id_asignaciondet_set-' + i + '-totalHoras').val(total_horas_detalle.split(':')[0]);
-        }
+        var totalDet = $(".row-table").length;
+        var subTotal = '00:00';
 
-        
-        var total_sem_diurnas=undefined;
-        temp = hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas!=undefined?total_sem_diurnas:'00:00')));
-        if (temp.substring(0, 1) == '-') {
-            document.getElementById("res_sem_diu").style.color = "#ff0000";
-        } else {
-            document.getElementById("res_sem_diu").style.color = "#000000";
-        }
+        subTotal = SumHrMin($("#id_totalasignado").val(), subTotal);
+        //$('#id_asignaciondet_set-' + i + '-totalHoras').val(total_horas_detalle.split(':')[0]);
+        // var total_sem_diurnas = undefined;
+        // temp = hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas != undefined ? total_sem_diurnas : '00:00')));
+        // console.log("TEMMMP",temp)
+        // if (temp.substring(0, 1) == '-') {
+        //     document.getElementById("res_sem_diu").style.color = "#ff0000";
+        // } else {
+        //     document.getElementById("res_sem_diu").style.color = "#000000";
+        // }
 
-        var total_sem_nocturnas=undefined;
-        temp = hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas!=undefined?total_sem_nocturnas:'00:00')));
-        if (temp.substring(0, 1) == '-') {
-            document.getElementById("res_sem_noc").style.color = "#ff0000";
-        } else {
-            document.getElementById("res_sem_noc").style.color = "#000000";
-        }
+        // var total_sem_nocturnas = undefined;
+        // temp = hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas != undefined ? total_sem_nocturnas : '00:00')));
+        // if (temp.substring(0, 1) == '-') {
+        //     document.getElementById("res_sem_noc").style.color = "#ff0000";
+        // } else {
+        //     document.getElementById("res_sem_noc").style.color = "#000000";
+        // }
 
-        var total_dom_diurnas=undefined;
-        temp = hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas!=undefined?total_dom_diurnas:'00:00')));
-        if (temp.substring(0, 1) == '-') {
-            document.getElementById("res_dom_diu").style.color = "#ff0000";
-        } else {
-            document.getElementById("res_dom_diu").style.color = "#000000";
-        }
+        // var total_dom_diurnas = undefined;
+        // temp = hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas != undefined ? total_dom_diurnas : '00:00')));
+        // if (temp.substring(0, 1) == '-') {
+        //     document.getElementById("res_dom_diu").style.color = "#ff0000";
+        // } else {
+        //     document.getElementById("res_dom_diu").style.color = "#000000";
+        // }
 
-        var total_dom_nocturnas=undefined;
-        temp = hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas!=undefined?total_dom_nocturnas:'00:00')));
-        if (temp.substring(0, 1) == '-') {
-            document.getElementById("res_dom_noc").style.color = "#ff0000";
-        } else {
-            document.getElementById("res_dom_noc").style.color = "#000000";
-        }
+        // var total_dom_nocturnas = undefined;
+        // temp = hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas != undefined ? total_dom_nocturnas : '00:00')));
+        // if (temp.substring(0, 1) == '-') {
+        //     document.getElementById("res_dom_noc").style.color = "#ff0000";
+        // } else {
+        //     document.getElementById("res_dom_noc").style.color = "#000000";
+        // }
 
-        $('#id_totalasignado').val(subTotal);
-        temp=hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(subTotal));
-        if (temp.substring(0, 1) == '-') {
-            document.getElementById("sumAll_resto").style.color = "#ff0000";
-        } else {
-            document.getElementById("sumAll_resto").style.color = "#000000";
-        }
+        // $('#id_totalasignado').val(subTotal);
+        // temp = hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(subTotal));
+        // if (temp.substring(0, 1) == '-') {
+        //     document.getElementById("sumAll_resto").style.color = "#ff0000";
+        // } else {
+        //     document.getElementById("sumAll_resto").style.color = "#000000";
+        // }
         $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours(subTotal)));
         //if($('#sumAll_resto').val()>=0){$('#sumAll_resto').removeClass("text-danger");}else{$('#sumAll_resto').addClass("text-danger");}
-        
-        $('#res_sem_diu').val(hoursToString(timeInHours($('#tot_sem_diu').val()!=undefined&&$('#tot_sem_diu').val()!="" && isNaN($('#tot_sem_diu').val())?$('#tot_sem_diu').val():"00:00") - timeInHours($('#sum_sem_diu').val()!=undefined&&$('#sum_sem_diu').val()!=""?$('#sum_sem_diu').val():"00:00")));
+
+        $('#res_sem_diu').val(hoursToString(timeInHours($('#tot_sem_diu').val() != undefined && $('#tot_sem_diu').val() != "" && isNaN($('#tot_sem_diu').val()) ? $('#tot_sem_diu').val() : "00:00") - timeInHours($('#sum_sem_diu').val() != undefined && $('#sum_sem_diu').val() != "" ? $('#sum_sem_diu').val() : "00:00")));
         //if(timeInHours($('#tot_sem_diu').val()!=undefined&&$('#tot_sem_diu').val()!=""?$('#tot_sem_diu').val():"00:00") - timeInHours($('#sum_sem_diu').val()!=undefined&&$('#sum_sem_diu').val()!=""?$('#sum_sem_diu').val():"00:00")>=0){$('#res_sem_diu').removeClass("text-danger");}else{$('#res_sem_diu').addClass("text-danger");}
-        $('#res_sem_noc').val(hoursToString(timeInHours($('#tot_sem_noc').val()!=undefined&&$('#tot_sem_noc').val()!="" && isNaN($('#tot_sem_noc').val())?$('#tot_sem_noc').val():"00:00") - timeInHours($('#sum_sem_noc').val()!=undefined&&$('#sum_sem_noc').val()!=""?$('#sum_sem_noc').val():"00:00")));
+        $('#res_sem_noc').val(hoursToString(timeInHours($('#tot_sem_noc').val() != undefined && $('#tot_sem_noc').val() != "" && isNaN($('#tot_sem_noc').val()) ? $('#tot_sem_noc').val() : "00:00") - timeInHours($('#sum_sem_noc').val() != undefined && $('#sum_sem_noc').val() != "" ? $('#sum_sem_noc').val() : "00:00")));
         //if(timeInHours($('#tot_sem_noc').val()!=undefined&&$('#tot_sem_noc').val()!=""?$('#tot_sem_noc').val():"00:00") - timeInHours($('#sum_sem_noc').val()!=undefined&&$('#sum_sem_noc').val()!=""?$('#sum_sem_noc').val():"00:00")>=0){$('#res_sem_noc').removeClass("text-danger");}else{$('#res_sem_noc').addClass("text-danger");}
-        $('#res_dom_diu').val(hoursToString(timeInHours($('#tot_dom_diu').val()!=undefined&&$('#tot_dom_diu').val()!="" && isNaN($('#tot_dom_diu').val())?$('#tot_dom_diu').val():"00:00") - timeInHours($('#sum_dom_diu').val()!=undefined&&$('#sum_dom_diu').val()!=""?$('#sum_dom_diu').val():"00:00")));
+        $('#res_dom_diu').val(hoursToString(timeInHours($('#tot_dom_diu').val() != undefined && $('#tot_dom_diu').val() != "" && isNaN($('#tot_dom_diu').val()) ? $('#tot_dom_diu').val() : "00:00") - timeInHours($('#sum_dom_diu').val() != undefined && $('#sum_dom_diu').val() != "" ? $('#sum_dom_diu').val() : "00:00")));
         //if(timeInHours($('#tot_dom_diu').val()!=undefined&&$('#tot_dom_diu').val()!=""?$('#tot_dom_diu').val():"00:00") - timeInHours($('#sum_dom_diu').val()!=undefined&&$('#sum_dom_diu').val()!=""?$('#sum_dom_diu').val():"00:00")>=0){$('#res_dom_diu').removeClass("text-danger");}else{$('#res_dom_diu').addClass("text-danger");}
-        $('#res_dom_noc').val(hoursToString(timeInHours($('#tot_dom_noc').val()!=undefined&&$('#tot_dom_noc').val()!="" && isNaN($('#tot_dom_noc').val()) ?$('#tot_dom_noc').val():"00:00") - timeInHours($('#sum_dom_noc').val()!=undefined&&$('#sum_dom_noc').val()!=""?$('#sum_dom_noc').val():"00:00")));
+        $('#res_dom_noc').val(hoursToString(timeInHours($('#tot_dom_noc').val() != undefined && $('#tot_dom_noc').val() != "" && isNaN($('#tot_dom_noc').val()) ? $('#tot_dom_noc').val() : "00:00") - timeInHours($('#sum_dom_noc').val() != undefined && $('#sum_dom_noc').val() != "" ? $('#sum_dom_noc').val() : "00:00")));
         //if(timeInHours($('#tot_dom_noc').val()!=undefined&&$('#tot_dom_noc').val()!=""?$('#tot_dom_noc').val():"00:00") - timeInHours($('#sum_dom_noc').val()!=undefined&&$('#sum_dom_noc').val()!=""?$('#sum_dom_noc').val():"00:00")>=0){$('#res_dom_noc').removeClass("text-danger");}else{$('#res_dom_noc').addClass("text-danger");}
-        
+
     }
 
 
@@ -1889,91 +1978,120 @@
         var total_sem_diurnas = '00:00';
         var total_dom_nocturnas = '00:00';
         var total_dom_diurnas = '00:00';
-
-        var $totalDetalle = $('#id_asignaciondet_set-TOTAL_FORMS');
-        var totalDet = parseInt($totalDetalle.val(), 10);
-
+        var totalHorasSemanales = '00:00';
+        var totalDet = $('.row-table').length;
+        var lunes = $(".lunes");
+        var martes = $(".martes");
+        var miercoles = $(".miercoles");
+        var jueves = $(".jueves");
+        var viernes = $(".viernes");
+        var sabado = $(".sabado");
+        var domingo = $(".domingo");
+        console.log("TOTAL DETALLES",totalDet)
         for (i = 0; i < totalDet; i++) {
-            if (!($('#leaveForm-' + i).css('display') == 'none')) {
-                //Lunes
-                var lunEnt = $('#id_asignaciondet_set-' + i + '-lunEnt').val();
-                var lunSal = $('#id_asignaciondet_set-' + i + '-lunSal').val();
+            totalHorasSemanales = '00:00';
+            //Lunes
+            if (lunes.length > 0) {
+                var horarioLunes = (lunes[i].innerText).split(" a ");
+                var lunEnt = String(horarioLunes[0]);
+                var lunSal = String(horarioLunes[1]);
                 temp = obtenerNocturnas(lunEnt, lunSal);
-
-                var totalLunes = timeInHours(lunSal) - timeInHours(lunEnt);
+                totalLunes = parseFloat(timeInHours(lunSal)).toFixed(2) - parseFloat(timeInHours(lunEnt)).toFixed(2);
                 if (!(totalLunes == 'NaN:NaN') && !isNaN(totalLunes)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalLunes))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalLunes - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
+            }
 
-                //Martes
-                var marEnt = $('#id_asignaciondet_set-' + i + '-marEnt').val();
-                var marSal = $('#id_asignaciondet_set-' + i + '-marSal').val();
+
+            //Martes
+            if (martes.length > 0) {
+                var horarioMartes = (martes[i].innerText).split(" a ");
+                var marEnt = String(horarioMartes[0]);
+                var marSal = String(horarioMartes[1]);
                 temp = obtenerNocturnas(marEnt, marSal);
-
                 var totalMartes = timeInHours(marSal) - timeInHours(marEnt);
                 if (!(totalMartes == 'NaN:NaN') && !isNaN(totalMartes)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalMartes))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMartes - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
+            }
 
+            if (miercoles.length > 0) {
                 //Miercoles
-                var mieEnt = $('#id_asignaciondet_set-' + i + '-mieEnt').val();
-                var mieSal = $('#id_asignaciondet_set-' + i + '-mieSal').val();
+                var horarioMiercoles = (miercoles[i].innerText).split(" a ");
+                var mieEnt = String(horarioMiercoles[0]);
+                var mieSal = String(horarioMiercoles[1]);
                 temp = obtenerNocturnas(mieEnt, mieSal);
-
                 var totalMiercoles = timeInHours(mieSal) - timeInHours(mieEnt);
                 if (!(totalMiercoles == 'NaN:NaN') && !isNaN(totalMiercoles)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalMiercoles))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalMiercoles - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
-
+            }
+            if (jueves.length > 0) {
                 //Jueves
-                var jueEnt = $('#id_asignaciondet_set-' + i + '-jueEnt').val();
-                var jueSal = $('#id_asignaciondet_set-' + i + '-jueSal').val();
+                var horarioJueves = (jueves[i].innerText).split(" a ");
+                var jueEnt = String(horarioJueves[0]);
+                var jueSal = String(horarioJueves[1]);
                 temp = obtenerNocturnas(jueEnt, jueSal);
-
                 var totalJueves = timeInHours(jueSal) - timeInHours(jueEnt);
                 if (!(totalJueves == 'NaN:NaN') && !isNaN(totalJueves)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalJueves))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalJueves - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
-
+            }
+            if (viernes.length > 0) {
                 //Viernes
-                var vieEnt = $('#id_asignaciondet_set-' + i + '-vieEnt').val();
-                var vieSal = $('#id_asignaciondet_set-' + i + '-vieSal').val();
+                var horarioViernes = (viernes[i].innerText).split(" a ");
+                var vieEnt = String(horarioViernes[0]);
+                var vieSal = String(horarioViernes[1]);
                 temp = obtenerNocturnas(vieEnt, vieSal);
-
                 var totalViernes = timeInHours(vieSal) - timeInHours(vieEnt);
                 if (!(totalViernes == 'NaN:NaN') && !isNaN(totalViernes)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalViernes))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalViernes - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
-
+            }
+            if (sabado.length > 0) {
                 //Sabado
-                var sabEnt = $('#id_asignaciondet_set-' + i + '-sabEnt').val();
-                var sabSal = $('#id_asignaciondet_set-' + i + '-sabSal').val();
+                var horarioSabado = (sabado[i].innerText).split(" a ");
+                var sabEnt = String(horarioSabado[0]);
+                var sabSal = String(horarioSabado[1]);
                 temp = obtenerNocturnas(sabEnt, sabSal);
-
                 var totalSabado = timeInHours(sabSal) - timeInHours(sabEnt);
                 if (!(totalSabado == 'NaN:NaN') && !isNaN(totalSabado)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalSabado))
                     total_sem_diurnas = SumHrMin(total_sem_diurnas, hoursToString(totalSabado - timeInHours(temp)));
                     total_sem_nocturnas = SumHrMin(total_sem_nocturnas, temp);
                 }
-
-
+            }
+            if (domingo.length > 0) {
                 //Domingo
-                var domEnt = $('#id_asignaciondet_set-' + i + '-domEnt').val();
-                var domSal = $('#id_asignaciondet_set-' + i + '-domSal').val();
+                var horarioDomingo = (domingo[i].innerText).split(" a ");
+                var domEnt = String(horarioDomingo[0]);
+                var domSal = String(horarioDomingo[1]);
                 temp = obtenerNocturnas(domEnt, domSal);
-
                 var totalDomingo = timeInHours(domSal) - timeInHours(domEnt);
+                console.log("domingos",totalDomingo)
                 if (!(totalDomingo == 'NaN:NaN') && !isNaN(totalDomingo)) {
+                    totalHorasSemanales = SumHrMin(totalHorasSemanales,hoursToString(totalDomingo))
                     total_dom_diurnas = SumHrMin(total_dom_diurnas, hoursToString(totalDomingo - timeInHours(temp)));
                     total_dom_nocturnas = SumHrMin(total_dom_nocturnas, temp);
                 }
             }
+            $('#cantTotal-'+(i+1)).text(totalHorasSemanales);
         }
+        var total_semanales = SumHrMin(total_sem_diurnas,total_sem_nocturnas);
+        var total_domingos = SumHrMin(total_dom_diurnas,total_dom_nocturnas);
+        $('#id_totalasignado').val(SumHrMin(total_semanales,total_domingos))
+        localStorage.setItem("total_asignado",SumHrMin(total_semanales,total_domingos));
+        $('#sumAll_resto').val(hoursToString(timeInHours($('#sumAll_total').val()) - timeInHours($('#id_totalasignado').val())));
         $('#sum_sem_diu').val(total_sem_diurnas);
         $('#sum_sem_noc').val(total_sem_nocturnas);
         $('#sum_dom_diu').val(total_dom_diurnas);
@@ -2010,17 +2128,15 @@
         } else {
             document.getElementById("res_dom_noc").style.color = "#000000";
         }
-        temp=hoursToString(timeInHours($('#sumAll_total').val()));
+        temp = hoursToString(timeInHours($('#sumAll_total').val()));
         if (temp.substring(0, 1) == '-') {
             document.getElementById("sumAll_resto").style.color = "#ff0000";
         } else {
             document.getElementById("sumAll_resto").style.color = "#000000";
         }
-
-
         $('#res_sem_diu').val(hoursToString((parseFloat($('#tot_sem_diu').val()) - timeInHours(total_sem_diurnas))));
         $('#res_sem_noc').val(hoursToString((parseFloat($('#tot_sem_noc').val()) - timeInHours(total_sem_nocturnas))));
-        $('#res_dom_diu').val(hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas))));
+        $('#res_dom_diu').val((hoursToString((parseFloat($('#tot_dom_diu').val()) - timeInHours(total_dom_diurnas)))));
         $('#res_dom_noc').val(hoursToString((parseFloat($('#tot_dom_noc').val()) - timeInHours(total_dom_nocturnas))));
     }
 
@@ -2061,8 +2177,8 @@
             $('#id_asignaciondet_set-' + (total) + '-DELETE').attr('style', 'display:none !important')
             $("#id_asignaciondet_set-" + (total) + "-DELETE").prop("checked", false);
             $('#guardar').prop("disabled", true);
-            
-            
+
+
             $totalDetalle.val(total + 1);
             var body = {
                 "id_puntoServicio": $('#id_puntoServicio').val(),
@@ -2073,14 +2189,14 @@
                 url: "/reingenieria/asignacion/agregarDetalle",
                 data: body
             }).done(function (result) {
-                if(result.codigo==0){
-                    $('html, body').animate({scrollTop:document.body.scrollHeight},'low');
+                if (result.codigo == 0) {
+                    $('html, body').animate({ scrollTop: document.body.scrollHeight }, 'low');
                 }
             });
         });
 
     });
-    
+
 </script>
 <script>
     $(document).on('focus', '.examDate', function () {
@@ -2138,7 +2254,54 @@
         background-color: #86273e1f !important;
     }
 
- 
+    .card-header {
+        background-color: #86273e !important;
+        color: white !important;
+        font-size: 20px !important;
+        border-radius: 0px !important;
+        border-bottom: 1px solid gray !important;
+        padding: .35rem 1.25rem !important;
+    }
+
+    .card {
+        border-radius: 0px !important;
+        border: none !important;
+    }
+
+    .card-body {
+        padding: 0px !important;
+    }
+
+    .table th {
+        padding: 0.2rem .75rem !important;
+        background-color: white !important;
+    }
+
+    .header-table th {
+        padding: 10px !important;
+        background-color: #636363 !important;
+        color: white !important;
+    }
+
+    .action-table {
+        color: #636363 !important;
+    }
+
+    .action-table:hover {
+        text-decoration: none !important;
+    }
+
+    .table-bordered th {
+        border: 0px solid #e9ecef !important;
+    }
+
+    .table-bordered {
+        border: none !important;
+    }
+
+    .table-bordered td {
+        border: none !important;
+    }
 </style>
 
 {% endblock %}

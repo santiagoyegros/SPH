@@ -1,0 +1,882 @@
+{% extends "base.html" %}
+{% load static %}
+{% block base_head %}
+<link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet">
+</link>
+{% endblock %}
+{% block content %}
+
+<div class="container-fluid">
+
+    {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %}
+    <input type="hidden" id="id_puntoServicio" value="{{id_puntoServicio}}">
+    <input type="hidden" id="id_asignacionDetalle" value="{{id_asignacionDetalle}}">
+    <form action="" method="POST" id="formulario">
+        {% csrf_token %}
+        <!--DATOS GENERALES-->
+        <input type="hidden" name="puntoServicio" id="id_puntoServicio" value="{{id_puntoServicio}}">
+        <div class="container-fluid mb-3 mt-4 p-0">
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Datos Generales
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Total Hrs</p>
+                            <div class="input-group field-general">
+                                <input value="{{totalHora}}" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Total Hrs Asignadas</p>
+                            <div class="input-group field-general">
+                                <input id="totalAsignado" class="form-control" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-2">
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Fecha Inicio</p>
+                            <div class="input-group field-general date">
+                                <input type="text" name="asignaciondet-fechaInicio" value="" placeholder="Fecha Inicio"
+                                    class="form-control examDate" id="id_asignaciondet-fechaInicio"
+                                    dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Fecha Fin</p>
+                            <div class="input-group field-general date">
+                                <input type="text" name="asignaciondet-fechaFin" value="" placeholder="Fecha Fin"
+                                    class="form-control examDate" id="id_asignaciondet-fechaFin"
+                                    dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker2"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-2">
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Perfil</p>
+                            <div class="input-group field-general">
+                                <select name="perfil-combo" id="id_perfil-combo" class="form-control perfil-combo">
+                                    <option value="0">--------</option>
+                                    {% for per in perfiles %}
+                                    <option value="{{per.id}}"> {{per.especializacion}}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="hidden" name="asignaciondet-perfil" id="id_asignaciondet-perfil" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Supervisor</p>
+                            <div class="input-group field-general">
+                                <input type="checkbox" name="supervisor-chec"
+                                    class="checkbox-supervisor supervisor-check" id="id_supervisor-check">
+                                <input type="checkbox" name="asignaciondet-supervisor" id="id_asignaciondet-supervisor"
+                                    class="d-none" lue="">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!--DATOS PLANIFICACION-->
+        <div class="container-fluid mb-3 mt-4 p-0">
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-4">
+                            Asignación
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-11 text-right title-right">TOTAL DE HORAS ASIGNADAS: </div>
+                                <div class="col-1 p-0"> <input id="sumAll" type="text" value=""
+                                        class="form-control form-control-sm total-horas" name="asignaciondet-totalHoras"
+                                        readonly /></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row input-horas" style="margin-bottom: 15px;">
+                        <div class="col p-0  "> Lunes </div>
+                        <div class="col p-0  "> Martes </div>
+                        <div class="col p-0  "> Miércoles </div>
+                        <div class="col p-0  "> Jueves </div>
+                        <div class="col p-0  "> Viernes </div>
+                        <div class="col p-0  "> Sábado </div>
+                        <div class="col p-0  "> Domingo </div>
+                    </div>
+                    <div class="row input-horas">
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-lunEnt"
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-lunEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_20&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-lunSal"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-lunSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-1" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-marEnt"
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-marEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_22&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-marSal"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-marSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-2" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-mieEnt"
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-mieEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_24&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-mieSal"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-mieSal"
+                                   >
+                                <div class="input-group-addon input-group-append icon-focus-3" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-jueEnt"
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-jueEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_26&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-jueSal"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-jueSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-4" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-vieEnt"
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-vieEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_28&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-vieSal"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-vieSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-5" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-sabEnt"
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-sabEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_30&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-sabSal"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-sabSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-6" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-domEnt"
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-domEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_32&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-domSal"
+                                    class="form-control form-control-sm examTime salida" id="id_asignaciondet-domSal"
+                                    >
+                                <div class="input-group-addon input-group-append icon-focus-7" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--DATOS SELECCION DE OPERARIO-->
+        <div class="container-fluid mb-3 mt-4 p-0">
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Seleccionar Operario
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 container-field">
+                            <p class="label-field"> Operario: </p>
+                            <div class="buscador-operario">
+                                <input type="text" class="form-control input-operario" value=""
+                                    name="asignaciondet-nombreOperario" id="id_asignaciondet-nombreOperario" readonly>
+                                <input type="hidden" value="" name="asignaciondet-operario"
+                                    id="id_asignaciondet-operario">
+                            </div>
+                            <div class="container-btn-buscar">
+                                <button type="button" class="btn btn-buscar" id="buscador" onclick="buscarOperario()"
+                                    disabled> <i class="fa fa-search"></i>
+                                    Buscar</button>
+                            </div>
+                            <div class="container-btn-buscar">
+                                <button type="button" class="btn btn-buscar" style="margin: 0px !important;"
+                                    id="limpiador" onclick="limpiarFiltro()"> <i class="fa fa-trash"></i>
+                                    Limpiar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin:20px 0px !important;">
+            <div class="col-md-12" style="display:flex !important;justify-content:flex-end;">
+                <button onclick="guardarAsignacion()" class="btn btn-guardar btn-primary" type="button"
+                    style="margin-right:15px !important"> <i class="fa fa-plus fa-lg"></i> Agregar asignación</button>
+                <button class="btn btn-cancelar btn-primary" onclick="salirAgregarAsignacion({{id_puntoServicio}})"
+                    type="button"> <i class="fa fa-times fa-lg"></i>
+                    Salir</button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="modalFiltro" tabindex="-1" role="dialog" aria-labelledby="modalFiltro"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Operarios Disponibles </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="jsGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        RecalcularHoras();
+        var totalAsignado = localStorage.getItem("total_asignado");
+        $("#totalAsignado").val(totalAsignado);
+    });
+    $(document).on("click", ".icon-focus-1", function () {
+        $("#id_asignaciondet-lunSal").focus();
+    });
+    $(document).on("click", ".icon-focus-2", function () {
+        $("#id_asignaciondet-marSal").focus();
+    });
+    $(document).on("click", ".icon-focus-3", function () {
+        $("#id_asignaciondet-mieSal").focus();
+    });
+    $(document).on("click", ".icon-focus-4", function () {
+        $("#id_asignaciondet-jueSal").focus();
+    });
+    $(document).on("click", ".icon-focus-5", function () {
+        $("#id_asignaciondet-vieSal").focus();
+    });
+    $(document).on("click", ".icon-focus-6", function () {
+        $("#id_asignaciondet-sabSal").focus();
+    });
+    $(document).on("click", ".icon-focus-7", function () {
+        $("#id_asignaciondet-domSal").focus();
+    });
+    $(document).on("focus", ".salida", function () {
+        var id_salida = $(this)[0].id;
+        var value_salida = $(this)[0].value;
+        var id_entrada = id_salida.substr(0, id_salida.length - 3) + "Ent";
+        var d = new Date();
+        if ($('#' + id_entrada)) {
+            d.setHours($('#' + id_entrada).val().substr(0,2),$('#' + id_entrada).val().substr(3,2))
+            $(this).datetimepicker({
+                useCurrent:false,
+                format:'HH:mm',
+                defaultDate: d,
+            })
+            $(this).val($('#' + id_entrada).val())
+        }
+    });
+    $(document).on("dp.change", ".examTime", function () {
+        // if ($(this)[0]) {
+        //     var id_entrada = $(this)[0].id;
+        //     var value_entrada = $(this)[0].value;
+        //     var id_salida = id_entrada.substr(0, id_entrada.length - 3) + "Sal";
+        //     if ($('#' + id_salida)) {
+        //         $('#' + id_salida).val(value_entrada);
+        //     }
+
+        // }
+        RecalcularHoras();
+    });
+    $(document).on("dp.change", ".examDate", function () {
+        RecalcularHoras();
+    });
+    function getDetalle() {
+        $.ajax({
+            type: "GET",
+            url: "/reingenieria/asignacion/asignacionDetalle",
+            data: { "asignacionDet_id": $('#id_puntoServicio').val(), "tipo": $('').val() }
+        }).done(function (result) {
+            endLoader();
+            if (result.codigo == 0) {
+                document.location.href = "/reingenieria/asignacion/listar";
+                setMessageAlert("No se pudo guardar la Asignación");
+            } else if (result.codigo == 1) {
+                setMessageAlert(result.mensaje);
+                $('html, body').animate({ scrollTop: 0 }, 'fast');
+            }
+        })
+    }
+    function pad(d) {
+        return (d < 10) ? '0' + d.toString() : d.toString();
+    }
+    function SumHrMin(h1, h2) {
+        var sp = h1.split(":");
+        var hora1 = sp[0];
+        var min1 = sp[1];
+
+        sp = h2.split(":");
+        var hora2 = sp[0];
+        var min2 = sp[1];
+
+        var hora_total = parseInt(hora1) + parseInt(hora2);
+        var min_pre = parseInt(min1) + parseInt(min2);
+
+        var horas_adicionales = Math.floor((min_pre / 60));
+        hora_total += horas_adicionales;
+        var min_total = (min_pre - (horas_adicionales * 60));
+
+        return hora_total + ":" + pad(min_total);
+    }
+    function hoursToString(h) {
+
+        if (h < 0) {
+            return "-" + hoursToString(h * -1);
+        }
+        var hours = Math.floor(h);
+        var minutes = ((h - hours) * 60).toFixed(2);
+
+        return pad(hours) + ":" + pad(minutes);
+    }
+    function timeInHours(str) {
+        if (str) {
+            var sp = str.split(":");
+            return parseInt(sp[0]) + parseFloat(sp[1] / 60);
+        }
+    }
+    $(document).on("change", "#id_perfil-combo", function () {
+        habilitarBusqueda();
+    });
+
+    function RecalcularHoras() {
+        habilitarBusqueda();
+        var total_horas_detalle = '00:00';
+        //Lunes
+        var lunEnt = $('#id_asignaciondet-lunEnt').val();
+        var lunSal = $('#id_asignaciondet-lunSal').val();
+        var totalLunes = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
+        if (!(totalLunes == 'NaN:NaN')) {
+            habilitarBusqueda();
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalLunes);
+        }
+
+        //Martes
+        var marEnt = $('#id_asignaciondet-marEnt').val();
+        var marSal = $('#id_asignaciondet-marSal').val();
+        var totalMartes = hoursToString(timeInHours(marSal) - timeInHours(marEnt));
+        if (!(totalMartes == 'NaN:NaN')) {
+            habilitarBusqueda();
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalMartes);
+        }
+        //Miercoles
+        var mieEnt = $('#id_asignaciondet-mieEnt').val();
+        var mieSal = $('#id_asignaciondet-mieSal').val();
+        var totalMiercoles = hoursToString(timeInHours(mieSal) - timeInHours(mieEnt));
+        if (!(totalMiercoles == 'NaN:NaN')) {
+            habilitarBusqueda();
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalMiercoles);
+        }
+        //Jueves
+        var jueEnt = $('#id_asignaciondet-jueEnt').val();
+        var jueSal = $('#id_asignaciondet-jueSal').val();
+        var totalJueves = hoursToString(timeInHours(jueSal) - timeInHours(jueEnt));
+        if (!(totalJueves == 'NaN:NaN')) {
+            habilitarBusqueda();
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalJueves);
+        }
+        //Viernes
+        var vieEnt = $('#id_asignaciondet-vieEnt').val();
+        var vieSal = $('#id_asignaciondet-vieSal').val();
+        var totalViernes = hoursToString(timeInHours(vieSal) - timeInHours(vieEnt));
+        if (!(totalViernes == 'NaN:NaN')) {
+            habilitarBusqueda();
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalViernes);
+        }
+        //Sabado
+        var sabEnt = $('#id_asignaciondet-sabEnt').val();
+        var sabSal = $('#id_asignaciondet-sabSal').val();
+        var totalSabado = hoursToString(timeInHours(sabSal) - timeInHours(sabEnt));
+        if (!(totalSabado == 'NaN:NaN')) {
+            habilitarBusqueda();
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalSabado);
+        }
+        //Domingo
+        var domEnt = $('#id_asignaciondet-domEnt').val();
+        var domSal = $('#id_asignaciondet-domSal').val();
+        var totalDomingo = hoursToString(timeInHours(domSal) - timeInHours(domEnt));
+        if (!(totalDomingo == 'NaN:NaN')) {
+            habilitarBusqueda();
+            total_horas_detalle = SumHrMin(total_horas_detalle, totalDomingo);
+        }
+        //SE FORMATEA PARA MOSTRAR EN DECIMAL
+        // if (total_horas_detalle != '00:00') {
+        //     var horas = total_horas_detalle.split(":")[0];
+        //     var minutos = total_horas_detalle.split(":")[1];
+        //     console.log(horas, minutos);
+        //     if (minutos != '00') {
+        //         minutos = (parseFloat(minutos) / 60).toFixed(2);
+        //         console.log("minutos ", minutos);
+        //         //TIENE HORAS
+        //         if (horas != '0') {
+        //             total_horas_detalle = parseFloat(horas) + parseFloat(minutos);
+        //         } else {
+        //             //NO TIENE HORAS
+        //             total_horas_detalle = parseFloat(minutos).toFixed(2);
+        //         }
+        //     }
+        //     $('#sumAll').val(total_horas_detalle);
+        // }else{
+        //     $('#sumAll').val('00');
+        // }
+        $('#sumAll').val(total_horas_detalle);
+
+    }
+    function habilitarBusqueda() {
+        var formisValid = false;
+        var fechasValid = false;
+        var horasValid = false;
+        if ($('#id_asignaciondet-fechaInicio').val()) {
+            fechasValid = true;
+        }
+        if ($('#id_perfil-combo').val() == 0) {
+            hasPerfil = false;
+        } else {
+            hasPerfil = true;
+        }
+
+        //hasPerfil = $('#id_asignaciondet-perfil').val();
+        //Lunes
+        var lunEnt = $('#id_asignaciondet-lunEnt').val();
+        var lunSal = $('#id_asignaciondet-lunSal').val();
+        var totalLunes = hoursToString(timeInHours(lunSal) - timeInHours(lunEnt));
+        if (!(totalLunes == 'NaN:NaN')) {
+            horasValid = true;
+        }
+
+        //Martes
+        var marEnt = $('#id_asignaciondet-marEnt').val();
+        var marSal = $('#id_asignaciondet-marSal').val();
+        var totalMartes = hoursToString(timeInHours(marSal) - timeInHours(marEnt));
+        if (!(totalMartes == 'NaN:NaN')) {
+            horasValid = true;
+        }
+        //Miercoles
+        var mieEnt = $('#id_asignaciondet-mieEnt').val();
+        var mieSal = $('#id_asignaciondet-mieSal').val();
+        var totalMiercoles = hoursToString(timeInHours(mieSal) - timeInHours(mieEnt));
+        if (!(totalMiercoles == 'NaN:NaN')) {
+            horasValid = true;
+        }
+        //Jueves
+        var jueEnt = $('#id_asignaciondet-jueEnt').val();
+        var jueSal = $('#id_asignaciondet-jueSal').val();
+        var totalJueves = hoursToString(timeInHours(jueSal) - timeInHours(jueEnt));
+        if (!(totalJueves == 'NaN:NaN')) {
+            horasValid = true;
+        }
+        //Viernes
+        var vieEnt = $('#id_asignaciondet-vieEnt').val();
+        var vieSal = $('#id_asignaciondet-vieSal').val();
+        var totalViernes = hoursToString(timeInHours(vieSal) - timeInHours(vieEnt));
+        if (!(totalViernes == 'NaN:NaN')) {
+            horasValid = true;
+        }
+        //Sabado
+        var sabEnt = $('#id_asignaciondet-sabEnt').val();
+        var sabSal = $('#id_asignaciondet-sabSal').val();
+        var totalSabado = hoursToString(timeInHours(sabSal) - timeInHours(sabEnt));
+        if (!(totalSabado == 'NaN:NaN')) {
+            horasValid = true;
+        }
+        //Domingo
+        var domEnt = $('#id_asignaciondet-domEnt').val();
+        var domSal = $('#id_asignaciondet-domSal').val();
+        var totalDomingo = hoursToString(timeInHours(domSal) - timeInHours(domEnt));
+        if (!(totalDomingo == 'NaN:NaN')) {
+            horasValid = true;
+        }
+        if (fechasValid && horasValid && hasPerfil) {
+            $('#buscador').prop("disabled", false);
+        } else {
+            $('#buscador').prop("disabled", true);
+        }
+
+    }
+
+    //------------------------ GUARDADO -------------------------------//
+    function guardarAsignacion() {
+        var error = true;
+        cant_horas = String($('#sumAll').val()).split(":")[0];
+        operario = String($("#id_asignaciondet-nombreOperario").val())
+
+        if (cant_horas >= 0) {
+            error = false;
+        }
+        if (operario) {
+            var puntoServicio_id = $('#id_puntoServicio').val();
+            token = '{{csrf_token}}';
+            startLoader();
+            $.ajax({
+                type: "POST",
+                url: "/reingenieria/asignacion/guardarAsigOperario",
+                data: $("#formulario").serialize() + "&csrfmiddlewaretoken=" + token + "&error=" + error
+            }).done(function (result) {
+                endLoader();
+                if (result.codigo == 0) {
+                    localStorage.setItem('eliminar', false);
+                    document.location.href = "/reingenieria/asignacion/asignar/" + puntoServicio_id;
+                } else if (result.codigo == 1) {
+                    setMessageAlert(result.mensaje);
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                }
+            })
+        } else {
+            setMessageAlert("Debe seleccionar un Operario para está asignación");
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
+        }
+        debugger;
+
+    }
+
+    function salirAgregarAsignacion(puntoServicio_id) {
+        document.location.href = "/reingenieria/asignacion/asignar/" + puntoServicio_id;
+    }
+    $(document).on("change", ".perfil-combo", function () {
+        $("#id_asignaciondet-perfil").val($(this).val());
+    });
+    $(document).on("change", ".supervisor-check", function () {
+        $("#id_asignaciondet-supervisor")[0].checked = $(this)[0].checked;
+
+    });
+    function deshabilitarCampos() {
+        $('#id_asignaciondet-fechaInicio').prop("readonly", true);
+        $('#id_asignaciondet-fechaFin').prop("readonly", true);
+        $('#id_perfil-combo').attr("disabled", "disabled");
+        $('#id_supervisor-check').attr("disabled", "disabled");
+        $('#id_asignaciondet-lunEnt').prop("readonly", true);
+        $('#id_asignaciondet-lunSal').prop("readonly", true);
+        $('#id_asignaciondet-marEnt').prop("readonly", true);
+        $('#id_asignaciondet-marSal').prop("readonly", true);
+        $('#id_asignaciondet-mieEnt').prop("readonly", true);
+        $('#id_asignaciondet-mieSal').prop("readonly", true);
+        $('#id_asignaciondet-jueEnt').prop("readonly", true);
+        $('#id_asignaciondet-jueSal').prop("readonly", true);
+        $('#id_asignaciondet-vieEnt').prop("readonly", true);
+        $('#id_asignaciondet-vieSal').prop("readonly", true);
+        $('#id_asignaciondet-sabEnt').prop("readonly", true);
+        $('#id_asignaciondet-sabSal').prop("readonly", true);
+        $('#id_asignaciondet-domEnt').prop("readonly", true);
+        $('#id_asignaciondet-domSal').prop("readonly", true);
+    }
+    function limpiarFiltro() {
+        $("#id_asignaciondet-nombreOperario").val("");
+        $('#id_asignaciondet-fechaInicio').prop("readonly", false);
+        $('#id_asignaciondet-fechaFin').prop("readonly", false);
+        $('#id_perfil-combo').prop("disabled", false);
+        $('#id_supervisor-check').prop("disabled", false);
+        $('#id_asignaciondet-lunEnt').prop("readonly", false);
+        $('#id_asignaciondet-lunSal').prop("readonly", false);
+        $('#id_asignaciondet-marEnt').prop("readonly", false);
+        $('#id_asignaciondet-marSal').prop("readonly", false);
+        $('#id_asignaciondet-mieEnt').prop("readonly", false);
+        $('#id_asignaciondet-mieSal').prop("readonly", false);
+        $('#id_asignaciondet-jueEnt').prop("readonly", false);
+        $('#id_asignaciondet-jueSal').prop("readonly", false);
+        $('#id_asignaciondet-vieEnt').prop("readonly", false);
+        $('#id_asignaciondet-vieSal').prop("readonly", false);
+        $('#id_asignaciondet-sabEnt').prop("readonly", false);
+        $('#id_asignaciondet-sabSal').prop("readonly", false);
+        $('#id_asignaciondet-domEnt').prop("readonly", false);
+        $('#id_asignaciondet-domSal').prop("readonly", false);
+    }
+    //------------------------------------------------------------------------------------//
+
+    //------------------------------- BUSCADOR DE OPERARIOS ------------------------------//
+    function buscarOperario() {
+        $('#modalFiltro').modal('show');
+        
+        $("#jsGrid").jsGrid({
+            width: "100%",
+            filtering: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            pageIndex:1,
+            pageSize: 5,
+            pagerFormat: "Páginas: {first} {prev} {pages} {next} {last}    {pageIndex} de {pageCount}",
+            pageButtonCount: 1,
+            pagePrevText: "Anterior",
+            pageNextText: "Siguiente",
+            pageFirstText: "Primera",
+            pageLastText: "Ultima",
+            noDataContent: "No se han encontrado registros que coincidan con la busqueda",
+            deleteConfirm: "Desea eliminar el registro?",
+            loadMessage: "Por favor, espere...",
+            invalidMessage: "Datos no válidos",
+            controller: {
+                loadData: function (filter) {
+                    
+                    var d = $.Deferred();
+                    filter.idPunto = $('#id_puntoServicio').val();
+                    filter.totalHorasProc = ($('#sumAll').val()).split(":")[0];
+                    filter.lunEnt = $('#id_asignaciondet-lunEnt').val();
+                    filter.lunSal = $('#id_asignaciondet-lunSal').val();
+                    filter.marEnt = $('#id_asignaciondet-marEnt').val();
+                    filter.marSal = $('#id_asignaciondet-marSal').val();
+                    filter.mieEnt = $('#id_asignaciondet-mieEnt').val();
+                    filter.mieSal = $('#id_asignaciondet-mieSal').val();
+                    filter.jueEnt = $('#id_asignaciondet-jueEnt').val();
+                    filter.jueSal = $('#id_asignaciondet-jueSal').val();
+                    filter.vieEnt = $('#id_asignaciondet-vieEnt').val();
+                    filter.vieSal = $('#id_asignaciondet-vieSal').val();
+                    filter.sabEnt = $('#id_asignaciondet-sabEnt').val();
+                    filter.sabSal = $('#id_asignaciondet-sabSal').val();
+                    filter.domEnt = $('#id_asignaciondet-domEnt').val();
+                    filter.domSal = $('#id_asignaciondet-domSal').val();
+                    filter.perfilproc = $('#id_asignaciondet-perfil').val();
+                    filter.supervisor = $('#id_asignaciondet-supervisor')[0].checked;
+                    filter.fechaIni = $('#id_asignaciondet-fechaInicio').val();
+                    filter.fechaFin = $('#id_asignaciondet-fechaFin').val();
+                    $.ajax({
+                        type: "GET",
+                        url: "/reingenieria/asignacion/asignar/operarios",
+                        data: filter
+                    }).done(function (result) {
+                        console.log(result)
+                        d.resolve($.map(result, function (item) {
+                            return $.extend(item.fields, { id: item.pk });
+                        }));
+                    });
+
+                    return d.promise();
+                }
+
+            },
+            rowClick: function (e) {
+                var ope = e.item.id;
+                $('#id_asignaciondet-nombreOperario').val(e.item.nombres);
+                $('#id_asignaciondet-operario').val(ope);
+                $('#modalFiltro').modal('hide');
+                deshabilitarCampos();
+            },
+
+            fields: [
+                { name: "nombres", type: "text", width: 150, title: "Nombre" },
+                { name: "nroLegajo", type: "text", width: 150, title: "Legajo" },
+                { name: "antiguedad", type: "text", width: 150, title: "Antiguedad (años)" },
+                { name: "nombres_puntoServicio", type: "text", width: 150, title: "Otros contratos" },
+                { name: "totalHoras", type: "text", width: 150, title: "Total horas" },
+                { name: "perfil", type: "text", width: 150, title: "Perfil" }
+            ]
+        });
+        
+    }
+</script>
+<style>
+    .buscador-operario {
+        width: 790px !important;
+    }
+
+    .btn-buscar {
+        background-color: #86273e !important;
+        color: white !important;
+        border-radius: 3px !important;
+        margin: 0px 15px !important;
+        cursor: pointer !important;
+    }
+
+    .btn-buscar:hover {
+        background-color: #86273ed9 !important;
+    }
+
+    .card-header {
+        background-color: #86273e !important;
+        color: white !important;
+        font-size: 20px !important;
+        border-radius: 0px !important;
+        border-bottom: 1px solid gray !important;
+    }
+
+    .card {
+        border-radius: 0px !important;
+    }
+
+    .field-general {
+        width: 270px;
+        padding: 0px 15px;
+    }
+
+    .container-field {
+        display: inline-flex !important;
+    }
+
+    .label-field {
+        margin: 0px !important;
+        line-height: 2rem;
+        width: 170px !important;
+    }
+
+    .row-2 {
+        margin-top: 15px !important;
+    }
+
+    .input-horas {
+        margin: 0px 50px;
+    }
+
+    .title-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 15px !important;
+    }
+
+    .total-horas {
+        font-size: 18px !important;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0px !important;
+        color: white !important;
+        font-weight: 600 !important;
+    }
+
+    .modal-dialog {
+        max-width: 1050px !important;
+        width: 1105px !important;
+    }
+
+    table th p {
+        margin: 10px 0px !important;
+    }
+
+    table tr {
+        cursor: pointer !important;
+    }
+
+    .jsgrid-nodata-row {
+        height: 273px !important;
+    }
+
+    .head {
+        background-color: #86273e !important;
+        color: white !important;
+    }
+
+    .jsgrid-grid-header,
+    .jsgrid-grid-body {
+        overflow: auto !important;
+    }
+
+    .jsgrid-header-sort-asc:before {
+        margin: 6px !important;
+        border-width: 0 5px 10px !important;
+        border-color: transparent transparent #ffffff !important;
+    }
+
+    .jsgrid-header-sort-desc:before {
+        border-width: 10px 5px 0;
+        margin: 5px !important;
+        border-color: #ffffff transparent transparent;
+    }
+</style>
+{% endblock %}

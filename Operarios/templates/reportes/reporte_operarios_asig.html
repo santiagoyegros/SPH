@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class='my-3'>Reporte de Asignaciones por Operario</h2>
+
+
+<div class="col-md-12 pl-0 pr-1">
+    <form method="GET" role="form" id="formulario">
+    <div class="card" style="margin-bottom:15px !important;">
+        <div class="card-header">
+            Operario
+        </div>
+        <div class="card-body">
+            <div class="cuerpo-filtro row">
+
+                <div class="col-md-12" style="margin:0px 0px 17px -21px !important; display: flex;">
+                    <div class="col-md-3">
+                        <label class="estilo-buscador" for="" style="margin: 0px 63px 10px 10px; ">Seleccionar
+                            Operario:</label>
+                    </div>
+                    <div class="col-md-5">
+                        <select style="width:483px !important;" type='submit' id="id_operarios" data-size="5"
+                            name="operarios" value="{{operarios}}" class="selectpicker form-control"
+                            data-live-search="true" title="Seleccionar....">
+
+                            {% for o in operarios %}
+
+                            <option data-tokens="{{o.nombre}}" value="{{o.id}}">
+                                {{o.nombre}} {{o.apellido}}</option>
+
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-limpiar" id="id_limpiar"> <i class="fa fa-trash fa-lg"></i>
+                            Limpiar</button>
+                    </div>
+                </div>
+
+
+
+                <div class="row filter-row" style="margin-top: 20px;">
+                    <div class="col-md-4">
+                        <div class="estilo-campos">
+                            <label for="">Nombre:</label>
+                            <input type="text" name="nombre" class="form-control" style="height:38px !important;"
+                                id="id_nombreOperario" disabled>
+                        </div>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="estilo-campos">
+
+                            <label for="tipoAlerta">Apellido:</label>
+                            <input type="text" name="apellido" class="form-control" style="height:38px !important;"
+                                id="id_apellidoOperario" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="estilo-campos">
+                            <label for="">Legajo:</label>
+                            <input type="text" name="legajo" class="form-control" style="height:38px !important;"
+                                id="id_legajoOperario" disabled>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row filter-row">
+                    <div class="col-md-3">
+                        <div class="estilo-campos">
+                            <label for="">Día Libre Inicio:</label>
+                            <input type="text" name="diaLibre" class="form-control" style="height:38px !important;"
+                                id="id_diaLibreInicioOperario" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div style="padding: 10px 5px 0px 0px !important;">
+                            <label for="">Hora:</label>
+                            <input type="text" name="horaInicio" class="form-control"
+                                style="height:38px !important; width: 80px !important;" id="id_horaInicioOperario"
+                                disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="estilo-campos">
+                            <label for="">Día Libre Fin:</label>
+                            <input type="text" name="diaLibre" class="form-control" style="height:38px !important;"
+                                id="id_diaLibreFinOperario" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div style="padding: 10px 10px 0px 0px !important;">
+                            <label for="">Hora:</label>
+                            <input type="text" name="horaFin" class="form-control"
+                                style="height:38px !important; width: 80px !important;" id="id_horaFinOperario"
+                                disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="estilo-campos">
+                            <label for="">Total de horas asignadas:</label>
+                            <input type="text" name="totalHorasAsignadas" class="form-control"
+                                style="height:38px !important;" id="id_totalHorasOperario" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-bottom:80px !important;">
+        <div class="dropdown show" style="float:right !important;">
+            <a class="btn btn-exportar dropdown-toggle" href="#" style="min-width: 160px !important;" role="button"
+                id="id_exportar" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-file-archive-o fa-lg"></i> EXPORTAR
+            </a>
+
+            <div id="id_dropdown" class="dropdown-menu estilo-exportar" aria-labelledby="dropdownMenuLink">
+                <a id="id_excel" class="dropdown-item estilo-opcion" href=#>EXCEL</a>
+                <a id="id_pdf" class="dropdown-item estilo-opcion" href=#>PDF</a>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom:15px !important; margin-top: 15px !important;">
+        <div class="card-header">
+            Asignaciones
+        </div>
+        <div class="card-body">
+            <div class="cuerpo-filtro row">
+                <table id="tabla" class="table table-bordered tabla">
+                    <thead>
+                        <tr>
+                            <th>Nro.</th>
+                            <th>Punto de Servicio</th>
+                            <th>Total Horas</th>
+                            <th>Lunes</th>
+                            <th>Martes</th>
+                            <th>Miércoles</th>
+                            <th>Jueves</th>
+                            <th>Viernes</th>
+                            <th>Sábado</th>
+                            <th>Domingo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#id_operarios").change(function () {
+            console.log("aca entro");
+            var id = $('#id_operarios').val();
+            $.ajax({
+                url: '/reingenieria/reportes/datosOperario/',
+                type: 'GET',
+                data: {
+                    'id': id,
+                },
+                success: function (response) {
+                    $("#tabla tbody").empty();
+                    $('#id_nombreOperario').val(response.nombre);
+                    $('#id_apellidoOperario').val(response.apellido);
+                    $('#id_legajoOperario').val(response.legajo);
+                    $('#id_totalHorasOperario').val(response.total);
+                    $('#id_diaLibreInicioOperario').val(response.diaLibre1);
+                    $('#id_horaInicioOperario').val(response.hora1);
+                    $('#id_diaLibreFinOperario').val(response.diaLibre2);
+                    $('#id_horaFinOperario').val(response.hora2);
+                    console.log(response.asignaciones)
+                    if (response.asignaciones.length > 0) {
+                        console.log("ento aca")
+                        $.each(response.asignaciones, function (index, value) {                            
+                            $("#tabla tbody").append($('<tr>'))
+                            $("#tabla tbody").append($('<td>').text(value[0]));
+                            $("#tabla tbody").append($('<td>').text(value[1]));
+                            $("#tabla tbody").append($('<td>').text(value[2]));
+                            $("#tabla tbody").append($('<td>').text(value[3]));
+                            $("#tabla tbody").append($('<td>').text(value[4]));
+                            $("#tabla tbody").append($('<td>').text(value[5]));
+                            $("#tabla tbody").append($('<td>').text(value[6]));
+                            $("#tabla tbody").append($('<td>').text(value[7]));
+                            $("#tabla tbody").append($('<td>').text(value[8]));
+                            $("#tabla tbody").append($('<td>').text(value[9]));
+                            $("#tabla tbody").append($('<tr>'))
+                        });
+                    } else {
+                        console.log("empty")
+                        $("#tabla tbody").empty();
+                    }
+                },
+                error: function () {
+                    console.log('error');
+                },
+            });
+
+        });
+
+
+    })
+
+
+    $(document).on('click', '#id_limpiar', function () {
+        $('#id_nombreOperario').val("");
+        $('#id_apellidoOperario').val("");
+        $('#id_legajoOperario').val("");
+        $('#id_totalHorasOperario').val("");
+        $('#id_diaLibreInicioOperario').val("");
+        $('#id_horaInicioOperario').val("");
+        $('#id_diaLibreFinOperario').val("");
+        $('#id_horaFinOperario').val("");
+        $('#id_operarios').val("");
+        $('#id_operarios').selectpicker("refresh");
+        $("#tabla tbody").empty();
+    });
+
+    $(document).on('click', '#id_excel', function () {
+        id_operario=$('#id_operarios').val();
+        if(id_operario){
+            startLoader();
+            window.open("/reingenieria/reportes/descargarAsignacionesXls/"+id_operario);
+        }     
+        $.ajax({
+                url: '/reingenieria/reportes/descargarAsignacionesXls/'+id_operario,
+                type: 'GET',
+                success: function (response) {
+                    endLoader();
+                },
+                error: function () {
+                    console.log('error');
+                },
+        });
+
+    });
+
+    $(document).on('click', '#id_pdf', function () {
+        id_operario=$('#id_operarios').val();
+        if(id_operario){
+            startLoader();
+            window.open("/reingenieria/reportes/descargarAsignacionesPDF/"+id_operario); 
+        }else{
+            id_operario=0;
+        }     
+        $.ajax({
+                url: '/reingenieria/reportes/descargarAsignacionesPDF/'+id_operario,
+                type: 'GET',
+                success: function (response) {
+                    endLoader();
+                },
+                error: function () {
+                    console.log('error');
+                },
+        });  
+    });
+</script>
+
+
+
+<style>
+    #id_dropdown {
+        transform: translate3d(0px, 35px, 0px) !important;
+    }
+
+    .estilo-buscador {
+        font-size: 1.2rem;
+    }
+
+    .estilo-campos {
+        padding: 10px 15px;
+    }
+
+    .estilo-hora {
+        padding: 10px 1px;
+    }
+
+    .card-header {
+        background-color: #86273e !important;
+        color: white !important;
+        font-size: 20px !important;
+        border-radius: 0px !important;
+        border-bottom: 1px solid gray !important;
+    }
+
+    .card {
+        border-radius: 0px !important;
+    }
+
+    .cuerpo-filtro .row div p {
+        width: 100% !important;
+        padding: 0px 10px;
+    }
+
+    .filter-row {
+        width: 100%;
+    }
+
+    .input-group {
+        padding: 0px 10px;
+
+    }
+
+    .btn-light.active,
+    .btn-light:active,
+    .show>.btn-light.dropdown-toggle {
+        background-color: #ffffff !important;
+        color: black !important;
+        background-image: none;
+        border-color: #d9d9d9 !important;
+    }
+
+    .btn-light {
+        background-color: #ffffff !important;
+        color: black !important;
+        background-image: none;
+        border-color: #d9d9d9 !important;
+    }
+
+    .bootstrap-select>.dropdown-toggle.bs-placeholder,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:active,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:focus,
+    .bootstrap-select>.dropdown-toggle.bs-placeholder:hover {
+        color: black !important;
+    }
+
+    .table th {
+        background-color: #707171 !important;
+        color: white !important;
+    }
+
+    .table th {
+        padding: .5em !important;
+        border-left: 1px solid white !important;
+        border-right: 2px solid white !important;
+    }
+
+    .table tr:hover {
+        background-color: #c4e2ff !important;
+    }
+
+    .titulo-cupo {
+        color: #86273e !important;
+        font-size: 24px !important;
+        border-radius: 0px !important;
+        padding-left: 20px;
+        clear: both;
+        float: left;
+        margin-right: 15px;
+    }
+
+    .btn-filtrar {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 30px;
+        cursor: pointer;
+    }
+
+    .btn-limpiar {
+        background-color: #707171 !important;
+        border-color: #707171 !important;
+        padding: 7px 20px;
+        color: white;
+        cursor: pointer;
+    }
+
+
+    .btn-exportar {
+        background-color: #86273e !important;
+        border-color: #86273e !important;
+        padding: 7px 7px;
+        cursor: pointer;
+        color: white;
+        font-weight: 700;
+    }
+
+    .btn-exportar:hover {
+        color: white !important;
+    }
+
+    .estilo-exportar {
+        background-color: #86273e !important;
+    }
+
+    .estilo-opcion {
+        background-color: #86273e !important;
+        color: white;
+    }
+
+    .estilo-opcion:hover {
+        background-color: #69051e !important;
+        color: white !important;
+    }
+
+
+
+    .form-bordernone:disabled {
+        background-color: transparent !important;
+        border: none !important;
+    }
+</style>
+
+{% endblock %}

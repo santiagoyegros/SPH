@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+{% load static %}
+{% block base_head %}
+<link href="{% static 'style/overrride.css' %}" type="text/css" media="all" rel="stylesheet">
+</link>
+{% endblock %}
+{% block content %}
+
+<div class="container-fluid">
+
+    {% if title %}<h1 class='my-3'>{{ title }}</h1>{% endif %} 
+    <input type="hidden" id="asignacion_id" value="{{id_asignacion}}">
+    <form action="" method="POST" id="formulario">
+        {% csrf_token %}
+        <!--DATOS GENERALES-->
+        <div class="container-fluid mb-3 mt-4 p-0">
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Datos Generales
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Total Hrs</p>
+                            <div class="input-group field-general">
+                                <input value="{{totalHora}}" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Total Hrs Asignadas</p>
+                            <div class="input-group field-general">
+                                <input value="{{totalHoraAsig}}" class="form-control" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-2">
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Fecha Inicio</p>
+                            <div class="input-group field-general date">
+                                <input type="text" name="asignaciondet-fechaInicio" value="" placeholder="Fecha Inicio"
+                                    class="form-control examDate" id="id_asignaciondet-fechaInicio" disabled
+                                    dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Fecha Fin</p>
+                            <div class="input-group field-general date">
+                                <input type="text" name="asignaciondet-fechaFin" value="" placeholder="Fecha Fin" disabled
+                                    class="form-control examDate" id="id_asignaciondet-fechaFin"
+                                    dp_config="{&quot;id&quot;: &quot;dp_19&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;es&quot;, &quot;format&quot;: &quot;DD/MM/YYYY&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker2"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-2">
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Perfil</p>
+                            <div class="input-group field-general">
+                                <input type="text" name="asignaciondet-perfil" id="id_asignaciondet-perfil" class="form-control" value="" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6 container-field">
+                            <p class="label-field">Supervisor</p>
+                            <div class="input-group field-general">
+                                <input type="checkbox" name="asignaciondet-supervisor" class="checkbox-supervisor"
+                                    id="id_asignaciondet-supervisor" disabled>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!--DATOS PLANIFICACION-->
+        <div class="container-fluid mb-3 mt-4 p-0">
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-4">
+                            Planificación
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-11 text-right title-right">TOTAL DE HORAS PLANIFICADAS: </div>
+                                <div class="col-1 p-0"> <input id="sumAll" type="text" value=""
+                                        class="form-control form-control-sm total-horas" name="asignaciondet-totalHoras"
+                                        readonly /></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row input-horas" style="margin-bottom: 15px;">
+                        <div class="col p-0  "> Lunes </div>
+                        <div class="col p-0  "> Martes </div>
+                        <div class="col p-0  "> Miércoles </div>
+                        <div class="col p-0  "> Jueves </div>
+                        <div class="col p-0  "> Viernes </div>
+                        <div class="col p-0  "> Sábado </div>
+                        <div class="col p-0  "> Domingo </div>
+                    </div>
+                    <div class="row input-horas">
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-lunEnt" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-lunEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_20&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-lunSal" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-lunSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_21&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_20&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-marEnt" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-marEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_22&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-marSal" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-marSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_23&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_22&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-mieEnt" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-mieEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_24&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-mieSal" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-mieSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_25&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_24&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-jueEnt" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-jueEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_26&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-jueSal" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-jueSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_27&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_26&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-vieEnt" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-vieEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_28&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-vieSal" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-vieSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_29&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_28&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-sabEnt" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-sabEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_30&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-sabSal" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-sabSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_31&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_30&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col pl-0">
+                            <div class="input-group date" style="margin:0px 0px 16px 0px;">
+                                <input type="text" value="" name="asignaciondet-domEnt" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-domEnt"
+                                    dp_config="{&quot;id&quot;: &quot;dp_32&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date">
+                                <input type="text" value="" name="asignaciondet-domSal" disabled
+                                    class="form-control form-control-sm examTime" id="id_asignaciondet-domSal"
+                                    dp_config="{&quot;id&quot;: &quot;dp_33&quot;, &quot;picker_type&quot;: &quot;TIME&quot;, &quot;linked_to&quot;: &quot;dp_32&quot;, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: false, &quot;useCurrent&quot;: false, &quot;stepping&quot;: 5, &quot;format&quot;: &quot;HH:mm&quot;}}">
+                                <div class="input-group-addon input-group-append" data-target="#datetimepicker1"
+                                    data-toggle="datetimepickerv">
+                                    <div class="input-group-text"><i class="glyphicon glyphicon-time"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--DATOS SELECCION DE OPERARIO-->
+        <div class="container-fluid mb-3 mt-4 p-0">
+            <div class="card" style="margin-bottom:15px !important;">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Seleccionar Operario
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 container-field">
+                            <p class="label-field"> Operario: </p>
+                            <div class="buscador-operario">
+                                <input type="text" class="form-control input-operario" value=""
+                                    name="asignaciondet-nombreOperario" id="id_asignaciondet-nombreOperario" readonly>
+                                <input type="hidden" value="" name="asignaciondet-operario"
+                                    id="id_asignaciondet-operario">
+                            </div>
+                            <!-- <div class="container-btn-buscar">
+                                <button type="button" class="btn btn-buscar" id="buscador" onclick="buscarOperario()"
+                                    disabled> <i class="fa fa-search"></i>
+                                    Buscar</button>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+            <div class="row" style="margin:20px 0px !important;">
+                    <div class="col-md-12" style="display:flex !important;justify-content:flex-end;">
+                       
+                        <button class="btn btn-cancelar btn-primary" onclick="salirAgregarAsignacion({{id_puntoServicio}})"
+                            type="button"> <i class="fa fa-times fa-lg"></i>
+                            Salir</button>
+                    </div>
+                </div>
+        </div>
+        
+    </form>
+</div>
+
+<script>
+    function salirAgregarAsignacion(puntoServicio_id) {
+        document.location.href = "/reingenieria/asignacion/asignar/" + puntoServicio_id;
+    }
+    $(document).ready(function () {
+        var tipo = localStorage.getItem("tipo-asignacion");
+        var id_asignacion = localStorage.getItem("id-signacion");
+        $.ajax({
+            type: "POST",
+            url: "/reingenieria/asignacion/getAsignacionByTipo/"+id_asignacion+"/",
+            data: {"tipo":tipo, csrfmiddlewaretoken: '{{csrf_token}}' }
+        }).done(function (result) {
+            endLoader();
+            console.log(result);
+            var asignacion = result.dato;
+            if(asignacion){
+                $("#id_asignaciondet-fechaInicio").val(asignacion.fechaInicio);
+                $("#id_asignaciondet-fechaFin").val(asignacion.fechaFin);
+                $("#id_asignaciondet-perfil").val(asignacion.perfilNombre);
+                $("#id_asignaciondet-lunEnt").val(asignacion.lunEnt.substr(0,5));
+                $("#id_asignaciondet-lunSal").val(asignacion.lunSal.substr(0,5));
+                $("#id_asignaciondet-marEnt").val(asignacion.marEnt.substr(0,5)); 
+                $("#id_asignaciondet-marSal").val(asignacion.marSal.substr(0,5));
+                $("#id_asignaciondet-mieEnt").val(asignacion.mieEnt.substr(0,5));
+                $("#id_asignaciondet-mieSal").val(asignacion.mieSal.substr(0,5));
+                $("#id_asignaciondet-jueEnt").val(asignacion.jueEnt.substr(0,5));
+                $("#id_asignaciondet-jueSal").val(asignacion.jueSal.substr(0,5));
+                $("#id_asignaciondet-vieEnt").val(asignacion.vieEnt.substr(0,5));
+                $("#id_asignaciondet-vieSal").val(asignacion.vieSal.substr(0,5));
+                $("#id_asignaciondet-sabEnt").val(asignacion.sabEnt.substr(0,5));
+                $("#id_asignaciondet-sabSal").val(asignacion.sabSal.substr(0,5));
+                $("#id_asignaciondet-domEnt").val(asignacion.domEnt.substr(0,5));
+                $("#id_asignaciondet-domSal").val(asignacion.domSal.substr(0,5));
+                console.log(asignacion.supervisor)
+                $("#id_asignaciondet-supervisor")[0].checked=(asignacion.supervisor==="true");
+                $("#id_asignaciondet-nombreOperario").val(asignacion.operarioNombre)
+            }
+        });
+    });
+</script>
+<style>
+    .buscador-operario {
+        width: 790px !important;
+    }
+
+    .btn-buscar {
+        background-color: #86273e !important;
+        color: white !important;
+        border-radius: 3px !important;
+        margin: 0px 15px !important;
+        cursor: pointer !important;
+    }
+
+    .btn-buscar:hover {
+        background-color: #86273ed9 !important;
+    }
+
+    .card-header {
+        background-color: #86273e !important;
+        color: white !important;
+        font-size: 20px !important;
+        border-radius: 0px !important;
+        border-bottom: 1px solid gray !important;
+    }
+
+    .card {
+        border-radius: 0px !important;
+    }
+
+    .field-general {
+        width: 270px;
+        padding: 0px 15px;
+    }
+
+    .container-field {
+        display: inline-flex !important;
+    }
+
+    .label-field {
+        margin: 0px !important;
+        line-height: 2rem;
+        width: 170px !important;
+    }
+
+    .row-2 {
+        margin-top: 15px !important;
+    }
+
+    .input-horas {
+        margin: 0px 50px;
+    }
+
+    .title-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 15px !important;
+    }
+
+    .total-horas {
+        font-size: 18px !important;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0px !important;
+        color: white !important;
+        font-weight: 600 !important;
+    }
+
+    .modal-dialog {
+        max-width: 1050px !important;
+        width: 1105px !important;
+    }
+
+    table th p {
+        margin: 10px 0px !important;
+    }
+
+    table tr {
+        cursor: pointer !important;
+    }
+
+    .jsgrid-nodata-row {
+        height: 273px !important;
+    }
+
+    .head {
+        background-color: #86273e !important;
+        color: white !important;
+    }
+
+    .jsgrid-grid-header,
+    .jsgrid-grid-body {
+        overflow: auto !important;
+    }
+
+    .jsgrid-header-sort-asc:before {
+        margin: 6px !important;
+        border-width: 0 5px 10px !important;
+        border-color: transparent transparent #ffffff !important;
+    }
+
+    .jsgrid-header-sort-desc:before {
+        border-width: 10px 5px 0;
+        margin: 5px !important;
+        border-color: #ffffff transparent transparent;
+    }
+</style>
+{% endblock %}

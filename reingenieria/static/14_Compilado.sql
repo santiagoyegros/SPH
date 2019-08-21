@@ -1,12 +1,12 @@
-ALTER DATABASE reingenieria SET COMPATIBILITY_LEVEL =  130 go
-USE [aireinegnier]
+CREATE OR ALTER DATABASE reingenieria SET COMPATIBILITY_LEVEL =  130 go
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamientomensualeros_trg]    Script Date: 25/7/2019 22:23:01 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[relevamientomensualeros_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[relevamientomensualeros_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -75,14 +75,14 @@ END
 
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamientoesp_trg]    Script Date: 25/7/2019 22:23:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[relevamientoesp_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[relevamientoesp_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -166,14 +166,14 @@ END
 GO
 
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamientodet_trg]    Script Date: 25/7/2019 22:23:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[relevamientodet_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[relevamientodet_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -282,14 +282,14 @@ END
 
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamientocupohoras_trg]    Script Date: 25/7/2019 22:24:18 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[relevamientocupohoras_trg]   
+CREATE OR ALTER PROCEDURE [dbo].[relevamientocupohoras_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -373,130 +373,14 @@ END
 
 GO
 
-USE [aireinegnier]
-GO
-/****** Object:  StoredProcedure [dbo].[relevamiento_manager]    Script Date: 25/7/2019 21:36:41 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-ALTER PROCEDURE [dbo].[relevamiento_manager]   
-	@json_cab nvarchar(max),
-	@json_det nvarchar(max),
-	@json_men nvarchar(max),
-	@json_cup nvarchar(max),
-	@json_esp nvarchar(max),
-	@retorno int OUTPUT
-	--@operario int
-AS   
-	
-  BEGIN
-  SET NOCOUNT ON;
-	DECLARE @TransactionName varchar(20) = 'Transactional';
-	Declare @err_msg nvarchar(max);
-	BEGIN TRAN @TransactionName 
-	BEGIN TRY
-		DECLARE @fechaCambio datetime;
-		SET @fechaCambio=CURRENT_TIMESTAMP;
-			DECLARE @RC int;
-			DECLARE @cab int;
-			DECLARE @tmp nvarchar(max);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_men);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cup);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_esp);
-			EXECUTE @RC = [dbo].[relevamiento_cab_trg] @json_cab,@fechaCambio,0
-			/*det*/
-			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_det)
-			OPEN cursorIt
-			FETCH NEXT FROM cursorIt INTO @tmp
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				IF @tmp is not NULL and @tmp!='{}'
-				begin
-					EXECUTE @RC = [dbo].[relevamientodet_trg] @tmp,@fechaCambio,@retorno
-				end
-
-
-
-			FETCH NEXT FROM cursorIt INTO @tmp
-			END
-			CLOSE cursorIt
-			DEALLOCATE cursorIt
-			/*ESP*/
-			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_esp)
-			OPEN cursorIt
-			FETCH NEXT FROM cursorIt INTO @tmp
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				IF @tmp is not NULL and @tmp!='{}'
-				begin
-					EXECUTE @RC = [dbo].[relevamientoesp_trg] @tmp,@fechaCambio,@retorno
-				end
-			FETCH NEXT FROM cursorIt INTO @tmp
-			END
-			CLOSE cursorIt
-			DEALLOCATE cursorIt
-			/*MENSUALEROS*/
-			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_men)
-			OPEN cursorIt
-			FETCH NEXT FROM cursorIt INTO @tmp
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				IF @tmp is not NULL and @tmp!='{}'
-				begin
-					EXECUTE @RC = [dbo].[relevamientomensualeros_trg] @tmp,@fechaCambio,@retorno
-				end
-			FETCH NEXT FROM cursorIt INTO @tmp
-			END
-			CLOSE cursorIt
-			DEALLOCATE cursorIt
-
-
-			/*CUPO HORAS*/
-			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_cup)
-			OPEN cursorIt
-			FETCH NEXT FROM cursorIt INTO @tmp
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				IF @tmp is not NULL and @tmp!='{}'
-				begin
-					EXECUTE @RC = [dbo].[relevamientocupohoras_trg] @tmp,@fechaCambio,@retorno
-				end
-			FETCH NEXT FROM cursorIt INTO @tmp
-			END
-			CLOSE cursorIt
-			DEALLOCATE cursorIt
-			SET @retorno=0;
-		COMMIT TRANSACTION @TransactionName;
-		SET @retorno=0;
-	END TRY 
-	BEGIN CATCH
-		set @err_msg=ERROR_MESSAGE();
-		ROLLBACK TRAN @TransactionName; 
-		SET @retorno=1;
-		insert into dbo.infolog(fechaHora,info) values(current_timestamp, @err_msg);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_men);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_cup);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_esp);
-	END CATCH
-	Select @retorno as resultado;
-
-END		
-
-GO
-
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[relevamiento_cab_trg]    Script Date: 31/7/2019 11:53:17 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[relevamiento_cab_trg]   
+CREATE OR CREATE OR ALTER PROCEDURE [dbo].[relevamiento_cab_trg]   
   
 
 	@json nvarchar(max),
@@ -613,6 +497,124 @@ AS
 
 END		
 
+
+USE [reingenieria]
+GO
+/****** Object:  StoredProcedure [dbo].[relevamiento_manager]    Script Date: 25/7/2019 21:36:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER PROCEDURE [dbo].[relevamiento_manager]   
+	@json_cab nvarchar(max),
+	@json_det nvarchar(max),
+	@json_men nvarchar(max),
+	@json_cup nvarchar(max),
+	@json_esp nvarchar(max),
+	@retorno int OUTPUT
+	--@operario int
+AS   
+	
+  BEGIN
+  SET NOCOUNT ON;
+	DECLARE @TransactionName varchar(20) = 'Transactional';
+	Declare @err_msg nvarchar(max);
+	BEGIN TRAN @TransactionName 
+	BEGIN TRY
+		DECLARE @fechaCambio datetime;
+		SET @fechaCambio=CURRENT_TIMESTAMP;
+			DECLARE @RC int;
+			DECLARE @cab int;
+			DECLARE @tmp nvarchar(max);
+			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
+			insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
+			insert into infolog(fechaHora,info) values(@fechaCambio,@json_men);
+			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cup);
+			insert into infolog(fechaHora,info) values(@fechaCambio,@json_esp);
+			EXECUTE @RC = [dbo].[relevamiento_cab_trg] @json_cab,@fechaCambio,0
+			/*det*/
+			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_det)
+			OPEN cursorIt
+			FETCH NEXT FROM cursorIt INTO @tmp
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				IF @tmp is not NULL and @tmp!='{}'
+				begin
+					EXECUTE @RC = [dbo].[relevamientodet_trg] @tmp,@fechaCambio,@retorno
+				end
+
+
+
+			FETCH NEXT FROM cursorIt INTO @tmp
+			END
+			CLOSE cursorIt
+			DEALLOCATE cursorIt
+			/*ESP*/
+			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_esp)
+			OPEN cursorIt
+			FETCH NEXT FROM cursorIt INTO @tmp
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				IF @tmp is not NULL and @tmp!='{}'
+				begin
+					EXECUTE @RC = [dbo].[relevamientoesp_trg] @tmp,@fechaCambio,@retorno
+				end
+			FETCH NEXT FROM cursorIt INTO @tmp
+			END
+			CLOSE cursorIt
+			DEALLOCATE cursorIt
+			/*MENSUALEROS*/
+			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_men)
+			OPEN cursorIt
+			FETCH NEXT FROM cursorIt INTO @tmp
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				IF @tmp is not NULL and @tmp!='{}'
+				begin
+					EXECUTE @RC = [dbo].[relevamientomensualeros_trg] @tmp,@fechaCambio,@retorno
+				end
+			FETCH NEXT FROM cursorIt INTO @tmp
+			END
+			CLOSE cursorIt
+			DEALLOCATE cursorIt
+
+
+			/*CUPO HORAS*/
+			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_cup)
+			OPEN cursorIt
+			FETCH NEXT FROM cursorIt INTO @tmp
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				IF @tmp is not NULL and @tmp!='{}'
+				begin
+					EXECUTE @RC = [dbo].[relevamientocupohoras_trg] @tmp,@fechaCambio,@retorno
+				end
+			FETCH NEXT FROM cursorIt INTO @tmp
+			END
+			CLOSE cursorIt
+			DEALLOCATE cursorIt
+			SET @retorno=0;
+		COMMIT TRANSACTION @TransactionName;
+		SET @retorno=0;
+	END TRY 
+	BEGIN CATCH
+		set @err_msg=ERROR_MESSAGE();
+		ROLLBACK TRAN @TransactionName; 
+		SET @retorno=1;
+		insert into dbo.infolog(fechaHora,info) values(current_timestamp, @err_msg);
+		insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
+		insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
+		insert into infolog(fechaHora,info) values(@fechaCambio,@json_men);
+		insert into infolog(fechaHora,info) values(@fechaCambio,@json_cup);
+		insert into infolog(fechaHora,info) values(@fechaCambio,@json_esp);
+	END CATCH
+	Select @retorno as resultado;
+
+END		
+
+GO
+
+
 GO
 
 USE [reingenieria]
@@ -622,7 +624,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[puntoServicio_trigger]   
+CREATE OR CREATE OR ALTER  PROCEDURE [dbo].[puntoServicio_trigger]   
   
 
 	@p_id int,
@@ -731,7 +733,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[planificacionope_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[planificacionope_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -841,7 +843,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[planificacionesp_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[planificacionesp_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -934,14 +936,14 @@ AS
 END
 GO
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  StoredProcedure [dbo].[planificacioncab_trg]    Script Date: 31/7/2019 11:53:14 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[planificacioncab_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[planificacioncab_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -1022,7 +1024,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER  PROCEDURE [dbo].[planificacion_manager]   
+CREATE OR CREATE OR ALTER  PROCEDURE [dbo].[planificacion_manager]   
 	@json_cab nvarchar(max),
 	@json_ope nvarchar(max),
 	@json_esp nvarchar(max),
@@ -1102,7 +1104,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER PROCEDURE [dbo].[asig_jefeyfiscal_trigger]   
+CREATE OR CREATE OR ALTER PROCEDURE [dbo].[asig_jefeyfiscal_trigger]   
   
 
 	@p_userJefe_id int,
@@ -1152,7 +1154,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[asignaciondet_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[asignaciondet_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -1268,7 +1270,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[asignacioncab_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[asignacioncab_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -1333,15 +1335,15 @@ GO
 
 USE [reingenieria]
 GO
-/****** Object:  StoredProcedure [dbo].[asignacion_manager]    Script Date: 24/7/2019 12:04:10 ******/
+/****** Object:  StoredProcedure [dbo].[asignacion_manager]    Script Date: 9/8/2019 08:39:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER  PROCEDURE [dbo].[asignacion_manager]   
+create or CREATE OR ALTER PROCEDURE [dbo].[asignacion_manager]   
 	@json_cab nvarchar(max),
-	@json_det nvarchar(max),
+	@asig_cab int,
 	@retorno int OUTPUT
 	--@operario int
 AS   
@@ -1354,27 +1356,71 @@ AS
 	BEGIN TRAN @TransactionName 
 	BEGIN TRY
 		DECLARE @fechaCambio datetime;
+		DECLARE @hrm0_id int;
+		DECLARE @hrm0_lunEnt time;
+		DECLARE @hrm0_lunSal time;
+		DECLARE @hrm0_marEnt time;
+		DECLARE @hrm0_marSal time;
+		DECLARE @hrm0_mieEnt time;
+		DECLARE @hrm0_mieSal time;
+		DECLARE @hrm0_jueEnt time;
+		DECLARE @hrm0_jueSal time;
+		DECLARE @hrm0_vieEnt time;
+		DECLARE @hrm0_vieSal time;
+		DECLARE @hrm0_sabEnt time;
+		DECLARE @hrm0_sabSal time;
+		DECLARE @hrm0_domEnt time;
+		DECLARE @hrm0_domSal time;
+		DECLARE @hrm0_asignacionCab_id int;
+		DECLARE @hrm0_operario_id int;
+		DECLARE @hrm0_fechaInicio date;
+		DECLARE @hrm0_totalHoras nvarchar(max);
+		DECLARE @hrm0_fechaFin date;
+		DECLARE @hrm0_supervisor bit;
+		DECLARE @hrm0_perfil_id int;
+		declare @tmp1_vregistro int;
+		DECLARE @hrm0_eliminado nvarchar(max);
 		SET @fechaCambio=CURRENT_TIMESTAMP;
 			DECLARE @RC int;
-			DECLARE @tmp nvarchar(max);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
-			insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
-
+			DECLARE @tmp int;
+			
 			EXECUTE @RC = [dbo].[asignacioncab_trg] @json_cab,@fechaCambio,@retorno
-			/*det*/
-			DECLARE cursorIt CURSOR LOCAL FOR SELECT "value" FROM OpenJson(@json_det)
+
+			INSERT INTO dbo.Operarios_asignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,eliminado)
+			select perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,eliminado from dbo.Operarios_asignaciondettemp where asignacionCab_id=@asig_cab and eliminado='False'
+				
+
+
+			/*det no borrados*/
+			DECLARE cursorIt CURSOR LOCAL FOR SELECT id,lunEnt,lunSal,marEnt,marSal,mieEnt,mieSal,jueEnt,jueSal,vieEnt,vieSal,sabEnt,sabSal,domEnt,domSal,asignacionCab_id,operario_id,fechaInicio,totalHoras,fechaFin,supervisor,perfil_id,eliminado FROM dbo.Operarios_asignaciondet where asignacionCab_id=@asig_cab
 			OPEN cursorIt
-			FETCH NEXT FROM cursorIt INTO @tmp
+			FETCH NEXT FROM cursorIt INTO @hrm0_id,@hrm0_lunEnt,@hrm0_lunSal,@hrm0_marEnt,@hrm0_marSal,@hrm0_mieEnt,@hrm0_mieSal,@hrm0_jueEnt,@hrm0_jueSal,@hrm0_vieEnt,@hrm0_vieSal,@hrm0_sabEnt,@hrm0_sabSal,@hrm0_domEnt,@hrm0_domSal,@hrm0_asignacionCab_id,@hrm0_operario_id,@hrm0_fechaInicio,@hrm0_totalHoras,@hrm0_fechaFin,@hrm0_supervisor,@hrm0_perfil_id,@hrm0_eliminado
 			WHILE @@FETCH_STATUS = 0
 			BEGIN
-				IF @tmp is not NULL and @tmp!='{}'
+				select @tmp1_vregistro=max(vregistro) from dbo.Operarios_histasignacioncab where vactual_id=@asig_cab
+				if @tmp1_vregistro is NULL
 				begin
-					EXECUTE @RC = [dbo].[asignaciondet_trg] @tmp,@fechaCambio,@retorno
+					set @tmp1_vregistro=1;
+					INSERT INTO dbo.Operarios_histasignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,vfechaInicio,vfechaFin,vregistro,vactual_id)
+					select perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,@fechaCambio,NULL,@tmp1_vregistro,@hrm0_id from dbo.Operarios_asignaciondet where id=@hrm0_id;
 				end
-			FETCH NEXT FROM cursorIt INTO @tmp
+				update dbo.Operarios_histasignaciondet set vfechaFin=@fechaCambio where vactual_id=@hrm0_id and vregistro=@tmp1_vregistro-1;
+				if @hrm0_eliminado is not NULL and @hrm0_eliminado=0
+				begin
+					INSERT INTO dbo.Operarios_histasignaciondet(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,vfechaInicio,vfechaFin,vregistro,vactual_id)
+					select @hrm0_perfil_id,@hrm0_supervisor,@hrm0_fechaFin,@hrm0_totalHoras,@hrm0_fechaInicio,@hrm0_operario_id,@hrm0_asignacionCab_id,@hrm0_domSal,@hrm0_domEnt,@hrm0_sabSal,@hrm0_sabEnt,@hrm0_vieSal,@hrm0_vieEnt,@hrm0_jueSal,@hrm0_jueEnt,@hrm0_mieSal,@hrm0_mieEnt,@hrm0_marSal,@hrm0_marEnt,@hrm0_lunSal,@hrm0_lunEnt,@fechaCambio,NULL,@tmp1_vregistro,@hrm0_id
+				end
+				if @hrm0_eliminado is not NULL and @hrm0_eliminado=1
+				begin
+        			update Operarios_histasignaciondet set vactual_id=NULL where vactual_id=@hrm0_id;
+					delete from dbo.Operarios_asignaciondet  where id=@hrm0_id;
+				end
+			FETCH NEXT FROM cursorIt INTO @hrm0_id,@hrm0_lunEnt,@hrm0_lunSal,@hrm0_marEnt,@hrm0_marSal,@hrm0_mieEnt,@hrm0_mieSal,@hrm0_jueEnt,@hrm0_jueSal,@hrm0_vieEnt,@hrm0_vieSal,@hrm0_sabEnt,@hrm0_sabSal,@hrm0_domEnt,@hrm0_domSal,@hrm0_asignacionCab_id,@hrm0_operario_id,@hrm0_fechaInicio,@hrm0_totalHoras,@hrm0_fechaFin,@hrm0_supervisor,@hrm0_perfil_id,@hrm0_eliminado
 			END
 			CLOSE cursorIt
 			DEALLOCATE cursorIt
+			delete from dbo.Operarios_asignaciondettemp where asignacionCab_id=@asig_cab
+
 
 		COMMIT TRANSACTION @TransactionName;
 		SET @retorno=0;
@@ -1385,7 +1431,6 @@ AS
 		SET @retorno=1;
 		insert into dbo.infolog(fechaHora,info) values(current_timestamp, @err_msg);
 		insert into infolog(fechaHora,info) values(@fechaCambio,@json_cab);
-		insert into infolog(fechaHora,info) values(@fechaCambio,@json_det);
 	END CATCH
 	Select @retorno as resultado;
 
@@ -1400,7 +1445,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[asigjefefiscal_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[asigjefefiscal_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -1465,7 +1510,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[asigjefefisc_des_trigger]   
+CREATE OR CREATE OR ALTER  PROCEDURE [dbo].[asigjefefisc_des_trigger]   
   
 
 	@p_userJefe_id int,
@@ -1506,7 +1551,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[asigfiscalpuntoservicio_trg]   
+CREATE OR ALTER   PROCEDURE [dbo].[asigfiscalpuntoservicio_trg]   
 	@json nvarchar(max),
 	@fechaCambio datetime,
 	@retorno int OUTPUT
@@ -1571,7 +1616,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[asig_psfiscal_trigger]   
+CREATE OR CREATE OR ALTER  PROCEDURE [dbo].[asig_psfiscal_trigger]   
   
 
 	@p_userFiscal_id int,
@@ -1622,7 +1667,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER  PROCEDURE [dbo].[asigpsfisc_des_trigger]   
+CREATE OR CREATE OR ALTER  PROCEDURE [dbo].[asigpsfisc_des_trigger]   
   
 
 	@p_userFiscal_id int,
@@ -1655,7 +1700,7 @@ AS
 END	
 go
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  Trigger [dbo].[trg_vrs_Operarios_hd_asignacioncab]    Script Date: 25/7/2019 19:46:55 ******/
 SET ANSI_NULLS ON
@@ -1663,7 +1708,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER TRIGGER [dbo].[trg_vrs_Operarios_hd_asignacioncab]
+CREATE OR ALTER TRIGGER [dbo].[trg_vrs_Operarios_hd_asignacioncab]
 ON [dbo].[Operarios_asignacioncab]
 AFTER UPDATE
 AS
@@ -1709,7 +1754,7 @@ END
 
 
 go
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  Trigger [dbo].[trg_vrs_Operarios_hd_planificacioncab]    Script Date: 25/7/2019 19:46:40 ******/
 SET ANSI_NULLS ON
@@ -1717,7 +1762,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER TRIGGER [dbo].[trg_vrs_Operarios_hd_planificacioncab]
+CREATE OR ALTER TRIGGER [dbo].[trg_vrs_Operarios_hd_planificacioncab]
 ON [dbo].[Operarios_planificacioncab]
 AFTER UPDATE
 AS
@@ -1763,7 +1808,7 @@ END
 
 go
 
-USE [aireinegnier]
+USE [reingenieria]
 GO
 /****** Object:  Trigger [dbo].[trg_header_relevamientocab]    Script Date: 25/7/2019 19:46:30 ******/
 SET ANSI_NULLS ON
@@ -1771,7 +1816,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER TRIGGER [dbo].[trg_header_relevamientocab]
+CREATE OR ALTER TRIGGER [dbo].[trg_header_relevamientocab]
 ON [dbo].[Operarios_relevamientocab]
 AFTER UPDATE
 AS
@@ -1798,12 +1843,12 @@ AS
                 if(@dp1_cantidadHrTotal!=@dp0_cantidadHrTotal)
                 BEGIN
 				
-					ALTER  TABLE [dbo].[Operarios_planificacioncab] DISABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
-					ALTER  TABLE [dbo].[Operarios_asignacioncab]    DISABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
+					CREATE OR ALTER  TABLE [dbo].[Operarios_planificacioncab] DISABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
+					CREATE OR ALTER  TABLE [dbo].[Operarios_asignacioncab]    DISABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
                     UPDATE [dbo].[Operarios_planificacioncab] set rePlanificar='True' where puntoServicio_id=@dp0_puntoServicio_id;
                     UPDATE [dbo].[Operarios_asignacioncab] set reAsignar='True' where puntoServicio_id=@dp0_puntoServicio_id;
-					ALTER  TABLE [dbo].[Operarios_planificacioncab] ENABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
-					ALTER  TABLE [dbo].[Operarios_asignacioncab]    ENABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
+					CREATE OR ALTER  TABLE [dbo].[Operarios_planificacioncab] ENABLE TRIGGER trg_vrs_Operarios_hd_planificacioncab;
+					CREATE OR ALTER  TABLE [dbo].[Operarios_asignacioncab]    ENABLE TRIGGER trg_vrs_Operarios_hd_asignacioncab;
                 END
             FETCH NEXT FROM cursorDt INTO @dp1_cantidadHrTotal
             END		
@@ -1820,3 +1865,365 @@ AS
 	CLOSE cursorIt
 	DEALLOCATE cursorIt
 END	
+GO
+
+USE [reingenieria]
+GO
+/****** Object:  StoredProcedure [dbo].[asignaciondet_tmptrg]    Script Date: 9/8/2019 08:39:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create or CREATE OR ALTER PROCEDURE [dbo].[asignaciondet_tmptrg]   
+	@json nvarchar(max),
+	@retorno int OUTPUT
+	--@operario int
+AS   
+	
+	BEGIN
+	SET NOCOUNT ON;
+		
+		declare @fechaCambio datetime;
+		DECLARE @tmp1_vregistro int;
+		DECLARE @p_id_tmp nvarchar(max);
+		DECLARE @p_fechaInicio date;
+		DECLARE @p_fechaFin date;
+		DECLARE @delete nvarchar(max);
+		DECLARE @p_perfil_id int;
+		DECLARE @p_supervisor bit;
+		DECLARE @p_totalHoras nvarchar(max);		
+		DECLARE @p_operario_id int;
+		DECLARE @p_asignacionCab_id int;
+
+		set @fechaCambio= CURRENT_TIMESTAMP;
+		DECLARE @p_domSal time;
+		DECLARE @p_domEnt time;
+		DECLARE @p_sabSal time;
+		DECLARE @p_sabEnt time;
+		DECLARE @p_vieSal time;
+		DECLARE @p_vieEnt time;
+		DECLARE @p_jueSal time;
+		DECLARE @p_jueEnt time;
+		DECLARE @p_mieSal time;
+		DECLARE @p_mieEnt time;
+		DECLARE @p_marSal time;
+		DECLARE @p_marEnt time;
+		DECLARE @p_lunSal time;
+		DECLARE @p_lunEnt time;
+		DECLARE @p_id int;
+
+		select @p_perfil_id="value" from OpenJson(@json) where "key"='perfil_id' and "value"!='None';
+		select @p_supervisor="value" from OpenJson(@json) where "key"='supervisor';
+		select @delete="value" from OpenJson(@json) where "key"='DELETE';
+		select @p_totalHoras="value" from OpenJson(@json) where "key"='totalHoras' and "value"!='None' and "value"!='00';
+		select @p_fechaInicio=cast("value" as date) from OpenJson(@json) where "key"='fechaInicio' and "value"!='None';
+		select @p_fechaFin=cast("value" as date) from OpenJson(@json) where "key"='fechaFin' and "value"!='None';	
+		select @p_operario_id="value" from OpenJson(@json) where "key"='operario_id' and "value"!='None';
+		select @p_asignacionCab_id="value" from OpenJson(@json) where "key"='asignacionCab_id';
+		select @p_domSal=cast("value" as time) from OpenJson(@json) where "key"='domSal' and "value"!='None';
+		select @p_domEnt=cast("value" as time) from OpenJson(@json) where "key"='domEnt' and "value"!='None';
+		select @p_sabSal=cast("value" as time) from OpenJson(@json) where "key"='sabSal' and "value"!='None';
+		select @p_sabEnt=cast("value" as time) from OpenJson(@json) where "key"='sabEnt' and "value"!='None';
+		select @p_vieSal=cast("value" as time) from OpenJson(@json) where "key"='vieSal' and "value"!='None';
+		select @p_vieEnt=cast("value" as time) from OpenJson(@json) where "key"='vieEnt' and "value"!='None';
+		select @p_jueSal=cast("value" as time) from OpenJson(@json) where "key"='jueSal' and "value"!='None';
+		select @p_jueEnt=cast("value" as time) from OpenJson(@json) where "key"='jueEnt' and "value"!='None';
+		select @p_mieSal=cast("value" as time) from OpenJson(@json) where "key"='mieSal' and "value"!='None';
+		select @p_mieEnt=cast("value" as time) from OpenJson(@json) where "key"='mieEnt' and "value"!='None';
+		select @p_marSal=cast("value" as time) from OpenJson(@json) where "key"='marSal' and "value"!='None';
+		select @p_marEnt=cast("value" as time) from OpenJson(@json) where "key"='marEnt' and "value"!='None';
+		select @p_lunSal=cast("value" as time) from OpenJson(@json) where "key"='lunSal' and "value"!='None';
+		select @p_lunEnt=cast("value" as time) from OpenJson(@json) where "key"='lunEnt' and "value"!='None';
+		select @p_id="value" from OpenJson(@json) where "key"='id' and "value"!='None';
+		
+		INSERT INTO dbo.Operarios_asignaciondettemp(perfil_id,supervisor,fechaFin,totalHoras,fechaInicio,operario_id,asignacionCab_id,domSal,domEnt,sabSal,sabEnt,vieSal,vieEnt,jueSal,jueEnt,mieSal,mieEnt,marSal,marEnt,lunSal,lunEnt,eliminado,fechaCreacion)
+		select @p_perfil_id,@p_supervisor,@p_fechaFin,@p_totalHoras,@p_fechaInicio,@p_operario_id,@p_asignacionCab_id,@p_domSal,@p_domEnt,@p_sabSal,@p_sabEnt,@p_vieSal,@p_vieEnt,@p_jueSal,@p_jueEnt,@p_mieSal,@p_mieEnt,@p_marSal,@p_marEnt,@p_lunSal,@p_lunEnt,'False',CURRENT_TIMESTAMP;
+			
+		SET @retorno=0;
+		Select @retorno as resultado;
+END
+GO
+
+USE [reingenieria]
+GO
+/****** Object:  StoredProcedure [dbo].[clean_asignaciondet]    Script Date: 9/8/2019 08:39:47 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create or CREATE OR ALTER   PROCEDURE [dbo].[clean_asignaciondet]
+	@p_asignacionCab_id int,
+	@retorno int OUTPUT
+	--@operario int
+AS   
+	
+	BEGIN
+	SET NOCOUNT ON;
+		declare @fechaCambio datetime;
+		set @fechaCambio= CURRENT_TIMESTAMP;
+		update dbo.Operarios_asignaciondet set eliminado='False' where asignacionCab_id=@p_asignacionCab_id;
+		delete from dbo.Operarios_asignaciondettemp where asignacionCab_id=@p_asignacionCab_id;
+		SET @retorno=0;
+		Select @retorno as resultado;
+END
+GO
+
+USE [reingenieria]
+GO
+/****** Object:  StoredProcedure [dbo].[operarios_disponibles_v3]    Script Date: 10/8/2019 20:18:47 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER  PROCEDURE [dbo].[operarios_disponibles_v3]   
+    @puntoServicio int,   
+    @totalHoras float,
+	@lunEntReq time(7),
+	@lunSalReq time(7),
+	@marEntReq time(7),
+	@marSalReq time(7),
+	@mierEntReq time(7),
+	@mierSalReq time(7),
+	@jueEntReq time(7),
+	@jueSalReq time(7),
+	@vieEntReq time(7),
+	@vieSalReq time(7),
+	@sabEntReq time(7),
+	@sabSalReq time(7),
+	@domEntReq time(7),
+	@domSalReq time(7), 
+	@fechaInicioOperario nvarchar(10),
+	@fechaFinOperario nvarchar(10),
+	@perfil nvarchar(3)
+AS   
+    BEGIN
+		LINENO 0;
+		DECLARE @horasMaximas int
+		DECLARE @traslado int
+		DECLARE @lunEntReqTras time(7)
+		DECLARE @marEntReqTras time(7)
+		DECLARE @mierEntReqTras time(7)
+		DECLARE @jueEntReqTras time(7)
+		DECLARE @vieEntReqTras time(7)
+		DECLARE @sabEntReqTras time(7)
+		DECLARE @domEntReqTras time (7)
+		DECLARE @fechaFin date
+		declare @totalConverted float;
+		select @totalConverted=@totalHoras;
+		--obtenemos la cantidad de horas maximas permitidas por semana
+		SELECT @horasMaximas=cast(valor as int) FROM dbo.Operarios_parametros WHERE tipo='BUSQUEDA' AND parametro='MAXIMO_ASIGNACION'
+		--obtenemos el tiempo maximo de traslado de un punto a otro
+		SELECT @traslado=cast(valor as int)*-1 FROM dbo.Operarios_parametros WHERE tipo='BUSQUEDA' AND parametro='TIEMPO_TRASLADO'
+		--hora requeridas que tienen en cuenta el traslado de un PS a otro PS
+		SELECT @lunEntReqTras=CAST (DATEADD(MINUTE, @traslado, @lunEntReq) AS TIME)  
+		SELECT @marEntReqTras=CAST (DATEADD(MINUTE, @traslado, @marEntReq) AS TIME)
+		SELECT @mierEntReqTras=CAST (DATEADD(MINUTE, @traslado, @mierEntReq) AS TIME)
+		SELECT @jueEntReqTras=CAST(DATEADD(MINUTE, @traslado, @jueEntReq) AS TIME)
+		SELECT @vieEntReqTras=CAST(DATEADD(MINUTE, @traslado, @vieEntReq) AS TIME)
+		SELECT @sabEntReqTras=CAST(DATEADD(MINUTE, @traslado, @sabEntReq) AS TIME)
+		SELECT @domEntReqTras=CAST(DATEADD(MINUTE, @traslado, @domEntReq) AS TIME)
+		if  LEN(@fechaFinOperario)>0  
+		BEGIN
+			SET @fechaFin=convert(date, @fechaInicioOperario)	 
+		END
+		ELSE 
+		BEGIN
+			SET @fechaFin=CONVERT(date, '2099-01-01', 23)
+		END
+		SELECT op.* FROM dbo.detalle_lista_operarios3 op 
+			where  op.id_operario NOT IN (
+			SELECT op.id_operario FROM dbo.detalle_lista_operarios3 op
+			INNER JOIN Operarios_asignaciondet asd on asd.operario_id=op.id_operario 
+			inner JOIN Operarios_asignacioncab ac on ac.id=asd.asignacionCab_id
+			inner JOIN Operarios_puntoservicio ps on ps.id=ac.puntoServicio_id
+			inner JOIN Operarios_relevamientocab rc on rc.puntoServicio_id=ps.id AND  rc.estado='Aprobado' 
+			LEFT JOIN Operarios_dialibre dl on dl.id_operario_id=op.id_operario
+			WHERE 
+			(
+			
+			op.totalHoras+cast(isnull(@totalHoras,0)  as float)>@horasMaximas
+			
+			
+			or(
+				(@fechaFin>=asd.fechaInicio and (@fechaFin <=asd.fechaFin or asd.fechaFin is null))
+				or (convert(date, @fechaInicioOperario, 23)>=asd.fechaInicio and (convert(date, @fechaInicioOperario)<=asd.fechaFin or asd.fechaFin is null))
+				or (convert(date, @fechaInicioOperario, 23) <=asd.fechaInicio and (@fechaFin>=asd.fechaFin or asd.fechaFin is NULL))
+				)
+			AND(
+				(asd.lunEnt between @lunEntReqTras and @lunSalReq) or (asd.lunSal  between @lunEntReqTras and @lunSalReq) 
+				or (asd.marEnt between @marEntReqTras and @marSalReq) or (asd.marSal   between @marEntReqTras and @marSalReq)
+				or (asd.mieEnt between @mierEntReqTras and @mierSalReq) or (asd.mieSal  between @mierEntReqTras and @mierSalReq)
+				or (asd.jueEnt between @jueEntReqTras and @jueSalReq) or (asd.jueSal between @jueEntReqTras and  @jueSalReq)
+				or (asd.vieEnt between @vieEntReqTras and @vieSalReq) or (asd.vieSal  between  @vieEntReqTras and @vieSalReq)
+				or (asd.sabEnt between @sabEntReqTras and @sabSalReq) or (asd.sabSal  between @sabEntReqTras and @sabSalReq)
+				or (asd.domEnt between @domEntReqTras and @domSalReq) or (asd.domSal  between @domEntReqTras and @domSalReq)
+			
+			)
+			
+			
+			/**traemos los que tienen dia libre en ese dia del requerimiento**/
+			or (dl.lunEnt between @lunEntReq and @lunSalReq) or (dl.lunSal between @lunEntReq and @lunSalReq)
+			or (dl.marEnt between @marEntReq and @marSalReq) or (dl.marSal between @marEntReqTras and @marSalReq)
+			or (dl.mieEnt between @mierEntReq and @mierSalReq) or (dl.mieSal  between @mierEntReq and @mierSalReq)
+			or (dl.jueEnt between  @jueEntReq and @jueSalReq)
+			or (dl.jueSal between  @jueEntReq and @jueSalReq)
+			or (dl.vieEnt between  @vieEntReq and @vieSalReq)  
+			or (dl.sabEnt between @sabEntReq and @sabSalReq) or (dl.sabSal  between @sabEntReq and @sabSalReq)
+			or (dl.domEnt  between @domEntReq and @domSalReq) or (dl.domSal  between @domEntReq and @domSalReq)
+			)) AND op.id_operario NOT IN (
+			SELECT op.id_operario FROM dbo.detalle_lista_operarios3 op
+			INNER JOIN Operarios_asignaciondettemp asd on asd.operario_id=op.id_operario 
+			inner JOIN Operarios_asignacioncab ac on ac.id=asd.asignacionCab_id
+			inner JOIN Operarios_puntoservicio ps on ps.id=ac.puntoServicio_id
+			inner JOIN Operarios_relevamientocab rc on rc.puntoServicio_id=ps.id AND  rc.estado='Aprobado' 
+			LEFT JOIN Operarios_dialibre dl on dl.id_operario_id=op.id_operario
+			WHERE 
+			(op.totalHoras+cast(isnull(@totalHoras,0)  as float)>@horasMaximas
+			
+			
+			or(
+				(@fechaFin>=asd.fechaInicio and (@fechaFin <=asd.fechaFin or asd.fechaFin is null))
+				or (convert(date, @fechaInicioOperario, 23)>=asd.fechaInicio and (convert(date, @fechaInicioOperario)<=asd.fechaFin or asd.fechaFin is null))
+				or (convert(date, @fechaInicioOperario, 23) <=asd.fechaInicio and (@fechaFin>=asd.fechaFin or asd.fechaFin is NULL))
+				)
+			AND(
+				(asd.lunEnt between @lunEntReqTras and @lunSalReq) or (asd.lunSal  between @lunEntReqTras and @lunSalReq) 
+				or (asd.marEnt between @marEntReqTras and @marSalReq) or (asd.marSal   between @marEntReqTras and @marSalReq)
+				or (asd.mieEnt between @mierEntReqTras and @mierSalReq) or (asd.mieSal  between @mierEntReqTras and @mierSalReq)
+				or (asd.jueEnt between @jueEntReqTras and @jueSalReq) or (asd.jueSal between @jueEntReqTras and  @jueSalReq)
+				or (asd.vieEnt between @vieEntReqTras and @vieSalReq) or (asd.vieSal  between  @vieEntReqTras and @vieSalReq)
+				or (asd.sabEnt between @sabEntReqTras and @sabSalReq) or (asd.sabSal  between @sabEntReqTras and @sabSalReq)
+				or (asd.domEnt between @domEntReqTras and @domSalReq) or (asd.domSal  between @domEntReqTras and @domSalReq)
+			
+			)
+			
+			/**traemos los que tienen dia libre en ese dia del requerimiento**/
+			or (dl.lunEnt between @lunEntReq and @lunSalReq) or (dl.lunSal between @lunEntReq and @lunSalReq)
+			or (dl.marEnt between @marEntReq and @marSalReq) or (dl.marSal between @marEntReqTras and @marSalReq)
+			or (dl.mieEnt between @mierEntReq and @mierSalReq) or (dl.mieSal  between @mierEntReq and @mierSalReq)
+			or (dl.jueEnt between  @jueEntReq and @jueSalReq)
+			or (dl.jueSal between  @jueEntReq and @jueSalReq)
+			or (dl.vieEnt between  @vieEntReq and @vieSalReq)  
+			or (dl.sabEnt between @sabEntReq and @sabSalReq) or (dl.sabSal  between @sabEntReq and @sabSalReq)
+			or (dl.domEnt  between @domEntReq and @domSalReq) or (dl.domSal  between @domEntReq and @domSalReq)
+			)
+			)
+		AND ((LEN(@perfil)>0 and op.ids_perfil like '%'+@perfil+'%') or LEN(@perfil)=0)
+		ORDER BY op.totalHoras asc, op.nombres asc
+	END
+	go
+
+
+USE [reingenieria]
+GO
+/****** Object:  UserDefinedFunction [dbo].[listarasignaciones]    Script Date: 9/8/2019 08:40:01 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create or CREATE OR ALTER FUNCTION [dbo].[listarasignaciones](@asigcab integer)
+RETURNS @query TABLE (
+	 id int,
+	lunEnt time,
+	lunSal time,
+	marEnt time,
+	marSal time,
+	mieEnt time,
+	mieSal time,
+	jueEnt time,
+	jueSal time,
+	vieEnt time,
+	vieSal time,
+	sabEnt time,
+	sabSal time,
+	domEnt time,
+	domSal time,
+	asignacionCab_id int ,
+	operario_id int ,
+	fechaInicio date,
+	totalHoras nvarchar(8) ,
+	fechaFin date,
+	supervisor bit ,
+	perfil_id int,
+	eliminado bit ,
+	tipo nvarchar(12)
+)
+BEGIN
+	insert @query
+	SELECT [id],[lunEnt],[lunSal],[marEnt],[marSal],[mieEnt],[mieSal],[jueEnt],[jueSal],[vieEnt],[vieSal],[sabEnt],[sabSal],[domEnt],[domSal],
+	[asignacionCab_id],[operario_id],[fechaInicio],[totalHoras],[fechaFin],[supervisor],[perfil_id],[eliminado],'persistido'
+	FROM [dbo].[Operarios_asignaciondet] where asignacionCab_id=@asigcab
+	union 
+	SELECT [id],[lunEnt],[lunSal],[marEnt],[marSal],[mieEnt],[mieSal],[jueEnt],[jueSal],[vieEnt],[vieSal],[sabEnt],[sabSal],[domEnt],[domSal],
+	[asignacionCab_id],[operario_id],[fechaInicio],[totalHoras],[fechaFin],[supervisor],[perfil_id],[eliminado],'temporal'
+	FROM [dbo].[Operarios_asignaciondettemp] where  asignacionCab_id=@asigcab
+	RETURN
+END
+Go
+
+USE [reingenieria]
+GO
+
+/****** Object:  View [dbo].[detalle_lista_operarios3]    Script Date: 10/8/2019 20:18:33 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+create or CREATE OR ALTER   VIEW [dbo].[detalle_lista_operarios3]
+AS
+SELECT        id_operario, nombres, nroLegajo, nombres_puntoServicio, ids_puntoServicio, totalHoras,
+                             (SELECT DISTINCT STRING_AGG(esp.especializacion, ', ') AS Expr1
+                               FROM            dbo.Operarios_operario_profesion AS opf LEFT OUTER JOIN
+                                                         dbo.Operarios_especializacion AS esp ON esp.id = opf.especializacion_id
+                               WHERE        (opf.operario_id = op_1.id_operario)) AS perfil, antiguedad,
+                             (SELECT DISTINCT STRING_AGG(especializacion_id, ', ') AS Expr1
+                               FROM            dbo.Operarios_operario_profesion AS opf
+                               WHERE        (operario_id = op_1.id_operario)) AS ids_perfil
+FROM            (SELECT        op.id AS id_operario, { fn CONCAT({ fn CONCAT(op.nombre, ' ') }, op.apellido) } AS nombres, op.nroLegajo, ISNULL(STRING_AGG(ps.NombrePServicio, ', '), '') AS nombres_puntoServicio, ISNULL(STRING_AGG(ps.id, 
+                                                    ', '), ' ') AS ids_puntoServicio, SUM(CAST(ISNULL(aod.totalHoras, 0) AS float))+SUM(CAST(ISNULL(aodt.totalHoras, 0) AS float)) AS totalHoras, DATEDIFF(year, op.fechaInicio, GETDATE()) AS antiguedad
+                          FROM            dbo.Operarios_operario AS op LEFT OUTER JOIN
+                                                    dbo.Operarios_asignaciondet AS aod ON op.id = aod.operario_id LEFT OUTER JOIN
+													dbo.Operarios_asignaciondettemp AS aodt ON op.id = aodt.operario_id LEFT OUTER JOIN
+                                                    dbo.Operarios_asignacioncab AS aoc ON aod.asignacionCab_id = aoc.id OR aodt.asignacionCab_id = aoc.id LEFT OUTER JOIN
+                                                    dbo.Operarios_puntoservicio AS ps ON ps.id = aoc.puntoServicio_id
+                          GROUP BY op.id, op.nombre, op.apellido, op.nroLegajo, op.fechaInicio) AS op_1
+GO
+
+USE [reingenieria]
+GO
+
+SET ANSI_PADDING ON
+GO
+
+/****** Object:  Index [ClusteredIndex-20190813-093028]    Script Date: 13/8/2019 09:33:49 ******/
+CREATE CLUSTERED INDEX [ClusteredIndex-20190813-093028] ON [dbo].[ESME_EM_Marcaciones]
+(
+	[CodPersona] ASC,
+	[CodUbicacion] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+
+USE [reingenieria]
+GO
+
+/****** Object:  Table [dbo].[infolog]    Script Date: 13/8/2019 14:30:56 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[infolog](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[info] [nvarchar](max) NULL,
+	[fechaHora] [datetime] NULL,
+ CONSTRAINT [PK_infolog] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+

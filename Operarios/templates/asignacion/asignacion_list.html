@@ -28,7 +28,7 @@
             inserting: false,
             editing: false,
             sorting: true,
-            height: $("#formAsig").height(),
+           // height: $("#formAsig").height(),
             paging: true,
             autoload: true,
             pageSize: 10,
@@ -57,8 +57,16 @@
                     return d.promise();
                 }
             },
-            rowClick: function (e) {
-                window.location.href = "/reingenieria/asignacion/asignar/" + e.item.idPunto
+            rowClick: function (e) { 
+                startLoader();
+                $.ajax({
+                    type: "POST",
+                    url: "/reingenieria/asignacion/changeStorage",
+                    data: { csrfmiddlewaretoken: '{{csrf_token}}' }
+                }).done(function (result) {
+                    endLoader();
+                    window.location.href = "/reingenieria/asignacion/asignar/" + e.item.idPunto;
+            });
             },
             fields: [
                 { name: "id", type: "text", width: 150, title: "Nro", headercss: "elm-table-header" },

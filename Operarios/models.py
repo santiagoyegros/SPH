@@ -485,6 +485,7 @@ class AsignacionDet(models.Model):
     totalHoras = models.CharField('Total Asignado', max_length=8, null=True)
     supervisor=models.BooleanField('Supervisor', default=False)
     perfil = models.ForeignKey(Especializacion, on_delete=models.CASCADE, null=True)
+    eliminado=models.BooleanField('Registro eliminado', default=False)
     class Meta:
         verbose_name = _("Asignacion Detalle")
         verbose_name_plural = _("Asignacion Detalles")
@@ -577,6 +578,7 @@ class Alertas(models.Model):
     PuntoServicio = models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
     Estado = models.CharField(_("Estado"), max_length=15)
     Tipo = models.CharField(_('Tipo de Alerta'), max_length=10)
+    Nivel=models.IntegerField('Nivel Alerta', blank=True, null=True)
 
 
 class DiaLibre(models.Model):
@@ -956,7 +958,67 @@ class HistRelevamientoMensualeros(models.Model):
     vfechaFin = models.DateTimeField('Fecha Fin Reg', auto_now_add=False,null=True)
     vregistro = models.IntegerField('Valor de Salario', blank=True, null=True)
 
+class CupoUtilizado (models.Model):
+    puntoServicio=models.ForeignKey(PuntoServicio, blank=True, null=True, on_delete=models.SET_NULL)
+    anho=models.IntegerField('Anho del cupo', blank=True, null=True)
+    mes=models.CharField(verbose_name='Mes del cupo del anho', max_length=2)
+    cupoUtilizado=models.IntegerField('Cantidad de horas totales usadas por hora procesada', blank=True, null=True)
+    horasProcesadas=models.ForeignKey(HorasProcesadas, blank=True, null=True, on_delete=models.SET_NULL)
 
+class AsignacionesDet (models.Model):
+    id = models.IntegerField(db_column='id_opeario', primary_key=True,verbose_name=' ')
+    lunEnt = models.TimeField(db_column='lunEnt',verbose_name='Lunes entradas' )
+    lunSal = models.TimeField(db_column='lunSal',verbose_name='Lunes salida' )
+    marEnt = models.TimeField(db_column='marEnt',verbose_name='Martes entrada' )
+    marSal = models.TimeField(db_column='marSal',verbose_name='Martes salida' )
+    mieEnt = models.TimeField(db_column='mieEnt',verbose_name='Miercoles entrada' )
+    mieSal = models.TimeField(db_column='mieSal',verbose_name='Miercoles salida' )
+    jueEnt = models.TimeField(db_column='jueEnt',verbose_name='Jueves entrada' )
+    jueSal = models.TimeField(db_column='jueSal',verbose_name='Jueves salida' )
+    vieEnt = models.TimeField(db_column='vieEnt',verbose_name='Viernes entrada' )
+    vieSal = models.TimeField(db_column='vieSal',verbose_name='Viernes salida' )
+    sabEnt = models.TimeField(db_column='sabEnt',verbose_name='Sabado entrada' )
+    sabSal = models.TimeField(db_column='sabSal',verbose_name='Sabado salida' )
+    domEnt = models.TimeField(db_column='domEnt',verbose_name='Domingo entrada' )
+    domSal = models.TimeField(db_column='domSal',verbose_name='Domingo salida' )
+    asignacionCab_id = models.IntegerField(db_column='asignacionCab_id',verbose_name='Cabecera id')
+    operario_id = models.IntegerField(db_column='operario_id',verbose_name='Operario id')
+    fechaInicio = models.DateField(db_column='fechaInicio',verbose_name='Fecha Inicio' )
+    totalHoras = models.CharField(db_column='totalHoras',verbose_name='Total Horas', max_length=8 )
+    fechaFin = models.DateField(db_column='fechaFin',verbose_name='Fecha Fin' )
+    supervisor= models.BooleanField(db_column='supervisor',verbose_name='Supervisor' )
+    perfil = models.IntegerField(db_column='perfil',verbose_name='Perfil')
+    eliminado = models.BooleanField(db_column='eliminado',verbose_name='Eliminado' )
+    tipo = models.CharField(db_column='tipo',verbose_name='Tipo', max_length=12 )
+    managed=False
+    class Meta:
+        verbose_name = _("Asignaciones realizadas")
+        verbose_name_plural = _("Asignaciones realizadas")
 
-
-
+class AsignacionDetTemp(models.Model):
+    asignacionCab =  models.ForeignKey(AsignacionCab, blank=True, null=True, on_delete=models.SET_NULL)
+    lunEnt = models.TimeField('Lunes entradas', blank=True, null=True)
+    lunSal = models.TimeField('Lunes salida', blank=True, null=True)
+    marEnt = models.TimeField('Martes entrada', blank=True, null=True)
+    marSal = models.TimeField('Martes salida', blank=True, null=True)
+    mieEnt = models.TimeField('Miercoles entrada', blank=True, null=True)
+    mieSal = models.TimeField('Miercoles salida', blank=True, null=True)
+    jueEnt = models.TimeField('Jueves entrada', blank=True, null=True)
+    jueSal = models.TimeField('Jueves salida', blank=True, null=True)
+    vieEnt = models.TimeField('Viernes entrada', blank=True, null=True)
+    vieSal = models.TimeField('Viernes salida', blank=True, null=True)
+    sabEnt = models.TimeField('Sabado entrada', blank=True, null=True)
+    sabSal = models.TimeField('Sabado salida', blank=True, null=True)
+    domEnt = models.TimeField('Domingo entrada', blank=True, null=True)
+    domSal = models.TimeField('Domingo salida', blank=True, null=True)
+    operario = models.ForeignKey(Operario, blank=True, null=True, on_delete=models.CASCADE)
+    fechaInicio = models.DateField('Fecha Inicio Operario', null=True)
+    fechaFin = models.DateField('Fecha Fin Operario', null=True,blank=True)
+    totalHoras = models.CharField('Total Asignado', max_length=8, null=True)
+    supervisor=models.BooleanField('Supervisor', default=False)
+    perfil = models.ForeignKey(Especializacion, on_delete=models.CASCADE, null=True)
+    eliminado=models.BooleanField('Registro temporal eliminado', default=False)
+    fechaCreacion=models.DateTimeField('Fecha creacion del registro', auto_now_add=True)
+    class Meta:
+        verbose_name = _("Asignacion Detalle Temp")
+        verbose_name_plural = _("Asignacion Detalles Temp")
